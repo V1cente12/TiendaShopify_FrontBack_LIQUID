@@ -1,0 +1,2094 @@
+<!-- product-grid-item.liquid -->
+<style>
+  .bajo {
+      position: absolute;
+      top: 3px;
+      left: 2%;
+      width: 70px;
+      z-index: 1;
+  }
+  
+  </style>
+{%- liquid
+  assign compare_at_price = product.compare_at_price 
+  assign price = product.price 
+  assign price_varies = product.price_varies 
+  assign available = product.available
+  if st_card[0] == "true"
+    unless product.tags contains 'notnew'
+      assign on_new = false
+      assign now_date_int = "now" | date: "%j" | plus: 0
+      assign now_year_int = "now" | date: '%Y' | plus: 0
+      assign pub_date_int = product.created_at | date: "%j" | plus: 0
+      assign pub_year_int = product.created_at | date: '%Y' | plus: 0
+      if now_year_int == pub_year_int
+        assign new_day_int = st_card[1] | default: 30 | plus: 0
+        assign check_new = now_date_int | minus: pub_date_int
+        if check_new >= 0 and check_new <= new_day_int
+          assign on_new = true
+        endif
+      else
+        assign new_day_int = st_card[1] | default: 30 | pub_date_int
+        assign check_new = now_date_int | plus: 366
+        if check_new <= new_day_int
+          assign on_new = true
+        endif
+      endif
+    endunless
+  endif
+  assign on_sale = false
+  if compare_at_price > price 
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true 
+  endif
+  unless grid_layout
+    assign grid_layout = st_card[3]
+  endunless
+  unless masonry
+    assign masonry = false
+    if st_card[7] == 'normal'
+      assign masonry = 'none'
+    endif
+  endunless
+  unless block_id
+    assign block_id = block.id
+  endunless
+  unless section_id
+    assign section_id = section.id
+  endunless
+-%}
+
+{%- if product.title != blank -%}
+{%- unless product.has_only_default_variant or st_card[13] == 'true' and product.variants.size == 1 or st_card[4] == 'false' -%}
+  {%- assign show_variant = true -%}
+{%- endunless -%}
+{%- endif -%}
+
+{%- capture card -%}
+{%- case grid_layout -%}
+  {%- when '' or '01' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-darker btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-outline-darker btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-outline-darker btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%- render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+      <div class="clearfix"></div>
+      <div class="product-cta-wrapper">
+      {%- if st_card[12] == 'true' -%}
+        {%- if product.has_only_default_variant -%}
+          {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-darker btn-block fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+        {%- else -%}
+          {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-darker btn-block fkt-cart-plus text-uppercase kt-button' -%}
+        {%- endif -%}
+      {%- endif -%}
+      </div>
+    </div>
+  {%- when '02' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      
+      {%- if product.featured_image != null -%}
+      		<a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+	  {%- else -%}    		         	
+      		<a class="aspectRatio lazyloaded"  data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="--ar_i:100.0%;" data-currentinclude="">
+            	{% render "product-img-nulo" %}
+            </a>
+      {%- endif -%}
+      
+      
+      
+      <div class="cta-btn">
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+      <div class="product-cta-wrapper btns_1">
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[6] != ''-%}
+          {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'kt-button' -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- when '03' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+      {% if st_card[12] == 'true' %}
+        {%- if product.has_only_default_variant -%}
+          {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+        {%- else -%}
+          {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase kt-button' %}
+        {%- endif -%}
+      {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+    </div>
+  {%- when '04' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      
+      
+      {%- if product.featured_image != null -%} 
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      {%- else -%}	
+      		<a class="aspectRatio lazyloaded"  data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="--ar_i:100.0%;" data-currentinclude="">
+            	{% render "product-img-nulo" %}
+            </a>
+      {%- endif -%}
+      
+      
+      
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+      {% if st_card[12] == 'true' %}
+        {%- if product.has_only_default_variant -%}
+          {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white-primary border-bottom w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+        {%- else -%}
+          {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white-primary border-bottom w-100 fkt-cart-plus text-uppercase kt-button' %}
+        {%- endif -%}
+      {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '05' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '06' -%}
+    <div class="product-thumb images">
+      {% for collection in product.collections %}
+      {% if collection.title == "Feliz día de la amistad" %}
+      {% if collection.metafields.custom.cucardas_img != blank %}
+      {%- assign image_cucarda = collection.metafields.custom.cucardas_img -%}
+        <img class="bajo" src="{{collection.metafields.custom.cucardas_img  | img_url: 'master'}}" >
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase btn-cart kt-button' %}
+          <!--
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase kt-button' %}
+          {%- endif -%}
+            -->
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+ 
+
+  {%- when '07' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      <div class="product-price-rate d-flex flex-wrap">
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      </div>
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '08' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-outline-primary-2 btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-outline-primary-2 btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '09' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-outline-primary-2 btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-outline-primary-2 btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary btn-rounded w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary btn-rounded w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '10' -%}
+
+     <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      
+      
+      {%- if product.featured_image != null -%}
+      	<a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      {%- else -%}	
+      		<a class="aspectRatio lazyloaded"  data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="--ar_i:100.0%;" data-currentinclude="">
+            	{% render "product-img-nulo" %}
+            </a>
+      {%- endif -%}
+      
+      	
+      
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-primary-dark btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-primary-dark btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary-dark btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary-white w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary-white w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+ 
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <!--NUEVO 27012022 -->
+          <a title="{{ product.vendor }}" href="{{ routes.collections_url }}/{{product.vendor  | downcase | replace: " ", "-" }}"><span>{{product.vendor }}</span></a>
+      {%- elsif map_tags -%}
+        <!--NUEVO 27012022 -->
+          <a title="{{ product.vendor }}" href="{{ routes.collections_url }}/{{product.vendor  | downcase | replace: " ", "-" }}"><span>{{product.vendor }}</span></a>
+      {%- else -%}
+        <!--NUEVO 27012022 -->
+          <a title="{{ product.vendor }}" href="{{ routes.collections_url }}/{{product.vendor  | downcase | replace: " ", "-" }}"><span>{{product.vendor }}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+
+  {%- when '11' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      </div>
+      {%- capture btns -%}
+        {%- assign btns_count = 0 -%}
+        {% if st_card[12] == 'true' %}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[5] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn-product quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn-product compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+      {%- endcapture -%}
+      <div class="product-cta-wrapper btns_{{btns_count}}">{{btns}}</div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '12' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- capture btns -%}
+        {%- assign btns_count = 0 -%}
+        {% if st_card[12] == 'true' %}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[5] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn-product quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+      {%- endcapture -%}
+      <div class="product-cta-wrapper btns_{{btns_count}}">{{btns}}</div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '13' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- capture btns -%}
+        {%- assign btns_count = 0 -%}
+        {% if st_card[12] == 'true' %}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[5] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn-product quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+      {%- endcapture -%}
+      <div class="product-cta-wrapper btns_{{btns_count}}">{{btns}}</div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '14' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-outline-primary-2 btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- capture btns -%}
+        {%- assign btns_count = 0 -%}
+        {% if st_card[12] == 'true' %}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[5] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn-product quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+      {%- endcapture -%}
+      <div class="product-cta-wrapper btns_{{btns_count}}">{{btns}}</div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '15' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      <a href="{{product.url | within: collection}}" title="{{product.title}}" aria-label="{{product.title}}" style="height: 100%;position: absolute;left: 0;right: 0;bottom: 0;"></a>
+      <div class="product-body-wrapper">
+        <div class="body-variant-visible">
+          {%- if st_card[10] == 'true' -%}
+          <div class="product-vendor">
+          {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+          {%- if map_tags -%}
+            {%- assign vendor_ = product.vendor | handleize -%}
+            {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+            {{ product.vendor | link_to: url_vendor }}
+          {%- else -%}
+            {{ product.vendor | link_to_vendor }}
+          {%- endif -%}
+          </div>
+          {%- endif -%}
+          <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+          {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        </div>
+        <div class="body-variant-hidden">
+          {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+          {%-if show_variant-%}
+          <div class="product-variants-wrapper">
+            <div class="prd-variants">
+              {%- for i in (1..product.options.size) -%}
+                <div class="prd--option{{i}} animated-background"></div>
+              {%- endfor -%}
+            </div>
+          </div>
+          {%-endif-%}
+          {%- capture btns -%}
+            {%- assign btns_count = 0 -%}
+            {%- if st_card[12] == 'true' -%}
+              {%- assign btns_count = btns_count | plus: 1 -%}
+              {%- if product.has_only_default_variant -%}
+                {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+              {%- else -%}
+                {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn-product btn-cart kt-button' %}
+              {%- endif -%}
+            {%- endif -%}
+            {%- if st_card[5] == 'true'-%}
+              {%- assign btns_count = btns_count | plus: 1 -%}
+              <div class="btn-product quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+            {%- endif -%}
+          {%- endcapture -%}
+          <div class="product-cta-wrapper btns_{{btns_count}}">{{btns}}</div>
+        </div>
+      </div>
+    </div>
+  {%- when '16' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn btn-white w-100 quick-view text-lowercase kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      <div class="position-relative">
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-link fkt-long-arrow-right text-lowercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-link fkt-long-arrow-right text-lowercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '04 p-style-17' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-dark btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-dark btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-dark btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark border-bottom w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark border-bottom w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '04 p-style-18' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-dark btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-dark btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-dark btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark border-bottom w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark border-bottom w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '04 p-style-19' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%-render 'kt-wishlist-product', wishlist: wishlist, style_btn: 'btn-primary-darker btn-product-icon btn-expandable kt-button'-%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-primary-darker btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary-darker btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary-darker border-bottom w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary-darker border-bottom w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '02 p-style-20' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+        {%- if st_card[6] != ''-%}
+          {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'kt-button' -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- when '21' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%-render 'kt-wishlist-product', wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button'-%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+      {% if st_card[12] == 'true' %}
+        <div class="product-cta-wrapper">
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white-primary border-bottom w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white-primary border-bottom w-100 fkt-cart-plus text-uppercase kt-button' %}
+          {%- endif -%}
+        </div>
+      {% endif %}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          {{ product.vendor | link_to: url_vendor }}
+        {%- else -%}
+          {{ product.vendor | link_to_vendor }}
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+    </div>
+  {%- when '09 p-style-22' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%-render 'kt-wishlist-product', wishlist: wishlist, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button'-%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true' -%}
+        <div class="btn-white btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[8] == 'true' -%}
+        <div class="btn-white btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1">
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase btn-cart kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-white w-100 text-uppercase kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+      {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+      {%- if st_card[8] and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown mt-1 mb-1">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+  {%- when '23' -%}
+    <div class="d-flex flex-wrap">
+      <div class="product-thumb images">
+        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      </div>
+      <div class="product-body">
+        {%- if st_card[10] -%}
+        <div class="product-vendor">
+        {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          {{ product.vendor | link_to: url_vendor }}
+        {%- else -%}
+          {{ product.vendor | link_to_vendor }}
+        {%- endif -%}
+        </div>
+        {%- endif -%}
+        <h2 class="product-name">
+          <a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a>
+        </h2>
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+        <div class="product-cta-wrapper btns_1">
+          {% if st_card[12] == 'true' %}
+            {%- if product.has_only_default_variant -%}
+              {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-white-3 btn-rounded fkt-cart-plus text-uppercase btn-cart kt-button' %}
+            {%- else -%}
+              {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-white-3 btn-rounded fkt-cart-plus text-uppercase kt-button' %}
+            {%- endif -%}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {%- when '25' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%-render 'kt-wishlist-product',product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button'-%}
+      {%- endif -%}
+      </div>
+    </div>
+    <h3 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h3>
+    <div class="product-cta-wrapper">
+    {%- if st_card[12] == 'true' -%}
+      {%- if product.has_only_default_variant -%}
+        {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+      {%- else -%}
+        {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase kt-button', position_btn: 'compare' -%}
+      {%- endif -%}
+    {%- endif -%}
+    </div>
+    {%- unless product.has_only_default_variant -%}
+    <div class="product-variants-wrapper mt-2">
+      <div class="prd-variants">
+        {%- for i in (1..product.options.size) -%}
+          <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endunless -%}
+  {%- when '26' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%-render 'kt-wishlist-product', wishlist: wishlist, style_btn: 'btn-outline-darker btn-product-icon btn-expandable kt-button'-%}
+      {%- endif -%}
+      {%- if st_card[5] == 'true'-%}
+        <div class="btn-outline-darker btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-outline-darker btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      {%-render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        <div class="product-cta-wrapper">
+        {%- if st_card[13] == 'true' -%}{%-render 'rating_star', product: product, type: 'collection'-%}{%- endif -%}
+        {%- if st_card[12] == 'true' -%}
+          {%- if product.has_only_default_variant -%}
+            {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-underline btn-underline-dark fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+          {%- else -%}
+            {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-underline btn-underline-dark fkt-cart-plus text-uppercase kt-button' -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- when '02 p-style-27' -%}
+    <div class="product-thumb-body">
+      <div class="product-thumb images">
+        {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+        <div class="cta-btn">
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+        </div>
+        {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+        <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+          <div class="product-grid-countdown">
+            {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+            <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="product-body">
+        {%- if st_card[10] == 'true' -%}
+        <div class="product-vendor">
+        {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          {{ product.vendor | link_to: url_vendor }}
+        {%- else -%}
+          {{ product.vendor | link_to_vendor }}
+        {%- endif -%}
+        </div>
+        {%- endif -%}
+        <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+        <div class="product-cta-wrapper btns_1 text-center">
+          {% if st_card[12] == 'true' %}
+            {%- if product.has_only_default_variant -%}
+              {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+            {%- else -%}
+              {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase kt-button' %}
+            {%- endif -%}
+          {% endif %}
+          {%- if st_card[6] != ''-%}
+            {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'kt-button' -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- when '02 p-style-27 p-style-27_' -%}
+    <div class="product-thumb-body">
+      <div class="product-thumb images">
+        {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+        <div class="cta-btn">
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn-primary btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          <div class="btn-primary btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+        </div>
+        {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+        <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+          <div class="product-grid-countdown">
+            {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+            <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="product-body">
+        {%- if st_card[10] == 'true' -%}
+        <div class="product-vendor">
+        {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          {{ product.vendor | link_to: url_vendor }}
+        {%- else -%}
+          {{ product.vendor | link_to_vendor }}
+        {%- endif -%}
+        </div>
+        {%- endif -%}
+        <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+        <div class="product-cta-wrapper btns_1 text-center">
+          {% if st_card[12] == 'true' %}
+            {%- if product.has_only_default_variant -%}
+              {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+            {%- else -%}
+              {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-primary w-100 fkt-cart-plus text-uppercase kt-button' %}
+            {%- endif -%}
+          {% endif %}
+          {%- if st_card[6] != ''-%}
+            {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'kt-button' -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+    {%- assign sold = product.tags | where: 'Sold ' | first -%}
+    {%- if sold -%}
+    {%- assign sold_split = sold | remove: 'Sold ' | split: '/' -%}
+    {%- assign sold_curr = sold_split[0] | plus: 0 -%}
+    {%- assign sold_max = sold_split[1] | default: 100 -%}
+    {%- assign curr_vr = product.selected_or_first_available_variant -%}
+    {%- assign inventory_quantity = curr_vr.inventory_quantity -%}
+    {%- if inventory_quantity != 0 and inventory_quantity < sold_curr -%}
+      {%- assign sold_curr = inventory_quantity -%}
+    {%- endif -%}
+    {%- if inventory_quantity <= 1 and curr_vr.inventory_policy == 'continue' -%}
+      {%- assign sold_curr = 1 -%}
+    {%- endif -%}
+    <div class="sold_progress">
+      <div class="progress">
+        <div class="progress-bar bg-warning" role="progressbar" style="width: {{sold_curr | times: 1.00 | divided_by: sold_max | times: 100}}%" aria-valuenow="{{sold_curr | divided_by: sold_max | times: 100}}" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <p class="mb-0">{{ 'sections.products_section.label_sold' | t: count: sold_curr }}</p>
+    </div>
+    {%- endif -%}
+  {%- when '28' -%}
+    <div class="product-thumb-body">
+      <div class="product-thumb images">
+        {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+        <div class="cta-btn">
+        {%- if st_card[6] != ''-%}
+          {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button' -%}
+        {%- endif -%}
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn-outline-primary-2 btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          <div class="btn-outline-primary-2 btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+        </div>
+        {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+        <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+          <div class="product-grid-countdown">
+            {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+            <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="product-body">
+        {%- if st_card[10] == 'true' -%}
+        <div class="product-vendor">
+        {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          <!--NUEVO 27012022 -->
+          <a title="{{ product.vendor }}" href="{{ routes.collections_url }}/{{product.vendor  | downcase | replace: " ", "-" }}"><span>{{product.vendor }}</span></a>
+        {%- else -%}
+          <!--NUEVO 27012022 -->
+          <a title="{{ product.vendor }}" href="{{ routes.collections_url }}/{{product.vendor  | downcase | replace: " ", "-" }}"><span>{{product.vendor }}</span></a>
+        {%- endif -%}
+        </div>
+        {%- endif -%}
+        <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+      </div>
+    </div>
+    <div class="product-cta-wrapper btns_1">
+      {% if st_card[12] == 'true' %}
+        {%- if product.has_only_default_variant -%}
+          {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded btn-block fkt-cart-plus text-uppercase btn-cart kt-button' %}
+        {%- else -%}
+          {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded btn-block fkt-cart-plus text-uppercase kt-button' %}
+        {%- endif -%}
+      {% endif %}
+    </div>
+  {%- when '28 p-style-28_' -%}
+    <div class="product-thumb-body">
+      <div class="product-thumb images">
+        {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+        <div class="cta-btn">
+        {%- if st_card[6] != ''-%}
+          {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-outline-primary-2 btn-product-icon btn-expandable kt-button' -%}
+        {%- endif -%}
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn-outline-primary-2 btn-product-icon btn-expandable quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          <div class="btn-outline-primary-2 btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+        </div>
+        {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+        <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+          <div class="product-grid-countdown">
+            {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+            <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="product-body">
+        {%- if st_card[10] == 'true' -%}
+        <div class="product-vendor">
+        {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+        {%- if map_tags -%}
+          {%- assign vendor_ = product.vendor | handleize -%}
+          {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/vendor-' | append: vendor_ -%}
+          {{ product.vendor | link_to: url_vendor }}
+        {%- else -%}
+          {{ product.vendor | link_to_vendor }}
+        {%- endif -%}
+        </div>
+        {%- endif -%}
+        <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+        {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+      </div>
+    </div>
+    <div class="product-cta-wrapper btns_1">
+      {% if st_card[12] == 'true' %}
+        {%- if product.has_only_default_variant -%}
+          {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded btn-block fkt-cart-plus text-uppercase btn-cart kt-button' %}
+        {%- else -%}
+          {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-rounded btn-block fkt-cart-plus text-uppercase kt-button' %}
+        {%- endif -%}
+      {% endif %}
+      {%- assign sold = product.tags | where: 'Sold ' | first -%}
+      {%- if sold -%}
+      {%- assign sold_split = sold | remove: 'Sold ' | split: '/' -%}
+      {%- assign sold_curr = sold_split[0] | plus: 0 -%}
+      {%- assign sold_max = sold_split[1] | default: 100 -%}
+      {%- assign curr_vr = product.selected_or_first_available_variant -%}
+      {%- assign inventory_quantity = curr_vr.inventory_quantity -%}
+      {%- if inventory_quantity != 0 and inventory_quantity < sold_curr -%}
+        {%- assign sold_curr = inventory_quantity -%}
+      {%- endif -%}
+      {%- if inventory_quantity <= 1 and curr_vr.inventory_policy == 'continue' -%}
+        {%- assign sold_curr = 1 -%}
+      {%- endif -%}
+      <div class="sold_progress">
+        <div class="progress">
+          <div class="progress-bar bg-warning" role="progressbar" style="width: {{sold_curr | times: 1.00 | divided_by: sold_max | times: 100}}%" aria-valuenow="{{sold_curr | divided_by: sold_max | times: 100}}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <p class="mb-0">{{ 'sections.products_section.label_sold' | t: count: sold_curr }}</p>
+      </div>
+      {%- endif -%}
+    </div>
+  {%- when '29' -%}
+    <div class="product-thumb images">
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      <div class="cta-btn">
+      {%- if st_card[6] != ''-%}
+        {%- render 'kt-wishlist-product', product: product, wishlist: wishlist, style_btn: 'btn-white btn-product-icon btn-expandable kt-button' -%}
+      {%- endif -%}
+      {%- if st_card[7] == 'true'-%}
+        <div class="btn-white btn-product-icon btn-expandable compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+      {%- endif -%}
+      </div>
+      <div class="product-cta-wrapper btns_1 flex-wrap justify-content-center align-content-center">
+        {%- if st_card[5] == 'true'-%}
+          <div class="btn btn-dark text-capitalize quick-view kt-button mb-1" data-view="{{product.url}}" data-target="#md_qvModal">{{'products.quickview.button'|t}}</div>
+        {%- endif -%}
+        {% if st_card[12] == 'true' %}
+          {%- if product.has_only_default_variant -%}
+            {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark text-capitalize kt-button' %}
+          {%- else -%}
+            {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-dark text-capitalize kt-button' %}
+          {%- endif -%}
+        {% endif %}
+      </div>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}
+      <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+      <div class="product-price-rate d-flex flex-wrap">
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      </div>
+      {%-if show_variant-%}
+      <div class="product-variants-wrapper">
+        <div class="prd-variants">
+          {%- for i in (1..product.options.size) -%}
+            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%-endif-%}
+    </div>
+  {%- when '30' -%}
+    <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+    <div class="product-thumb images">
+      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+      {%- if st_card[8] == 'true' and product.metafields.event.countdown != blank%}
+      <div class="product-countdown style{{st_card[9]}} d-flex flex-wrap justify-content-center">
+        <div class="product-grid-countdown">
+          {%-if st_card[9] == '02'-%}<p class="mb-0 label_countdown">{{'general.countdown.label'|t}}:</p><div class="w-100"></div>{%-endif-%}
+          <div class="kt_countdown style{{st_card[9]}} kt_countdow_page clearfix" data-time="{{product.metafields.event.countdown}}" data-time-zone="{{'now' | date:'%Z'}}"></div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+    <div class="product-body">
+      {%- comment -%}{%- if st_card[10] == 'true' -%}
+      <div class="product-vendor">
+      {%- assign map_tags = product.tags | where: 'Vendor '| first -%}
+      {%- if settings.multi_flts_or -%}
+        {%- assign vendor_handle = product.vendor | handleize -%}
+        <a href="{{collections[vendor_handle].url | default: routes.all_products_collection_url}}?q=vendor:{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- elsif map_tags -%}
+        <a href="{{routes.all_products_collection_url}}/vendor-{{product.vendor | handleize}}"><span>{{product.vendor}}</span></a>
+      {%- else -%}
+        <a href="{{routes.collections_url}}/vendors?q={{product.vendor}}"><span>{{product.vendor}}</span></a>
+      {%- endif -%}
+      </div>
+      {%- endif -%}{%- endcomment -%}
+      <div class="product-price-rate d-flex flex-wrap justify-content-between">
+      {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+        {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+      </div>
+      {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out, preOrder: preOrder -%}
+      {%- capture btns -%}
+        {%- assign btns_count = 0 -%}
+        {% if st_card[12] == 'true' %}
+          {%- assign style_btn = 'btn btn-primary btn-rounded fkt-shopping-cart text-uppercase btn-cart kt-button' -%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          {%- if product.has_only_default_variant -%}
+            <input type="hidden" name="id" value="{{product.selected_or_first_available_variant.id}}"><input type="hidden" name="quantity" value="1">
+            {%- if preOrder -%}
+              <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button addItemAjax" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap">{{'products.product.pre_order'|t}}</span></div>
+            {%- elsif sold_out == false -%}
+              <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button addItemAjax" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap">{{'products.product.add_small' | t}}</span></div>
+            {%- else -%}
+              <div class="{{style_btn}} add_to_cart_button addItemAjax sold_out disabled"><span class="text-nowrap">{{'products.product.sold_out'|t}}</span></div>
+            {%- endif -%}
+          {%- else -%}
+            {%-assign has_variants = true-%}
+            {%- if settings.qs_show_vars_list -%}
+              {%- if product.options.size == 1 or product.options.size > 1 and settings.qs_show_first_opt == false -%}
+                {%- if product.options_with_values[0].values.size <= 5 -%}
+                  {%-assign has_variants = false-%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endif -%}
+            {%- capture onclick -%}
+              {%- if has_variants -%}
+                kt__quick-shop
+              {%- else -%}
+                addItemAjax
+              {%- endif -%}
+            {%- endcapture -%}
+
+            {%- if preOrder -%}
+              <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}}" data-view="{{ product.url }}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap">{{'products.product.pre_order'|t}}</span></div>
+            {%- elsif sold_out == false -%}
+              <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}}" data-view="{{ product.url }}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap">{{'products.product.add_small' | t}}</span></div>
+            {%- else -%}
+              <div class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}} sold_out disabled"><span class="text-nowrap">{{'products.product.sold_out'|t}}</span></div>
+            {%- endif -%}
+          {%- endif -%}
+        {% endif %}
+        <div class="btns-qv-cp">
+        {%- if st_card[5] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn btn-outline-primary-2 btn-rounded quick-view fkt-binoculars kt-button" data-view="{{product.url}}" data-target="#md_qvModal"><span class="text-nowrap">{{'products.quickview.button'|t}}</span></div>
+        {%- endif -%}
+        {%- if st_card[7] == 'true'-%}
+          {%- assign btns_count = btns_count | plus: 1 -%}
+          <div class="btn btn-outline-primary-2 btn-rounded compare fkt-random kt-button" data-pid="{{product.handle}}"><span class="text-nowrap">{{'products.compare.button'|t}}</span></div>
+        {%- endif -%}
+        </div>
+      {%- endcapture -%}
+      <div class="product-cta-wrapper btns_{{btns_count}} d-flex flex-wrap justify-content-center align-content-center mt-1">
+        {%-if show_variant-%}
+        <div class="product-variants-wrapper mb-1 w-100">
+          <div class="prd-variants">
+            {%- for i in (1..product.options.size) -%}
+              <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%-endif-%}
+        {{btns}}
+      </div>
+    </div>
+{%- endcase -%}
+{%- endcapture -%}
+{%- case grid_layout -%}
+{%- when '24' -%}
+  {%- render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+{%- else -%}
+<div class="product product-card product-inner --card{% if show_variant %} ktlz{%endif%}"{%unless product.has_only_default_variant%} data-href="{{product.handle}}"{{ktlz}}{%endunless%}>
+  <form method="post" action="{{ routes.cart_add_url }}"{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-{{block_id}}" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-{{block_id}}" data-options="{{product.options.size}}" data-pr-vrs{%endunless%}>{{-card-}}
+  </form>
+</div>
+{%- endcase -%}

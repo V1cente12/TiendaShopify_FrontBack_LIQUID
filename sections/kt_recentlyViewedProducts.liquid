@@ -1,0 +1,364 @@
+<!-- kt_recentlyViewedProducts.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%- unless section.settings.off_section -%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+  {%- if template.suffix != 'recently' -%}
+    <div class="load_recent{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-include></div>
+  {%-endif-%}
+  {%-if template.suffix == 'recently'-%}
+  <!--lz_sc-->
+    {%- capture canonical_url -%}{% render 'kt_url_full' %}{%- endcapture -%}
+    {%- assign arr_canonical_url = canonical_url | split: 'q=' | last | split:'&view=' | first -%}
+    {%- if arr_canonical_url contains '+' -%}
+      {%- assign arr_canonical_url = arr_canonical_url | replace: ' +', '+' | replace: '+ ', '+' | split: '+' -%}
+    {%- else -%}
+      {%- assign arr_canonical_url = arr_canonical_url | split: ' ' -%}
+    {%- endif -%}
+    {%- capture products_map -%}
+      {%- for handle_product in arr_canonical_url -%}
+        {%- if handle_product != blank -%}
+        {%- assign product_rcv = all_products[handle_product] -%}
+        {%-if product.id != product_rcv.id and product_rcv != blank -%}
+          <div class="swiper-slide grid-item p-style-{{grid_ly}}">
+            {%- render "product-grid-item", product: product_rcv, grid_layout: grid_ly, st_card: st_card -%}
+          </div>
+        {%- endif -%}
+        {%- endif-%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if products_map.size >= 1 %}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      {%-render 'sc_css'-%}
+      <div class="widget_recent_productSg {{width_section_}}" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section">
+        <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%} swiper-fixed-fshadow"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+          <div class="section-width {{width_content_}}">
+            <div class="section-title text-center">
+              <h3 class="m-0">{{section.settings.product_recently_title}}</h3>
+              {%- if section.settings.product_recently_stitle != blank -%}
+                <dfn class="sub-title m-0">{{section.settings.product_recently_stitle}}</dfn>
+              {%- endif -%}
+              <div class="clearfix mb-4"></div>
+            </div>
+            <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+              <div class="products-card-grid swiper-container swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}">
+                <div class="swiper-wrapper">{{products_map}}</div>
+                {%- if section.settings.use_dots -%}
+                <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+                {%- endif -%}
+              </div>
+              {%- if section.settings.use_navigation -%}
+              <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+                <div class="content-buttons position-relative">
+                  <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+                  <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  <!--lz_sc-->
+  {%-endif-%}
+{%- endunless -%}
+{%- endunless -%}
+{% schema %}
+  {
+    "name": "Recently viewed Products",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Recently viewed Products",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "checkbox",
+        "id": "off_section",
+        "label": "Turn off section?",
+        "default": true
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920x pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "text",
+        "id": "product_recently_title",
+        "label": "Title section",
+        "default": "Recently viewed"
+      },
+      {
+        "type": "text",
+        "id": "product_recently_stitle",
+        "label": "Sub title"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "__Auto-rotate slides",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "__Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          },
+          {
+            "value": "nav-top-right",
+            "label": "Top right"
+          },
+          {
+            "value": "nav-top-left",
+            "label": "Top left"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "inside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "__Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 0\n  },\n  \"375\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 20\n  },\n  \"1500\": {\n    \"slidesPerView\": 6,\n    \"spaceBetween\": 20\n  }\n}"
+      }
+    ]
+  }
+{% endschema %}

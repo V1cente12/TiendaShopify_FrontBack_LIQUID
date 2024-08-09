@@ -1,0 +1,79 @@
+{%- for link in linklists['mix-match'].links -%}
+  {%- if link.links.size > 0 -%}
+    {%- assign handle_check = link.object.handle -%}
+    {%- assign product_handle_check = product.handle -%}
+    {%- if handle_check == product_handle_check -%}
+      {%- assign prds_mix = link.links -%}
+      {%- break -%}
+    {%- else -%}
+      {%- continue -%}
+    {%- endif -%}
+  {%- else -%}
+  {%- continue -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if prds_mix -%}
+<div class="table-products table-responsive" style="padding: 0 1px;margin-bottom: 2rem;">
+  <table class="group-product table">
+    <tbody>
+      <tr class="d-none">
+        <th><span class="sticky">{{'products.products_group.name'|t}}</span></th>
+        {% comment %}<th class="th-price">{{'products.products_group.price'|t}}</th>{% endcomment %}
+        <th class="th-qty">{{'products.products_group.quantity'|t}}</th>
+      </tr>
+      {%- for link in prds_mix -%}
+      {%- if link.type == 'product_link' -%}
+        {%- assign pr = link.object -%}
+        {%- unless pr.available -%}{%-continue-%}{%- endunless -%}
+        {%- assign pr_current_variant = pr.selected_or_first_available_variant -%}
+        <tr class="itemGroupProducts">
+          <td>
+            <div class="item-wrap">
+              <div class="item-thumb">
+                <a href="{{pr.url}}" class="thumb-img">
+                  <img class="lazyload" alt="{{ pr.featured_image.alt | escape |strip_html }}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ pr.featured_image.src| img_url: '104x120', crop:'top' }}">
+                </a>
+              </div>
+              <div class="item-name">
+                <a href="{{pr.url}}">{{pr.title}}</a>
+                {%- unless pr.has_only_default_variant -%}
+                <select class="product-form__variants pr-group" style="border-top: none;border-bottom: none;border-radius: 5px;outline: none !important;">
+                  {%- for variant in pr.variants -%}
+                    {%- if variant.available -%}
+                      <option {% if variant == pr.selected_or_first_available_variant %} selected="selected"{% endif %} value="{{ variant.id }}" data-value="{{ variant.title | escape }}" data-price="{{variant.price}}" data-c-price="{{variant.compare_at_price | default: variant.price}}">
+                        {{ variant.title }}
+                      </option>
+                    {%- else -%}
+                      <option disabled="disabled">{{ variant.title }} - {{ 'products.product.sold_out' | t }}</option>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </select>
+                {%-endunless-%}
+                <div class="price">
+                  <ins class="">
+                    {{ pr_current_variant.price | money }}
+                  </ins>
+                  <del class="{%if pr_current_variant.compare_at_price <= pr_current_variant.price or pr_current_variant.compare_at_price == null%} d-none{%endif%}">
+                    {{ pr_current_variant.compare_at_price | default: pr_current_variant.price | money }}
+                  </del>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="quantity-inner">
+            <div class="quantity{% if preOrder == false and sold_out %} d-none{% endif %}">
+              <div class="control">
+                <a class="btn-number qtyminus quantity-minus" href="#"></a>
+                <input type="text" data-step="1" name="qty_group" min="0" value="1" title="{{products.product.quantity|t}}" class="input-qty input-text qty text" size="4" data-id="{{pr_current_variant.id}}" data-price="{{pr_current_variant.price}}" data-c-price="{{pr_current_variant.compare_at_price | default: pr_current_variant.price}}" pattern="[0-9]*">
+                <a class="btn-number qtyplus quantity-plus" href="#"></a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {%- endif -%}
+      {%- endfor -%}
+    </tbody>
+  </table>
+</div>
+{%- endif -%}

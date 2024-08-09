@@ -1,0 +1,526 @@
+<!-- md_icon_boxes.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+ 
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign mapType = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}} icon-boxes-container{%if section.settings.separator%} icon-boxes-separator{%endif%}">
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      {%- assign block = section.blocks | where: 'type', 'item_title' | first -%}
+      {%- if block -%}
+        <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%}">
+          <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12{%endif%}">
+            <div class="section-title {{block.settings.title_align}} w-100">
+              {%- if block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endif -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+              {%- unless block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- if block.settings.name_link != blank -%}
+          <div class="col-auto">
+            {%- if block.settings.link_to != blank -%}              
+              <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+            {%- else -%}
+              <p class="sub-title">{{block.settings.name_link}}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.use_slide -%}
+        {%- assign item_grid = 'swiper-slide' -%}      
+        <div class="swiper-container-fuild position-relative">
+          <div class="swiper-container" data-breakpoints='{{responsive_}}' data-autoplay="true" data-slides-per-view="{{items_}}" data-scrollbar="true">
+            <div class="swiper-wrapper">
+              {%- render 'md_icon_boxes_items', item_grid: 'swiper-slide' -%}
+            </div>
+            <div class="swiper-scrollbar"></div>
+          </div>
+        </div>
+      {%- else -%}
+        <div class="row justify-content-center">
+          {%- assign blocks_size = section.blocks.size -%}
+          {%- if mapType contains 'item_title' -%}
+          {%- assign blocks_size = blocks_size | minus: 1 -%}
+          {%- endif -%}
+          {%- case blocks_size -%}
+            {% when 1 %}
+              {%- assign item_grid = 'col-12' -%}
+            {% when 2 %}
+              {%- assign item_grid = 'col-12 col-lg-6' -%}
+            {% when 3 %}
+              {%- assign item_grid = 'col-12 col-sm-6 col-lg-4' -%}
+            {% when 4 %}
+              {%- assign item_grid = 'col-12 col-sm-6 col-lg-3' -%}
+          {%- endcase -%}
+          {%- render 'md_icon_boxes_items', item_grid: item_grid -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%-capture cta-css-%}
+{%-style-%}
+  .content_{{section.id}} {
+    --cl_icon: {{section.settings.color_icon}};
+    --cl_title: {{section.settings.color_title}};
+    --title_f_w: {{section.settings.title_font_weight}};
+    --cl_desc: {{section.settings.color_desc}};
+  }
+{%-endstyle-%}
+{%-endcapture-%}
+{{ cta-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Icon Boxes",
+    "class": "md_icon_boxes",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Icon Boxes",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "color",
+        "id": "color_icon",
+        "label": "Color icon",
+        "default": "#333"
+      },
+      {
+        "type": "color",
+        "id": "color_title",
+        "label": "Color title",
+        "default": "#333"
+      },
+      {
+        "type": "color",
+        "id": "color_desc",
+        "label": "Color description",
+        "default": "#ccc"
+      },
+      {
+        "type": "select",
+        "id": "title_font_weight",
+        "label": "Title font weight",
+        "options": [
+          { "value": "400", "label": "400" },
+          { "value": "500", "label": "500" },
+          { "value": "600", "label": "600" }
+        ],
+        "default": "400"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type":"checkbox",
+        "id": "use_slide",
+        "label": "Use slide mode?"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "== Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"476\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 20\n  },\n  \"768\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 20\n  }\n}"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item Title section",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "html",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          }
+        ]
+      },
+      {
+        "type": "item_simple_icons",
+        "name": "Item Simple Icons",
+        "settings": [
+          {
+            "type": "select",
+            "id": "content_align",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              }
+            ],
+            "label": "Content align",
+            "default": "center"
+          },
+          {
+            "type": "text",
+            "id": "icon_font",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](//midas-theme.myshopify.com/pages/icon-boxes)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Quisque a lectus"
+          },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue."
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "item_sircle_icons",
+        "name": "Item Circle Icons",
+        "settings": [
+          {
+            "type": "select",
+            "id": "content_align",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              }
+            ],
+            "label": "Content align",
+            "default": "center"
+          },
+          {
+            "type": "text",
+            "id": "icon_font",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](//midas-theme.myshopify.com/pages/icon-boxes)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Suspendisse potenti"
+          },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat."
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "item_icon_side",
+        "name": "Item Box icon side",
+        "settings": [
+          {
+            "type": "text",
+            "id": "icon_font",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](//midas-theme.myshopify.com/pages/icon-boxes)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Free Shipping"
+          },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Orders $50 or more"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "item_icon_box_card",
+        "name": "Item Icon box card",
+        "settings": [
+          {
+            "type": "text",
+            "id": "icon_font",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](//midas-theme.myshopify.com/pages/icon-boxes)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Payment & Delivery"
+          },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Free shipping for orders over $50"
+          },
+          {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color",
+            "default": "#fafafa"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "item_icon_box_card_2",
+        "name": "Item Icon box card_2",
+        "settings": [
+          {
+            "type": "text",
+            "id": "icon_font",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](//midas-theme.myshopify.com/pages/icon-boxes)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Payment & Delivery"
+          },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Free shipping for orders over $50"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Icon Boxes",
+        "category": "05. Element"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,120 @@
+{%-layout none-%}
+<div class="d-none">{% section 'product-template'%}</div>
+{% capture unique_tabs %}{% section 'product-template'%}{% endcapture %}
+{% assign unique_tabs = unique_tabs | split: '<!-- unique_tabs -->' | last | split: '<!-- end_unique_tabs -->' | first | remove: '|</div>' | remove: '</div>' | split: '|' %}
+{%- if search.performed -%}
+{%- assign searchTerms = search.terms -%}
+{%- paginate search.results by 30 -%}
+  {%- if search.results_count == 0 -%}
+	  <h3 class="title text-center my-5">
+	    <span class="d-block my-2">{{ 'general.search.no_results_html' | t: terms: searchTerms }}</span>
+		  <a href="#" title="" onclick="window.location.reload()" class="btn btn-outline-primary" style="padding: 0 10px;">Close</a>
+	  </h3>
+  {%- else -%}
+	  <h3 class="title text-center mb-5" style="border-bottom: 1px solid #efefef;padding-bottom: 10px;">
+	  	<div class="d-flex align-items-center justify-content-between">
+		    <span class="d-block">{{ 'general.search.results_for_html' | t: terms: searchTerms }}</span>
+			  <a href="#" title="" onclick="window.location.reload()" class="btn btn-outline-primary" style="padding: 0 10px;">Close</a>
+	  	</div>
+	  </h3>
+		<div class="row">
+		{%- for item in search.results -%}
+			{%- assign product = item -%}
+			<div class="product-item col-12 col-md-6 col-lg-4 col-xl-3" id="prd_{{product.id}}">
+				<div class="product-inner">
+					<div class="info d-flex align-items-start">
+						<div class="img">
+							<img class="rounded" src="{{product.featured_image|img_url: '75x100', crop: 'center'}}" alt="{{product.featured_image.alt | default: product.title}}">
+						</div>
+						<div class="name">
+							<a class="custom-control custom-checkbox" href="{{product.url}}" title="{{product.title}}" data-pid="{{product.id}}">
+								<span class="custom-control-label"></span>
+							</a>
+							<a href="{{product.url}}" title="{{product.title}}" style="display: block;width: 100%;margin-top: 20px;text-decoration: none !important"><h2 class="product-name">{{product.title}}</h2></a>
+						</div>
+					</div>
+					<form class="meta-feilds" action="#" method="POST">
+					  <div class="form-group my-3 mb-2">
+					    <label for="short_description-{{product.id}}" class="sr-only">Short description</label>
+					    <textarea class="form-control" id="short_description-{{product.id}}" placeholder="Short description" name="meta.short_description" rows="3" data-method="{%if product.metafields.meta.short_description%}PUT{%else%}POST{%endif%}">
+					    	{{-product.metafields.meta.short_description-}}
+					    </textarea>
+					  </div>
+					  <div class="form-group my-3 mb-2">
+					    <label for="additional_information-{{product.id}}" class="sr-only">Additional information</label>
+					    <textarea class="form-control" id="additional_information-{{product.id}}" placeholder="Additional information" name="meta.additional_information" rows="3" data-method="{%if product.metafields.meta.additional_information%}PUT{%else%}POST{%endif%}">
+					    	{{-product.metafields.meta.additional_information-}}
+					    </textarea>
+					  </div>
+					  <div class="form-group my-3 mb-2">
+					    <label for="size_guide-{{product.id}}" class="sr-only">Size guide</label>
+					    <textarea class="form-control" id="size_guide-{{product.id}}" placeholder="Size guide" name="meta.size_guide" rows="3" data-method="{%if product.metafields.meta.size_guide%}PUT{%else%}POST{%endif%}">
+					    	{{-product.metafields.meta.size_guide-}}
+					    </textarea>
+					  </div>
+					  {%- for unique_tab in unique_tabs -%}
+						  {% assign nameTab = unique_tab|split: '"tab_title":"' | last | split: '"' | first %}
+						  {% assign nameKey = unique_tab|split: '"tab_key":"' | last | split: '"' | first | handle %}
+						  <div class="form-group my-3 mb-2">
+						    <label for="{{nameKey}}-{{product.id}}">{{nameTab}}</label>				    
+		            <textarea class="form-control" id="{{nameKey}}-{{product.id}}" name="meta.{{nameKey}}" rows="3" data-method="{%if product.metafields.meta[nameKey]%}PUT{%else%}POST{%endif%}">
+		            	{{-product.metafields.meta[nameKey]-}}
+		            </textarea>
+						  </div>
+					  {%- endfor -%}
+					  <div class="more" style="display: none;">
+						  <div class="form-group my-3 mb-2">
+						    <label for="countdown-{{product.id}}" class="sr-only">Countdown</label>
+		            <input type="text" class="form-control date-picker" id="countdown-{{product.id}}" placeholder="Countdown" name="event.countdown" rows="3" value="{{product.metafields.event.countdown}}" data-method="{%if product.metafields.event.countdown%}PUT{%else%}POST{%endif%}">
+						  </div>
+						  <div class="form-group my-3 mb-2">
+						    <label for="video-{{product.id}}" class="sr-only">Video</label>				    
+		            <textarea class="form-control" id="video-{{product.id}}" placeholder="Video" name="meta.video" rows="3" data-method="{%if product.metafields.meta.video%}PUT{%else%}POST{%endif%}">
+		            	{{-product.metafields.meta.video-}}
+		            </textarea>
+		            <i><small>Ex value: link thumbnail | link video</small></i>
+						  </div>
+						  <div class="form-group my-3 mb-2">
+						    <label for="on_link-{{product.id}}" class="sr-only">External / Affiliate</label>				    
+		            <textarea class="form-control" id="on_link-{{product.id}}" placeholder="External / Affiliate" name="purchase.on_link" rows="3" data-method="{%if product.metafields.purchase.on_link%}PUT{%else%}POST{%endif%}">
+		            	{{-product.metafields.purchase.on_link-}}
+		            </textarea>
+		            <i><small>Ex value: https://molla-theme.myshopify.com/products/block-side-table-trolley-1</small></i>
+						  </div>
+					  </div>
+					</form>
+				  <div class="w-100 mt-3">
+				  	<a class="btn btn-showall" href="#" title=""><span class="show_all">Show all</span><span class="hide_more" style="display: none">Hide</span></a>
+				  </div>
+				</div>
+			</div>
+		{%- endfor -%}
+		</div>
+	  {%- if paginate.pages > 1 -%}
+		<div class="pagination">
+			<nav class="w-100" aria-label="Page navigation example">
+			  <ul class="pagination justify-content-center list-unstyled">
+			    <li class="page-item{% unless paginate.previous %} disabled{%endunless%}">
+			      <a class="page-link" href="{{ paginate.previous.url }}" tabindex="-1">Previous</a>
+			    </li>
+				  {%- for part in paginate.parts -%}
+					  {%- if part.is_link -%}
+					    <li class="page-item"><a class="page-link" href="{{ part.url }}">{{ part.title }}</a></li>		    
+					  {%- else -%}
+						  {%- if part.title == paginate.current_page -%}
+							  <li class="page-item active"><span class="page-link">{{ part.title }}</span></li>
+						  {%- else -%}
+							  <li class="page-item"><span class="page-link dots">{{ part.title }}</span></li>
+						  {%- endif -%}
+					  {%- endif -%}
+				  {%- endfor -%}
+			    <li class="page-item{% unless paginate.next %} disabled{%endunless%}">
+			      <a class="page-link" href="{{ paginate.next.url }}">Next</a>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+	  {%- endif -%}
+  {%- endif -%}
+{%- endpaginate -%}
+{%- endif -%}

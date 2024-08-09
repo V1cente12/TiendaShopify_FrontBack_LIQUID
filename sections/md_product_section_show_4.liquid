@@ -1,0 +1,256 @@
+<!-- md_product_section_show_4.liquid -->
+{%- if template.name != 'collection' -%}
+  {%- liquid
+    assign width_section = section.settings.width_section
+    assign width_content = section.settings.width_content
+    capture width_section_
+      if width_section == 'container-fluid wide' and width_content == false
+        echo 'w-100'
+      else
+        echo width_section
+      endif
+    endcapture
+    capture width_content_
+      if width_content and width_section == 'w-100'
+        echo 'container'
+      elsif width_section == 'container-fluid wide' and width_content == false
+        echo 'container-fluid wide'
+      else
+        echo 'w-100'
+      endif
+    endcapture
+    assign dir_body = settings.dir_body
+    assign cssAlign = 'left'
+    assign cssAlign_rev = 'right'
+    if dir_body == 'rtl'
+      assign cssAlign = 'right'
+      assign cssAlign_rev = 'left'
+    endif
+  -%}
+
+  {%-if section.blocks.size != 0-%}
+  {%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+  {%- assign typeBlocks = section.blocks | map: 'type' -%}
+  {%-render 'sc_css'-%}
+  <div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+    <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%} swiper-fixed-fshadow"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">      
+      <div class="section-width {{width_content_}}">
+        <div class="row justify-content-center">
+        {%- if section.blocks.size == 2 -%}{%- assign col_group = 'mt-3 mt-lg-0 col-lg-6' -%}{%- endif -%}
+        {%- if section.blocks.size == 3 -%}{%- assign col_group = 'mt-3 mt-lg-0 col-lg-6 col-xl-4' -%}{%- endif -%}
+        {%-for block in section.blocks-%}
+        <div class="col-12 {{col_group}}">
+          <div class="heading row no-gutters align-items-center justify-content-between mb-2">
+            <div class="col-12 col-md mb-1 mb-lg-0">
+              <div class="section-title w-100">
+                {{--}}<h3 class="title">{{collections[block.settings.products].title | default: block.id}}</h3>{{--}}
+              </div>
+            </div>
+            <div class="col-12 col-md-auto">
+              {{--}}<a href="{{collections[block.settings.products].url | default: '#'}}" class="title-link">{{block.settings.name_link}}</a>{{--}}
+            </div>
+          </div>
+          {%-if collections[block.settings.products].title != blank-%}
+            <div class="product-list lazyload" data-include="{{collections[block.settings.products].url}}/?section_id={{section.id}}&q={{forloop.index}}"></div>
+          {%- endif -%}
+        </div>
+        {%- endfor-%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endunless-%}
+  {%- endif -%}
+{%- else -%}
+<!--lz_sc-->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+{% assign i = canonical_url | split: 'q=' | last | plus: 0 %}
+{%-assign pos_tab = i | minus: 1 -%}
+{%-assign block = section.blocks[pos_tab]-%}
+{%-if collections[block.settings.products].title != blank -%}
+  {%-for product in collections[block.settings.products].products limit: block.settings.limit-%}
+    <div class="grid-item list mini-list">{%- render 'product-list-item-mini-4', product: product, st_card: st_card -%}</div>
+  {%-endfor-%}
+{%- else -%}
+  {%-for i in (1..block.settings.limit) -%}
+  <div class="grid-item list mini-list">{%- render 'product-list-item-mini-4', product: product, st_card: st_card -%}</div>
+  {%-endfor-%}
+{%-endif-%}
+<!--lz_sc-->
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Show(list)",
+    "class": "md_products_section md_products_section_show_4",
+    "max_blocks": 3,
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Show(list)",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section title"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "VIEW MORE <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "header",
+            "content": "Products setting"
+          },
+          {
+            "type": "collection",
+            "id": "products",
+            "label": "Choose collection"
+          },
+          {
+            "type": "range",
+            "id": "limit",
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "label": "Limit display product",
+            "default": 3
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Show(list)",
+        "category": "03. Section products",
+        "blocks": [
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

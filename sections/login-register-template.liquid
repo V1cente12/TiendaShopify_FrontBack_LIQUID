@@ -1,0 +1,629 @@
+<!-- login-register-template.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%-render 'sc_css'-%}
+<div class="border-top" style="opacity: 0.3"></div>
+<div class="{{width_section_}}">
+  <div class="section-width {{width_content_}}">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+</div>
+<div class="login-page {{width_section_}}">
+  <div class="content_{{section.id}}{%if section.settings.image %} bg-image lazyload{%endif%}"{%if section.settings.image  %} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div style="display:flex;justify-content:space-between;flex-wrap: wrap;" class="section-width {{width_content_}}">
+      
+      <div class="form-box">
+        {%- if template.name == 'login' or template.name == 'register' -%}
+          <div class="center_logo" >
+            <img src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/Genio_Feliz.png?v=1648570302" width="0%" > 
+          </div>  
+
+        <div class="form-tab">
+          <ul class="nav nav-pills nav-fill list-unstyled" role="tablist">
+            {%- if template.name == 'register'-%}
+            <li class="nav-item">
+              <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">{{'customer.register.submit'|t}}</a>
+            </li>
+            {%- elsif template.name == 'login' -%}
+            <li class="nav-item">
+              <a class="nav-link " id="signin-tab" data-toggle="tab" href="#signin" role="tab" aria-controls="signin" aria-selected="true">{{'customer.login.sign_in'|t}}</a>
+            </li>
+            {%- endif -%}
+          </ul>
+          <div class="tab-content myLogin" id="tab-content-5">
+            {%- if template.name == 'login'-%}
+            <div class="tab-pane fade active show" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+              {% form 'customer_login', id: 'CustomerLoginForm', class: 'needs-validation' %}
+              {{ form.errors | default_errors }}
+              
+             <div class='oxi-social-login'></div>
+				
+              <hr class="divider"> 
+              
+             
+              <div class="form-group">
+                <!-- <label for="singin-email">{{ 'customer.login.email' | t }}</label> -->
+                <input type="email" id="singin-email" class="form-control" name="customer[email]" required="" placeholder="{{ 'customer.login.email' | t }}">
+              </div>
+              {%- if form.password_needed -%}
+              <div class="form-group">
+                 <!--<label for="singin-password">{{ 'customer.login.password' | t }}</label>-->
+                <input type="password" id="singin-password" class="form-control" name="customer[password]" required="" placeholder="{{ 'customer.login.password' | t }}">
+              </div>
+              {%- endif -%}
+             
+              <div class="center_btn_ini" >
+                <button type="submit" class="btn btn-primary w-80">
+                  <span>{{ 'customer.login.sign_in' | t }}</span>
+                </button>
+              </div>
+              <div class="egx_center recover">
+                {%- if form.password_needed -%}
+                   <a href="#recover" id="RecoverPassword" class="forgot-link mt-1 mb-1">{{ 'customer.login.forgot_password' | t }}</a>
+                {%- endif -%}
+              </div>
+              {% endform %}
+              {% form 'recover_customer_password', id: 'RecoverPasswordForm', class: 'd-none needs-validation' %}
+              {{ form.errors | default_errors }}
+              {% if form.posted_successfully? %}
+              <span class="d-none reset-password-success">{{ 'customer.recover_password.success' | t }}</span>
+              {% endif %}
+              <div class="form-group">
+                     <label class="custom-label" style="font-size: 1.4rem; font-weight:500; margin-left:1rem">
+                     Te enviaremos un correo electrónico con un enlace para restablecer tu contraseña 
+                    </label>
+                <label for="RecoverEmail">{{ 'customer.login.email' | t }}</label>
+                <input type="email" id="RecoverEmail" class="form-control" name="email" required="">
+              </div>
+
+              <div class="form-footer unaFila">
+                  <button type="button" class="btn btn-outline-primary-2" id="HideRecoverPasswordLink">
+                    <i class="fkt-long-arrow-left"></i>
+                    <span>Volver atrás</span>
+                  </button>
+                  <button type="submit" class="btn btn-primary w-80">
+                    <span>{{ 'customer.recover_password.submit' | t }}</span>
+                    <i class="fkt-long-arrow-right"></i>
+                  </button>
+              </div>
+              {% endform %}
+              {% if shop.checkout.guest_login %}
+              {% form 'guest_login' %}
+              <h2 class="h4" style="font-weight: 400;">{{ 'customer.login.guest_title' | t }}</h2>
+              <div class="form-footer">
+                <button type="submit" class="btn btn-outline-primary-2">
+                  <span>{{ 'customer.login.guest_continue' | t }}</span>
+                  <i class="fkt-long-arrow-right"></i>
+                </button>
+              </div>
+              {% endform %}
+              {% endif %}
+            </div>
+
+            {%- elsif template.name == 'register' -%}
+            
+            <div class="tab-pane fade active show" id="register" role="tabpanel" aria-labelledby="register-tab">
+              {% form 'create_customer', class: 'needs-validation' %}
+              {{ form.errors | default_errors }}
+               
+              <hr class="divider"> 
+                <div class="start_imput_name">
+                 <div class="form-group-ad col-md-6">
+                  <!-- <label for="first_name">Nombre</label> -->
+                    <input type="text" id="first_name" class="form-control" name="customer[first_name]" required="" placeholder="Nombre">
+                  </div>
+                </div>
+              <div class="end_imput_name">
+                <div class="form-group-ad col-md-6">
+                  <!-- <label for="last_name">Apellido</label> -->
+                  <input type="text" id="last_name" class="form-control" name="customer[last_name]" required="" placeholder="Apellido">
+                </div>
+               </div>
+              <div class="form-group">
+                <!-- <label for="register-email">{{ 'customer.register.email' | t }}</label> -->
+                <input type="email" class="form-control" id="register-email" name="customer[email]" {% if form.email %} value="{{ form.email }}"{% endif %} required="" placeholder="{{ 'customer.register.email' | t }}">
+              </div>
+
+              <div class="form-group">
+                <!-- <label for="register-password">{{ 'customer.register.password' | t }}</label> -->
+                <input type="password" class="form-control" id="register-password" name="customer[password]" required="" placeholder="{{ 'customer.register.password' | t }}">
+              </div>
+
+              <div class="form-group custom-control custom-checkbox">
+                <input type="hidden" name="customer[accepts_marketing]" value="" />
+                <input class="custom-control-input" id="register-subcrible" type="checkbox" name="customer[accepts_marketing]" checked="checked" />
+                <label class="custom-control-label" for="register-subcrible" style="font-size: 1.3rem;">{{ 'customer.register.subcrible' | t }}</label>
+              </div>
+	         <div class="center">
+                   <button type="submit" class="btn btn-primary w-80" data-layout="account">
+                     <span>{{ 'customer.register.submit' | t }}</span> 
+                  </button>
+                </div>
+              <div class="form-footer d-flex flex-wrap flex-md-nowrap agree_checkbox">
+                 
+
+                {%- if settings.terms_conditions_register -%}
+                <div class="mt-1 mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input kt_agree" data-layout="account" id="register-policy" required="">
+                    <label class="custom-control-label" for="register-policy" style="font-size: 1.3rem;">
+                      {{settings.terms_and_privacy_conditions_register|replace: '<p>','<p class="m-0" style="display: inline">'|html}}
+                    </label>
+                  </div>
+                </div>
+                {%- endif -%}
+              </div>
+                  <div class="contenedor" > 
+               		<label class="custom-label" style="font-size: 1.4rem; ">
+                       ¿Ya tienes una cuenta?     
+               		</label>
+                   </div>
+                    <div class="center" >
+                    <a href="/account/login" class="btn btn-outline-primary-2"><b>Iniciar sesión</b></a>
+                  </div>
+                 
+              {% endform %}
+            </div>
+            {%- endif -%}
+          </div>
+        </div>
+        {%- elsif template.name == 'reset_password' -%}
+        {% form 'reset_customer_password', id: 'CustomerResetForm', class: 'needs-validation' %}
+        <p class="text-center">{{ 'customer.reset_password.subtext' | t: email: email }}</p>
+        {{ form.errors | default_errors }}
+        <div class="form-group">
+          <label for="singin-password">{{ 'customer.reset_password.password' | t }}</label>
+          <input type="password" id="singin-password" class="form-control" name="customer[password]" required="">
+        </div>
+
+        <div class="form-group">
+          <label for="singin-password_confirmation">{{ 'customer.reset_password.password_confirm' | t }}</label>
+          <input type="password" id="singin-password_confirmation" class="form-control" name="customer[password_confirmation]" required="">
+        </div>
+
+        <div class="form-footer">
+          <button type="submit" class="btn btn-outline-primary-2">
+            <span>{{ 'customer.reset_password.submit' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+             
+          </button>
+        </div>
+        {% endform %}
+        {%- elsif template.name == 'activate_account' -%}
+        {% form 'activate_customer_password', id: 'CustomerActivateForm', class: 'needs-validation' %}
+        {{ form.errors | default_errors }}
+        <div class="form-group">
+          <label for="singin-password">{{ 'customer.activate_account.password' | t }}</label>
+          <input type="password" id="singin-password" class="form-control" name="customer[password]" required="">
+        </div>
+        <div class="form-group">
+          <label for="singin-password_confirmation">{{ 'customer.activate_account.password_confirm' | t }}</label>
+          <input type="password" id="singin-password_confirmation" class="form-control" name="customer[password_confirmation]" required="">
+        </div>
+        <div class="form-footer">
+          <button type="submit" class="btn btn-outline-primary">
+            <span>{{ 'customer.activate_account.password_confirm' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+          </button>
+          <button type="submit" class="btn btn-outline-primary-2">
+            <span>{{ 'customer.activate_account.cancel' | t }}</span>
+          </button>
+        </div>
+        {% endform %}
+        {%- endif -%}
+         {%- if template.name == 'login'-%}
+	      <div class="egx_center">
+	        <label class="custom-label">¿No tienes una cuenta? </label>
+        </div>
+        <div class="center_logo" >
+            <a href="/account/register" class="btn btn-outline-primary-2" ><b>Registrate</b></a>                   
+        </div>  
+
+     
+          {%- endif -%}
+      </div>
+ <!--     
+      <div class="form-box">
+        <div class="reward-program-and-order-container">
+            </div>
+            <div class="reward-program-container">
+                <div class="reward-program-content" id="reward-program-content" style="display: block;">
+                  <img id="cleanclub-logo" src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/Logo_Spill-Club-TM.svg?v=1616443392" alt="Spill Club Logo">
+                  <div class="reward-program-items-container">
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/free_shipping_loyalty.svg?v=1616443392" alt="Free Shipping Icon" height="65px" width="65px">
+                      <p>Free Shipping*</p>
+                    </div>
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/earn_points_loyalty.svg?v=1616443392" alt="Dollar Point Icon" height="65px" width="65px">
+                      <p>Earn 1 Spill Point for every $ spent</p>
+                    </div>
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/reddem_points_loyalty.svg?v=1616443392" alt="100 for 10 Icon" height="65px" width="65px">
+                      <p>Redeem 100 Spill Points for $10 off</p>
+                    </div>
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/Icon_Loyalty-FirstLook.svg?v=1614016109" alt="First Look Icon" height="65px" width="65px">
+                      <p>Early access to new arrivals &amp; products</p>
+                    </div>
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/member_sales_loyalty.svg?v=1616443392" alt="Exclusive Sales Icon" height="65px" width="65px">
+                      <p>Exclusive member-only sales</p>
+                    </div>
+                    <div class="reward-program-item">
+                      <img src="https://cdn.shopify.com/s/files/1/0284/2666/6115/files/Icon_Loyalty-Gifts.svg?v=1614016109" alt="Annual Gift Icon" height="65px" width="65px">
+                      <p>Annual Gift</p>
+                    </div>
+                    <a href="/pages/spill-club" class="cta-secondary">
+                      <span>Learn More</span>
+                      <img src="https://cdn.shopify.com/s/files/1/0268/0337/2125/files/SecondaryCTA_Arrow-Right.svg?18965" class="right-arrow" alt="Right Arrow">
+                    </a>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>    
+    </div>
+    	-->
+      
+      </div>
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "Login & Register page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem",
+        "default": "17.5rem 0 17.5rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ]
+  }
+{% endschema %}
+
+{%-style-%}
+.myLogin .recover{
+  border-bottom: thin solid #ebebeb;
+  padding-bottom: 2rem;
+  margin-bottom: 2.3rem;
+  margin-top: 15px;
+}
+.myLogin .recover a{
+  color: #F7AA06;
+}
+.myLogin .recover a:hover {
+  text-decoration: underline;
+}
+
+.login-page .custom-label{
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+.form-footer{
+  text-align: right;
+  display: block;
+}
+
+.unaFila {
+  display: flex;
+  justify-content: space-between;
+}
+/* Login */
+.login-landing-page .reward-program-and-order-container {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: center;
+    justify-content: center;
+    background-color: #f2f9ff;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: 60%;
+    padding: 65px 30px 54px;
+    padding: 65px 70px 54px;
+    background-image: url(https://cdn.shopify.com/s/files/1/0284/2666/6115/files/Logomark_White_Outlined.svg?v=1614298947);
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+
+}
+
+.login-landing-page .reward-program-and-order-container .reward-program-item {
+flex-direction: row
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.login-landing-page .reward-program-and-order-container #order-tracker-content {
+    display: none;
+    height: 600px;
+}
+
+
+.form-box {
+  max-width: 630px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -8rem;
+  background-color: #fff;
+  padding: 3.7rem 2rem;
+  box-shadow: 0 3px 16px rgba(51, 51, 51, 0.1);
+}
+@media (min-width: 767px) {
+  .form-box {
+    padding: 3.7rem 6rem 6.4rem;
+  }
+}
+.form-box .btn {
+  min-width: 115px;
+}
+
+.form-tab .nav.nav-pills {
+  border-bottom: thin solid #ebebeb;
+}
+.form-tab .nav.nav-pills .nav-item {
+  margin-bottom: -0.1rem;
+}
+[dir="ltr"] .form-tab .nav.nav-pills .nav-item + .nav-item {
+  margin-left: 0;
+}
+[dir="rtl"] .form-tab .nav.nav-pills .nav-item + .nav-item {
+  margin-right: 0;
+}
+.form-tab .nav.nav-pills .nav-link {
+  text-transform: capitalize;
+  font-weight: 400;
+  font-size: 2.4rem;
+  letter-spacing: -0.025em;
+  color: inherit;
+  border-bottom-width: 0.2rem;
+  padding: 0.9rem 1rem;
+}
+.form-tab .nav.nav-pills .nav-link.active {
+  color: inherit;
+}
+.form-tab .nav-fill .nav-item {
+  flex: 1 1 0;
+}
+.form-tab .tab-content .tab-pane {
+  padding: 2rem 0 0;
+}
+.form-tab .form-group {
+  margin-bottom: 1.3rem;
+}
+.form-tab .form-footer {
+  padding-top: 0.6rem;
+  padding-bottom: 2rem;
+  
+  border-bottom: thin solid #ebebeb;
+  margin-bottom: 2.3rem;
+}
+[dir="ltr"] .form-tab .form-footer .btn {
+  margin-right: 1.6rem;
+}
+[dir="rtl"] .form-tab .form-footer .btn {
+  margin-left: 1.6rem;
+}
+.form-tab .form-footer a {
+  color: inherit;
+}
+.form-tab .form-footer a:hover, .form-tab .form-footer a:focus {
+  color: var(--primary);
+}
+.form-tab .form-footer a:not(.forgot-link) {
+  text-decoration: underline;
+}
+.form-tab .form-footer .custom-control {
+  margin: 0;
+}
+@media (min-width: 768px) {
+  [dir="ltr"] .form-tab .form-footer .forgot-link {
+    margin-left: 0rem;
+  }
+  [dir="rtl"] .form-tab .form-footer .forgot-link {
+    margin-right: auto;
+  }
+}
+.form-choice {
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+.form-choice p {
+  margin-bottom: 2.7rem;
+}
+.btn.btn-login {
+  font-weight: 300;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  display: flex;
+  display: -ms-flexbox;
+  align-items: center;
+  -ms-flex-align: center;
+  justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0.85rem 1rem;
+  border: thin solid #ebebeb;
+  min-width: 0;
+}
+.btn.btn-login i {
+  text-align: initial;
+  display: inline-block;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  min-width: 2rem;
+}
+.btn.btn-login.btn-g i {
+  color: #cc3333;
+  min-width: 2.6rem;
+}
+.btn.btn-login.btn-f i {
+  color: #3366cc;
+}
+.btn.btn-login:hover, .btn.btn-login:focus {
+  background-color: #f5f6f9;
+}
+
+
+
+ hr.divider {
+	margin-top: 5px;
+    margin-bottom: 20px;
+    padding: 0;
+    overflow: visible;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    color: #6e6d7a;
+    text-align: center;
+}
+.divider {
+    border-top: 1px solid #dbdbde;
+}
+user agent stylesheet
+hr {
+    display: block;
+    unicode-bidi: isolate;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+    overflow: hidden;
+    border-style: inset;
+    border-width: 1px;
+}
+hr.divider:after {
+    content: 'O bien';
+    display: inline-block;
+    position: relative;
+    top: -13px;
+    padding: 0 16px;
+    background: #fff;
+    font: normal 14px/14px "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+div.center_btn_ini {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+div.center {
+  text-align: center;
+
+}
+div.contenedor {
+ 
+ display: flex;
+ justify-content: space-between ;
+}
+
+div.center_logo {
+ display : flex;
+ justify-content:center;
+ align-items:center;
+ padding:10px;
+ }
+div.center_logo img{
+    width: 15vh;
+    height: auto;
+ }
+
+div.start_imput_name {
+  text-align: left;
+  margin-left: -7px;
+  margin-right: -30px;
+ 
+}
+div.end_imput_name {
+  text-align: right;
+  margin-left: -1rem;
+  margin-right: -3rem;
+}
+
+
+{%-endstyle-%}

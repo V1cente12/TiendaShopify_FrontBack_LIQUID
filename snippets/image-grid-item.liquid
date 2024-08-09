@@ -1,0 +1,86 @@
+{%- liquid
+unless masonry
+  assign masonry = 'false'
+endunless
+unless second_thumb
+  assign second_thumb = settings.use_second_img
+endunless
+unless img_size
+  assign img_size = '[360, 540, 720]'
+endunless
+if as_r
+  assign aspect_ratioW = as_r | split: '/' | first | strip | plus: 0.00
+  assign aspect_ratioH = as_r | split: '/' | last | strip | plus: 0.00
+  capture image_fit_css
+    echo 'padding-bottom: '
+    echo aspect_ratioH | divided_by: aspect_ratioW | times: 100.00000000
+    echo '%;'
+  endcapture
+else
+  assign as_r = settings.aspect_ratio | default: settings.aspect_ratio_default
+endif
+if product.tags contains 'ar__1-1'
+  assign as_r = '1/1'
+endif
+assign featured_image = product.featured_image
+if settings.use_second_img and product.selected_or_first_available_variant.image
+  assign featured_image = product.selected_or_first_available_variant.image
+endif
+assign aspect_ratioW = as_r | split: '/' | first | strip | plus: 0.00
+assign aspect_ratioH = as_r | split: '/' | last | strip | plus: 0.00
+if masonry == true or masonry == "true"
+  assign aspect_ratioW = featured_image.width | plus: 0.00
+  assign aspect_ratioH = featured_image.height | plus: 0.00
+  capture image_fit_css
+    echo '--ar_i: '
+    echo featured_image.height | times: 1.00 | divided_by: featured_image.width | times: 100.00000000
+    echo '%;'
+  endcapture
+endif
+capture image_fit
+  render 'kt_image_fit', width: aspect_ratioW, height: aspect_ratioH, image_item: featured_image
+endcapture
+-%}
+<a class="aspectRatio" href="{{product.url| within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{image_fit_css}}">
+  {%- if featured_image -%}
+  <div class="primary-thumb" data-ogr="{{ featured_image | img_url: 'master' }}">
+    {%- assign img_url = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+    <img width="{{featured_image.width}}" height="{{featured_image.height}}" class="lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="{{img_size}}" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ featured_image.alt | escape }}" style="padding-bottom:{{featured_image.height | times: 1.00 | divided_by: featured_image.width | times: 100.00000000}}%">
+  </div>
+  {%- else -%}
+  <div class="primary-thumb" data-ogr="">
+    <img class="lazyload {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://cdn.shopify.com/s/files/1/1958/5719/files/no-image.webp?v=1534478004" data-aspectratio="1/1" data-sizes="auto" alt="">
+  </div>
+  {%- endif -%}
+  {%- if product.images.size > 1 and second_thumb == true or product.images.size > 1 and second_thumb == 'true'-%}
+    {%- capture second_image -%}
+      {%- capture image_fit -%}
+        {%- render 'kt_image_fit', width: aspect_ratioW, height: aspect_ratioH, image_item: product.images[1] -%}
+      {%- endcapture -%}
+      <div class="second-thumb">
+        {%- assign img_url = product.images[1] | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <img width="{{product.images[1].width}}" height="{{product.images[1].height}}" class="lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="{{img_size}}" data-aspectratio="{{ product.images[1].aspect_ratio }}" data-sizes="auto" alt="{{ product.images[1].alt | escape }}" style="padding-bottom:{{product.images[1].height | times: 1.00 | divided_by: product.images[1].width | times: 100.00000000}}%">
+      </div>
+    {%- endcapture -%}
+    {%- if settings.use_second_img -%}
+      {%- assign has_next_vr_img = false -%}
+      {%- assign map_opt1 = product.variants | map: 'option1' | uniq -%}
+      {%- assign variant =  product.variants | where: 'option1', map_opt1[1] | where: 'image' | first -%}
+      {%- if variant -%}
+      {%- capture image_fit -%}
+        {%- render 'kt_image_fit', width: aspect_ratioW, height: aspect_ratioH, image_item: variant.image -%}
+      {%- endcapture -%}
+      <div class="second-thumb">
+        {%- assign img_url = variant.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <img width="{{variant.image.width}}" height="{{variant.image.height}}" class="lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="{{img_size}}" data-aspectratio="{{ variant.image.aspect_ratio }}" data-sizes="auto" alt="{{ variant.image.alt | escape }}" style="padding-bottom:{{variant.imag.height | times: 1.00 | divided_by: variant.imag.width | times: 100.00000000}}%">
+      </div>
+      {%- assign has_next_vr_img = true -%}
+      {%- endif -%}
+      {%- if has_next_vr_img == false -%}
+        {{second_image}}
+      {%- endif -%}
+    {%- else -%}
+      {{second_image}}
+    {%- endif -%}
+  {%-endif-%}
+</a>

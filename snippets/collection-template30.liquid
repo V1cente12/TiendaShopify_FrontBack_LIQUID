@@ -1,0 +1,170 @@
+{%-liquid
+  assign view = cart.attributes.theme_coll_layout | split: '_'
+  assign limit = settings.coll_limit
+  case settings.coll_grid
+    when '1'
+      assign gl = '1'
+      assign layout_gl = '1grid'
+    when '2'
+      assign gl = '2'
+      assign layout_gl = '2grid'
+    when '3'
+      assign gl = '3'
+      assign layout_gl = '3grid'
+    when '4'
+      assign gl = '4'
+      assign layout_gl = '4grid'
+    when '5'
+      assign gl = '5'
+      assign layout_gl = '5grid'
+    when '6'
+      assign gl = '6'
+      assign layout_gl = '6grid'
+  endcase
+  if settings.coll_list_enable
+    assign ly = settings.coll_sidebar_layout | append: 'lis'
+    assign gl = 'list'
+    assign layout_gl = 'list'
+  else
+    if settings.coll_masonry == true
+      assign ly = 'ms'
+    else
+      assign ly = 'gr'
+    endif    
+  endif
+  if view.size == 2
+    assign split_check = view[0] | split: 'gr'
+    assign split_check_ = view[0] | split: 'li'
+    assign limit = view[1] | replace: 'pds','' | plus: 0
+    if split_check contains 'id'
+      assign gl = view[0] | replace: 'grid',''
+      assign layout_gl = view[0]
+      if settings.coll_masonry == true
+        assign ly = 'ms'
+      else
+        assign ly = 'gr'
+      endif
+    elsif split_check_ contains 'st'
+    assign ly = settings.coll_sidebar_layout | append: 'lis'
+      assign gl = 'list'
+      assign layout_gl = view[0]
+    endif
+  elsif view != blank
+    assign split_check = view[0] | split: 'gr'
+    assign split_check_ = view[0] | split: 'li'
+    if split_check contains 'id'
+      assign gl = view[0] | replace: 'grid',''
+      assign layout_gl = view[0]
+      if settings.coll_masonry == true
+        assign ly = 'ms'
+      else
+        assign ly = 'gr'
+      endif
+    elsif split_check_ contains 'st'
+      assign ly = settings.coll_sidebar_layout | append: 'lis'
+      assign gl = 'list'
+      assign layout_gl = view[0]
+    endif
+  endif
+  assign section_id = 'collection-template30'
+  case limit
+    when 16
+      assign limit_pds = '_16pds'
+    when 20
+      assign limit_pds = '_20pds'
+    when 30
+      assign limit_pds = '_30pds'
+    when 50
+      assign limit_pds = '_50pds'
+    else
+      assign limit_pds = ''
+  endcase
+  case gl
+    when '2'
+      assign grid_item_width = ' col-xs-6'
+    when '3'
+      assign grid_item_width = ' col-xs-6 col-sm-4'
+    when '4'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-3'
+    when '5'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-2-10'
+    when '6'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-2-10 col-xl-2'
+    when 'list'
+      assign grid_item_width = ' col-12'
+  endcase
+  assign settings_collection_layout = settings.coll_layout
+-%}
+
+{%- if settings.multi_flts_or and settings.use_flts -%}
+  {%- assign pagi = limit -%}
+  {%- assign idx_pagi = 0 -%}
+  {%- assign filters = canonical_url | split: 'q=' -%}
+  {%- if filters.size == 2 -%}
+    {%- assign filters = canonical_url | split: 'q=' | last -%}
+    {%- assign flts_ = filters -%}
+    {%- if canonical_url contains 'page_' -%}
+      {%- assign page = canonical_url | split: 'page_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_page = 'page_' | append: page -%}{%- assign filters = filters | remove: less_page -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'avai_' -%}
+      {%- assign avai = canonical_url | split: 'avai_' | last | split: '+' | first -%}
+      {%- assign less_avai = 'avai_' | append: avai -%}{%- assign filters = filters | remove: less_avai -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'offp_' -%}
+      {%- assign offset = canonical_url | split: 'offp_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_offset = 'offp_' | append: offset -%}{%- assign filters = filters | remove: less_offset -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'mipr_' -%}
+      {%- assign pmin = canonical_url | split: 'mipr_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_pmin = 'mipr_' | append: pmin -%}{%- assign filters = filters | remove: less_pmin -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'mapr_' -%}
+      {%- assign pmax = canonical_url | split: 'mapr_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_pmax = 'mapr_' | append: pmax -%}{%- assign filters = filters | remove: less_pmax -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'miw_' -%}
+      {%- assign wmin = canonical_url | split: 'miw_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_wmin = 'miw_' | append: wmin -%}{%- assign filters = filters | remove: less_wmin -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'maw_' -%}
+      {%- assign wmax = canonical_url | split: 'maw_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_wmax = 'maw_' | append: wmax -%}{%- assign filters = filters | remove: less_wmax -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- assign filters = '' -%}
+  {%- endif -%}
+
+  {%- assign filters = filters | split: '+' | uniq -%}
+  {%-paginate collection.products by 1000 offset: offset %}
+  <div data-section-id="{{ section_id }}" data-section-type="collection-template30">
+    <div class="shop-top kt--drop-w kt--drop-w-d d-flex flex-wrap flex-lg-nowrap align-items-center">
+      <div class="filter-by filterMobile d-lg-none{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div>
+      {%- if settings.coll_sidebar_layout == '' -%}
+      <div class="filter-by filterCanvas d-none d-lg-block{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div>
+      {% endif -%}
+      <span class="result-count d-none d-md-block ml-auto mx-sm-auto"></span>
+      {%- if settings.sort_enable -%}{%- render 'kt_filter_sortby' -%}{%- endif -%}
+      {%- render 'kt_gridlist_layout', layout_gl: layout_gl, gl: gl, limit: limit, ly: ly -%}
+    </div>
+  </div>
+  {%-section 'collection-template30'-%}
+  {%-endpaginate-%}
+{%- else -%} 
+  {%-paginate collection.products by limit %}
+  <div data-section-id="{{ section_id }}" data-section-type="collection-template30">    
+    <div class="shop-top kt--drop-w kt--drop-w-d d-flex flex-wrap flex-lg-nowrap align-items-center">
+      {%- if settings.use_flts -%}
+<!--       <div class="filter-by filterMobile d-lg-none{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div> -->
+      {%- if settings.coll_sidebar_layout == '' -%}
+      <div class="filter-by filterCanvas d-none d-lg-block{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div>
+      {% endif -%}          
+      {%- endif -%}
+     
+      {%- if settings.sort_enable -%}{%- render 'kt_filter_sortby' -%}{%- endif -%}
+      {%- render 'kt_gridlist_layout', layout_gl: layout_gl, gl: gl, limit: limit, ly: ly -%}
+    </div>
+  </div>
+  {%-section 'collection-template30'-%}
+  {% endpaginate -%}
+{%- endif -%}

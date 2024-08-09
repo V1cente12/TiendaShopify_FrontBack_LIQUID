@@ -1,0 +1,71 @@
+{%-if settings.social_twitter_link != blank
+      or settings.social_facebook_link != blank
+      or settings.social_pinterest_link != blank
+      or settings.social_instagram_link != blank
+      or settings.social_tumblr_link != blank
+      or settings.social_snapchat_link != blank
+      or settings.social_youtube_link != blank
+      or settings.social_vimeo_link != blank
+      or settings.social_vk_link != blank
+-%}
+{%- assign social_icons = true -%}
+{%-endif-%}
+{%-if social_icons-%}
+<ul class="socials list-inline">
+  {%-if settings.social_facebook_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-facebook fkt-facebook-f" target="_blank" href="{{ settings.social_facebook_link | escape }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Facebook' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_twitter_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-twitter fkt-twitter" target="_blank" href="{{ settings.social_twitter_link | escape }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Twitter' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_googleplus_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-google-plus fkt-google-plus-g" target="_blank" href="{{ settings.social_googleplus_link | escape }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Google plus' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_instagram_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-instagram fkt-instagram" target="_blank" href="{{ settings.social_instagram_link | escape }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Instagram' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_youtube_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-youtube fkt-youtube" href="{{ settings.social_youtube_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Youtube' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_pinterest_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-pinterest fkt-pinterest-p" target="_blank" href="{{ settings.social_pinterest_link | escape }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Pinterest' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_vk_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-vk fkt-vk" href="{{ settings.social_vk_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'VK' }}"></a>{{--}}
+  </li>    
+  {%-endif-%}
+  {%-if settings.social_linkedin_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-linkedin fkt-linkedin-in" href="{{ settings.social_linkedin_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Linkedin' }}"></a>{{--}}
+  </li>    
+  {%-endif-%}
+  {%-if settings.social_tumblr_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-tumblr fkt-tumblr" href="{{ settings.social_tumblr_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Tumblr' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_snapchat_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-snapchat fkt-snapchat-ghost" href="{{ settings.social_snapchat_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Snapchat' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+  {%-if settings.social_vimeo_link != blank-%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-vimeo fkt-vimeo-v" href="{{ settings.social_vimeo_link | escape }}" target="_blank" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Vimeo' }}"></a>{{--}}
+  </li>
+  {%-endif-%}
+</ul>
+{%-endif-%}

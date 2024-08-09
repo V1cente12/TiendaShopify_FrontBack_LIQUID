@@ -1,0 +1,268 @@
+<!-- search-template.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- liquid
+  assign searchTerms = search.terms
+  for coll_search in collections
+    if search.terms contains coll_search.id
+      assign isCollection = coll_search.id | append:' '
+      assign searchTerms = coll_search.title | append: "-" | append: search.terms | remove:isCollection
+      break
+    endif
+  endfor
+  assign limit_ = settings.limit_search
+-%}
+{%-render 'sc_css' -%}
+{%style%}
+.template-search .product {
+  height: auto;
+}
+.template-search .grid-item .noImage {
+  padding: 4.5rem 1.5rem;
+  background-color: #efefef;
+  z-index: 0;
+}
+.template-search .grid-item .noImage a {
+  --primary: var(--text);
+}
+.template-search .grid-item .item-name {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+.template-search .grid-item .thumb-name .item-name {
+  font-size: 1.8rem;
+}
+.template-search .grid-item .thumb-name {
+  padding: 15px 6px 0;
+}
+.template-search .btn-search-page {
+  min-width: 10rem;
+}
+@media (min-width: 992px){  
+  .template-search .btn-search-page {
+    min-width: 14rem;
+  }
+}
+{%endstyle%}
+<div class="{{width_section_}}">
+  <div class="section-width {{width_content_}}">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+</div>
+<div class="border-top" style="opacity: 0.3"></div>
+<div class="page-content search-page {{width_section_}}">
+  <div class="content_{{section.id}}{%if section.settings.image %} bg-image lazyload{%endif%}"{%if section.settings.image  %} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      <form action="/search">
+        <div class="input-group">
+          <label for="ws" class="sr-only">{{'blogs.sidebar.placeholder_search'|t}}</label>
+          <input type="search" class="form-control" name="q" id="ws" placeholder="{{ 'general.search.placeholder' | t }}" required="" value="{{ search.terms | remove: isCollection | escape }}">
+          <input type="hidden" name="type" value="product{%-if settings.search_type_page-%},page{%-endif-%}{%-if settings.search_type_article-%},article{%-endif-%}">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-primary btn-search-page">
+              <i class="fkt-search fkt-lg m-0i" style="line-height: 1;"></i>
+              <span class="sr-only">{{'blogs.sidebar.button_search'|t}}</span>
+            </button>
+          </div>            
+        </div>
+      </form>        
+    {% if search.performed %}
+      <div class="row">
+        <div class="col-12">
+          {%- if search.results_count == 0 -%}
+          <h3 class="title text-center mt-5">
+            {{ 'general.search.no_results_html' | t: terms: searchTerms }}
+          </h3>
+          {%- else -%}
+          <h3 class="title text-center mt-5 mb-3">
+            {{ 'general.search.results_for_html' | t: terms: searchTerms }}
+          </h3>
+          {% paginate search.results by limit_ %}
+          <div class="product-list-grid row">            
+            {% for item in search.results %}
+            {%- if item.object_type == 'product'-%}
+            <div class="grid-item p-style-{{grid_ly}} col-xs-6 col-md-3 ly__gr mb-3">
+              {%- render "product-grid-item", product: item, grid_layout: grid_ly, st_card: st_card -%}
+            </div>
+            {% else %}
+            <div class="grid-item col-sm-6 col-md-3 ly__gr">
+              <div class="thumb noImage position-relative mb-3">
+                <div class="flashs">
+                  {%-if item.object_type == 'page' -%}
+                  <span class="page onnew">Page</span>
+                  {%-else-%}
+                  <span class="blog onnew">Blog</span>
+                  {%-endif-%}
+                </div>
+                <a href="{{item.url}}">
+                  <div class="thumb-name">
+                    <h4 class="item-name">{{ item.title | strip_html | truncate: 25}}</h4>
+                    <div class="product-description">
+                      {% if item.published_at %}<i class="fa fa-clock-o" aria-hidden="true"></i> {{ item.published_at | date: "%b %d, %Y" }}{%- unless item.object_type == 'page'-%} , <i class="fa fa-comment"></i> {{item.comments_count}}{% endunless %}<br/> {% endif %}
+                      <div class="claerfix mt-2">
+                        {{- item.content | strip_html | truncate: 150 | capitalize -}}
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% if paginate.pages > 1 %}
+              <div class="pagination_ text-center w-100">
+                {%- render 'pagination', paginate: paginate, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+              </div>
+            {% endif %}
+          </div>
+          {% endpaginate %}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "Search page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem",
+        "default": "3rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "range",
+        "id": "limit_search",
+        "min": 5,
+        "max": 50,
+        "step": 1,
+        "label": "Limit display product",
+        "default": 15
+      }
+    ]
+  }
+{% endschema %}

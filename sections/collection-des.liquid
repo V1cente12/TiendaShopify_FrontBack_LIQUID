@@ -1,0 +1,22 @@
+{%- if section.settings.show -%}
+<div class="collection-description mb-3">
+  {{collection.description | html }}
+</div>
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Description",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Short description"
+      },
+      {
+        "type": "checkbox",
+        "id" :"show",
+        "label": "Show?",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}

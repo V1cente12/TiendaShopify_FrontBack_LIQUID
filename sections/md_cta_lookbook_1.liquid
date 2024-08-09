@@ -1,0 +1,637 @@
+<!-- md_cta_lookbook_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign mapType = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" data-section-type="kt-lookbook">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      <div class="row no-gutters align-items-center">
+        {%- assign block = section.blocks | where: 'type', 'item_text' | first -%}
+        {%- if block -%}
+        <div class="col-12 col-md-6 banner_content">
+          <div class="content-text wait-for-css">
+            <div class="text--">
+              {%-if block.settings.titlex != blank -%}<h3>{{block.settings.titlex}}</h3>{%- endif -%}
+              {%-if block.settings.desc != blank -%}<p>{{block.settings.desc}}</p>{%- endif -%}
+              {%-if block.settings.name_btn != blank -%}
+              <a href="{{block.settings.image_link|default:'#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn | strip_html}}">{{block.settings.name_btn}}</a>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- assign image_item = block.settings.image -%}
+          {%-assign width = image_item.width | default: 700.00 -%}{%-assign height = image_item.height | default: 680.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="700x680 px" {% endunless %}></a>
+        </div>
+        {%- endif -%}
+        {%- assign block = section.blocks | where: 'type', 'item_pins' | first -%}
+        <div class="col-12 col-md-6 banner_pins">
+          <div class="position-relative">
+            {%- assign image_item = block.settings.image -%}
+            {%-assign width = image_item.width | default: 700.00 -%}{%-assign height = image_item.height | default: 680.00 | plus: 0.00-%}
+            <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="600x840 px"{% endunless %}></div>
+            {%- for block in section.blocks -%}
+            {%- if block.type != 'item_pins' -%}{%-continue-%}{%- endif -%}
+              <div class="kt_lookbook kt_pin_item">
+                <div class="kt_pins">
+                  {%- for i in (1..5) -%}
+                  {%- assign id_ = 'id_' | append: i -%}
+                  {%- if block.settings[id_] != blank -%}
+                  {%- assign top_pin_ = 'top_pin_' | append: i -%}{%- assign top_pin_ = block.settings[top_pin_] -%}
+                  {%- assign left_pin_ = 'left_pin_' | append: i -%}{%- assign left_pin_ = block.settings[left_pin_] -%}
+                  {%- assign size_ = 'size_' | append: i -%}{%- assign size_ = block.settings[size_] -%}
+                  {%- assign bg_ = 'bg_' | append: i -%}{%- assign bg_ = block.settings[bg_] -%}
+                  {%- assign pr_lb = all_products[block.settings[id_]] -%}
+                    <div class="button kt_pin" data-product-handle="{{pr_lb.handle}}" style="top: {{top_pin_}}%;left: {{left_pin_}}%;width: {{size_}}px;height: {{size_}}px;margin-top: -{{size_|divided_by:2}}px;margin-left: -{{size_|divided_by:2}}px;line-height: {{size_}}px; background-color: {{bg_}}">
+                      <span class="kt_pin_name" style="width: {{size_}}px;height: {{size_}}px;">
+                        <span class="kt_pin_icon">+</span>
+                        <span class="kt_pin_animate" style="width: {{size_|plus: 5}}px;height: {{size_|plus: 5}}px; border-color: {{bg_ | color_modify: 'alpha', 0.5}}"></span>
+                      </span>
+                    </div>
+                    <div style="display: none"><div class="kt_pin_pritem lazyload loadvariant" data-include="{{pr_lb.url}}?view=list-mini2" data-product-handle="{{pr_lb.handle}}" grid-flash="01"><div class="lz-place pin-mini2-place"></div></div></div>
+                  {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+<noscript class="banner-css" data-section-type="md_cta_lookbook_1">
+  {%-capture banner-css-%}
+    {%style%}
+      .md_cta_lookbook_1 .banner_content{
+        z-index:0;
+      }
+      .md_cta_lookbook_1 .img__banner{
+        min-height: 350px;
+      }
+      .md_cta_lookbook_1 .content-text{
+        position: absolute;
+        z-index:1;
+        left: 2rem;
+        top: 50%;
+        right: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        flex-flow: column;
+        align-items: flex-start;
+        font-family: var(--f_family_second,var(--f_family));
+      }
+      .md_cta_lookbook_1 .content-text .text--{
+        transform: translate(0,-50%);
+      }
+      .md_cta_lookbook_1 .content-text h3{
+        margin: 4px 0 0 0;
+        font-size: 2.8rem;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: -1.25px;
+        margin-bottom: 1.5rem;
+      }
+      .md_cta_lookbook_1 .content-text p {
+        margin-bottom: 2.4rem;
+        color: #666;
+        font-size: 1.6rem;
+        line-height: 1.435;
+        letter-spacing: 0;
+        font-family: var(--f_family);
+      }
+      .md_cta_lookbook_1 .content-text .btn {
+        padding: 0.85rem 2rem;
+        border-width: .2rem;
+        font-weight: 500;
+        min-width: auto;
+      }
+      @media (min-width: 768px) {  
+        .md_cta_lookbook_1 .content-text h3{
+          font-size: 5rem;
+          margin-bottom: 3rem;
+        }
+        .md_cta_lookbook_1 .content-text p {
+          font-size: 1.8rem;
+          margin-bottom: 3.2rem;
+        }
+        .md_cta_lookbook_1 .content-text .btn {
+          padding: 1rem 2rem;
+        }
+      }
+      @media (min-width: 1200px) {
+        .md_cta_lookbook_1 .content-text{
+          left: 17%;
+          right: 17%;
+        }
+      }
+    {%- endstyle -%}
+  {%-endcapture-%}
+  {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{% schema %}
+  {
+    "name": "CTA + Lookbook 1",
+    "class": "md_cta_lookbook_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "CTA + Lookbook 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_text",
+        "name": "Item Text content",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Banner image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image banner",
+            "info": "Size suggestion: 700 x 680 px"
+          },
+          {
+            "type":"html",
+            "id":"titlex",
+            "label": "Title",
+            "default":"It’s the gift we’ve been waiting for all year."
+          },
+          {
+            "type":"html",
+            "id":"desc",
+            "label": "Desciption",
+            "default":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis."
+          },
+          {
+            "type": "url",
+            "id": "image_link",
+            "label": "Link to"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<span>READ MORE<\/span><i class=\"fkt-angle-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "item_pins",
+        "name": "Pins for item image",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "====================== Banner image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image banner",
+            "info": "Size suggestion: 600 x 840 px"
+          },
+          {
+            "type": "product",
+            "id": "id_1",
+            "label": "Product for pin 1"
+          },
+          {
+            "type": "range",
+            "id": "top_pin_1",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Top",
+            "default": 46
+          },
+          {
+            "type": "range",
+            "id": "left_pin_1",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Left",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "size_1",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg_1",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          },
+          {
+            "type": "product",
+            "id": "id_2",
+            "label": "Product for pin 2"
+          },
+          {
+            "type": "range",
+            "id": "top_pin_2",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Top",
+            "default": 46
+          },
+          {
+            "type": "range",
+            "id": "left_pin_2",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Left",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "size_2",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg_2",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          },
+          {
+            "type": "product",
+            "id": "id_3",
+            "label": "Product for pin 3"
+          },
+          {
+            "type": "range",
+            "id": "top_pin_3",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Top",
+            "default": 46
+          },
+          {
+            "type": "range",
+            "id": "left_pin_3",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Left",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "size_3",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg_3",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          },
+          {
+            "type": "product",
+            "id": "id_4",
+            "label": "Product for pin 4"
+          },
+          {
+            "type": "range",
+            "id": "top_pin_4",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Top",
+            "default": 46
+          },
+          {
+            "type": "range",
+            "id": "left_pin_4",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Left",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "size_4",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg_4",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          },
+          {
+            "type": "product",
+            "id": "id_5",
+            "label": "Product for pin 5"
+          },
+          {
+            "type": "range",
+            "id": "top_pin_5",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Top",
+            "default": 46
+          },
+          {
+            "type": "range",
+            "id": "left_pin_5",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Position Left",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "size_5",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg_5",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "CTA & Lookbook 1",
+        "category": "08. Lookbooks",
+        "blocks": [
+          {
+            "type": "item_text"
+          },
+          {
+            "type": "item_pins"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

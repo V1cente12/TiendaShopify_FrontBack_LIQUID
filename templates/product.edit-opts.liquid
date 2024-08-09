@@ -1,0 +1,97 @@
+{%-layout none-%}
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price > product.price 
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true 
+  endif
+	unless product.has_only_default_variant or st_card[13] == 'true' and product.variants.size == 1 or st_card[4] == 'false'
+  	assign show_variant = true
+	endunless
+-%}
+<div class="product product-inner ktlz" data-href="{{product.handle}}" data-ktlz="instant">
+	<form method="post" action="{{ routes.cart_change_url }}"{%if product.title%}{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-qs" class="form form-ajax-- ktlz-form-pid-{{product.id}} addItemsAjaxFrom" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-qs" data-options="{{product.options.size}}" data-pr-vrs{%endunless%}{%endif%} data-noneid="true">
+		<div class="modal-header">
+			<h3>{{ 'products.product.edit_option' | t }}</h3>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+		</div>
+    <div class="modal-body prd--wrap">
+			<div class="row">
+				<div class="col-5 col-lg-4">
+					<div class="product-thumb images is-default">
+			      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+			      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?variant={{product.selected_or_first_available_variant.id}}&view=imgcard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+					</div>
+				</div>
+				<div class="col-7 col-lg-8">
+					<div class="product-body">
+						<h2 class="product-name">
+							<a href="{{product.url}}" tabindex="0">{{product.title}}</a>
+						</h2>
+						{%- render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+					</div>
+		      {%-if show_variant-%}
+		      <div class="product-variants-wrapper product-variants-wrapper-eo">
+		        <div class="prd-variants">
+		          {%- for i in (1..product.options.size) -%}
+		            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+		          {%- endfor -%}
+		        </div>
+		        <div class="quantity">
+		        	<label for="qty-eo">{{'products.product.quantity'|t}}<span>: </span></label>
+		        	<div class="control">
+		        		<a class="btn-number qtyminus quantity-minus" href="#"></a>
+		        		<input type="text" data-id="{{product.selected_or_first_available_variant.id}}" data-step="1" data-min="1" value="1" id="qty-eo" class="input-qty input-text qty" size="4" pattern="[0-9]*">
+		        		<a class="btn-number qtyplus quantity-plus" href="#"></a>
+		        	</div>
+		        </div>
+		      </div>
+		      {%-endif-%}
+				</div>
+			</div>
+    </div>
+		<div class="modal-footer flex-wrap">
+			{% comment %}<div class="c-eo-opt--select w-100">
+				<ul class="list-unstyled d-flex flex-nowrap align-items-center kt_scroll">
+					<li class="opt--select --item --editing" data-id="{{product.selected_or_first_available_variant.id}}">
+						<span class="it-action --remove" data-title="{{'cart.general.remove'|t }}" data-toggle="tooltip" data-boundary="window"><svg class="molla-svg-icon" viewBox="0 0 241.171 241.171"><use xlink:href="#icon-remove-eo"></use></svg></span>
+						<span class="it-action --edit" data-title="Editing" data-toggle="tooltip"><svg class="molla-svg-icon" viewBox="0 0 24 24"><use xlink:href="#icon-edit-eo"></use></svg></span>
+						<div class="it-info">
+							<span class="it-img"></span>
+							<span class="it-name">{{product.selected_or_first_available_variant.title}}</span>
+							<span class="it-qty">1</span>
+						</div>
+					</li>
+				</ul>
+				<div class="c-eo-add-more" data-title="Add more" data-toggle="tooltip"><i class="fkt-plus"></i></div>
+			</div>{% endcomment %}
+			<div class="product-button-wrapper-eo">
+      {%- if settings.use_add_to_cart_btn -%}
+      {%- if product.selected_or_first_available_variant.available -%}
+	      <div data-submit class="btn btn-primary btn-rounded btn-block fkt-cart-plus text-uppercase kt-button btn-onclick add_to_cart_button addItemsAjax" data-view="{{product.url}}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap addItemAjax-text">{{'products.product.add_to_cart'|t}}</span></div>
+    	{%- else -%}
+	      <div data-submit class="btn btn-primary btn-rounded btn-block fkt-cart-plus text-uppercase kt-button btn-onclick add_to_cart_button addItemsAjax sold_out disabled" data-view="{{product.url}}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap addItemAjax-text">{{'products.product.sold_out'|t}}</span></div>
+      {%- endif -%}
+      {%- endif -%}
+			</div>
+		</div>
+		<input type="hidden" name="id" value="{{product.selected_or_first_available_variant.id}}">
+		<input class="it-ip-editing" type="hidden" name="updates[{{product.selected_or_first_available_variant.id}}]" value="1">
+	</form>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none" id="sprites-icon-eo">
+  <defs>
+    <path id="icon-remove-eo" d="M138.138,120.754l99.118-98.576c4.752-4.704,4.752-12.319,0-17.011c-4.74-4.704-12.439-4.704-17.179,0
+		l-99.033,98.492L21.095,3.699c-4.74-4.752-12.439-4.752-17.179,0c-4.74,4.764-4.74,12.475,0,17.227l99.876,99.888L3.555,220.497
+		c-4.74,4.704-4.74,12.319,0,17.011c4.74,4.704,12.439,4.704,17.179,0l100.152-99.599l99.551,99.563
+		c4.74,4.752,12.439,4.752,17.179,0c4.74-4.764,4.74-12.475,0-17.227L138.138,120.754z"/>{{--}}
+    <path id="icon-edit-eo" d="M21.783,3.766l-1.548-1.548c-1.088-1.088-2.858-1.088-3.946,0L2.35,16.155c-0.092,0.092-0.151,0.211-0.169,0.339 l-0.774,5.42c-0.027,0.187,0.036,0.375,0.169,0.509C1.689,22.538,1.842,22.6,2,22.6c0.028,0,0.057-0.002,0.085-0.006l5.42-0.774 c0.128-0.018,0.248-0.078,0.339-0.169L21.783,7.712C22.871,6.624,22.871,4.854,21.783,3.766z M7.138,20.66l-4.431,0.633l0.633-4.431 L14.704,5.499l3.797,3.797L7.138,20.66z M20.934,6.863L19.35,8.447L15.553,4.65l1.584-1.584c0.62-0.62,1.629-0.62,2.249,0 l1.548,1.548C21.554,5.234,21.554,6.243,20.934,6.863z"/>{{--}}
+  </defs>
+</svg>

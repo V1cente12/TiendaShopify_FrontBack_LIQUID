@@ -1,0 +1,773 @@
+<!-- md_testimonials.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css' -%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%} swiper-fixed-fshadow"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}"> 
+    <div class="section-width {{width_content_}}">
+      {%- assign block = section.blocks | where: 'type', 'item_title' | first -%}
+      {%- if block -%}
+        <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%}" style="margin-bottom:{{block.settings.margin_btitle}}rem">
+          <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12 {{block.settings.title_align}}{%endif%}">
+            <div class="section-title w-100">
+              {%- if block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endif -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+              {%- unless block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- if block.settings.name_link != blank -%}
+          <div class="col-auto">
+            {%- if block.settings.link_to != blank -%}
+              <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+            {%- else -%}
+              <p class="sub-title">{{block.settings.name_link}}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container testimonials-slide" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'item' -%}
+            <div class="swiper-slide style_01" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial{%unless block.settings.image %} testimonial-icon{%endunless%} text-center">
+                {%- if block.settings.image -%}
+                <img class="img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x240', crop: 'center'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                {%- endif -%}
+                <p>“ {{block.settings.content}} ”</p><cite>{{block.settings.name}}<span>{{block.settings.info}}</span></cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_2' -%}
+            <div class="swiper-slide style_02" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial{%unless block.settings.image %} testimonial-icon{%endunless%} text-center">
+                {%- if block.settings.image -%}
+                <img class="img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x240', crop: 'center'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                {%- endif -%}
+                <h4>“ {{block.settings.title}} ”</h4><p>“ {{block.settings.content}} ”</p><cite>{{block.settings.name}}<span>{{block.settings.info}}</span></cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_3' -%}
+            <div class="swiper-slide style_03" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial text-center">
+                <span class="quote">“</span><p>{{block.settings.content}}</p><cite>{{block.settings.name}}<span>{{block.settings.info}}</span></cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_4' -%}
+            <div class="swiper-slide style_04" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial text-center">
+                {%- if block.settings.image -%}
+                <img class="img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x240', crop: 'center'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                {%- endif -%}
+                <div class="rate_star rate_star_{{block.settings.rate|handleize}}">
+                  {%- assign rate_ceil = block.settings.rate | ceil -%}
+                  {%- assign rate_floor = block.settings.rate | floor -%}
+                  {%- for i in (1..5) -%}
+                    <i class="fkt-star{%if forloop.index > rate_floor%}-o{% endif %}{% if forloop.index == rate_ceil and rate_ceil > block.settings.rate %} fkt-half-star{% endif %}"></i>
+                  {%- endfor -%}
+                </div>
+                <h4>{{block.settings.title}}</h4><p>{{block.settings.content}}</p><cite>{{block.settings.name}}<span>{{block.settings.info}}</span></cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_5' -%}
+            <div class="swiper-slide style_05" {{ block.shopify_attributes }}>
+              <div class="testimonial row align-items-center flex-sm-nowrap">
+                {%- if block.settings.image -%}
+                <div class="testimonial-img col-12 col-sm-auto">
+                  <img class="img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x240', crop: 'center'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                </div>
+                {%- endif -%}
+                <div class="testimonial-info col-12 col-sm pl-md-4">
+                  <div class="rate_star rate_star_{{block.settings.rate|handleize}}">
+                    {%- assign rate_ceil = block.settings.rate | ceil -%}
+                    {%- assign rate_floor = block.settings.rate | floor -%}
+                    {%- for i in (1..5) -%}
+                      <i class="fkt-star{%if forloop.index > rate_floor%}-o{% endif %}{% if forloop.index == rate_ceil and rate_ceil > block.settings.rate %} fkt-half-star{% endif %}"></i>
+                    {%- endfor -%}
+                  </div>
+                  <h4>{{block.settings.title}}</h4><p>{{block.settings.content}}</p><cite>{{block.settings.name}}<span>{{block.settings.info}}</span></cite>
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_6' -%}
+            <div class="swiper-slide style_06" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial text-center mt-1">
+                {%- if block.settings.image -%}
+                <img class="mb-2 img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x240', crop: 'center'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                {%- endif -%}
+                <p>“ {{block.settings.content}} ”</p><cite>{{block.settings.name}}</cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_7' -%}
+            <div class="swiper-slide style_07" {{ block.shopify_attributes }}>
+              <blockquote class="testimonial text-center">
+                <div class="rate_star rate_star_{{block.settings.rate|handleize}}">
+                  {%- assign rate_ceil = block.settings.rate | ceil -%}
+                  {%- assign rate_floor = block.settings.rate | floor -%}
+                  {%- for i in (1..5) -%}
+                    <i class="fkt-star{%if forloop.index > rate_floor%}-o{% endif %}{% if forloop.index == rate_ceil and rate_ceil > block.settings.rate %} fkt-half-star{% endif %}"></i>
+                  {%- endfor -%}
+                </div>
+                <h4>{{block.settings.title}}</h4><p>{{block.settings.content}}</p><cite>{{block.settings.name}}</cite>
+              </blockquote>
+            </div>
+            {%- endif -%}
+            {%- if block.type == 'item_8' -%}
+            <div class="swiper-slide style_08" {{ block.shopify_attributes }}>
+              <div class="testimonial--wrap">                
+                <blockquote class="testimonial text-center">
+                  <span class="rate_munberic">
+                    {{block.settings.rate | plus: 0.0}} / 5.0
+                  </span>
+                  <div class="rate_star rate_star_{{block.settings.rate|handleize}}">
+                    {%- assign rate_ceil = block.settings.rate | ceil -%}
+                    {%- assign rate_floor = block.settings.rate | floor -%}
+                    {%- for i in (1..5) -%}
+                      <i class="fkt-star{%if forloop.index > rate_floor%}-o{% endif %}{% if forloop.index == rate_ceil and rate_ceil > block.settings.rate %} fkt-half-star{% endif %}"></i>
+                    {%- endfor -%}
+                  </div>
+                  <p>{{block.settings.content}}</p><cite>{{block.settings.name}}</cite>
+                  {%- if block.settings.image -%}
+                  <img class="img lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image|img_url: '240x'}}" alt="{{block.settings.image.alt|default: 'user'}}" width="{{block.settings.image.width}}" height="{{block.settings.image.height}}">
+                  {%- endif -%}
+                </blockquote>
+              </div>
+            </div>
+            {%- endif -%}
+          {%- endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+          <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.use_navigation -%}
+        <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+          <div class="content-buttons position-relative">
+            <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>{{--}}
+            <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Testimonials",
+    "class": "md_testimonials",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Testimonials",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "__Auto-rotate slides",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "__Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          },
+          {
+            "value": "nav-top-right",
+            "label": "Top right"
+          },
+          {
+            "value": "nav-top-left",
+            "label": "Top left"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "inside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"992\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"1200\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  }\n}"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Color text"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item Title section",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "html",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 0,
+            "max": 9,
+            "step": 0.2,
+            "label": "Margin bottom of title",
+            "default": 0
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item 1",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 240 x 240 pixels"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Jenson Gregory"
+          },
+          {
+            "type": "text",
+            "id": "info",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          }
+        ]
+      },
+      {
+        "type": "item_2",
+        "name": "Item 2",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 240 x 240 pixels"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Jenson Gregory"
+          },
+          {
+            "type": "text",
+            "id": "info",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Really great store"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu."
+          }
+        ]
+      },
+      {
+        "type": "item_3",
+        "name": "Item 3",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "You need add google font Montserrat and Playfair Display in Custom CSS > Custom in \<head>"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Jenson Gregory"
+          },
+          {
+            "type": "text",
+            "id": "info",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Sed egestas, antet vulputate volutpat, eros pede semperest, vitae luctus metus<br>libero eu augue Morobi purus libero, faucibus acipiscing."
+          }
+        ]
+      },
+      {
+        "type": "item_4",
+        "name": "Item 4",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "You need add google font Montserrat and Playfair Display in Custom CSS > Custom in \<head>"
+          },
+          {
+            "type": "range",
+            "id": "rate",
+            "min": 3,
+            "max": 5,
+            "step": 0.5,
+            "label": "Rate",
+            "default": 5
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 240 x 240 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Really great store"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Sed egestas, antet vulputate volutpat, eros pede semperest, vitae luctus metus<br>libero eu augue Morobi purus libero, faucibus acipiscing."
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Jenson Gregory"
+          }
+        ]
+      },
+      {
+        "type": "item_5",
+        "name": "Item 5",
+        "settings": [
+          {
+            "type": "range",
+            "id": "rate",
+            "min": 3,
+            "max": 5,
+            "step": 0.5,
+            "label": "Rate",
+            "default": 5
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 240 x 240 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Really great store"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Sed egestas, antet vulputate volutpat, eros pede semperest, vitae luctus metus<br>libero eu augue Morobi purus libero, faucibus acipiscing."
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Jenson Gregory"
+          }
+        ]
+      },
+      {
+        "type": "item_6",
+        "name": "Item 6",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 240 x 240 pixels"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Sakina Stout"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Morbi interdum mollis sapien. Sedac risus phasellus lacinia, magna a ullamcorper laoreet, lectusarcu pulvinar risus, vitae facilisis libero dolor a purus. Sed vel lacus mauris nibh felis, adipiscing varius, adipiscing in, lacinia vel, tellus."
+          }
+        ]
+      },
+      {
+        "type": "item_7",
+        "name": "Item 7",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "You need add google font Jost and Manrope in Custom CSS > Custom in \<head>"
+          },
+          {
+            "type": "range",
+            "id": "rate",
+            "min": 3,
+            "max": 5,
+            "step": 0.5,
+            "label": "Rate",
+            "default": 5
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Morbi in sem quis dui placerat ..."
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Nam dui mi, tincidunt quis, accumsan porttitor facilisis luctus metus"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Sakina Stout"
+          }
+        ]
+      },
+      {
+        "type": "item_8",
+        "name": "Item 8",
+        "settings": [
+          {
+            "type": "range",
+            "id": "rate",
+            "min": 3,
+            "max": 5,
+            "step": 0.1,
+            "label": "Rate",
+            "default": 5
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Nam dui mi, tincidunt quis, accumsan porttitor facilisis luctus metus"
+          },
+          {
+            "type": "text",
+            "id": "name",
+            "label": "Name customer",
+            "default": "Sakina Stout"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Avatar",
+            "info": "Size suggestion: 150 x 60 pixels"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Testimonials",
+        "category": "05. Element"
+      }
+    ]
+  }
+{% endschema %}

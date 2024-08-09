@@ -1,0 +1,34 @@
+<style>
+  .colorBlanco {
+  	color: white;
+  }
+</style>
+
+{% assign colorPago = '' %}
+
+
+{% case estadoPago %}
+
+  {% when 'paid' %}
+      {% assign estadoPago = 'Pagado' %}
+      {% assign colorPago = 'badge badge-success' %}
+
+  {% when 'pending' %}
+      {% assign estadoPago = 'Pendiente' %}
+      {% assign colorPago = 'colorBlanco badge badge-warning' %}
+  
+  {% when 'partially_paid' %}
+      {% assign estadoPago = 'Parcialmente pagado' %}
+      {% assign colorPago = 'colorBlanco badge badge-warning' %}
+    
+  {% when 'voided' %}
+      {% assign estadoPago = 'Cancelado' %}
+      {% assign colorPago = 'badge badge-danger' %}
+
+  {% else %}
+      {% assign colorPago = 'colorBlanco badge badge-warning' %}
+{% endcase %}
+                                                  
+<span style="font-weight: normal; font-size: 13px; " class="{{colorPago}} status_{{ order.financial_status }}">     
+	{{ estadoPago }}
+</span>

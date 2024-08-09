@@ -1,0 +1,42 @@
+<style>
+  .colorBlanco {
+  	color: white;
+  }
+</style>
+<!-- 
+  pedido_estadoCumplimiento-Preparacion.liquid 
+  utilizados en, order-template, account-template
+  {{ order.tags  }}
+-->
+{%- liquid
+assign colorCumplimiento = ''
+assign estadoCumplimiento = '' 
+assign criterio = 'Entregado' | split:','
+
+ case obj.fulfillment_status 
+
+   when 'fulfilled'
+    assign colorCumplimiento = 'badge badge-success' 
+   
+    if obj.tags contains "Entregado" 
+            assign estadoCumplimiento = 'Entregado'
+            assign colorCumplimiento = 'badge badge-info' 
+
+            else
+            assign estadoCumplimiento = 'Preparado'  
+            endif
+    
+
+   when 'unfulfilled' 
+       assign estadoCumplimiento = 'No preparado' 
+       assign colorCumplimiento = 'badge badge-danger' 
+
+   else 
+       assign estadoCumplimiento = 'Parcialmente preparado' 
+       assign colorCumplimiento = 'colorBlanco badge badge-warning' 
+ endcase 
+-%}           
+
+<span style="font-weight: normal; font-size: 13px" class="{{colorCumplimiento}} status_{{ order.fulfillment_status }}">
+	{{ estadoCumplimiento }} 
+</span>

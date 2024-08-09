@@ -1,0 +1,23 @@
+{%- style -%}
+    @media screen and (max-width: 991px)
+    {
+        .mySeccion {
+            margin-top: 40px !important;
+       }
+    }
+    @media screen and (max-width: 768px)
+    {
+        .mySeccion {
+            margin-top: 40px !important;
+            margin-bottom: -50px;
+       }
+    }
+{%- endstyle -%}
+{%- liquid
+    assign ruta = collection.url | remove: "/collections/"
+-%} 
+
+{%- if ruta == "productos-en-oferta-promociones" -%}
+  {%-section 'sec_ofertas_mbbrand'-%}
+{%-endif-%}
+

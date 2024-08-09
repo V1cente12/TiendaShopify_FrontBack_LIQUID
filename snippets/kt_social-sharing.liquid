@@ -1,0 +1,45 @@
+<ul class="socials list-inline">
+{%- if settings.share_facebook -%}
+  <li class="list-inline-item">{{--}}
+    <a data-tippy="Share this post on Facebook" class="social-icon social-facebook fkt-facebook-f" href="http://www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=380,width=660');return false;"></a>{{--}}
+  </li>
+  {%- endif -%}
+  {%- if settings.share_twitter -%}
+  <li class="list-inline-item">{{--}}
+    <a data-tippy="compartir en twitter" class="social-icon social-twitter fkt-whatsapp" href="//api.whatsapp.com/send?text={{ shop.url | append: share_permalink }}&amp;url={{ shop.url | append: share_permalink }}" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=380,width=660');return false;"></a>{{--}}
+  </li>
+  {%- endif -%}
+  {%- if settings.share_pinterest -%}
+  <li class="list-inline-item">{{--}}
+    <a class="social-icon social-pinterest" href="javascript:getlink();"><i class="fas fa-link"></i></a>
+<!--     <a data-tippy="Share this post on Pinterest" class="social-icon social-pinterest fkt-arrow-down" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"></a>{{--}} -->
+  </li>
+  {%- endif -%}
+  {%- if settings.share_tumblr -%}
+  <li class="list-inline-item">{{--}}
+    <a data-tippy="Share this post on Tumbr" class="social-icon social-tumbl fkt-tumblr" data-content="{{ share_image | img_url: '1024x1024' }}" href="//tumblr.com/widgets/share/tool?canonicalUrl={{ shop.url | append: share_permalink }}" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=540');return false;"></a>{{--}}
+  </li>
+  {%- endif -%}
+</ul>
+
+
+
+<script>
+function getlink() {
+var aux = document.createElement("input");
+aux.setAttribute("value",window.location.href.split('?')[0].split('#')[0]);
+document.body.appendChild(aux);
+aux.select();
+document.execCommand("copy");
+document.body.removeChild(aux);
+var css = document.createElement("style");
+var estilo = document.createTextNode("#aviso {position:fixed; z-index: 9999999; widht: 100px; top:30%;left:50%;margin-left: -60px;padding: 15px; background: #f9a025;border-radius: 2.3rem;font-size: 14px;font-family:Poppins;color: #ffffff;border: #f79206; font-weight: 500;}");
+css.appendChild(estilo);
+document.head.appendChild(css);
+var aviso = document.createElement("div");
+aviso.setAttribute("id", "aviso");
+var contenido = document.createTextNode("URL copiada");
+aviso.appendChild(contenido);
+document.body.appendChild(aviso);
+window.load = setTimeout("document.body.removeChild(aviso)", 2000);}
+</script>

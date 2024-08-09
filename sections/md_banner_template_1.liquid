@@ -1,0 +1,3505 @@
+<!-- md_banner_template_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+  	{%-for block in section.blocks-%}
+    {%-if block.settings.turnoff-%}{%-continue-%}{%-endif-%}
+    {%-case block.type -%}
+    {%-when '1'-%}
+      {%- assign use_css = false -%}
+			<div class="row align-items-center imgs__banner_template1{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+				<div class="col-12 col-md-6 item__1 mb-gutter mb-md-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.desc_1 == blank and block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+            <div class="text-content position-absolute wait-for-css">
+              <p style="--color: {{block.settings.color_desc_1}}">{{block.settings.desc_1}}</p>
+              <h3 style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}<br/><span class="stitle" style="--color: {{block.settings.color_desc_1}}">{{block.settings.stitle_1}}</span></h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 575.00 -%}{%-assign height = image_item.height | default: 630.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="575x630 px"{% endunless %}></a>
+          </div>
+				</div>
+				<div class="col-12 col-md-6">
+          <div class="row">
+            <div class="col-12 item__2 mb-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.desc_2 == blank and block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <p style="--color: {{block.settings.color_desc_2}}">{{block.settings.desc_2}}</p>
+                  <h3 style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}<br/><span class="stitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</span></h3>
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_2 -%}
+                {%-assign width = image_item.width | default: 575.00 -%}{%-assign height = image_item.height | default: 305.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="575x305 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 item__3">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.desc_3 == blank and block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <p style="--color: {{block.settings.color_desc_3}}">{{block.settings.desc_3}}</p>
+                  <h3 style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}<br/><span class="stitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</span></h3>
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn {{block.settings.style_btn_3}} {{block.settings.style_btn_rounded_3}}{%if block.settings.btn_shadow_3%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 575.00 -%}{%-assign height = image_item.height | default: 305.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="575x305 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+				</div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template1">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template1 p{
+            color:var(--color);
+            font-weight:300;
+            font-size:1.6rem;
+            line-height:1.2;
+            letter-spacing:-.01em;
+            margin-bottom:1rem;
+          }
+          .imgs__banner_template1 h3{
+            color:var(--color);
+            font-weight:600;
+            font-size:2rem;
+            line-height:1.2;
+            letter-spacing:-.01em;
+            margin-bottom:1.6rem;
+          }
+          .imgs__banner_template1 h3 .stitle{
+            color:var(--color);
+            font-weight:300;
+          }
+          .imgs__banner_template1 .btn{
+            min-width:auto;
+            padding:.5rem 2rem
+          }
+          .imgs__banner_template1 .btn.btn-link{
+            padding-left: 0;
+            padding-right: 0;
+          }
+          .imgs__banner_template1 .btn.btn-link:not(:hover){
+            color: #333;
+          }
+          .imgs__banner_template1 .item__1 .btn.btn-link:not(:hover){
+            color: #fff;
+          }
+          .imgs__banner_template1 .text-content{
+            z-index:2;
+            top:50%;
+            transform:translateY(-50%);
+            -ms-transform:translateY(-50%);
+            -webkit-transform:translateY(-50%);
+            {{cssAlign}}:7rem;
+          }
+          .imgs__banner_template1 .item__1 h3{
+            font-size:2.4rem;
+          }
+          .imgs__banner_template1 .item__1 .banner-effect3:after {
+            border-color: rgba(255,255,255,0.4);
+            top: 3rem;
+            {{cssAlign}}: 3rem;
+            bottom: 3rem;
+            right: 3rem;
+          }
+          @media (max-width: 767px){
+            .imgs__banner_template1 .text-content{
+              {{cssAlign}}:4rem;
+            }
+          }
+        {%endstyle%}
+        {%-endcapture-%}
+        {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '2'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template2{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-md-7 col-lg-5 item__1 mb-gutter mb-lg-0">
+          <div class="position-relative {{block.settings.banner-effect-1}}">
+            {%- unless block.settings.desc_1 == blank and block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <p style="--color: {{block.settings.color_desc_1}}">{{block.settings.desc_1}}</p>
+              <h3 style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}<br/><span class="stitle" style="--color: {{block.settings.color_desc_1}}">{{block.settings.stitle_1}}</span></h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 470.00 -%}{%-assign height = image_item.height | default: 510.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="470x510 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-5 col-lg-3 item__2 mb-gutter mb-lg-0">
+          <div class="position-relative {{block.settings.banner-effect-2}}">
+            {%- unless block.settings.desc_2 == blank and block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <p style="--color: {{block.settings.color_desc_2}}">{{block.settings.desc_2}}</p>
+              <h3 style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}<br/><span class="stitle" style="--color: {{block.settings.color_desc_2}}">{{block.settings.stitle_2}}</span></h3>
+              <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 520.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="280x520 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="row">
+            <div class="col-12 col-md-6 col-lg-12 item__3 mb-gutter">
+              <div class="position-relative {{block.settings.banner-effect-3}}">
+                {%- unless block.settings.desc_3 == blank and block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <p style="--color: {{block.settings.color_desc_3}}">{{block.settings.desc_3}}</p>
+                  <h3 style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}<br/><span class="stitle" style="--color: {{block.settings.color_desc_3}}">{{block.settings.stitle_3}}</span></h3>
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn {{block.settings.style_btn_3}} {{block.settings.style_btn_rounded_3}}{%if block.settings.btn_shadow_3%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 370.00 -%}{%-assign height = image_item.height | default: 245.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="370x245 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-12 item__4">
+              <div class="position-relative {{block.settings.banner-effect-4}}">
+                {%- unless block.settings.desc_4 == blank and block.settings.titlex_4 == blank and block.settings.stitle_4 == blank and block.settings.name_btn_4 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <p style="--color: {{block.settings.color_desc_4}}">{{block.settings.desc_4}}</p>
+                  <h3 style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4}}<br/><span class="stitle" style="--color: {{block.settings.color_desc_4}}">{{block.settings.stitle_4}}</span></h3>
+                  <a href="{{block.settings.image_link_4|default:'#'}}" class="btn {{block.settings.style_btn_4}} {{block.settings.style_btn_rounded_4}}{%if block.settings.btn_shadow_4%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_4 -%}
+                {%-assign width = image_item.width | default: 370.00 -%}{%-assign height = image_item.height | default: 245.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="370x245 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template2">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template2 .position-relative{
+            z-index: 0;
+          }
+          .imgs__banner_template2 .img__banner{
+            z-index: 0;
+          }
+          .imgs__banner_template2 p{
+            color:var(--color);
+            margin-bottom:.5rem
+          }
+          .imgs__banner_template2 h3{
+            color:var(--color);
+            font-weight:700;
+            font-size:2rem;
+            line-height:normal
+          }
+          .imgs__banner_template2 h3 .stitle{
+            color:var(--color);
+            font-weight:300
+          }
+          .imgs__banner_template2 .btn{
+            min-width:auto;
+            padding:.5rem 1.5rem
+          }
+          .imgs__banner_template2 .text-content{
+            z-index:1
+          }
+          .imgs__banner_template2 .item__1 .text-content{
+            top:3.6rem;
+            {{cssAlign}}:4rem
+          }
+          .imgs__banner_template2 .item__2 .text-content{
+            bottom:4rem;
+            {{cssAlign}}:4rem
+          }
+          .imgs__banner_template2 .item__3 .text-content,
+          .imgs__banner_template2 .item__4 .text-content{
+            padding-top:.4rem;
+            top:3.6rem;
+            {{cssAlign}}:4rem
+          }
+          .imgs__banner_template2 .item__1 h3{
+            font-size:2.4rem
+          }
+          @media (min-width: 992px) {            
+            .imgs__banner_template2 .item__1 .text-content{
+              {{cssAlign}}:7rem
+            }
+          }
+        {%endstyle%}
+        {%-endcapture-%}
+        {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '3'-%}
+      {%- render 'md_banner_template_1_3', block: block, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+    {%-when '4'-%}
+      {%- render 'md_banner_template_1_4', block: block, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+    {%-when '5'-%}
+      {%- render 'md_banner_template_1_5', block: block, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+    {%- endcase -%}
+    {%- endfor -%}
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Template 1",
+    "class": "md_banner_template_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Banner template 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 px"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview demo](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-banner-template.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Banners type 1",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 1",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Banners type 1 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 575 x 630 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_1",
+            "label": "Desciption",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_desc_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"This Week's Most Wanted"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"DISCOVER NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 575 x 305 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_2",
+            "label": "Desciption",
+            "default":"Limited time only."
+          },
+          {
+            "type": "color",
+            "id": "color_desc_2",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Trainers & Sportwear"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default":"Sale Up to 70% off"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 575 x 305 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_3",
+            "label": "Desciption",
+            "default":"This week we love..."
+          },
+          {
+            "type": "color",
+            "id": "color_desc_3",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Holiday Clothes"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default":"Womens"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"DISCOVER NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "2",
+        "name": "Banners type 2",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 2",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Banners type 2 settings"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 470 x 510 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect-1",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect5"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_1",
+            "label": "Desciption",
+            "default":"Clearence"
+          },
+          {
+            "type": "color",
+            "id": "color_desc_1",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Coffee Tables"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "from $19.99"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 520 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect-2",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_2",
+            "label": "Desciption",
+            "default":"On Sale"
+          },
+          {
+            "type": "color",
+            "id": "color_desc_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Amazing<br>Armchairs"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default":"from $39.99"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"DISCOVER NOW<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 370 x 245 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect-3",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_3",
+            "label": "Desciption",
+            "default":"New Arrivals"
+          },
+          {
+            "type": "color",
+            "id": "color_desc_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Storage<br>Boxes & Baskets"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"DISCOVER NOW<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 370 x 245 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect-4",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect5"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_4",
+            "label": "Desciption",
+            "default":"On Sale"
+          },
+          {
+            "type": "color",
+            "id": "color_desc_4",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"Lamps Offer"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_4",
+            "label": "Sub title",
+            "default":"up to 30% off"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_4",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"SHOP NOW<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_4",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_4",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_4",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "3",
+        "name": "Banners type 3",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 3",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Content Design"
+          },
+          {
+            "type": "select",
+            "id": "content_type",
+            "options": [
+              {
+                "value": "type_1",
+                "label": "Design 1"
+              },
+              {
+                "value": "type_2",
+                "label": "Design 2"
+              },
+              {
+                "value": "type_3",
+                "label": "Design 3"
+              },
+              {
+                "value": "type_4",
+                "label": "Design 4"
+              },
+              {
+                "value": "type_5",
+                "label": "Design 5"
+              },
+              {
+                "value": "type_6",
+                "label": "Design 6"
+              }
+            ],
+            "label": "Content design",
+            "default": "type_1"
+          },
+          {
+            "type": "header",
+            "content": "Settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default":"Smart Offer"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Save $150 <strong style=\"color: #333\">on Samsung <br>Galaxy Note9<\/strong>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Shop Now<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-outline-primary-2",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default":"Time Deals"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"<strong style=\"color: #333\">Bose SoundSport</strong> <br>Time Deal -30%"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Shop Now<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-outline-primary-2",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default":"Clearance"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"<strong style=\"color: #333\">GoPro - Fusion 360<\/strong> <br>Save $70"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"Shop Now<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-outline-primary-2",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Custom CSS"
+          },
+          {
+            "type":"html",
+            "id":"css",
+            "label": "CSS",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      },
+      {
+        "type": "4",
+        "name": "Banners type 4",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 4",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Section title"
+          },
+          {
+            "type": "text",
+            "id": "titlex",
+            "label": "Title",
+            "default": "Shop by Categories"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title"
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "unit": "rem",
+            "label": "Margin bottom of title",
+            "default": 6
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Content Design"
+          },
+          {
+            "type": "select",
+            "id": "content_type",
+            "options": [
+              {
+                "value": "type_1",
+                "label": "Design 1"
+              },
+              {
+                "value": "type_2",
+                "label": "Design 2"
+              }
+            ],
+            "label": "Content design",
+            "default": "type_1"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 4 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "banner-effect1",
+                "label": "Banner Effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner Effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner Effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner Effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner Effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner Effect 6"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 546 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 546 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_4",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_4",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_4",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "5",
+        "name": "Banners type 5",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 5",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Content Design"
+          },
+          {
+            "type": "select",
+            "id": "content_type",
+            "options": [
+              {
+                "value": "type_1",
+                "label": "Design 1"
+              },
+              {
+                "value": "type_2",
+                "label": "Design 2"
+              },
+              {
+                "value": "type_3",
+                "label": "Design 3"
+              },
+              {
+                "value": "type_4",
+                "label": "Design 4"
+              },
+              {
+                "value": "type_5",
+                "label": "Design 5"
+              }
+            ],
+            "label": "Content design",
+            "default": "type_1"
+          },
+          {
+            "type": "header",
+            "content": "Settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner Effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner Effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner Effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner Effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner Effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner Effect 6"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default":"New in"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"<strong>Women’s</strong> <br>Clothing"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-underline",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default":"New in"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"<strong>Men’s</strong> <br>Clothing"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-underline",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Template 1",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

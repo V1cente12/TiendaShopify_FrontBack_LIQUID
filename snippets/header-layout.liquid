@@ -1,0 +1,58 @@
+{%- liquid
+case settings.import_header
+  when ''
+    section 'header'
+  when '01'
+    section 'header-01'
+  when '02'
+    section 'header-02'
+  when '03'
+    section 'header-03'
+  when '04'
+    section 'header-04'
+  when '05'
+    section 'header-05'
+  when '06'
+    section 'header-06'
+  when '07'
+    if request.design_mode
+    section 'kt_mega_mn-vertical'
+    endif
+    section 'header-07'
+  when '08'
+    section 'header-08'
+    if request.design_mode
+    section 'kt_mega_mn-vertical'
+    endif
+  when '09'
+    section 'header-09'
+  when '10'
+    section 'header-10'
+  when '11'
+    section 'header-11'
+  when '12'
+    section 'header-12'
+  when '13'
+    section 'header-13'
+  when '14'
+    section 'header-14'
+  when '15'
+    section 'header-15'
+  when '16'
+    section 'header-16'
+    if request.design_mode
+    section 'kt_mega_mn-vertical'
+    endif
+  when '17'
+    section 'header-17'
+  when '18'
+    section 'header-18'
+  when '19'
+    section 'header-19'
+  when '20'
+    section 'header-20'
+    if request.design_mode
+    section 'kt_mega_mn-vertical'
+    endif
+endcase
+-%}

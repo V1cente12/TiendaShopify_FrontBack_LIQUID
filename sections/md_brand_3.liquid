@@ -1,0 +1,257 @@
+<!-- md_brand_3.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      <div class="row">
+        <div class="col-12 col-lg-5">
+          <div class="brands-text">
+            {%- assign blockTitle = section.blocks | where: 'type', 'title' | first -%}
+            {%- if blockTitle -%}
+            <h3 class="title" style="line-height: normal;">{{blockTitle.settings.title}}</h3>
+            {%- if blockTitle.settings.stitle != blank -%}
+              <p>{{blockTitle.settings.stitle}}</p>
+            {%- endif -%}
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="row justify-content-center brands-display">
+          {%- for block in section.blocks-%}
+            {%- if block.type != 'item' -%}{%-continue-%}{%- endif -%}
+            <div class="image__brand col-6 col-sm-4">
+              <a href="{{ block.settings.brand_call_to_action | default: '#' }}" class="icon__brand" aria-label="{{ block.settings.image.alt | default: shop.name | escape }}">
+                {%- liquid
+                  assign image_item = block.settings.image
+                  assign width = image_item.width | default : 150.00
+                  assign height = image_item.height | default : 60.00 | plus: 0.00
+                  assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+                -%}
+                <img{%if image_item != blank%} class="lazyload"{%endif%} src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="{{width}}" height="{{height}}" viewBox="0 0 100% 100%"><rect style="fill:%23ebebeb" width="100%" height="100%"/></svg>' data-src="{{ img_url }}" data-widths="[150, 240]" data-aspectratio="{{ image_item.aspect_ratio }}" data-sizes="auto" alt="{{ image_item.alt | escape }}">
+              </a>
+            </div>
+          {%- endfor -%}
+          </div>
+        </div>
+      </div>   
+    </div>
+  </div>
+</div>
+<noscript class="banner-css" data-section-type="md_brand_3">
+{%-capture banner-css-%}
+{%-style-%}
+  .md_brand_3 .brands-text {
+    max-width: 430px;
+    margin-top: 2.5rem;
+    margin-bottom: 3rem;
+  }
+  .md_brand_3 .icon__brand{
+    display: block;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+{%-endstyle-%}
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%-endunless-%}
+{%- endunless -%}
+{% schema %}
+  {
+    "name": "Brands logo 3",
+    "class": "md_brand md_brand_3",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Brands 3",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "title",
+        "name": "Item title",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "The world's premium design brands in one destination."
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title",
+            "default": "Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nis"
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item brand",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 60 pixels"
+          },
+          {
+            "id": "brand_call_to_action",
+            "type": "url",
+            "label": "Brand link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Brands Logo 3",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "title"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

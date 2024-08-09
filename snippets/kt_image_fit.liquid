@@ -1,0 +1,9 @@
+{%- liquid
+  assign aspect_cs = width | divided_by: height | round: 5
+  assign aspect_image = image_item.aspect_ratio | round: 5
+  assign return = 'nonwidth'
+  if aspect_cs > aspect_image
+    assign return = 'nonheight'
+  endif
+  echo return
+-%}

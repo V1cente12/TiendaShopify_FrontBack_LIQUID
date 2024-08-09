@@ -1,0 +1,3213 @@
+<!-- about-template.liquid -->
+{{page.content}}
+{%- for block in section.blocks -%}
+	{%- if block.type == 'item_banner' -%}
+	{%-unless block.settings.off_block-%}
+
+	{%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+	<div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_banner">
+	  <div class="content_{{block.id}}{%if block.settings.image%} bg-image lazyload{%endif%}" {%if block.settings.image%} data-bgset="{{block.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+      	<div class="text-content text-center">
+    			<h2 class="text-white">{{block.settings.html_content}}</h2>
+      	</div>
+      </div>
+	  </div>
+	  <div class="section-width {{width_content_}}">
+			{%- assign count = 0 -%}
+			{%- assign col = 'col-12' -%}
+			{%- if block.settings.html_content_1 != blank -%}
+				{% assign count = 1 %}
+				{% assign col = 'col-12 col-md-6' %}
+			{%- endif -%}
+			{%- if block.settings.html_content_2 != blank -%}
+				{% assign count = 2 %}
+				{% assign col = 'col-12 col-md-6' %}
+			{%- endif -%}
+			<div class="row mt-5">
+			{%- if block.settings.html_content_1 != blank -%}
+				<div class="{{col}}">
+					<h2 class="title">{{block.settings.title_1}}</h2>
+					<p>{{block.settings.html_content_1}}</p>
+				</div>
+			{%- endif -%}
+			{%- if block.settings.html_content_2 != blank -%}
+				<div class="{{col}}">
+					<h2 class="title">{{block.settings.title_2}}</h2>
+					<p>{{block.settings.html_content_2}}</p>
+				</div>
+			{%- endif -%}
+			</div>
+		</div>
+	</div>
+	{%-endunless-%}
+	{%- elsif block.type == 'item_who_we_are_1' -%}
+	{%-unless block.settings.off_block-%}
+
+	{%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+	<div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_who_we_are_1">
+	  <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+      	<div class="row">
+          <div class="col-lg-5{%if block.settings.banner_left%} offset-lg-1{%endif%}">
+            <h2 class="title">{{block.settings.title}}</h2>
+            {{block.settings.html_content}}
+            <a href="{{block.settings.btn_url|default:'#'}}" class="btn btn-sm btn-minwidth btn-outline-primary-2">
+              {{block.settings.btn_name}}
+            </a>
+          </div>
+          <div class="col-lg-6{%if block.settings.banner_left%} order-first {% else %} offset-lg-1{%endif%}">
+            <div class="about-images">
+            	{%- assign image_item = block.settings.image -%}
+						  {%-assign width = image_item.width | default: 560.00 -%}{%-assign height = image_item.height | default: 360.00 | plus: 0.00-%}
+						  <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="560x360 px"{% endunless %}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+	  </div>
+	</div>
+	{%-endunless-%}
+  {%- elsif block.type == 'item_who_we_are_2' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_who_we_are_2">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="row">
+          <div class="col-lg-10 offset-lg-1 text-center">
+            <h2 class="title">{{block.settings.title}}</h2>
+            {{block.settings.html_content}}
+            <div class="about-images mb-5">
+              {%if block.settings.image_signature %}
+              {%- assign image_item = block.settings.image_signature -%}
+              <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{% render 'kt_image_format',cache:false,src: image_item,size: 'master' %}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;">
+              {% endif %}
+            </div>                
+            <div class="about-images">
+              {%if block.settings.image %}
+              {%- assign image_item = block.settings.image -%}
+              {%-assign width = image_item.width | default: 930.00 -%}{%-assign height = image_item.height | default: 390.00 | plus: 0.00-%}
+              <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="560x360 px"{% endunless %}></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_icons' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_icons">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        {%- assign count = 0 -%}
+        {%- if block.settings.title_1 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_2 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_3 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_4 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%-case count-%}
+          {%- when 0-%}
+            {%- assign item_grid = 'col-12' -%}
+          {%- when 2-%}
+            {%- assign item_grid = 'col-12 col-sm-6' -%}
+          {%- when 3-%}
+            {%- assign item_grid = 'col-12 col-sm-6 col-md-4' -%}
+          {%- when 4-%}
+            {%- assign item_grid = 'col-12 col-sm-6 col-md-3' -%}
+        {%-endcase-%}
+        <div class="row">
+          {%- for i in (1..4) -%}
+          {%- assign title = 'title_' | append: i -%}
+          {%- if block.settings[title] != blank -%}
+          {%- assign content = 'content_' | append: i -%}
+          {%- assign icon_font = 'icon_font_' | append: i -%}
+          {%- assign icon = 'icon_' | append: i -%}
+          {%- assign url = 'url_' | append: i -%}
+          <div class="{{item_grid}}">
+            <div class="icon-box icon-box-sm text-center">
+              <span class="icon-box-icon">
+                {%- if block.settings[icon_font] -%}
+                <a class="text-primary" href="{{block.settings[url]|default:'#'}}">
+                  <i class="{{block.settings[icon_font] | default: 'fkt-puzzle-piece'}}"></i>
+                </a>
+                {%- else -%}
+                <a href="{{block.settings[url]|default:'#'}}">
+                  {%- assign image_item = block.settings[icon] -%}
+                  <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{% render 'kt_image_format',cache:false,src: image_item,size: 'master' %}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;">
+                </a>
+                {%- endif -%}
+              </span>
+              <div class="icon-box-content">
+                <h3 class="icon-box-title">{{block.settings[title]}}</h3>
+                <p>{{block.settings[content]}}</p>
+              </div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_count' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_count" data-section-id="{{ block.id }}" id="Countto-{{ block.id }}" data-section-type="countto-section">
+    <div class="content_{{block.id}}{%if block.settings.image%} bg-image lazyload{%endif%}"{%if block.settings.image%} data-bgset="{{block.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        {%- assign count = 0 -%}
+        {%- if block.settings.title_1 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_2 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_3 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%- if block.settings.title_4 != blank -%}
+          {% assign count = count | plus: 1 %}
+        {%- endif -%}
+        {%-case count-%}
+          {%- when 0-%}
+            {%- assign item_grid = 'col-12' -%}
+          {%- when 2-%}
+            {%- assign item_grid = 'col-6' -%}
+          {%- when 3-%}
+            {%- assign item_grid = 'col-6 col-md-4' -%}
+          {%- when 4-%}
+            {%- assign item_grid = 'col-6 col-md-3' -%}
+        {%-endcase-%}
+        <div class="row">
+          {%- for i in (1..4) -%}
+          {%- assign title = 'title_' | append: i -%}
+          {%- if block.settings[title] != blank -%}
+          {%- assign count = 'count_' | append: i -%}
+          {%- assign unit = 'unit_' | append: i -%}
+          <div class="{{item_grid}}">
+            <div class="count-container text-center">
+              <div class="count-wrapper text-white">
+                <span class="count kt_countTo" data-from="0" data-to="{{block.settings[count]}}" data-speed="3000" data-refresh-interval="50">{{block.settings[count]}}</span>{{block.settings[unit]}}
+              </div>
+              <h3 class="count-title text-white">{{block.settings[title]}}</h3>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+	{%- elsif block.type == 'item_brands_info_1' -%}
+	{%-unless block.settings.off_block-%}
+
+	{%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+	<div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_brands_info_1">
+	  <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      	<div class="row">
+          <div class="col-lg-5">
+            <div class="brands-text">
+              <h2 class="title" style="line-height: normal;">{{block.settings.title}}</h2>
+              <p>{{block.settings.html_content}}</p>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="brands-display">
+              <div class="row justify-content-center">
+              	{%- for i in (1..9) -%}
+              	{%- assign image = 'image_' | append: i -%}
+              	{%- assign brand_call_to_action = 'brand_call_to_action_' | append: i -%}
+              	{%- if block.settings[image] != blank -%}
+                <div class="image__brand col-6 col-sm-4">
+                  <a href="{{ block.settings[brand_call_to_action] | default: '#' }}" class="icon__brand" aria-label="{{ block.settings[image].alt | default: shop.name | escape }}">
+                    {%- liquid
+                      assign image_item = block.settings[image]
+                      assign width = image_item.width
+                      assign height = image_item.height | plus: 0.00
+                      assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+                    -%}
+                    <img class="lazyload" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="{{width}}" height="{{height}}" viewBox="0 0 100% 100%"><rect style="fill:%23ebebeb" width="100%" height="100%"/></svg>' data-src="{{ img_url }}" data-widths="[150, 240]" data-aspectratio="{{ image_item.aspect_ratio }}" data-sizes="auto" alt="{{ image_item.alt | escape }}">
+                  </a>
+                </div>
+              	{%- endif -%}
+              	{%- endfor -%}
+              </div>
+            </div>
+          </div>
+        </div>	          
+				<hr class="mt-4 mb-6">
+      </div>
+	  </div>
+	</div>
+	{%-endunless-%}
+  {%- elsif block.type == 'item_brands_info_2' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_brands_info_2">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="row text-center">
+          <div class="col-lg-10 offset-lg-1">
+            <div class="brands-text mb-4 mx-auto">
+              <h2 class="title">{{block.settings.title}}</h2>
+              <p>{{block.settings.html_content}}</p>
+            </div>
+          </div>
+          <div class="col-lg-10 offset-lg-1">
+            <div class="brands-display">
+              <div class="row">
+                {%- for i in (1..9) -%}
+                {%- assign image = 'image_' | append: i -%}
+                {%- assign brand_call_to_action = 'brand_call_to_action_' | append: i -%}
+                {%- if block.settings[image] != blank -%}
+                <div class="image__brand col-sm-3">
+                  <a href="{{ block.settings[brand_call_to_action] | default: '#' }}" class="brand">
+                    {%- assign image_item = block.settings[image] -%}
+                    {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+                    <div class="img__banner position-relative lazyload none-bg" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;background-size: auto;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto"></div>
+                  </a>
+                </div>
+                {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+	{%- elsif block.type == 'item_meet_our_team_1' -%}
+	{%-unless block.settings.off_block-%}
+
+	{%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+	<div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_meet_our_team_1">
+		<div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+      	<h2 class="title text-center mb-4">{{block.settings.title}}</h2>
+      	<div class="row justify-content-center">
+        	{%- for i in (1..9) -%}
+        	{%- assign image = 'image_avatar_' | append: i -%}
+        	{%- if block.settings[image] != blank -%}
+        	{%- assign name = 'name_' | append: i -%}
+        	{%- assign info = 'info_' | append: i -%}
+        	{%- assign social_twitter_link = 'social_twitter_link_' | append: i -%}
+        	{%- assign social_facebook_link = 'social_facebook_link_' | append: i -%}
+        	{%- assign social_instagram_link = 'social_instagram_link_' | append: i -%}
+          <div class="col-md-4">
+            <div class="member member-anim text-center">
+              <figure class="member-media">
+            	{%- assign image_item = block.settings[image] -%}
+						  {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+						  <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+                <figcaption class="member-overlay">
+                  <div class="member-overlay-content">
+                    <h3 class="member-title">{{block.settings[name]}}</h3>
+                    <p>{{block.settings[info]}}</p> 
+                    <div class="social-icons social-icons-simple">
+                    	{%- if block.settings[social_twitter_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Facebook" target="_blank"><i class="fkt-facebook-f"></i></a>
+				              {%- endif -%}
+                    	{%- if block.settings[social_facebook_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Twitter" target="_blank"><i class="fkt-twitter"></i></a>
+				              {%- endif -%}
+                    	{%- if block.settings[social_instagram_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Instagram" target="_blank"><i class="fkt-instagram"></i></a>
+				              {%- endif -%}
+                    </div>
+                  </div>
+                </figcaption>
+              </figure>
+              <div class="member-content">
+                <h3 class="member-title">{{block.settings[name]}}</h3>
+              </div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+	  </div>
+	</div>
+	{%-endunless-%}
+  {%- elsif block.type == 'item_meet_our_team_2' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_meet_our_team_2">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <h2 class="title text-center mb-4">{{block.settings.title}}</h2>
+        <div class="row justify-content-center">
+          {%- for i in (1..9) -%}
+          {%- assign image = 'image_avatar_' | append: i -%}
+          {%- if block.settings[image] != blank -%}
+          {%- assign name = 'name_' | append: i -%}
+          {%- assign info = 'info_' | append: i -%}
+          {%- assign social_twitter_link = 'social_twitter_link_' | append: i -%}
+          {%- assign social_facebook_link = 'social_facebook_link_' | append: i -%}
+          {%- assign social_instagram_link = 'social_instagram_link_' | append: i -%}
+          <div class="col-md-3">
+            <div class="member member-2 text-center">
+              <figure class="member-media">
+              {%- assign image_item = block.settings[image] -%}
+              {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+              <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+                <figcaption class="member-overlay">
+                  <div class="member-overlay-content">
+                    <div class="social-icons social-icons-simple">
+                      {%- if block.settings[social_twitter_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Facebook" target="_blank"><i class="fkt-facebook-f"></i></a>
+                      {%- endif -%}
+                      {%- if block.settings[social_facebook_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Twitter" target="_blank"><i class="fkt-twitter"></i></a>
+                      {%- endif -%}
+                      {%- if block.settings[social_instagram_link] != blank -%}
+                      <a href="{{block.settings[social_twitter_link]}}" class="social-icon" title="Instagram" target="_blank"><i class="fkt-instagram"></i></a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </figcaption>
+              </figure>
+              <div class="member-content">
+                <h3 class="member-title">{{block.settings[name]}}</h3>
+              </div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+          <div class="col-12 mt-3 text-center">
+            <a href="{{block.settings.btn_url|default:'#'}}" class="btn btn-sm btn-minwidth-lg {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+	{%- elsif block.type == 'item_customer_say' -%}
+	{%-unless block.settings.off_block-%}
+
+	{%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+	<div class="about-testimonials {{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_customer_say">
+	  <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+    	<h2 class="title text-center mb-4">{{block.settings.title}}</h2>
+      {%- assign responsive_ = block.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <div class="section-width {{width_content_}}" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section">
+      	<div class="swiper-container-fuild position-relative nav-default nav-style-default nav-mode-default">
+	      	<div class="swiper-container" data-breakpoints='{{responsive_}}' data-autoplay="{{block.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{block.settings.use_dots}}" data-nav="{{block.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}">
+            <div class="swiper-wrapper">
+            	{%- for i in (1..9) -%}
+            	{%- assign image = 'image_avatar_' | append: i -%}
+            	{%- if block.settings[image] != blank -%}
+            	{%- assign name = 'name_' | append: i -%}
+            	{%- assign info = 'info_' | append: i -%}
+							<div class="swiper-slide">
+								<blockquote class="testimonial text-center">
+									<div class="img">
+		              	{%- assign image_item = block.settings[image] -%}
+										<div class="img__banner lazyload" style="padding-bottom: 100%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+									</div>
+									<p>“ {{block.settings[info]}} ”</p>
+									<cite>{{block.settings[name]}}</cite>
+								</blockquote>
+							</div>
+              {%- endif -%}
+              {%- endfor -%}
+	          </div>
+          </div>
+          {%- if block.settings.use_navigation -%}
+          <div class="swiper-buttons position-absolute"{% if block.settings.nav_position == 'nav-top-right' or block.settings.nav_position == 'nav-top-left' %} style="margin-top: -{{block.settings.margin_btitle|plus: 1.6}}rem" {%endif%}>
+            <div class="content-buttons position-relative">
+              <div class="swiper-button-prev sw-btn-prev-{{block.id}} fkt-angle-left fkt-2x fkt-va"></div>
+              <div class="swiper-button-next sw-btn-next-{{block.id}} fkt-angle-right fkt-2x fkt-va"></div>
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+	  </div>
+	</div>
+	{%-endunless-%}
+	{%- endif -%}
+{%- endfor -%}
+<style>
+	[data-block="item_banner"] .text-content{
+		min-height: 354px;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		align-items: center;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
+		justify-content: center;
+	}
+	[data-block="item_banner"] .text-content h2{
+		font-weight: 400;
+		letter-spacing: -.025em;
+		margin-bottom: 0;
+	}
+	[data-block="item_banner"] .text-content h2 span{
+		display: block;
+		font-size: 1.6rem;
+		margin-top: .4rem;
+		letter-spacing: 0;
+	}
+  /* Counters */
+  .count-container {
+    margin-bottom: 3.3rem;
+  }
+
+  .count-wrapper {
+    color: #333;
+    font-weight: 400;
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: .6rem;
+  }
+
+  .count-title {
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: -.01em;
+  }
+	[data-block="item_brands_info_1"] .brands-text {
+    max-width: 430px;
+    margin-top: 2.5rem;
+    margin-bottom: 3rem;
+	}
+	[data-block="item_brands_info_1"] .brand{
+    display: block;
+	  margin-bottom: 1rem;
+	}
+  [data-block="item_brands_info_2"] .brands-text {
+    max-width: 430px;
+    margin-top: .5rem;
+  }
+	[data-block="item_meet_our_team_1"] .member {
+	  margin-bottom: 2rem;
+	  max-width: 376px;
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	[data-block="item_meet_our_team_1"] .member p {
+	  max-width: 240px;
+	}
+	[data-block="item_meet_our_team_1"] .member.text-center p {
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	[data-block="item_meet_our_team_1"] .member.text-center .social-icons {
+	  justify-content: center;
+	}
+
+	[data-block="item_meet_our_team_1"] .member-media {
+	  position: relative;
+	  margin: 0;
+	}
+
+	[data-block="item_meet_our_team_1"] .member-content {
+	  padding-top: 2.4rem;
+	  padding-bottom: 2.4rem;
+	  overflow: hidden;
+	}
+
+	[data-block="item_meet_our_team_1"] .member-title {
+	  font-weight: 400;
+	  font-size: 1.6rem;
+	  letter-spacing: 0;
+	  margin-bottom: 0;
+	}
+	[data-block="item_meet_our_team_1"] .member-title span {
+	  display: block;
+	  color: #999999;
+	  font-weight: 300;
+	  font-size: 1.4rem;
+	  margin-top: 0.3rem;
+	}
+
+	[data-block="item_meet_our_team_1"] .member-overlay {
+	  position: absolute;
+	  left: 0;
+	  right: 0;
+	  top: 0;
+	  bottom: 0;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  background-color: rgba(102, 102, 102, 0.7);
+	  color: #fff;
+	  opacity: 0;
+	  visibility: hidden;
+	  overflow: hidden;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .member-title {
+	  color: inherit;
+	  margin-bottom: 1.5rem;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .member-title span {
+	  color: #ebebeb;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .social-icons {
+	  margin-top: 2.7rem;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .social-icon {
+	  font-size: 1.5rem;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .social-icon + .social-icon {
+	  margin-left: 2.8rem;
+	}
+	[data-block="item_meet_our_team_1"] .member-overlay .social-icon:not(:hover) {
+	  color: inherit;
+	}
+
+	[data-block="item_meet_our_team_1"] .member-content,
+	[data-block="item_meet_our_team_1"] .member-overlay {
+	  transition: all 0.45s ease;
+	}
+
+	[data-block="item_meet_our_team_1"] .member:hover .member-content {
+	  opacity: 0;
+	}
+	[data-block="item_meet_our_team_1"] .member:hover .member-overlay {
+	  visibility: visible;
+	  opacity: 1;
+	}
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-overlay .member-title,
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-overlay p,
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-overlay .social-icons {
+	  animation-name: fadeInUpShort;
+	  animation-duration: 0.65s;
+	  animation-fill-mode: both;
+	}
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-overlay p {
+	  animation-delay: 0.1s;
+	}
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-overlay .social-icons {
+	  animation-delay: 0.2s;
+	}
+	[data-block="item_meet_our_team_1"] .member:hover.member-anim .member-content .member-title {
+	  animation-name: fadeOutUpShort;
+	  animation-duration: 0.65s;
+	  animation-fill-mode: both;
+	}
+
+  [data-block="item_meet_our_team_2"] .member {
+    margin-bottom: 2rem;
+    max-width: 376px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  [data-block="item_meet_our_team_2"] .member p {
+    max-width: 240px;
+  }
+  [data-block="item_meet_our_team_2"] .member.text-center p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  [data-block="item_meet_our_team_2"] .member.text-center .social-icons {
+    justify-content: center;
+  }
+
+  [data-block="item_meet_our_team_2"] .member-media {
+    position: relative;
+    margin: 0;
+  }
+
+  [data-block="item_meet_our_team_2"] .member-content {
+    padding-top: 2.4rem;
+    padding-bottom: 2.4rem;
+    overflow: hidden;
+  }
+
+  [data-block="item_meet_our_team_2"] .member-title {
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0;
+    margin-bottom: 0;
+  }
+  [data-block="item_meet_our_team_2"] .member-title span {
+    display: block;
+    color: #999999;
+    font-weight: 300;
+    font-size: 1.4rem;
+    margin-top: 0.3rem;
+  }
+
+  [data-block="item_meet_our_team_2"] .member-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(102, 102, 102, 0.7);
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .member-title {
+    color: inherit;
+    margin-bottom: 1.5rem;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .member-title span {
+    color: #ebebeb;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .social-icons {
+    margin-top: 2.7rem;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .social-icon {
+    font-size: 1.5rem;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .social-icon + .social-icon {
+    margin-left: 2.8rem;
+  }
+  [data-block="item_meet_our_team_2"] .member-overlay .social-icon:not(:hover) {
+    color: inherit;
+  }
+
+  [data-block="item_meet_our_team_2"] .member-content,
+  [data-block="item_meet_our_team_2"] .member-overlay {
+    transition: all 0.45s ease;
+  }
+
+  [data-block="item_meet_our_team_2"] .member:hover .member-content {
+    opacity: 0;
+  }
+  [data-block="item_meet_our_team_2"] .member:hover .member-overlay {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  [data-block="item_meet_our_team_2"] .member.member-2 {
+    background-color: #fff;
+    max-width: 277px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  [data-block="item_meet_our_team_2"] .member.member-2 .member-content {
+    visibility: visible;
+    opacity: 1;
+    padding-top: 1.7rem;
+    padding-bottom: 2.7rem;
+  }
+  [data-block="item_meet_our_team_2"] .member.member-2 .member-overlay {
+    color: #333;
+    background-color: rgba(249, 249, 249, 0.7);
+  }
+  [data-block="item_meet_our_team_2"] .member.member-2 .member-overlay .social-icons {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+	@keyframes fadeInUpShort {
+	  from {
+	    opacity: 0;
+	    -webkit-transform: translate3d(0, 100px, 0);
+	    transform: translate3d(0, 100px, 0);
+	  }
+	  to {
+	    opacity: 1;
+	    -webkit-transform: translate3d(0, 0, 0);
+	    transform: translate3d(0, 0, 0);
+	  }
+	}
+	@keyframes fadeOutUpShort {
+	  from {
+	    opacity: 1;
+	    -webkit-transform: translate3d(0, 0, 0);
+	    transform: translate3d(0, 0, 0);
+	  }
+	  to {
+	    opacity: 0;
+	    -webkit-transform: translate3d(0, -100px, 0);
+	    transform: translate3d(0, -100px, 0);
+	  }
+	}
+	.about-testimonials blockquote {
+    color: #666666;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: normal;
+    line-height: 1.875;
+	}
+</style>
+{%schema%}
+  {
+    "name": "About page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_banner",
+        "name": "Item Banner",
+        "settings": [
+		      {
+		        "type":"checkbox",
+		        "id": "off_block",
+		        "label": "Turn off block?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_mobile",
+		        "label": "Turn off on mobile?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_desktop",
+		        "label": "Turn off on desktop?"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Space settings"
+		      },
+		      {
+		        "type": "radio",
+		        "id": "width_section",
+		        "label": "Max width section?",
+		        "options": [
+		          { "value": "container", "label": "1200px" },
+		          { "value": "container-fluid wide", "label": "Wide" },
+		          { "value": "w-100", "label": "Full width" }
+		        ],
+		        "default": "container"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "width_content",
+		        "label": "Max width content?",
+		        "default": true
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_top",
+		        "label": "Margin top",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_bottom",
+		        "label": "Margin bottom",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_padding",
+		        "label": "Paddings (top right bottom left)",
+		        "info": "6rem 6rem 0 6rem"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Background settings"
+		      },
+		      {
+		        "type": "color",
+		        "id": "section_bg",
+		        "label": "Background color"
+		      },
+		      {
+		        "type": "range",
+		        "id": "section_bg_op",
+		        "min": 0,
+		        "max": 1,
+		        "step": 0.1,
+		        "label": "Opacity background color",
+		        "default": 1
+		      },
+		      {
+		        "type": "image_picker",
+		        "id": "image",
+		        "label": "Background image",
+		        "info": "Size suggestion: 1920 x 497 pixels"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Content settings"
+		      },
+		      {
+		        "type": "html",
+		        "id": "html_content",
+		        "label": "Text content",
+		        "default": "About us<span>Who we are</span>"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Box text 1"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title_1",
+		      	"label": "Title",
+		      	"default": "Our Vision"
+		      },
+		      {
+		        "type": "html",
+		        "id": "html_content_1",
+		        "label": "Text content",
+		        "default": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nisi. Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh."
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Box text 2"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title_2",
+		      	"label": "Title",
+		      	"default": "Our Mission"
+		      },
+		      {
+		        "type": "html",
+		        "id": "html_content_2",
+		        "label": "Text content",
+		        "default": "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est. Sed lectus. <br>Praesent elementum hendrerit tortor. Sed semper lorem at felis."
+		      }
+        ]
+      },
+      {
+        "type": "item_who_we_are_1",
+        "name": "Item Who We Are 1",
+        "settings": [
+		      {
+		        "type":"checkbox",
+		        "id": "off_block",
+		        "label": "Turn off block?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_mobile",
+		        "label": "Turn off on mobile?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_desktop",
+		        "label": "Turn off on desktop?"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Space settings"
+		      },
+		      {
+		        "type": "radio",
+		        "id": "width_section",
+		        "label": "Max width section?",
+		        "options": [
+		          { "value": "container", "label": "1200px" },
+		          { "value": "container-fluid wide", "label": "Wide" },
+		          { "value": "w-100", "label": "Full width" }
+		        ],
+		        "default": "container"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "width_content",
+		        "label": "Max width content?",
+		        "default": true
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_top",
+		        "label": "Margin top",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_bottom",
+		        "label": "Margin bottom",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_padding",
+		        "label": "Paddings (top right bottom left)",
+		        "info": "6rem 6rem 0 6rem"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Background settings"
+		      },
+		      {
+		        "type": "color",
+		        "id": "section_bg",
+		        "label": "Background color"
+		      },
+		      {
+		        "type": "range",
+		        "id": "section_bg_op",
+		        "min": 0,
+		        "max": 1,
+		        "step": 0.1,
+		        "label": "Opacity background color",
+		        "default": 1
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Content settings"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title",
+		      	"label": "Title",
+		      	"default": "Who We Are"
+		      },
+		      {
+		        "type": "html",
+		        "id": "html_content",
+		        "label": "Text content",
+		        "default": "<p class=\"lead text-primary mb-3\">Pellentesque odio nisi, euismod pharetra a ultricies <br>in diam. Sed arcu. Cras consequat<\/p><p class=\"mb-2\">Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Suspendisse potenti. Sed egestas, ante et vulputate volutpat, uctus metus libero eu augue. <\/p>"
+		      },
+		      {
+		      	"type": "textarea",
+		      	"id": "btn_name",
+		      	"label": "Button name",
+		      	"default": "<span>VIEW OUR NEWS</span><i class=\"fkt-long-arrow-right\"><\/i>"
+		      },
+		      {
+		      	"type": "url",
+		      	"id": "btn_url",
+		      	"label": "Button url"
+		      },
+		      {
+		        "type": "image_picker",
+		        "id": "image",
+		        "label": "Banner image",
+		        "info": "Size suggestion: 560 x 360 pixels"
+		      },
+          {
+            "type":"checkbox",
+            "id": "banner_left",
+            "label": "Banner left?"
+          }
+        ]
+      },
+      {
+        "type": "item_who_we_are_2",
+        "name": "Item Who We Are 2",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Who We Are"
+          },
+          {
+            "type": "html",
+            "id": "html_content",
+            "label": "Text content",
+            "default": "<p>Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Suspendisse potenti. Sed egestas, ante et vulputate volutpat, uctus metus libero eu augue. Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est. Sed lectus. Praesent elementum hendrerit tortor. Sed semper lorem at felis.<\/p>"
+          },
+          {
+            "type": "textarea",
+            "id": "btn_name",
+            "label": "Button name",
+            "default": "<span>VIEW OUR NEWS</span><i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "url",
+            "id": "btn_url",
+            "label": "Button url"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_signature",
+            "label": "Signature image",
+            "info": "Size suggestion: 140 x 46 pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Banner image",
+            "info": "Size suggestion: 930 x 390 pixels"
+          }
+        ]
+      },
+      {
+        "type": "item_brands_info_1",
+        "name": "Item Brands info 1",
+        "settings": [
+		      {
+		        "type":"checkbox",
+		        "id": "off_block",
+		        "label": "Turn off block?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_mobile",
+		        "label": "Turn off on mobile?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_desktop",
+		        "label": "Turn off on desktop?"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Space settings"
+		      },
+		      {
+		        "type": "radio",
+		        "id": "width_section",
+		        "label": "Max width section?",
+		        "options": [
+		          { "value": "container", "label": "1200px" },
+		          { "value": "container-fluid wide", "label": "Wide" },
+		          { "value": "w-100", "label": "Full width" }
+		        ],
+		        "default": "container"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "width_content",
+		        "label": "Max width content?",
+		        "default": true
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_top",
+		        "label": "Margin top",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_bottom",
+		        "label": "Margin bottom",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_padding",
+		        "label": "Paddings (top right bottom left)",
+		        "info": "6rem 6rem 0 6rem"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Background settings"
+		      },
+		      {
+		        "type": "color",
+		        "id": "section_bg",
+		        "label": "Background color"
+		      },
+		      {
+		        "type": "range",
+		        "id": "section_bg_op",
+		        "min": 0,
+		        "max": 1,
+		        "step": 0.1,
+		        "label": "Opacity background color",
+		        "default": 1
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Content settings"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title",
+		      	"label": "Title",
+		      	"default": "The world's premium design brands in one destination."
+		      },
+		      {
+		        "type": "html",
+		        "id": "html_content",
+		        "label": "Text content",
+		        "default": "Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nis"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Brands setting"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 1"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_1",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 2"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_2",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 3"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_3",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 4"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_4",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 5"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_5",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_5",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 6"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_6",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_6",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 7"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_7",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_7",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 8"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_8",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_8",
+            "label": "Brand link"
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Brand 9"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_9",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_9",
+            "label": "Brand link"
+          }
+        ]
+      },
+      {
+        "type": "item_brands_info_2",
+        "name": "Item Brands info 2",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "The world's premium design brands in one destination."
+          },
+          {
+            "type": "html",
+            "id": "html_content",
+            "label": "Text content",
+            "default": "Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nis"
+          },
+          {
+            "type": "header",
+            "content": "Brands setting"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_1",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_2",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_3",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_4",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 5"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_5",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_5",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 6"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_6",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_6",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 7"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_7",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_7",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 8"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_8",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_8",
+            "label": "Brand link"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Brand 9"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_9",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "type": "url",
+            "id": "brand_call_to_action_9",
+            "label": "Brand link"
+          }
+        ]
+      },
+      {
+        "type": "item_meet_our_team_1",
+        "name": "Item Meet Our Team 1",
+        "settings": [
+		      {
+		        "type":"checkbox",
+		        "id": "off_block",
+		        "label": "Turn off block?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_mobile",
+		        "label": "Turn off on mobile?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_desktop",
+		        "label": "Turn off on desktop?"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Space settings"
+		      },
+		      {
+		        "type": "radio",
+		        "id": "width_section",
+		        "label": "Max width section?",
+		        "options": [
+		          { "value": "container", "label": "1200px" },
+		          { "value": "container-fluid wide", "label": "Wide" },
+		          { "value": "w-100", "label": "Full width" }
+		        ],
+		        "default": "container"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "width_content",
+		        "label": "Max width content?",
+		        "default": true
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_top",
+		        "label": "Margin top",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_bottom",
+		        "label": "Margin bottom",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_padding",
+		        "label": "Paddings (top right bottom left)",
+		        "info": "6rem 6rem 0 6rem"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Background settings"
+		      },
+		      {
+		        "type": "color",
+		        "id": "section_bg",
+		        "label": "Background color"
+		      },
+		      {
+		        "type": "range",
+		        "id": "section_bg_op",
+		        "min": 0,
+		        "max": 1,
+		        "step": 0.1,
+		        "label": "Opacity background color",
+		        "default": 1
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Content settings"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title",
+		      	"label": "Title",
+		      	"default": "Meet Our Team"
+		      },
+		      {
+		        "type": "header",
+		        "content": "Members setting"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 1"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_1",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_1",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_1",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_1",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_1",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_1",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 2"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_2",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_2",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_2",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_2",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_2",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_2",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 3"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_3",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_3",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_3",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_3",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_3",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_3",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 4"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_4",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_4",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_4",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_4",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_4",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_4",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 5"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_5",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_5",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_5",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_5",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_5",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_5",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Member 6"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_6",
+            "label": "Members image",
+            "info": "Size suggestion: 376 x 500 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_6",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_6",
+            "label": "Info",
+            "default": "Sed pretium, ligula sollicitudin viverra, tortor libero sodales leo, eget blandit nunc."
+          },
+		      {
+		        "type": "url",
+		        "id": "social_twitter_link_6",
+		        "label": "Twitter",
+		        "info": "https:\/\/twitter.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_facebook_link_6",
+		        "label": "Facebook",
+		        "info": "https:\/\/facebook.com\/shopify"
+		      },
+		      {
+		        "type": "url",
+		        "id": "social_instagram_link_6",
+		        "label": "Instagram",
+		        "info": "http:\/\/instagram.com\/shopify"
+		      }
+        ]
+      },
+      {
+        "type": "item_meet_our_team_2",
+        "name": "Item Meet Our Team 2",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Meet Our Team"
+          },
+          {
+            "type": "header",
+            "content": "Members setting"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_1",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_1",
+            "label": "Name and position",
+            "default": "Samanta Grey<span>Founder &amp; CEO<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_1",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_1",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_1",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_2",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_2",
+            "label": "Name and position",
+            "default": "Bruce Sutton<span>Sales & Marketing Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_2",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_2",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_2",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_3",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_3",
+            "label": "Name and position",
+            "default": "Janet Joy<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_3",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_3",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_3",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_4",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_4",
+            "label": "Name and position",
+            "default": "Mark Pocket<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_4",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_4",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_4",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 5"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_5",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_5",
+            "label": "Name and position",
+            "default": "Damion Blue<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_5",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_5",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_5",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 6"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_6",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_6",
+            "label": "Name and position",
+            "default": "Lenard Smith<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_6",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_6",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_6",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 7"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_7",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_7",
+            "label": "Name and position",
+            "default": "Rachel Green<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_7",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_7",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_7",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 8"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_8",
+            "label": "Members image",
+            "info": "Size suggestion: 280 x 300 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_8",
+            "label": "Name and position",
+            "default": "David Doe<span>Product Manager<\/span>"
+          },
+          {
+            "type": "text",
+            "id": "social_twitter_link_8",
+            "label": "Twitter",
+            "info": "https:\/\/twitter.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_facebook_link_8",
+            "label": "Facebook",
+            "info": "https:\/\/facebook.com\/shopify"
+          },
+          {
+            "type": "text",
+            "id": "social_instagram_link_8",
+            "label": "Instagram",
+            "info": "http:\/\/instagram.com\/shopify"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Button"
+          },
+          {
+            "type":"url",
+            "id":"btn_url",
+            "label": "Button url"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<span>LETS START WORK<\/span><i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Default"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "item_customer_say",
+        "name": "Item Customer Say",
+        "settings": [
+		      {
+		        "type":"checkbox",
+		        "id": "off_block",
+		        "label": "Turn off block?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_mobile",
+		        "label": "Turn off on mobile?"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "off_desktop",
+		        "label": "Turn off on desktop?"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Space settings"
+		      },
+		      {
+		        "type": "radio",
+		        "id": "width_section",
+		        "label": "Max width section?",
+		        "options": [
+		          { "value": "container", "label": "1200px" },
+		          { "value": "container-fluid wide", "label": "Wide" },
+		          { "value": "w-100", "label": "Full width" }
+		        ],
+		        "default": "container"
+		      },
+		      {
+		        "type":"checkbox",
+		        "id": "width_content",
+		        "label": "Max width content?",
+		        "default": true
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_top",
+		        "label": "Margin top",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_margin_bottom",
+		        "label": "Margin bottom",
+		        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+		      },
+		      {
+		        "type": "text",
+		        "id": "section_padding",
+		        "label": "Paddings (top right bottom left)",
+		        "info": "6rem 6rem 0 6rem"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Background settings"
+		      },
+		      {
+		        "type": "color",
+		        "id": "section_bg",
+		        "label": "Background color"
+		      },
+		      {
+		        "type": "range",
+		        "id": "section_bg_op",
+		        "min": 0,
+		        "max": 1,
+		        "step": 0.1,
+		        "label": "Opacity background color",
+		        "default": 1
+		      },
+		      {
+		        "type": "header",
+		        "content": "Content settings"
+		      },
+		      {
+		      	"type": "text",
+		      	"id": "title",
+		      	"label": "Title",
+		      	"default": "What Customer Say About Us"
+		      },
+		      {
+		        "type": "header",
+		        "content": "===Customers setting"
+		      },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 1"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_1",
+            "label": "Customer image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_1",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_1",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 2"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_2",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_2",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_2",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 3"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_3",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_3",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_3",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 4"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_4",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_4",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_4",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 5"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_5",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_5",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_5",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+		      {
+		        "type": "paragraph",
+		        "content": "___Customer 6"
+		      },
+          {
+            "type": "image_picker",
+            "id": "image_avatar_6",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 150 pixels"
+          },
+          {
+            "type": "textarea",
+            "id": "name_6",
+            "label": "Name and position",
+            "default": "Victoria Ventura<span>Customer<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "info_6",
+            "label": "Info",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque dolores magni recusandae! Doloremque quidem error eum quis similique doloribus natus qui ut ipsum.Velit quos ipsa exercitationem, vel unde obcaecati impedit eveniet non."
+          },
+          {
+            "type": "header",
+            "content": "===Slide settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "__Auto-rotate slides",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "use_navigation",
+            "label": "__Use navigation?",
+            "default": true
+          },
+          {
+            "type": "select",
+            "id": "nav_style",
+            "options": [
+              {
+                "value": "-default",
+                "label": "Default"
+              },
+              {
+                "value": "1",
+                "label": "Style 1"
+              },
+              {
+                "value": "2",
+                "label": "Style 2"
+              }
+            ],
+            "label": "Navigation style",
+            "default": "-default"
+          },
+          {
+            "type": "select",
+            "id": "nav_mode",
+            "options": [
+              {
+                "value": "default",
+                "label": "Default"
+              },
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "primary",
+                "label": "Primary color"
+              }
+            ],
+            "label": "Navigation mode",
+            "default": "default"
+          },
+          {
+            "type": "select",
+            "id": "nav_position",
+            "options": [
+              {
+                "value": "nav-default",
+                "label": "Default"
+              },
+              {
+                "value": "nav-center-center",
+                "label": "Center center"
+              },
+              {
+                "value": "nav-center-outside",
+                "label": "Center outside"
+              },
+              {
+                "value": "nav-top-right",
+                "label": "Top right"
+              },
+              {
+                "value": "nav-top-left",
+                "label": "Top left"
+              }
+            ],
+            "label": "Navigation position",
+            "default": "nav-default"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_dots",
+            "label": "__Use dots?"
+          },
+          {
+            "type": "select",
+            "id": "dots_mode",
+            "options": [
+              {
+                "value": "default",
+                "label": "Default"
+              },
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "primary",
+                "label": "Primary color"
+              }
+            ],
+            "label": "Dots mode",
+            "default": "default"
+          },
+          {
+            "type": "select",
+            "id": "dots_position",
+            "options": [
+              {
+                "value": "inside",
+                "label": "Inside"
+              },
+              {
+                "value": "outside",
+                "label": "Outside"
+              }
+            ],
+            "label": "Dots position",
+            "default": "inside"
+          },
+          {
+            "type": "textarea",
+            "id": "responsive",
+            "label": "__Responsive",
+            "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"768\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  }\n}"
+          }
+        ]
+      },
+      {
+        "type": "item_icons",
+        "name": "Item Icon box",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box 1"
+          },
+          {
+            "type": "text",
+            "id": "icon_font_1",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](#)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon_1",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Design Quality"
+          },
+          {
+            "type": "textarea",
+            "id": "content_1",
+            "label": "Content",
+            "default": "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero <br>eu augue."
+          },
+          { 
+            "type":"url",
+            "id":"url_1",
+            "label":"Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box 2"
+          },
+          {
+            "type": "text",
+            "id": "icon_font_2",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](#)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon_2",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Professional Support"
+          },
+          {
+            "type": "textarea",
+            "id": "content_2",
+            "label": "Content",
+            "default": "Praesent dapibus, neque id cursus faucibus, <br>tortor neque egestas augue, eu vulputate <br>magna eros eu erat."
+          },
+          { 
+            "type":"url",
+            "id":"url_2",
+            "label":"Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box 3"
+          },
+          {
+            "type": "text",
+            "id": "icon_font_3",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](#)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon_3",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title_3",
+            "label": "Title",
+            "default": "Made With Love"
+          },
+          {
+            "type": "textarea",
+            "id": "content_3",
+            "label": "Content",
+            "default": "Pellentesque a diam sit amet mi ullamcorper <br>vehicula. Nullam quis massa sit amet <br>nibh viverra malesuada."
+          },
+          { 
+            "type":"url",
+            "id":"url_3",
+            "label":"Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box 4"
+          },
+          {
+            "type": "text",
+            "id": "icon_font_4",
+            "label": "Icon font",
+            "info": "Class Icon font. [Find class icon](#)"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon_4",
+            "label": "Icon image",
+            "info": "Image size suggestion: 100 x 100 pixels"
+          },
+          {
+            "type": "text",
+            "id": "title_4",
+            "label": "Title"
+          },
+          {
+            "type": "textarea",
+            "id": "content_4",
+            "label": "Content"
+          },
+          { 
+            "type":"url",
+            "id":"url_4",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "item_count",
+        "name": "Item Count",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920 x 497 pixels"
+          },
+          {
+            "type": "radio",
+            "id": "bg_effect",
+            "label": "Background effect",
+            "options": [
+              {"value": "simple", "label": "Simple"},
+              {"value": "parallax", "label": "Parallax"},
+              {"value": "move", "label": "Move follow mouse"}
+            ],
+            "default": "simple"
+          },
+          {
+            "type": "range",
+            "id": "parallax_speed",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Parallax speed",
+            "default": 0.2
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Count 1"
+          },
+          {
+            "type": "text",
+            "id": "count_1",
+            "label": "Count",
+            "default": "41"
+          },
+          {
+            "type": "text",
+            "id": "unit_1",
+            "label": "Unit",
+            "default": "K+"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Happy Customer"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Count 2"
+          },
+          {
+            "type": "text",
+            "id": "count_2",
+            "label": "Count",
+            "default": "20"
+          },
+          {
+            "type": "text",
+            "id": "unit_2",
+            "label": "Unit",
+            "default": "+"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Years in Business"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Count 3"
+          },
+          {
+            "type": "text",
+            "id": "count_3",
+            "label": "Count",
+            "default": "97"
+          },
+          {
+            "type": "text",
+            "id": "unit_3",
+            "label": "Unit",
+            "default": "%"
+          },
+          {
+            "type": "text",
+            "id": "title_3",
+            "label": "Title",
+            "default": "Return Clients"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Count 4"
+          },
+          {
+            "type": "text",
+            "id": "count_4",
+            "label": "Count",
+            "default": "15"
+          },
+          {
+            "type": "text",
+            "id": "unit_4",
+            "label": "Unit"
+          },
+          {
+            "type": "text",
+            "id": "title_4",
+            "label": "Title",
+            "default": "Awards Won"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

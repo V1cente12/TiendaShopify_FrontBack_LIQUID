@@ -1,0 +1,83 @@
+<!-- kt_related-products_cart-popup.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+  {%- if recommendations.performed -%}
+    {%- capture products_map -%}
+    {% if recommendations.products_count > 0 %}
+      {%- for prd in recommendations.products -%}
+      <div class="grid-item p-style-{{grid_ly}} col-12 col-xs-6 col-md-4 col-xl-2-10 mb-2 mb-xl-0">
+        {%- render "product-grid-item", product: prd, grid_layout: grid_ly, st_card: st_card -%}
+      </div>
+      {%-endfor-%}
+    {%- endif -%}
+    {%- endcapture -%}
+  {%- endif -%}
+  {%- if products_map.size > 1 -%}
+  <div class="modal-header">
+    <h3 class="modal-title cart__popup-related-title h4 mb-0">{{'cart.popup.related_products'|t}}</h3>
+  </div>
+  <div class="modal-body cart__popup-related p-3">
+    <div class="row justify-content-center" style="--grid-gutter: 10px">
+      {{products_map}}
+    </div>
+  </div>
+  {%- endif -%}

@@ -1,0 +1,378 @@
+<!-- md_contact_i_q.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      {% assign block = section.blocks[0] %}
+      <div class="row">
+        <div class="col-lg-6">
+          <h2 class="title mb-1">{{block.settings.title_1}}</h2>
+          {{block.settings.html_desciption_1}}
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="contact-info">
+                <h3>{{block.settings.title_1_1}}</h3>
+                <ul class="contact-list list-unstyled">
+                  {%- if block.settings.address_1_1 != blank -%}
+                  <li>
+                    <i class="fkt-map-marker"></i>
+                    {{block.settings.address_1_1}}
+                  </li>
+                  {%- endif -%}
+                  {%- if block.settings.phone_1_1 != blank -%}
+                  <li>
+                    <i class="fkt-phone"></i>
+                    <a href="tel:{{block.settings.phone_1_1}}">{{block.settings.phone_1_1}}</a>
+                  </li>
+                  {%- endif -%}
+                  {%- if block.settings.email_1_1 != blank -%}
+                  <li>
+                    <i class="fkt-envelope"></i>
+                    <a href="mailto:{{block.settings.email_1_1}}">{{block.settings.email_1_1}}</a>
+                  </li>
+                  {%- endif -%}
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="contact-info">
+                <h3>{{block.settings.title_1_2}}</h3>
+                <ul class="contact-list list-unstyled">
+                  {%- if block.settings.openning_1_2 != blank -%}
+                  <li>
+                    <i class="fkt-clock-o"></i>
+                    <span class="text-dark">{{block.settings.openning_1_2}}</span>
+                  </li>
+                  {% endif %}
+                  {%- if block.settings.openning_1_22 != blank -%}
+                  <li>
+                    <i class="fkt-calendar"></i>
+                    <span class="text-dark">{{block.settings.openning_1_22}}</span>
+                  </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h2 class="title mb-1">{{block.settings.title_2}}</h2>
+          <p class="mb-2">{{block.settings.html_desciption_2}}</p>
+            {%- assign formId = 'ContactForm' -%}
+            {%- form 'contact', class: 'contact-form mb-3' -%}
+            {% render 'form-status', form: form, form_id: formId %}
+            <div class="row">
+              <div class="col-12 col-sm-6">
+                <label for="cname" class="sr-only">{{ 'contact.form.name' | t }} </label>
+                <input type="text" class="form-control" id="cname" name="contact[name]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'contact.form.name' | t }} *" required="">
+              </div>
+
+              <div class="col-12 col-sm-6">
+                <label for="cemail" class="sr-only">{{ 'contact.form.email' | t }} </label>
+                <input type="email" class="form-control" id="cemail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }} *" required="">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <label for="cphone" class="sr-only">{{ 'contact.form.phone' | t }}</label>
+                <input type="tel" class="form-control" id="cphone" name="contact[phone]" placeholder="{{ 'contact.form.phone' | t }}">
+              </div>
+            </div>
+            <label for="cmessage" class="sr-only">{{ 'contact.form.message' | t }}</label>
+            <textarea class="form-control" cols="30" rows="4" id="cmessage" name="contact[body]" required="" placeholder="{{ 'contact.form.message' | t }} *"></textarea>
+
+            <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+              <span>{{ 'contact.form.submit' | t }}</span>
+              <i class="fkt-long-arrow-right"></i>
+            </button>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<noscript class="banner-css" data-section-type="md_contact_i_q">
+{%-capture banner-css-%}
+{%-style-%}
+  .md_contact_i_q .direction-link {
+    display: inline-block;
+    margin-top: 1rem;
+    line-height: 1;
+  }
+  .md_contact_i_q .contact-info h3 {
+    margin-top: 0.5rem;
+    font-weight: 400;
+    font-size: 1.8rem;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+  .md_contact_i_q .contact-list {
+    max-width: 270px;
+    list-style: none;
+    padding: 0;
+  }
+  .md_contact_i_q .contact-list li {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.4rem;
+  }
+  .md_contact_i_q .contact-list a {
+    color: inherit;
+  }
+  .md_contact_i_q .contact-list a:hover,
+  .md_contact_i_q .contact-list a:focus {
+    color: var(--primary);
+  }
+  .md_contact_i_q .contact-list i {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--primary);
+  }
+  [dir="rtl"] .md_contact_i_q .contact-list li{
+    padding-left: 0;
+    padding-right: 3rem;
+  }
+  [dir="rtl"] .md_contact_i_q .contact-list i {
+    left: auto;
+    right: 0;
+  }
+{%-endstyle-%}
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%-endunless-%}
+{%- endunless -%}
+{%schema%}
+  {
+    "name": "Infor & Questions",
+    "class": "md_contact_i_q",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Infor & Questions",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item I&Q",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Box Information"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Contact Information"
+          },
+          {
+            "type": "html",
+            "id": "html_desciption_1",
+            "label": "Text desciption",
+            "default": "<p class=\"mb-3\">Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui, eu pulvinar nunc sapien ornare nisl. Phasellus pede arcu, dapibus eu, fermentum et, dapibus sed, urna.<\/p>"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 1"
+          },
+          {
+            "type": "text",
+            "id": "title_1_1",
+            "label": "Title",
+            "default": "The Office"
+          },
+          {
+            "type": "text",
+            "id": "address_1_1",
+            "label": "Address",
+            "default": "70 Washington Square South New York, NY 10012, United States"
+          },
+          {
+            "type": "text",
+            "id": "phone_1_1",
+            "label": "Phone",
+            "default": "+92 423 567"
+          },
+          {
+            "type": "text",
+            "id": "email_1_1",
+            "label": "Email",
+            "default": "info@midas.com"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 2"
+          },
+          {
+            "type": "text",
+            "id": "title_1_2",
+            "label": "Title",
+            "default": "Office Hours"
+          },
+          {
+            "type": "text",
+            "id": "openning_1_2",
+            "label": "Opening time 1",
+            "default": "Monday-Saturday<br>11am-7pm ET"
+          },
+          {
+            "type": "text",
+            "id": "openning_1_22",
+            "label": "Opening time 2",
+            "default": "Sunday<br>11am-6pm ET"
+          },
+          {
+            "type": "header",
+            "content": "Box Questions"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Got Any Questions?"
+          },
+          {
+            "type": "html",
+            "id": "html_desciption_2",
+            "label": "Text desciption",
+            "default": "<p class=\"mb-2\">Use the form below to get in touch with the sales team</p>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Infor & Questions",
+        "category": "10. Contact",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

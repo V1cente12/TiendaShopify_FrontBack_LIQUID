@@ -1,0 +1,130 @@
+{%- for block in section.blocks -%} 
+  {%- capture quitarPunteroMouse -%}{%if block.settings.url == blank %} gx_quitarPunteroMouse{%endif%}{%- endcapture -%}
+  {%- if block.type == 'item_simple_icons' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box text-{{block.settings.content_align}} icon-box-{{block.settings.content_align}}{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-star-o'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="36" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_sircle_icons' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-circle text-{{block.settings.content_align}} icon-box-{{block.settings.content_align}}{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-info-circle'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="100" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_icon_side' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-side{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">   
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-rotate-left'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="90" height="{{50 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="{{ quitarPunteroMouse }} icon-box-content>
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_icon_side_light' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-side item_icon_side_light{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-rotate-left'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="36" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="{{ quitarPunteroMouse }} icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_icon_side_dark' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-side dark-mode{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-rotate-left'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="36" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_icon_box_card' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-card text-center{%if section.settings.medium_size%} icon-box-sm{%endif%}" style="background-color: {{block.settings.bg_color}}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-rotate-left'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="36" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- elsif block.type == 'item_icon_box_card_2' -%}
+  <div class="{{item_grid}}">
+    <div class="icon-box icon-box-card-border text-center{%if section.settings.medium_size%} icon-box-sm{%endif%}">
+      <span class="icon-box-icon">
+        {%- if block.settings.icon_font != blank -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}"><i class="{{ quitarPunteroMouse }} {{block.settings.icon_font | default: 'fkt-rocket'}}"></i></a>
+        {%- elsif block.settings.icon -%}
+        <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="mr-2 {{ quitarPunteroMouse }}">
+          {%- assign image_item = block.settings.icon -%}
+          <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ image_item | img_url: '240x' }}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;" width="36" height="{{36 | divided_by: image_item.aspect_ratio}}">
+        </a>
+        {%- endif -%}
+      </span>
+      <a href="{{block.settings.url|default:'#'}}" aria-label="{{block.settings.title | escape}}" class="icon-box-content">
+        <h3 class="icon-box-title">{{block.settings.title}}</h3><p>{{block.settings.content}}</p>
+      </a>
+    </div>
+  </div>
+  {%- endif -%}
+{%- endfor -%}

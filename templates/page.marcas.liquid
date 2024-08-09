@@ -1,0 +1,28 @@
+{%-assign url_check = canonical_url | split: '?q=' | last-%}
+{%- if url_check == 'ly_none' -%}
+{%-layout none-%}
+{{page.content}}
+{%- elsif page.handle == 'vertical-menu' -%}
+<div class="container menu-vertical-prev" style="margin-top: 500px;">
+
+</div>
+{%- else -%}
+<div class="container page-content">
+
+
+	{%- section 'sec_marcas_kt_slideshow_1' -%}
+	{%- section 'sec_marcas_kt_slideshow' -%}	
+	{%- section 'sec_marcas_md_banner_template_1' -%}	
+	{%- section 'sec_marcas_md_icon_boxes' -%}	
+	
+	{%- section 'sec_marcas_md_list_item_cattegories_5' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_6' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_7' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_8' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_9' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_10' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_11' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_12' -%}
+	{%- section 'sec_marcas_md_list_item_cattegories_13' -%}
+</div>
+{%- endif -%}

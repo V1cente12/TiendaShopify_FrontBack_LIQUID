@@ -1,0 +1,54 @@
+{%- if settings.show_multiple_currencies -%}
+{%- if layout == 1 -%}
+  {%- if settings.currency_options == 'customize' -%}
+  <ul class="curcy_list row d-flex list-unstyled">
+    {%-assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ','-%}
+    {%-assign supported_codes = settings.supported_currencies | split: ' '-%}
+    <li class="curcy_item col active" data-currency="{{shop.currency}}"><span class="curc_label">{%- comment -%}<span class="flags {{shop.currency}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: shop.currency-%}</span>
+    </li>
+    {%-for code in supported_codes-%}
+    {%-if code != shop.currency and codes contains code-%}
+    <li class="curcy_item col" data-currency="{{code}}"><span class="curc_label">{%- comment -%}<span class="flags {{code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: code-%}</span></li>
+    {%-endif-%}
+    {%- endfor -%}
+  </ul>
+  {%- elsif settings.currency_options == 'shopify' and shop.enabled_currencies -%}
+  <ul class="curcy_list row d-flex list-unstyled">
+    {%- for currency in shop.enabled_currencies -%}
+      {%- if currency == cart.currency -%}
+        <li class="curcy_item col active" data-currency="{{currency.iso_code}}"><span class="curc_label">{%- comment -%}<span class="flags {{currency.iso_code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: currency.iso_code-%}</span></li>
+      {%- else -%}
+        <li class="curcy_item col" data-currency="{{currency.iso_code}}"><span class="curc_label">{%- comment -%}<span class="flags {{currency.iso_code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: currency.iso_code-%}</span></li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+  {%- endif -%}
+{%- elsif layout == 2 -%}  
+<div class="kt--drop-title text-link fkt-angle-down_ currency_display">
+  <span class="currency__name">{{ cart.currency.iso_code | default: shop.currency }}</span>
+</div>
+<div class="kt--drop-in w-auto py-1i currency-list">
+  <ul class="currency curcy_list list-unstyled mb-0 kt_scroll">
+    {%- if settings.currency_options == 'customize' -%}
+      {%-assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ','-%}
+      {%-assign supported_codes = settings.supported_currencies | split: ' '-%}
+      <li class="curcy_item active" data-currency="{{shop.currency}}"><span class="curc_label">{%- comment -%}<span class="flags {{shop.currency}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: shop.currency-%}</span>
+      </li>
+      {%-for code in supported_codes-%}
+      {%-if code != shop.currency and codes contains code-%}
+      <li class="curcy_item" data-currency="{{code}}"><span class="curc_label">{%- comment -%}<span class="flags {{code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: code-%}</span></li>
+      {%-endif-%}
+      {%- endfor -%}
+    {%- elsif settings.currency_options == 'shopify' and shop.enabled_currencies -%}
+      {%- for currency in shop.enabled_currencies -%}
+        {%- if currency == cart.currency -%}
+          <li class="curcy_item active" data-currency="{{currency.iso_code}}"><span class="curc_label">{%- comment -%}<span class="flags {{currency.iso_code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: currency.iso_code-%}</span></li>
+        {%- else -%}
+          <li class="curcy_item" data-currency="{{currency.iso_code}}"><span class="curc_label">{%- comment -%}<span class="flags {{currency.iso_code}}"></span>{%- endcomment -%}{%-render 'kt-currency-name', cur: currency.iso_code-%}</span></li>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </ul>
+</div>
+{%- endif -%}
+{%- endif -%}

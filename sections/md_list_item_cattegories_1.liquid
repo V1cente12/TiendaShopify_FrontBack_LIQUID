@@ -1,0 +1,585 @@
+<!-- md_list_item_cattegories_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {%- assign blocksSize = section.blocks.size -%}
+      {%- if typeBlocks contains 'item_title' -%}
+        {%- assign blocksSize = blocksSize | minus: 1 -%}
+      {%- endif -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'item_title' -%}
+        <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%} mb-3">
+          <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12{%endif%}">
+            <div class="section-title {{block.settings.title_align}} w-100">                
+              {%- if block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endif -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+              {%- unless block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- if block.settings.name_link != blank -%}
+          <div class="col-auto">
+            {%- if block.settings.link_to != blank -%}              
+              <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+            {%- else -%}
+              <p class="sub-title">{{block.settings.name_link}}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      {%- endfor -%}
+      <div class="d-flex justify-content-center">
+        <div class="overflow-scroll-wrapper w-100">
+          <ul class="box-tabs row flex-sm-row mb-0 list-unstyled justify-content-center">
+            {%- assign itemIdx = 0 -%}
+            {%- assign blocks = section.blocks | where: 'type', 'item' -%}
+            {% assign css = '' %}
+            {%- for block in blocks -%}
+              {% comment %}{%- unless block.settings.image_1 and block.settings.image_2 and block.settings.icon_svg_1 == blank and block.settings.icon_svg_2 == blank -%}{%- continue -%}{%- endunless -%}{% endcomment %}
+              {%- case section.settings.content_type -%}
+                {%- when 'type_1' -%}
+                  <li class="col-6 col-xs-4{%if section.settings.width_content == false and section.settings.width_section != 'container'%} col-xl-3{%endif%}">
+                    <div class="row align-items-end h-100">
+                      {%- if block.settings.image_1 -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list">
+                          <a href="{{block.settings.link_1|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- assign img_url = block.settings.image_1 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_1.width}}" height="{{block.settings.image_1.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_1.alt | escape }}" style="padding-bottom:{{block.settings.image_1.height | times: 1.00 | divided_by: block.settings.image_1.width | times: 100.00000000}}%">
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{block.settings.title_1}}</h3>
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                      {%- if block.settings.image_2 -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list">
+                          <a href="{{block.settings.link_2|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- assign img_url = block.settings.image_2 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_2.width}}" height="{{block.settings.image_2.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_2.alt | escape }}" style="padding-bottom:{{block.settings.image_2.height | times: 1.00 | divided_by: block.settings.image_2.width | times: 100.00000000}}%">
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{block.settings.title_2}}</h3>
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                    </div>
+                  </li>
+                {%- when 'type_2' -%}
+                  <li class="col-6 col-xs-4 col-xl-3">
+                    <div class="row align-items-start h-100">
+                      {%- if block.settings.image_1 -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list type_2">
+                          <a href="{{block.settings.link_1|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- assign img_url = block.settings.image_1 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_1.width}}" height="{{block.settings.image_1.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_1.alt | escape }}" style="padding-bottom:{{block.settings.image_1.height | times: 1.00 | divided_by: block.settings.image_1.width | times: 100.00000000}}%">
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{ block.settings.title_1 }}</h3>
+                            {%- if block.settings.link_1.type == 'collection_link' -%}
+                              <span>{{ 'sections.products_section.products_item' | t: count: block.settings.link_1.object.products_count }}</span>
+                            {%- endif -%}
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                      {%- if block.settings.image_2 -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list type_2">
+                          <a href="{{block.settings.link_2|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- assign img_url = block.settings.image_2 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_2.width}}" height="{{block.settings.image_2.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_2.alt | escape }}" style="padding-bottom:{{block.settings.image_2.height | times: 1.00 | divided_by: block.settings.image_2.width | times: 100.00000000}}%">
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{ block.settings.title_2 }}</h3>
+                            {%- if block.settings.link_2.type == 'collection_link' -%}
+                              <span>{{ 'sections.products_section.products_item' | t: count: block.settings.link_2.object.products_count }}</span>
+                            {%- endif -%}
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                    </div>
+                  </li>
+                {%- when 'type_3' -%}
+                  <li class="col-6 col-xs-4 col-xl-3">
+                    <div class="row align-items-start h-100">
+                      {%- if block.settings.image_1 or block.settings.icon_svg_1 != blank -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list type_3">
+                          <a href="{{block.settings.link_1|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- if block.settings.icon_svg_1 != blank -%}
+                                <svg class="molla-svg-icon" viewBox="0 0 48 48"><use xlink:href="#{{block.settings.icon_svg_1}}"></use></svg>
+                                {%- else -%}
+                                {%- assign img_url = block.settings.image_1 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_1.width}}" height="{{block.settings.image_1.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_1.alt | escape }}" style="padding-bottom:{{block.settings.image_1.height | times: 1.00 | divided_by: block.settings.image_1.width | times: 100.00000000}}%">
+                                {%- endif -%}
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{ block.settings.title_1 }}</h3>
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                      {%- if block.settings.image_2 or block.settings.icon_svg_2 != blank -%}
+                      <div class="col-12 col-sm-6">
+                        <div class="item-card_list type_3">
+                          <a href="{{block.settings.link_2|default: '#'}}" class="cat-block">
+                            <figure>
+                              <span>
+                                {%- if block.settings.icon_svg_2 != blank -%}
+                                <svg class="molla-svg-icon" viewBox="0 0 48 48"><use xlink:href="#{{block.settings.icon_svg_2}}"></use></svg>
+                                {%- else -%}
+                                {%- assign img_url = block.settings.image_2 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                <img width="{{block.settings.image_2.width}}" height="{{block.settings.image_2.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[160, 240, 320]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_2.alt | escape }}" style="padding-bottom:{{block.settings.image_2.height | times: 1.00 | divided_by: block.settings.image_2.width | times: 100.00000000}}%">
+                                {%- endif -%}
+                              </span>
+                            </figure>
+                            <h3 class="cat-block-title">{{ block.settings.title_2 }}</h3>
+                          </a>
+                        </div>
+                      </div>
+                      {%- endif -%}
+                    </div>
+                  </li>
+              {%- endcase -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- if section.settings.content_type == 'type_3' -%}
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none" id="sprites-icon-catlist-3">
+    <defs>
+      <path id="t-shirt" d="M357.933,980.959H330.046a1,1,0,0,1-1-1V950.327a1,1,0,0,1,1-1c0.55,0,.954.119,0.954,0.67v29h26V950c0-.551.383-0.67,0.933-0.67a1,1,0,0,1,1,1v29.634A1,1,0,0,1,357.933,980.959Zm5.91-29.936h-5.91a1,1,0,0,1,0-2h5.174l2.589-8.466L354.944,935.3c-1.422,1.616-5.56,5.717-10.955,5.717s-9.533-4.042-10.952-5.631l-10.752,5.167,2.588,8.476h5.173a1,1,0,0,1,0,2h-5.91a1,1,0,0,1-.952-0.707l-3.055-10a1,1,0,0,1,.522-1.191l12.217-5.872a1,1,0,0,1,1.218.288c0.043,0.055,4.322,5.48,9.9,5.48s9.857-5.511,9.9-5.566a1,1,0,0,1,1.229-.291l12.217,5.979a1,1,0,0,1,.516,1.188l-3.055,9.988A1,1,0,0,1,363.843,951.023Z" transform="translate(-320.094 -933.063)"/>  
+      <path id="smartphones" class="cls-1" d="M884.858,980H869.144A4.161,4.161,0,0,1,865,975.833V944.167A4.16,4.16,0,0,1,869.144,940h15.714A4.159,4.159,0,0,1,889,944.167v31.666A4.16,4.16,0,0,1,884.858,980Zm-15.714-38A2.157,2.157,0,0,0,867,944.167v31.666A2.157,2.157,0,0,0,869.144,978h15.714A2.157,2.157,0,0,0,887,975.833V944.167A2.157,2.157,0,0,0,884.858,942H869.144Zm11.356,4h-6a1,1,0,1,1,0-2h6A1,1,0,1,1,880.5,946ZM861,972h-1a4.043,4.043,0,0,1-4-4.167V936.167A4.16,4.16,0,0,1,860.143,932h15.713A4.03,4.03,0,0,1,880,936a1,1,0,1,1-2,0,2.03,2.03,0,0,0-2.144-2H860.143A2.157,2.157,0,0,0,858,936.167v31.666A2.043,2.043,0,0,0,860,970h1A1,1,0,0,1,861,972Zm16,4a2,2,0,1,1,2-2A2,2,0,0,1,877,976Z" transform="translate(-848.5 -932)"/>
+      <path id="blender" class="cls-1" d="M1233.94,963.984h-13.98a1,1,0,0,1,0-2h13.98A1,1,0,0,1,1233.94,963.984Zm0,0a0.872,0.872,0,0,1-.11-0.007,1,1,0,0,1-.88-1.1l2.94-26.931a1.831,1.831,0,0,0-.45-1.421,1.58,1.58,0,0,0-1.19-.523h-14.61a1.586,1.586,0,0,0-1.2.523,1.84,1.84,0,0,0-.44,1.435l2.95,26.917a1,1,0,1,1-1.98.219l-2.95-26.932a3.867,3.867,0,0,1,.95-2.984,3.535,3.535,0,0,1,2.67-1.178h14.61a3.566,3.566,0,0,1,2.67,1.178,3.884,3.884,0,0,1,.94,2.971l-2.93,26.945A1,1,0,0,1,1233.94,963.984ZM1237.95,980h-21.88a0.994,0.994,0,0,1-.97-1.237l3.9-16.015a0.994,0.994,0,1,1,1.93.474L1217.33,978h19.34l-3.7-14.771a1,1,0,1,1,1.93-.488l4.01,16.015a1.011,1.011,0,0,1-.17.859A1,1,0,0,1,1237.95,980Zm-19.93-24h-6.48a0.981,0.981,0,0,1-.98-0.9l-1.55-16a0.985,0.985,0,0,1,.25-0.769A1,1,0,0,1,1210,938h6.74a1,1,0,0,1,0,2h-5.65l1.36,14h5.57A1,1,0,0,1,1218.02,956Zm10.91-16h-3.98a1,1,0,0,1,0-2h3.98A1,1,0,1,1,1228.93,940Zm0,6h-3.98a1,1,0,0,1,0-2h3.98A1,1,0,1,1,1228.93,946Zm0,6h-3.98a1,1,0,0,1,0-2h3.98A1,1,0,0,1,1228.93,952Zm-1.99,22a3,3,0,1,1,2.99-3A2.995,2.995,0,0,1,1226.94,974Zm0-4a1,1,0,1,0,1,1A0.993,0.993,0,0,0,1226.94,970Z" transform="translate(-1199.97 -932)"/>
+      <path id="controller-1" class="cls-1" d="M1562.62,970.724a1.024,1.024,0,0,1-.71-0.29,0.991,0.991,0,0,1,0-1.406l6.02-5.967a1,1,0,0,1,1.41,0,0.974,0.974,0,0,1,0,1.406l-6.01,5.967A0.99,0.99,0,0,1,1562.62,970.724Zm6.02,0a0.99,0.99,0,0,1-.71-0.29l-6.02-5.967a0.991,0.991,0,0,1,0-1.406,1.01,1.01,0,0,1,1.42,0l6.01,5.967a0.974,0.974,0,0,1,0,1.406A0.984,0.984,0,0,1,1568.64,970.724Zm17.03-25.855h-3v-2.983h3v2.983Zm5.01,0h-3v-2.983h3v2.983Zm-5.01,4.973h-3v-2.983h3v2.983Zm5.01,0h-3v-2.983h3v2.983Zm-24.78,29.832a13.235,13.235,0,0,1-9.4-3.863,13.107,13.107,0,0,1,0-18.657l21.51-21.348a13.384,13.384,0,0,1,18.8,0,13.125,13.125,0,0,1,0,18.658,13.4,13.4,0,0,1-14.06,3.03,0.986,0.986,0,0,1-.59-1.279,1,1,0,0,1,1.29-.583,11.4,11.4,0,0,0,11.95-2.574,11.161,11.161,0,0,0,0-15.846,11.368,11.368,0,0,0-15.97,0l-21.52,21.348a11.136,11.136,0,0,0,0,15.845,11.357,11.357,0,0,0,15.97,0,11.164,11.164,0,0,0,2.59-11.851,1,1,0,0,1,1.88-.7A13.214,13.214,0,0,1,1565.9,979.674Zm11.51-16.476a1.021,1.021,0,0,1-.71-0.291,0.991,0.991,0,0,1,0-1.406l5.69-5.642a1.012,1.012,0,0,1,1.42,0,0.991,0.991,0,0,1,0,1.406l-5.69,5.642A0.987,0.987,0,0,1,1577.41,963.2Zm-9-15.918a1.007,1.007,0,0,1-.89-0.538c-3.16-6.038-4.94-5.332-6.82-4.579-1.32.525-3.12,1.241-4.89-.6a11.154,11.154,0,0,1-3.18-8.767,1,1,0,0,1,1.99.275h0a9.152,9.152,0,0,0,2.64,7.119c0.8,0.831,1.37.65,2.69,0.126,2.82-1.126,5.66-1.551,9.35,5.509A1,1,0,0,1,1568.41,947.28Z" transform="translate(-1552.655 -931.829)"/>
+      <path id="couch" class="cls-1" d="M1417,950a1,1,0,0,1-1-1v-6a2.05,2.05,0,0,0-2.09-2h-27.82a2.05,2.05,0,0,0-2.09,2v6a1,1,0,0,1-2,0v-6a4.053,4.053,0,0,1,4.09-4h27.82a4.053,4.053,0,0,1,4.09,4v6A1,1,0,0,1,1417,950Zm-37,9a0.991,0.991,0,0,1-.34-0.06,5.64,5.64,0,0,1-3.66-5.309,5.5,5.5,0,1,1,11,0,1,1,0,1,1-2,0,3.5,3.5,0,1,0-7,0,3.634,3.634,0,0,0,2.34,3.43A1,1,0,0,1,1380,959Zm40,0a1,1,0,0,1-.34-1.939,3.633,3.633,0,0,0,2.34-3.428,3.5,3.5,0,1,0-7,0,1,1,0,1,1-2,0,5.5,5.5,0,1,1,11,0,5.636,5.636,0,0,1-3.66,5.307A0.991,0.991,0,0,1,1420,959Zm-34,0a1,1,0,0,1-1-1v-4.533a1,1,0,1,1,2,0V958A1,1,0,0,1,1386,959Zm-6,8.89a1,1,0,0,1-1-1v-8.824a1,1,0,1,1,2,0v8.824A1,1,0,0,1,1380,967.889ZM1420,968a1,1,0,0,1-1-1v-8.933a1,1,0,1,1,2,0V967A1,1,0,0,1,1420,968Zm-6-9a1,1,0,0,1-1-1v-4.533a1,1,0,1,1,2,0V958A1,1,0,0,1,1414,959Zm-0.2,0h-27.6a1,1,0,0,1,0-2h27.6A1,1,0,0,1,1413.8,959Zm6.2,9h-40a1,1,0,0,1,0-2h40A1,1,0,0,1,1420,968Zm-37,4a1,1,0,0,1-1-1v-4a1,1,0,1,1,2,0v4A1,1,0,0,1,1383,972Zm34,0a1,1,0,0,1-1-1v-4a1,1,0,1,1,2,0v4A1,1,0,0,1,1417,972Z" transform="translate(-1376 -931.5)"/>
+      <path id="lamp-2" class="cls-1" d="M709.953,980H681.992a1,1,0,0,1,0-2h27.961A1,1,0,0,1,709.953,980Zm-18.573-6.132a1,1,0,0,1-.894-0.553l-7.824-15.668a1,1,0,1,1,1.787-.895l7.824,15.667A1,1,0,0,1,691.38,973.867ZM681.992,958a4,4,0,1,1,4-4A4,4,0,0,1,681.992,958Zm0-6a2,2,0,1,0,2,2A2,2,0,0,0,681.992,952Zm2.061,0.824a1,1,0,0,1-.725-1.689l11.286-11.918a1,1,0,1,1,1.449,1.377l-11.286,11.918A1,1,0,0,1,684.053,952.823Zm14.113-9.7a1,1,0,0,1-.707-0.293l-1.969-1.975a5.21,5.21,0,0,1,0-7.34,5.169,5.169,0,0,1,7.32,0l1.97,1.975a1,1,0,1,1-1.412,1.414l-1.971-1.975a3.251,3.251,0,0,0-4.493,0,3.2,3.2,0,0,0,0,4.513l1.969,1.975A1,1,0,0,1,698.166,943.126ZM701.135,952a1.052,1.052,0,0,1-.23-0.025,1,1,0,0,1-.718-0.658l-2.954-8.889a1,1,0,0,1,.24-1.022l5.907-5.925a0.992,0.992,0,0,1,1.023-.242l8.862,2.962a1,1,0,0,1,.391,1.655l-11.815,11.851A1,1,0,0,1,701.135,952Zm-1.813-9.617,2.249,6.764,9.531-9.561-6.745-2.253ZM709.953,980a1,1,0,0,1-1-1v-2a3,3,0,0,0-3-3H685.987a3,3,0,0,0-3,3v2a1,1,0,1,1-2,0v-2a5,5,0,0,1,4.994-5h19.972a5,5,0,0,1,4.993,5v2A1,1,0,0,1,709.953,980Z" transform="translate(-671.969 -932)"/>
+      <path id="monitor" class="cls-1" d="M1069.47,971h-42.94a2.561,2.561,0,0,1-2.53-2.58V941.579a2.562,2.562,0,0,1,2.53-2.58h42.94a2.562,2.562,0,0,1,2.53,2.58V968.42A2.561,2.561,0,0,1,1069.47,971Zm-42.94-30a0.562,0.562,0,0,0-.53.579V968.42a0.563,0.563,0,0,0,.53.58h42.94a0.563,0.563,0,0,0,.53-0.58V941.579a0.562,0.562,0,0,0-.53-0.579h-42.94ZM1048,978a1,1,0,0,1-1-1v-7a1,1,0,0,1,2,0v7A1,1,0,0,1,1048,978Zm9,1h-17.93a1,1,0,1,1,0-2H1057A1,1,0,1,1,1057,979Z" transform="translate(-1024 -935)"/>
+      <path id="desktop" class="cls-1" d="M541.444,965H516.556A2.566,2.566,0,0,1,514,962.428V943.571A2.566,2.566,0,0,1,516.556,941h24.888A2.566,2.566,0,0,1,544,943.571v18.857A2.566,2.566,0,0,1,541.444,965Zm-24.888-22a0.57,0.57,0,0,0-.556.571v18.857a0.571,0.571,0,0,0,.556.572h24.888a0.571,0.571,0,0,0,.556-0.572V943.571a0.57,0.57,0,0,0-.556-0.571H516.556ZM537,971H521a1,1,0,1,1,0-2h16A1,1,0,1,1,537,971Zm-29.5,0h-9a2.5,2.5,0,0,1-2.5-2.5v-27a2.5,2.5,0,0,1,2.5-2.5h9a2.5,2.5,0,0,1,2.5,2.5v27A2.5,2.5,0,0,1,507.5,971Zm-9-30a0.5,0.5,0,0,0-.5.5v27a0.5,0.5,0,0,0,.5.5h9a0.507,0.507,0,0,0,.5-0.5v-27a0.507,0.507,0,0,0-.5-0.5h-9Zm6.5,6h-4a1,1,0,1,1,0-2h4A1,1,0,1,1,505,947Zm0,4h-4a1,1,0,1,1,0-2h4A1,1,0,1,1,505,951Zm-2,14a2,2,0,1,1,2-2A2,2,0,0,1,503,965Zm23,5a1,1,0,0,1-1-1v-4a1,1,0,1,1,2,0v4A1,1,0,0,1,526,970Zm6,0a1,1,0,0,1-1-1v-4a1,1,0,1,1,2,0v4A1,1,0,0,1,532,970Z" transform="translate(-496 -931)"/>
+    </defs>
+    <defs><style>.cls-icon{fill:none;stroke:currentColor;stroke-miterlimit:10;stroke-width:2px;}</style></defs>
+    <g id="beauty"><path class="cls-icon" d="M24,46.73H17.3C14.91,46.73,15,45,15,45V33s-.08-1.76,2.31-1.76H30.7C33.09,31.27,33,33,33,33V45s.08,1.76-2.31,1.76Z"/><path class="cls-icon" d="M30.54,31.27s0-17.48,0-18.37-.26-1.44-2.08-1.44H19.38c-1.83,0-2,.55-2.09,1.44s0,18.37,0,18.37"/><path class="cls-icon" d="M19.38,11.46V6.85a13.13,13.13,0,0,1,9.11-5.58l.08,10.18"/></g>
+    <g id="fitness"><rect class="cls-icon" x="11.41" y="8.24" width="5.97" height="31.52" rx="1.46"/><path class="cls-icon" d="M11.41,35.86H7a1.65,1.65,0,0,1-1.57-1.73V13.86A1.65,1.65,0,0,1,7,12.13h4.4"/><path class="cls-icon" d="M5.44,27.26H2.71a1.65,1.65,0,0,1-1.56-1.73V22.4a1.66,1.66,0,0,1,1.56-1.73H5.44"/><rect class="cls-icon" x="30.63" y="8.24" width="5.97" height="31.52" rx="1.46"/><path class="cls-icon" d="M36.6,35.86H41a1.65,1.65,0,0,0,1.57-1.73V13.86A1.65,1.65,0,0,0,41,12.13H36.6"/><path class="cls-icon" d="M42.57,27.26h2.71a1.65,1.65,0,0,0,1.57-1.73V22.4a1.66,1.66,0,0,0-1.57-1.73H42.57"/><polyline class="cls-icon" points="17.37 27.26 25.08 27.26 22.93 27.26 30.63 27.26 30.63 20.74 22.93 20.74 25.08 20.74 17.37 20.74"/></g>
+    <g id="hair"><path class="cls-icon" d="M32.38,16.65v28.1A2.28,2.28,0,0,1,30.1,47H14.52a2.28,2.28,0,0,1-2.29-2.28h0V16.26a.32.32,0,0,1,.32-.32H32.06a.32.32,0,0,1,.31.32h0Z"/><path class="cls-icon" d="M12.23,15.94c0-1.75,4.11-6.36,9.36-6.75H23c5.26,0,9.36,5,9.36,6.75"/><line class="cls-icon" x1="22.31" y1="9.17" x2="22.31" y2="6.89"/><rect class="cls-icon" x="19.2" y="2.62" width="6.22" height="4.27" rx="0.96"/><circle class="cls-2" cx="29.1" cy="4.61" r="0.76"/><circle class="cls-2" cx="32.89" cy="4.61" r="0.76"/><circle class="cls-2" cx="34.78" cy="1.72" r="0.76"/><circle class="cls-2" cx="36.65" cy="4.61" r="0.76"/><circle class="cls-2" cx="34.78" cy="7.43" r="0.76"/><circle class="cls-2" cx="38.6" cy="7.43" r="0.76"/><circle class="cls-2" cx="31.37" cy="7.03" r="0.76"/><circle class="cls-icon" cx="22.31" cy="31.14" r="4.93"/></g>
+    <g id="pet"><ellipse class="cls-icon" cx="13.4" cy="11.05" rx="6.91" ry="4.68" transform="translate(-0.71 21.17) rotate(-75.16)"/><ellipse class="cls-icon" cx="39.79" cy="19.86" rx="7.93" ry="5.37" transform="translate(-4.03 27.47) rotate(-36.37)"/><ellipse class="cls-icon" cx="37.29" cy="34.81" rx="6.55" ry="4.44" transform="translate(-6.82 9.18) rotate(-12.87)"/><ellipse class="cls-icon" cx="28.43" cy="8.38" rx="7.72" ry="5.23" transform="translate(6.15 27.93) rotate(-57.69)"/><path class="cls-icon" d="M25,26.55a15,15,0,0,1,1.34,4.82,15.76,15.76,0,0,1-5.48,14.14c-3.87,3-7.19-.12-9-2.69a10.53,10.53,0,0,1-1-1.66A10.13,10.13,0,0,0,8.37,38,11.23,11.23,0,0,0,6,36.46a6.07,6.07,0,0,1-1-.65C2.41,34-.68,30.67,2.29,26.8a15.76,15.76,0,0,1,14.14-5.48,15.74,15.74,0,0,1,3.38.76,9.07,9.07,0,0,1,4.34,3.12A7.67,7.67,0,0,1,25,26.55Z"/></g>
+    <g id="toy"><path class="cls-icon" d="M.72,38.17s21.24,19.45,46,0"/><path class="cls-icon" d="M4.36,40.87l7.38-13.38a1.63,1.63,0,0,0,.18-1.06c-.31-1.77-.9-7.26,3.52-7.32,5.27-.08,9.27.15,9.64,0s1.9-6.86,4.2-11A11.55,11.55,0,0,1,34,4.2l0,0a1,1,0,0,0,.63-.94V1.62a.45.45,0,0,1,.77-.3l8.7,9.36a.78.78,0,0,1,.16.81l-.71,2a.78.78,0,0,1-.93.5c-1.94-.47-7.31-1.76-7.62-1.76s-.24,11.93-.22,14.18a1.69,1.69,0,0,0,.15.7l6.51,14.67"/><path class="cls-icon" d="M37.93,43.62,29,29.5a.8.8,0,0,0-.67-.37h-10a.82.82,0,0,0-.66.34L8.17,43"/><path class="cls-icon" d="M14.35,19.26S12.28,14.93,8.17,16c-3.22.84-3.2,3.71-3,5.2s1.21,3.71-.6,6c-1.1,1.42-1.55,1.93-1.55,1.93"/><circle class="cls-icon" cx="36" cy="8.09" r="0.68"/></g>
+  </svg>
+{%- endif -%}
+{%- endunless-%}
+{%-endif-%}
+
+{% schema %}
+  {
+    "name": "List categories 1",
+    "class": "md_list_item_categories_1",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "List categories",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "select",
+        "id": "content_type",
+        "options": [
+          {
+            "value": "type_1",
+            "label": "Type 1"
+          },
+          {
+            "value": "type_2",
+            "label": "Type 2"
+          },
+          {
+            "value": "type_3",
+            "label": "Type 3"
+          }
+        ],
+        "label": "Content type",
+        "default": "type_1"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item title section",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "textarea",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item category",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Item 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image",
+            "info": "Size suggestion: 240 x 240 px"
+          },
+          {
+            "type": "select",
+            "id": "icon_svg_1",
+            "options": [
+              {
+                "value": "",
+                "label": "None"
+              },
+              {
+                "value": "t-shirt",
+                "label": "T-shirt"
+              },
+              {
+                "value": "desktop",
+                "label": "Desktop"
+              },
+              {
+                "value": "lamp-2",
+                "label": "Lamp"
+              },
+              {
+                "value": "smartphones",
+                "label": "Smartphones"
+              },
+              {
+                "value": "monitor",
+                "label": "Monitor"
+              },
+              {
+                "value": "blender",
+                "label": "Blender"
+              },
+              {
+                "value": "couch",
+                "label": "Couch"
+              },
+              {
+                "value": "controller-1",
+                "label": "Controller"
+              },
+              {
+                "value": "beauty",
+                "label": "Beauty"
+              },
+              {
+                "value": "fitness",
+                "label": "Fitness"
+              },
+              {
+                "value": "hair",
+                "label": "Hair"
+              },
+              {
+                "value": "pet",
+                "label": "Pet"
+              },
+              {
+                "value": "toy",
+                "label": "Toy"
+              }
+            ],
+            "label": "SVG icon",
+            "default": "t-shirt",
+            "info": "[Open ticket to add custom svg](https:\/\/support.the4.co\/)"
+          },
+          {
+            "type": "url",
+            "id": "link_1",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title"
+          },
+          {
+            "type": "header",
+            "content": "Item 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image",
+            "info": "Size suggestion: 240 x 240 px"
+          },
+          {
+            "type": "select",
+            "id": "icon_svg_2",
+            "options": [
+              {
+                "value": "",
+                "label": "None"
+              },
+              {
+                "value": "t-shirt",
+                "label": "T-shirt"
+              },
+              {
+                "value": "desktop",
+                "label": "Desktop"
+              },
+              {
+                "value": "lamp-2",
+                "label": "Lamp"
+              },
+              {
+                "value": "smartphones",
+                "label": "Smartphones"
+              },
+              {
+                "value": "monitor",
+                "label": "Monitor"
+              },
+              {
+                "value": "blender",
+                "label": "Blender"
+              },
+              {
+                "value": "couch",
+                "label": "Couch"
+              },
+              {
+                "value": "controller-1",
+                "label": "Controller"
+              },
+              {
+                "value": "beauty",
+                "label": "Beauty"
+              },
+              {
+                "value": "fitness",
+                "label": "Fitness"
+              },
+              {
+                "value": "hair",
+                "label": "Hair"
+              },
+              {
+                "value": "pet",
+                "label": "Pet"
+              },
+              {
+                "value": "toy",
+                "label": "Toy"
+              }
+            ],
+            "label": "SVG icon",
+            "default": "t-shirt",
+            "info": "[Open ticket to add custom svg](https:\/\/support.the4.co\/)"
+          },
+          {
+            "type": "url",
+            "id": "link_2",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "List categories 1",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

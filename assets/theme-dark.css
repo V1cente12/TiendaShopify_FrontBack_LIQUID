@@ -1,0 +1,95 @@
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+  --text: #efefef;
+}
+
+/*----- QUANTITY -----*/
+.quantity input.input-qty {
+  border-color: #444;
+}
+
+/*==========================================================================
+HEADER
+===========================================================================*/
+.header .border-top {
+  display: none;
+}
+/*----- MAIN MENU -----*/
+.sub-mn {
+  --bg: #242424;
+  box-shadow:  none;
+}
+.i-megamn .mn-i.title_lv1 > a{
+  color: #efefef;
+}
+.main-mn .mn-lv1.mn-i:hover {
+  background-color: #242424;
+}
+.header-bottom .main-mn > li > a:before {
+  display: none;
+}
+.mn-i .mn-i >a {
+  color: #999;
+}
+/*==========================================================================
+SLIDESHOW
+===========================================================================*/
+.nav-style1 .swiper-button-next,
+.nav-style1 .swiper-button-prev {
+  background-color: #444;
+}
+.nav-style1.nav-mode-white .swiper-button-next,
+.nav-style1.nav-mode-white .swiper-button-prev {
+  color: #fefefe;
+}
+
+/*==========================================================================
+PRODUCT
+===========================================================================*/
+
+/*----- PRODUCT GRID -----*/
+.grid-item .product-name {
+  color: #efefef;
+}
+.animated-background {
+  background: #444444;
+  background: linear-gradient(to right, #444444 8%, #404040 18%, #444444 33%);
+}
+.product-loop-variants .swatch {
+  color: #efefef;
+}
+.product-loop-variants.circle[data-usecolor="true"] li.swatch-on-grid .swatch,
+.product-loop-variants.square[data-usecolor="true"] li.swatch-on-grid .swatch {
+  border: .2rem solid #444;
+}
+.product-loop-variants.circle[data-usecolor="true"] li.swatch-on-grid.active .swatch,
+.product-loop-variants.square[data-usecolor="true"] li.swatch-on-grid.active .swatch {
+  -webkit-box-shadow: 0 0 0 0.1rem #9E9E9E;
+  box-shadow: 0 0 0 0.1rem #9E9E9E;
+}
+.product-loop-variants.circle .more .swatch,
+.product-loop-variants.square .more .swatch {
+  background-color: var(--bg);
+}
+
+/*==========================================================================
+PRODUCT SINGLE
+===========================================================================*/
+.entry-buttons .col-6:first-child:after,
+.entry-buttons .col-auto:first-child:after {
+  border-right-color: #444;
+}
+
+/*==========================================================================
+FIX BOOSTRAP
+===========================================================================*/
+input {
+  background-color: #333;
+}
+.modal-content {
+  background-color: #181818;
+}

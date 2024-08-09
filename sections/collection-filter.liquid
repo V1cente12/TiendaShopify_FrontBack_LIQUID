@@ -1,0 +1,828 @@
+<!-- collection-filter.liquid -->
+{% assign view = cart.attributes.theme_coll_layout | split: '_' %}
+{%-assign limit = settings.coll_limit -%}
+{% if view.size == 2 %}
+  {%-assign limit = view[1] | replace: 'pds','' | plus: 0 -%}
+{% endif %}
+{%- unless collection.handle -%}
+  {%- assign collection = collections['all'] -%}
+{%- endunless -%}
+{%-paginate collection.products by limit %}
+<div data-section-id="{{ section.id }}" data-section-type="collection-filter">
+<div class="catalog-filter"><a data-pjax-filter class="ktjax d-none" href="javascript:void(0)"></a></div> 
+{%-render 'kt_filter_json', paginate: paginate-%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-if typeBlocks contains 'item_categories' -%}
+<noscript class="kt_categories_filter d-none">
+  <div class="{{settings.coll_shop_layout | default: 'default'}}-layout">
+    <div class="layered_subtitle_heading">
+      <span class="layered_subtitle">{{ 'collections.sidebar.categories' | t }}<span></span></span>
+      <span class="ico"><i class="fkt-angle-down" aria-hidden="true"></i></span>
+    </div>
+    <ul class="product-categories kt--filter-gr-i_ul list-unstyled">
+      {%- if settings.list_categories_linklist == blank -%}
+        {%- for lin_1 in collections -%}
+          <li class="{% if lin_1.handle == collection.handle %}current-cat{% endif %}">
+            <a class="custom-control custom-checkbox"{% if lin_1.handle == collection.handle %} href="javascript:void(0)"{%else%} href="{{lin_1.url|default: 'javascript:void(0)'}}"{% endif %}>
+              <span class="custom-control-label">{{lin_1.title}}</span>
+              <span class="count">{{lin_1.all_products_count}}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign list_categories_linklist = linklists[settings.list_categories_linklist].links -%}
+        {% comment %}
+        {%- assign list_categories_linklist = linklists[settings.list_categories_linklist].links -%}
+        {%- assign designer_view_ = canonical_url | split: '?q=' -%}
+        {%- assign designer_view = designer_view_ | last -%}
+        {%- if designer_view_.size == 2 -%}
+        {%- assign list_categories_linklist = linklists[designer_view].links -%}
+        {%- endif -%}      
+        {%- for link in list_categories_linklist -%}
+          {%- if link.links.size > 0 -%}
+            {%- assign handle_check = link.links | map: 'handle' -%}
+            {%- assign object_check = link.links | map: 'object' | map: 'id' -%}
+            {%- assign title_check = link.links | map: 'title' -%}
+            {%- if handle_check contains collection.handle or title_check contains collection.title or object_check contains collection.id-%}
+              {%- assign list_categories_linklist = link.links -%}
+              {%-break-%}
+            {%- else -%}
+              {%- for child_link in link.links -%}
+                {%- if child_link.links.size > 0 -%}
+                  {%- assign handle_check_ = child_link.links | map: 'handle' -%}
+                  {%- assign object_check_ = child_link.links | map: 'object' | map: 'id' -%}
+                  {%- assign title_check_ = child_link.links | map: 'title' -%}
+                  {%- if handle_check_ contains collection.handle or title_ contains collection.title or object_check_ contains collection.id-%}
+                    {%- assign list_categories_linklist = child_link.links -%}
+                    {%-break-%}
+                  {%- else -%}
+                    {%-continue-%}
+                  {%- endif -%}
+                {%- else -%}
+                  {%-continue-%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- else -%}
+            {%-continue-%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if collection.id != blank -%}
+          {%- for link in list_categories_linklist -%}
+            {%- if link.object.id == collection.id and link.links.size > 0 -%}
+              {%- assign list_categories_linklist = link.links -%}
+              {%- break -%}
+            {%- else -%}
+              {%- continue -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}{% endcomment %}
+        {%- for lin_1 in list_categories_linklist -%}
+        <li class="level-1{%if lin_1.links.size > 0%} level-1-has-child{%endif%}{% if lin_1.active %} current-cat showAny{% endif %}{%if forloop.first%} opened{%endif%}">
+          <a class="custom-control custom-checkbox"{% if lin_1.active %} href="javascript:void(0)"{%else%} href="{{lin_1.url|default: 'javascript:void(0)'}}"{% endif %}>
+            <span class="custom-control-label">{{lin_1.title}}</span>
+            {%- if lin_1.type == 'collection_link' -%}
+            <span class="count{%if lin_1.url != lin_1.object.url%} lazyload{%endif%}" data-include="{{lin_1.url}}?view=count_with_tag">{{lin_1.object.all_products_count}}</span>
+            {%- endif -%}
+          </a>
+          {% if lin_1.links.size > 0-%}
+          <ul class="child_collection list-unstyled">
+            {% for lin_2 in lin_1.links-%}
+              <li class="level-2{% if lin_2.active %} current-cat{% endif %}">
+                <a class="custom-control custom-checkbox"{% if lin_2.active %} href="javascript:void(0)"{%else%} href="{{lin_2.url|default: 'javascript:void(0)'}}"{% endif %}>
+                  <span class="custom-control-label">{{lin_2.title}}</span>
+                  {%- if lin_2.type == 'collection_link' -%}
+                  <span class="count{%if lin_2.url != lin_2.object.url%} lazyload{%endif%}" data-include="{{lin_2.url}}?view=count_with_tag">{{lin_2.object.all_products_count}}</span>
+                  {%- endif -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- endif -%}
+        </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</noscript>
+{%-endif-%}
+</div>
+{% endpaginate -%}
+<div class="loadingFilter"><div class="card d-none"><div class="bar-loading ifinite"></div></div></div>
+<div class="kt--filter kt--filter-m">
+  <div class="headFilter">
+    <span class="title">{{'collections.filters_mobile.title'|t}}</span><button class="close"><span aria-hidden="true">×</span></button>
+    <div class="kt--filter-sl-gr"><div id="kt--filter-sl"></div></div>
+  </div>
+  <div class="kt--filter-grs kt--filter-grs-m" data-toggle="show"></div>
+  <div class="kt--filter-btn-gr"><button class="btn btn-primary btn-rounded btn-shadow" id="filterApply"></button></div>
+</div>
+{% schema %}
+  {
+    "name": "Filter",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "color_groups",
+        "default": "Color",
+        "label": "List group use style with color swatch",
+        "info": "Separate by a comma, i.e \"Color, Material, ...\"."
+      },
+      {
+        "type": "textarea",
+        "id": "brands_icon",
+        "label": "Brands link image",
+        "info": "Separate by a comma, i.e \"https://cdn.shopify.com/s/files/1/1958/5719/files/Adidas.jpg?581951153018427370, https://cdn.shopify.com/s/files/1/1958/5719/files/Apple.jpg?763180296243275461, ...\". [Upload svg file to Files](\/admin\/settings\/files) and copy name file to input."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Filter By...",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"title",
+            "label":"Filter by group title",
+            "default":"Filter By"
+          },
+          {
+            "type": "textarea",
+            "id": "tags",
+            "label": "Shop by tags list",
+            "info": "Separate by a comma, i.e \"Tag1, Tag2, Tag3\". Or all_tag"
+          },
+          {
+            "type": "header",
+            "content": "Custom for auto filter groups"
+           },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"Color",
+            "info": "Tags containing keyword will be display"
+          },
+          {
+            "type": "paragraph",
+            "content": "Create tag filter groups in Shopify. This snippet is designed to group and separate out collection tags. Use admin extensions"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          },
+          {
+            "type": "select",
+            "id": "block_style",
+            "options": [
+              {
+                "value": "1",
+                "label": "Detail"
+              },
+              {
+                "value": "2",
+                "label": "Color list"
+              },
+              {
+                "value": "3",
+                "label": "Tag"
+              },
+              {
+                "value": "4",
+                "label": "Color tag"
+              },
+              {
+                "value": "5",
+                "label": "Color icon"
+              },
+              {
+                "value": "6",
+                "label": "Brand icon"
+              },
+              {
+                "value": "7",
+                "label": "Brand with icon"
+              }
+            ],
+            "label": "Style",
+            "default": "1"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_split",
+            "label": "Split the column into 2"
+          },
+          {
+            "type": "checkbox",
+            "id": "always_show",
+            "label": "Always show."
+          }          
+        ]
+      },
+      {
+        "type": "item_sl",
+        "name": "Filter By... (Slider)",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"title",
+            "label":"Filter by group title",
+            "default":"Filter By"
+          },
+          {
+            "type": "select",
+            "id": "option",
+            "options": [
+              {
+                "value": "price",
+                "label": "Price"
+              },
+              {
+                "value": "weight",
+                "label": "Weight"
+              }
+            ],
+            "label": "Option",
+            "default": "price"
+          },
+          {
+            "type": "text",
+            "id": "step",
+            "label": "Step",
+            "default": "20000",
+            "info": "20000 $200.00"
+          },
+          {
+            "type": "text",
+            "id": "unit",
+            "label": "Weight unit",
+            "default": "g",
+            "info": "ib, oz, kg, g, cts"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_slider",
+            "info": "Wrong: Don't change"
+          }
+        ]
+      },
+      {
+        "type": "item_avai",
+        "name": "Filter By Truthy",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"title",
+            "label":"Filter by group title",
+            "default":"Filter By Truthy"
+          },
+          { 
+            "type":"text",
+            "id":"val",
+            "label":"Value",
+            "default":"avai",
+            "info": "Available: avai, Preorder: preorder"
+          },
+          { 
+            "type":"text",
+            "id":"label",
+            "label":"Label",
+            "default":"In stock"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          },
+          {
+            "type": "select",
+            "id": "block_style",
+            "options": [
+              {
+                "value": "checkbox",
+                "label": "Checkbox"
+              }
+            ],
+            "label": "Style",
+            "default": "checkbox"
+          },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_truthy",
+            "info": "Wrong: Don't change"
+          }
+        ]
+      },
+      {
+        "type": "item_recent",
+        "name": "Recent products",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_rencent",
+            "info": "Wrong: Don't change"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          }
+        ]
+      },
+      {
+        "type": "item_banner",
+        "name": "Banner",
+        "settings": [
+          { 
+            "type":"image_picker",
+            "id":"img",
+            "label":"Banner image"
+          },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_banner",
+            "info": "Wrong: Don't change"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          }
+        ]
+      },
+      {
+        "type": "item_custom",
+        "name": "Custom",
+        "settings": [
+          { 
+            "type":"page",
+            "id":"content",
+            "label":"Page content"
+          },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_custom",
+            "info": "Wrong: Don't change"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          }
+        ]
+      },
+      {
+        "type": "item_categories",
+        "name": "Categories",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"kt_categories",
+            "info": "Wrong: Don't change"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "auto",
+                "label": "Auto"
+              },
+              {
+                "value": "1",
+                "label": "1/12"
+              },
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": " 4/12"
+              },
+              {
+                "value": "5",
+                "label": "5/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              },
+              {
+                "value": "7",
+                "label": "7/12"
+              },
+              {
+                "value": "8",
+                "label": "8/12"
+              },
+              {
+                "value": "9",
+                "label": "9/12"
+              },
+              {
+                "value": "10",
+                "label": "10/12"
+              },
+              {
+                "value": "11",
+                "label": "11/12"
+              },
+              {
+                "value": "12",
+                "label": "Full width"
+              }
+            ],
+            "label": "Width",
+            "default": "auto"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

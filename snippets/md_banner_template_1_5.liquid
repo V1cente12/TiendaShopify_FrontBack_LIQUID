@@ -1,0 +1,477 @@
+<!-- md_banner_template_1_5.liquid -->
+{%- assign parent_class = 'imgs__banner_template5' | append: block.settings.content_type -%}
+{%- case block.settings.content_type -%}
+  {%- when 'type_1' -%}
+    {%- assign use_css = false -%}
+    <div class="row align-items-center {{parent_class}}{%if section.blocks.size > 1%} mt-gutter{%endif%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+      <div class="col-12 col-md-6 item__banner item__1">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_1 -%}
+          {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 605.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="580x605 px"{% endunless %}></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}  
+          <div class="text-content position-absolute wait-for-css">
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_2 -%}
+          {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 605.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="580x605 px"{% endunless %}></a>
+        </div>
+      </div>
+    </div>
+    {%- if use_css -%}
+    <noscript class="banner-css" data-section-type="{{parent_class}}">
+      {%-capture banner-css-%}
+      {%style%}
+        .{{parent_class}} a.img__banner {
+          z-index: 0;
+        }
+        .{{parent_class}} .banner-subtitle {
+          color: var(--color);
+          font-weight: 300;
+          font-size: 1.3rem;
+          letter-spacing: -.025em;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+        }
+        .{{parent_class}} .banner-title {
+          color: var(--color);
+          font-weight: 300;
+          font-size: 2.4rem;
+          line-height: 1.13;
+          margin-bottom: 2.6rem;
+          letter-spacing: -.025em;
+          text-transform: uppercase;
+        }
+        .{{parent_class}} .banner-title strong {
+          font-weight: 600;
+        }  
+        .{{parent_class}} .text-content {
+          z-index: 1;
+          top: 50%;
+          left: 50%;
+          -webkit-transform:translate(-50%,-50%);
+          transform:translate(-50%,-50%);
+          -ms-transform:translate(-50%,-50%);
+          text-align: center;
+          width: 100%;
+          padding-right: 10px;
+          padding-left: 10px;
+        }
+      {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </noscript>
+    {%- endif -%}
+  {%- when 'type_2' -%}
+    {%- assign use_css = false -%}
+    <div class="row align-items-center {{parent_class}}{%unless forloop.first%}{%if section.blocks.size > 1%} mb-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+      <div class="col-12 col-md-6 item__banner item__1">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_1 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_1 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+            {% endif %}
+            {%- if block.settings.name_btn_1 != blank -%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            {%- endif -%}
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_1 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%} 
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_1 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_1 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+            {% endif %}
+            {%- if block.settings.name_btn_2 != blank -%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+            {%- endif -%}
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_2 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+    </div>
+    {%- if use_css -%}
+    <noscript class="banner-css" data-section-type="{{parent_class}}">
+      {%-capture banner-css-%}
+      {%style%}
+        .{{parent_class}} a.img__banner{
+          z-index:0;
+          min-height: 300px;
+        }
+        .{{parent_class}} .banner-subtitle{
+          color: var(--color);
+          margin-bottom: .6rem;
+          font-weight: 300;
+          font-size: 1.4rem;
+          line-height: 1.2;
+          letter-spacing: .1em;
+        }
+        .{{parent_class}} .banner-title{
+          color: var(--color);
+          font-size: 3rem;
+          line-height: 1.15;
+          font-weight: 400;
+          letter-spacing: .1em;
+          margin-bottom: 2.2rem;
+        }
+        .{{parent_class}} .banner-title strong{
+          font-weight:600
+        }
+        .{{parent_class}} .text-content{
+          z-index:1;
+          top:50%;
+          left:50%;
+          -webkit-transform:translate(-50%,-50%);
+          transform:translate(-50%,-50%);
+          -ms-transform:translate(-50%,-50%);
+          text-align:center;
+          width:100%;
+          padding-right:1rem;
+          padding-left:1rem
+        }
+      {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </noscript>
+    {%- endif -%}
+  {%- when 'type_3' -%}
+    {%- assign use_css = false -%}
+    <div class="row align-items-center {{parent_class}}{%unless forloop.first%}{%if section.blocks.size > 1%} mb-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+      <div class="col-12 col-md-6 item__banner item__1">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            <div class="content-border d-flex align-items-center justify-content-center h-100 w-100">
+              <div>
+              {%- if block.settings.stitle_1 != blank -%}
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              {%- endif -%}
+              {%- if block.settings.titlex_1 != blank -%}
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              {% endif %}
+              </div>
+            </div>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_1 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            <div class="content-border d-flex align-items-center justify-content-center h-100 w-100">
+              <div>
+              {%- if block.settings.stitle_2 != blank -%}
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+              {%- endif -%}
+              {%- if block.settings.titlex_2 != blank -%}
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+              {% endif %}
+              </div>
+            </div>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_2 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+    </div>
+    {%- if use_css -%}
+    <noscript class="banner-css" data-section-type="{{parent_class}}">
+      {%-capture banner-css-%}
+      {%style%}
+        .{{parent_class}} a.img__banner{
+          z-index: 0;
+          min-height: 400px;
+        }
+        .{{parent_class}} .banner-subtitle{
+          color: var(--color);
+          font-size: 3rem;
+          margin-bottom: 1rem;
+          letter-spacing: .01em;
+        }
+        .{{parent_class}} .banner-title{
+          color: var(--color);
+          font-size: 1.5rem;
+          margin-bottom: 0;
+          letter-spacing: .01em;
+        }
+        .{{parent_class}} .text-content{
+          z-index:1;
+          top:50%;
+          left:50%;
+          font-weight: 500;
+          line-height: 1.2;
+          -webkit-transform:translate(-50%,-50%);
+          transform:translate(-50%,-50%);
+          -ms-transform:translate(-50%,-50%);
+          text-align:center;
+          width:100%;
+          max-width: 33rem;
+          padding-right:1rem;
+          padding-left:1rem;
+        }
+        .{{parent_class}} .content-border {
+          padding: 1.5rem;
+          border: .3rem dashed transparent;
+          min-height: 15.2rem;
+          width: 100%;
+          transition: all .3s;
+        }
+        .{{parent_class}} .item__banner:hover .content-border{
+          border-color: #fff;
+        }
+      {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </noscript>
+    {%- endif -%}
+  {%- when 'type_4' -%}
+    {%- assign use_css = false -%}
+    <div class="row align-items-center {{parent_class}}{%unless forloop.first%}{%if section.blocks.size > 1%} mb-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+      <div class="col-12 col-md-6 item__banner item__1">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_1 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_1 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+            {% endif %}
+            {%- if block.settings.name_btn_1 != blank -%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="banner_link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            {%- endif -%}
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_1 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_2 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_2 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+            {% endif %}
+            {%- if block.settings.name_btn_2 != blank -%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="banner_link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+            {%- endif -%}
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_2 -%}
+          {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="880x500 px"{% endunless %}></a>
+        </div>
+      </div>
+    </div>
+    {%- if use_css -%}
+    <noscript class="banner-css" data-section-type="{{parent_class}}">
+      {%-capture banner-css-%}
+      {%style%}
+        .{{parent_class}} a.img__banner{
+          z-index: 0;
+          min-height: 23rem;
+        }
+        .{{parent_class}} .banner-subtitle{
+          color: var(--color);
+          font-size: 1.4rem;
+          margin-bottom: 1rem;
+          letter-spacing: .01em;
+        }
+        .{{parent_class}} .banner-title{
+          color: var(--color);
+          font-size: 2rem;
+          font-weight: 700;
+          line-height: 1.25;
+          letter-spacing: -.01em;
+          margin-bottom: 1.2rem;
+
+        }
+        .{{parent_class}} .banner_link {
+          font-weight: 600;
+        }
+        .{{parent_class}} .banner_link i {
+          width: 1.6rem;
+          height: 1.6rem;
+          color: #fff;
+          background-color: var(--primary);
+          border-radius: 1rem;
+          line-height: 1.6rem;
+          display: inline-block;
+          font-size: 1rem;
+          text-align: center;
+          margin: 0 .7rem;
+          transform: translateY(-1px);
+        }
+        .{{parent_class}}{
+          margin-left: -5px;
+          margin-right: -5px;
+        }
+        .{{parent_class}}>div{
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+        .{{parent_class}} .text-content{
+          z-index:1;
+          top:50%;
+          {{cssAlign}}:30%;
+          -webkit-transform:translateY(-50%);
+          transform:translateY(-50%);
+          -ms-transform:translateY(-50%);
+          line-height: 1.2;
+          padding-{{cssAlign_rev}}:1rem;
+          padding-{{cssAlign}}:3.5rem;
+        }
+        @media (min-width: 1200px) {
+          .{{parent_class}} .text-content{
+            {{cssAlign}}:50%;
+          }
+        }
+      {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </noscript>
+    {%- endif -%}
+  {%- when 'type_5' -%}
+    {%- assign use_css = false -%}
+    <div class="row align-items-center {{parent_class}}{%if section.blocks.size > 1%} mt-gutter{%endif%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+      <div class="col-12 col-md-6 item__banner item__1">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_1 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_1 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+            {%- endif -%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_1 -%}
+          {%-assign width = image_item.width | default: 690.00 -%}{%-assign height = image_item.height | default: 220.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="690x220 px"{% endunless %}></a>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+        <div class="position-relative {{block.settings.banner-effect}}">
+          {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}
+          <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.stitle_2 != blank -%}
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+            {%- endif -%}
+            {%- if block.settings.titlex_2 != blank -%}
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+            {%- endif -%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          {%- assign image_item = block.settings.image_2 -%}
+          {%-assign width = image_item.width | default: 690.00 -%}{%-assign height = image_item.height | default: 220.00 | plus: 0.00-%}
+          <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="690x220 px"{% endunless %}></a>
+        </div>
+      </div>
+    </div>
+    {%- if use_css -%}
+    <noscript class="banner-css" data-section-type="{{parent_class}}">
+      {%-capture banner-css-%}
+      {%style%}
+        .{{parent_class}} a.img__banner {
+          z-index: 0;
+          min-height: 22rem;
+        }
+        .{{parent_class}} .banner-subtitle {
+          color: var(--color);
+          font-weight: 400;
+          font-size: 1.3rem;
+          letter-spacing: -.01em;
+          margin-bottom: 1rem;
+        }
+        .{{parent_class}} .banner-title {
+          color: var(--color);
+          font-weight: 400;
+          font-size: 2rem;
+          line-height: 1.3;
+          margin-bottom: 2rem;
+          letter-spacing: -.01em;
+        }
+        .{{parent_class}} .banner-title strong {
+          font-weight: 600;
+        }
+        .{{parent_class}} .text-content {
+          z-index: 1;
+          top: 50%;
+          {{cssAlign}}: 3rem;
+          -webkit-transform:translateY(-50%);
+          transform:translateY(-50%%);
+          -ms-transform:translateY(-50%%);
+          padding-right: 10px;
+          padding-left: 10px;
+        }
+        .{{parent_class}} .text-content .btn{
+          font-size:1.4rem;
+          line-height:1;
+          padding:.9rem 2rem;
+          min-width:126px;
+          text-transform:uppercase
+        }
+        .{{parent_class}} .img__banner{
+          border-radius:.3rem
+        }
+      {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </noscript>
+    {%- endif -%}
+{%- endcase -%}

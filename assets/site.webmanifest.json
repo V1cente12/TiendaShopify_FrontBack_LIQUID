@@ -1,0 +1,7 @@
+{
+  "name": "Molla - Shopify template",
+  "short_name": "Molla","start_url": "/",
+  "theme_color": "#131415",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

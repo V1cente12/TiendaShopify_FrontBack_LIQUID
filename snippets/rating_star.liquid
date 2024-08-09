@@ -1,0 +1,42 @@
+{%- if settings.review_app == 'shopifyreview' %}
+<div class="rating">
+  <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+</div>
+{%- elsif settings.review_app == 'ryviu' %}
+  <div class="rating">
+    {%- if type == 'collection' -%}
+    <div class="ryviu-collection"><ryviu-widget-total collection=1 reviews_data="{{product.metafields.ryviu.product_reviews_info  | escape  }}" product_id="{{product.id}}" handle="{{product.handle}}"></ryviu-widget-total></div> 
+    {%- else -%}
+    <div class="review-widget"><ryviu-widget-total reviews_data="{{product.metafields.ryviu.product_reviews_info  | escape  }}" 
+    product_id="{{product.id}}" handle="{{product.handle}}"></ryviu-widget-total></div>
+    {%- endif -%}
+  </div>
+{%- elsif settings.review_app == 'yotpo' %}
+  <div class="yotpo rating" {{--}}
+    data-appkey="5SyMaw47YkHv19ipX1Dt7XSY4ADnSj8DnTZi34sB" {{--}}
+    data-domain="{{shop.permanent_domain | escape }}" {{--}}
+    data-product-id="{{ product.id }}" {{--}}
+    data-product-models="{{ product.id }}" {{--}}
+    data-name="{{ product.title | escape }}" {{--}}
+    data-url="{{ shop.url }}{{ product.url }}" {{--}}
+    data-image-url="{{ product.featured_image | product_img_url: 'large' |replace: '?', '%3F' | replace: '&','%26'}}" {{--}}
+    data-description="{{ product.description | escape }}" {{--}}
+    data-bread-crumbs="{% for tag in product.tags %}{{ tag | escape }};{% endfor %}">
+  </div>
+{%- elsif settings.review_app == 'areviews' %}
+  <div class="areviews_product_item areviews_stars{{ product.id }}"  data-product-id="{{ product.id }}"></div>
+{%- elsif settings.review_app == 'alireviews' %}
+  <div product-id="{{ product.id }}" class="arv-collection arv-collection--{{ product.id }}"></div>
+{%- elsif settings.review_app == 'loox' %}
+  <div class="rating">
+  {%- if type == 'collection' -%}
+    <div class="loox-rating" data-id="{{ product.id }}" data-rating="{{ product.metafields.loox.avg_rating }}" data-raters="{{ product.metafields.loox.num_reviews }}"></div>
+  {%- else -%}
+    <a href="#looxReviews"><div class="loox-rating" data-id="{{ product.id }}" data-rating="{{ product.metafields.loox.avg_rating }}" data-raters="{{ product.metafields.loox.num_reviews }}"></div></a>
+  {%- endif -%}
+  </div>
+{%- elsif settings.review_app == 'judgeme' %}
+  {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+{%- else -%}
+  <!-- reviews-badge -->
+{%- endif -%}

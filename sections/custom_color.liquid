@@ -1,0 +1,92 @@
+{%-style-%}
+  {%-for block in section.blocks -%}
+  {%-if block.settings.title == ''-%}{%-continue-%}{%-endif-%}
+  {%-case block.type -%}
+  {%-when 'color'-%}
+  li._{{block.settings.title | handleize }} .swatch{ {{--}}
+    background-color: {{block.settings.color_1_c | default: "#fff"}};{{--}}
+    {%-if block.settings.color_1_c != blank and block.settings.color_2_c != blank -%}
+    background-image: -webkit-linear-gradient({{block.settings.color_1_c}} 50%, {{block.settings.color_2_c}} 50%);{{--}}
+    background-image: -o-linear-gradient({{block.settings.color_1_c}} 50%, {{block.settings.color_2_c}} 50%);{{--}}
+    background-image: -moz-linear-gradient({{block.settings.color_1_c}} 50%, {{block.settings.color_2_c}} 50%);{{--}}
+    background-image: linear-gradient({{block.settings.color_1_c}} 50%, {{block.settings.color_2_c}} 50%);{{--}}
+    {%-endif -%}
+    {%- if block.settings.color_img and block.settings.color_jpg != blank %}
+    background-image: url({{ block.settings.color_jpg | img_url: '120x120', crop: 'center' | split:'?' | first }});{{--}}
+    {%-endif -%}
+  }
+  {%-when 'label'-%}
+    .label-menu._{{block.settings.title | handleize}}{color: {{block.settings.color}};--bg-color: {{block.settings.bg_color}};}{{--}}
+  {%- endcase -%}
+  {%- endfor -%}
+{%-endstyle-%} 
+{%- schema -%}
+  {
+    "name": "Variants + Label menu",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Name the color name and select the color code you want to customize"
+      }
+    ],
+    "blocks": [
+      {
+        "type":"color",
+        "name":"Item color for variant",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Color name",
+            "info": "eg: yellow"
+          },
+          {
+            "type": "color",
+            "id": "color_1_c",
+            "label": "Select color"
+          },
+          {
+            "type": "color",
+            "id": "color_2_c",
+            "label": "Select color 2 (optional)"
+          },
+          {
+            "type": "checkbox",
+            "id": "color_img",
+            "label": "Show image?"
+          },
+          {
+            "type": "image_picker",
+            "id": "color_jpg",
+            "label": "Color image",
+            "info": "30px x 30px recommended"
+          }
+        ]
+      },
+      {
+        "type":"label",
+        "name":"Item label menu",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Label name",
+            "info": "eg: sale"
+          },
+          {
+            "type": "color",
+            "id": "color",
+            "label": "Text color",
+            "default": "#fff"
+          },
+          {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color",
+            "default": "#1cc0a0"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

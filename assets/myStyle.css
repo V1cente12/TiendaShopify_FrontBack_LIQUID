@@ -1,0 +1,137 @@
+:root{
+    --color_red: #dc3545;
+}
+
+.gx_quitarPunteroMouse{
+    cursor:default !important;
+}
+
+.gx_cursorMano{
+    cursor:pointer !important;
+}
+
+.egx_ocultar{
+    display: none !important;
+}
+
+.egx_red{
+    color: var(--color_red) !important;
+}
+.egx_center{
+    text-align: center !important;
+}
+
+
+
+/*BEGIN: FORMULARIO*/
+.egx_inputNoValidado{
+    border-color: #c7465e !important;
+    background-color: #9e060617;
+    color: #cd6d7f !important;
+}
+/*END: FORMULARIO*/
+
+
+
+/*BEGIN: NOTIFY*/
+.egx_notifySuccess{
+    background-color: #69c18a !important;
+}
+.egx_notifyWarning{
+    background-color: #ec9121 !important;
+}
+.egx_notifyDanger{
+    background-color: red !important;
+}
+.egx_notifyColor{
+    color: white !important;
+}
+/*END: MODAL*/
+
+
+
+
+/*BEGIN: DIV*/
+.egx_row{
+    display: flex;
+}
+.egx_col50{
+    flex: 50%;
+}
+/*END: DIV*/
+
+
+
+
+/*BEGIN: MODAL*/
+.egx_modal{
+    position: fixed;
+    top:0;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    background-color: #000000bf;
+    display:flex;
+
+    --opacity: 0;
+    --pointer:none;
+    opacity: var(--opacity);
+    pointer-events: var(--pointer);
+
+    transition: opacity .5s;
+    z-index: 1000;
+}
+.egx_modal:target{
+    --opacity: 1;
+    --pointer:unset;
+}
+.egx_modal .egx_modal_container{
+    margin: auto;
+    background-color:#fff;
+    width: 90%;
+    max-width:600px;
+    max-height:90%;
+    overflow: hidden;
+    text-align: center;
+    padding: 2.5em 1.5em;
+    border-radius: 3em;
+}
+.egx_modal:target .egx_modal_container{
+    animation: show_modal_container 1s .5s backwards;
+}
+@keyframes show_modal_container {
+    0%{
+      transform: translateY(-150vh);
+    }
+
+    100%{
+      transform: translateY(0);
+    }
+}
+.egx_modal .egx_modal_container figure{
+    width: 90%;
+    margin: 0 auto;
+    max-width: 400px;
+    margin-bottom: 2em;
+    width:35%;
+}
+.egx_modal:target figure{
+    animation: scale_figure .5s 1.5s backwards;
+}
+@keyframes scale_figure {
+    0%{
+      transform: scale(0);
+    }
+}
+.egx_modal_container h2{
+    font-size: 30px;
+}
+@media (max-width: 600px){
+    .egx_modal_container h2{
+        font-size: 25px;
+    }
+  }
+
+
+/*END: MODAL*/

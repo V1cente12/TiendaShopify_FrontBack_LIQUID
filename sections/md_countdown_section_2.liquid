@@ -1,0 +1,338 @@
+<!-- md_countdown_section_2.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide'
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide'
+      echo 'container-fluid wide'
+    elsif width_section == 'container'
+      echo 'w-100'
+    else
+      echo 'container-fluid'
+    endif   
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" id="Countdown-{{ section.id }}" data-section-type="countdown-section">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+    	<div class="row justify-content-center align-items-center">        
+        <div class="col-sm-12 col-md-8 col-lg-6">
+          <div class="deal-content wait-for-css">
+            <h4>{{section.settings.stitle}}</h4>
+            <h2>{{section.settings.titlex}}</h2>
+            {% if section.settings.time_countdown != blank or settings.stock_countdown %}
+            <div class="product-parent-countdown d-flex flex-nowrap align-items-center justify-content-center">
+              <div class="kt_countdown style01{% unless section.settings.time_countdown != blank or settings.time_countdown != blank%} kt_loop_bar{% endunless %} kt_countdown_page clearfix" data-time="{% if section.settings.time_countdown != blank%}{{section.settings.time_countdown}}{%elsif settings.time_countdown != blank%}{{settings.time_countdown}}{% endif %}"></div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="row deal-products">
+          {%- for i in (1..2) -%}
+            {%- assign product_ = 'product_' | append: i -%}
+            {% if section.settings[product_] and all_products[section.settings[product_]].handle %}
+            {%- assign product = all_products[section.settings[product_]] -%}
+              <div class="col-12 col-xs-6 justify-content-center deal-product text-center">
+                <div class="grid-item p-style-04">
+                  <div class="product text-center_ product-inner{% unless product.has_only_default_variant or settings.qs_hide_only_1_opt and product.variants.size == 1 or settings.qs_show_vars_list == false %} ktlz{%endunless%}" data-href="{{product.handle}}"{%unless product.has_only_default_variant%} data-show-name="{{ settings.qs_use_name_opt }}" {%if product.options.size >= 1%} data-show-only-first-option="{{settings.qs_show_first_opt}}"{%endif%}{%endunless%}>
+                    <form method="post" action="{{routes.cart_add_url}}" id="ProductSection-{{product.id}}-{{block_id}}-{{section_id}}" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-{{block_id}}-{{section_id}}" data-options="{{product.options.size}}" data-pr-vrs="">
+                      <div class="product-thumb images">
+                        {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+                        <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+                      </div>
+                      <div class="product-body">   
+                        <h2 class="product-name">
+                          <a href="{{product.url| within: collection}}" tabindex="0">{{product.title}}</a>
+                        </h2>
+                        {%- render "product-grid-item", product: product, grid_layout: '24', st_card: st_card -%}
+                        {%-if product.has_only_default_variant == false-%}
+                          {%-unless st_card[13] and product.variants.size == 1-%}
+                          <div class="product-variants-wrapper">
+                            <div class="prd-variants">
+                              {%- for i in (1..product.options.size) -%}
+                                <div class="prd--option{{i}} animated-background"></div>
+                              {%- endfor -%}
+                            </div>
+                          </div>
+                          {%-endunless-%}
+                        {%-endif-%}
+                        <div class="product-cta-wrapper btns_1">
+                          <a href="{{product.url}}" class="btn btn-underline btn-underline-dark text-uppercase" title="{{product.title}}">{{section.settings.btn_view}}</a>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {%- endfor -%}
+          </div>
+        </div>
+    	</div>
+    </div>
+    <noscript class="banner-css" data-section-type="md_countdown_section_2">
+      {%style%}
+        .md_countdown_section_2 .wait-for-css {
+          display: block;
+        }
+        .md_countdown_section_2 .deal-content{
+          font-weight: 300;
+          font-size: 1.6rem;
+          line-height: 1.625;
+          text-align: center;
+        }
+        .md_countdown_section_2 .deal-content h4 {
+          color: {{settings.color_primary}};
+          font-weight: 400;
+          font-size: 1.3rem;
+          line-height: 1.3;
+          letter-spacing: .05em;
+          margin-bottom: 2rem;
+          text-transform: uppercase;
+        }
+        .md_countdown_section_2 .deal-content h2 {
+          font-weight: 600;
+          font-size: 2.4rem;
+          line-height: 1.1;
+          letter-spacing: -.025em;
+          text-transform: uppercase;
+        }
+        .md_countdown_section_2 .kt_countdown.style01{
+          padding-top: 2.2rem;
+          margin-bottom: 4.2rem;
+        }
+        .md_countdown_section_2 .kt_countdown.style01 .flip-top{
+          font-size: 2.4rem;
+        }
+        .md_countdown_section_2 .kt_countdown.style01 .label{
+          font-size: 1.3rem;
+          margin-top: 0.5rem;
+        }
+        .md_countdown_section_2 .kt_countdown.style01 span.sign {
+          margin-top: -21px;
+        }
+        .md_countdown_section_2 .deal-products .product-inner,
+        .md_countdown_section_2 .deal-products .product-body{
+          background-color: transparent;
+          padding-bottom: 2rem;
+        }
+        .md_countdown_section_2 .deal-products  .product-inner{
+          box-shadow: none;
+        }
+        .md_countdown_section_2 .deal-products .product-body{
+          padding-bottom: 0;
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .md_countdown_section_2 .deal-products .p-style-04 .product-price {
+          margin-bottom: 1rem;
+          -ms-flex-pack: center;
+          justify-content: center;
+        }
+        @media screen and (min-width: 576px){
+          .md_countdown_section_2 .deal-products {
+            padding-left: 6rem;
+            padding-right: 6rem;
+          }
+          .md_countdown_section_2 .deal-products .product-body{
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
+        }
+      {%endstyle%}
+    </noscript>
+  </div>
+</div>
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Countdown section 2",
+    "class": "md_countdown_section_2",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Countdown section 2",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "range",
+        "id": "parallax_speed",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Parallax speed",
+        "default": 0.2
+      },
+      {
+        "type": "header",
+        "content": "Countdown settings"
+      },
+      {
+        "type": "text",
+        "id": "time_countdown",
+        "label": "Time",
+        "info": "Ex value: 2020/10/26 12:00:00"
+      },
+      {
+        "type":"textarea",
+        "id":"stitle",
+        "label": "Sub title",
+        "default": "Limited quantities."
+      },
+      {
+        "type":"textarea",
+        "id":"titlex",
+        "label": "Title",
+        "default": "Deal of the Day!"
+      },
+      {
+        "type": "product",
+        "id": "product_1",
+        "label": "Product 1"
+      },
+      {
+        "type": "product",
+        "id": "product_2",
+        "label": "Product 2"
+      },
+      {
+        "type":"text",
+        "id":"btn_view",
+        "label": "Button view",
+        "default": "Shop now"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Countdown section 2",
+        "category": "04. Section"
+      }
+    ]
+  }
+{% endschema %}

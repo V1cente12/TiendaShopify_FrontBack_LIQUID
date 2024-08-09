@@ -1,0 +1,114 @@
+<!-- 404-template.liquid -->
+{%style%}
+.error-content {
+  color: #999;
+  font-weight: 400;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+.error-content > .img__banner {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 620px;
+}
+{%endstyle%}
+<div class="border-top" style="opacity: .3;"></div>
+<div class="container">
+  {%-render 'kt_breadcrumb', use_prd_nav: true -%}
+</div>
+<div class="error-content position-relative text-center ">
+  {%- assign image_item = section.settings.img -%}
+  {%-assign width = image_item.width | default: 1920.00 -%}{%-assign height = image_item.height | default: 600.00 | plus: 0.00-%}
+  <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%; margin-top:2.5rem" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless section.settings.img %} title="1920x600 px"{% endunless %}>
+    {%- if section.settings.img_mobile -%}
+     {%- assign image_mobile = section.settings.img_mobile -%}
+       <img width="{{ image_mobile.width }}" height="{{image_mobile.height }}" class="d-sm-none" src="{{section.settings.img_mobile  | img_url: 'master'}}" style="margin: auto;"> 
+   {%- endif -%}
+  </div> 
+    <div class="text-content text-center position-absolute" style="top: 45.5rem;left: 0;width: 100%;">
+     
+      <div class="container" style="margin-bottom: 1rem;">
+        <h1 class="error-title" style="font-size: 5rem;">{{'general.404.title'|t}}</h1>
+        <p>{{'general.404.subtext'|t}}</p>
+        {%- if section.settings.name_buttom_1 != blank -%} 
+        <!-- <a href="{{ routes.root_url }}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+          <span>{{'general.404.link'|t}}</span>
+        </a> -->
+        <a href="{{ section.settings.url_buttom_1 }}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+          <span>{{ section.settings.name_buttom_1 }}</span>
+        </a>
+        {%- endif -%}
+      </div>
+      
+      {%- if section.settings.name_buttom_2 != blank -%} 
+      <div class="container" style="margin-bottom: 1rem;">
+        <a href="{{ section.settings.url_buttom_2 }}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+            <span>{{ section.settings.name_buttom_2 }}</span>
+        </a>
+      </div>
+      {%- endif -%}
+      {%- if section.settings.name_buttom_3 != blank-%} 
+      <div class="container" style="margin-bottom: 1rem;">
+        <a href="{{ section.settings.url_buttom_3 }}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+         <span>{{ section.settings.name_buttom_3 }}</span>
+        </a>  
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%schema%}
+  {
+    "name": "404 Template",
+    "settings": [
+      { 
+        "type":"image_picker",
+        "id":"img",
+        "label":"Banner image"
+      },
+      {
+        "type": "text",
+        "id": "name_buttom_1",
+        "label": "Buttom_1 name"
+      },
+      { 
+        "type":"url",
+        "id":"url_buttom_1",
+        "label":"Link to buttom_1"
+      },
+      {
+        "type": "text",
+        "id": "name_buttom_2",
+        "label": "Buttom_2 name"
+      },
+      { 
+        "type":"url",
+        "id":"url_buttom_2",
+        "label":"Link to buttom_2"
+      },
+      {
+        "type": "text",
+        "id": "name_buttom_3",
+        "label": "Buttom_3 name"
+      },
+      { 
+        "type":"url",
+        "id":"url_buttom_3",
+        "label":"Link to buttom_3"
+      },
+      {
+        "type":"header",
+        "content":"IMAGE MOBILE"
+      },
+      {
+        "type":"image_picker",
+        "id":"img_mobile",
+        "label":"mobile image",
+        "info":"Dimension: 768x**"
+      }
+    ]
+  }
+{%endschema%}
+
+

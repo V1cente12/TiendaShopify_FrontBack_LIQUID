@@ -1,0 +1,17 @@
+{%- unless section_id -%}
+  {%- assign section_id = section.id -%}
+{%- endunless -%}
+{%- unless product.has_only_default_variant -%}
+{%- for option in product.options_with_values -%}
+  <select class="form-control sgl-opt-selector sgl-opt-selector-{{ section_id }} d-none" id="SglOptSelector-{{ forloop.index0 }}--{{ section_id }}" data-index="option{{ forloop.index }}" data-js-selector="{{ forloop.index0 }}--{{ section_id }}">
+    {%- for value in option.values -%}
+      <option value="{{ value | escape }}"{% if option.selected_value == value %} selected="selected"{% endif %}>{{ value }}</option>
+    {%- endfor -%}
+  </select>
+{% endfor -%}
+{%- endunless -%}
+<select name="id" id="ProductSelect-{{ section_id }}" class="d-none">
+  {%- for variant in product.variants -%}
+  <option{% if variant == product.selected_or_first_available_variant %} selected="selected"{% endif %}{% unless variant.available %} disabled="disabled"{% endunless %} value="{{ variant.id }}" data-value="{{ variant.title | escape}}"{% if variant.inventory_quantity > 0 %} data-inventory-quantity="{{variant.inventory_quantity}}"{%endif%}{%if variant.incoming%} data-incoming="{{variant.next_incoming_date | date: format: 'pre_order_date'}}"{%endif%}>{{ variant.title }}{%unless variant.available%} - {{ 'products.product.sold_out' | t }}{%endunless%}</option>
+  {%- endfor -%}
+</select>

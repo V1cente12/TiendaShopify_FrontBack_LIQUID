@@ -1,0 +1,279 @@
+{%- if settings.use_header_mobile_logo_center -%}
+<div class="header-bottom {{section.settings.width_header}}" style="position: relative;z-index: 13;">
+  <div class="main-header-top kt--drop-w kt--drop-w-d">
+    {%- if section.settings.use_header_announcement or section.settings.use_header_top and settings.color_headt_bg == settings.color_head_bg -%}
+    <div class="clearfix border-top{%unless section.settings.sticky_header_top%} not-sticky{%endunless%}" style="opacity: .5"></div>
+    {%- endif -%}
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="header-control col-3 col-lg-1 d-xl-none order-1 order-xl-1">
+        <div class="control-inner">
+          <div class="mobile-block block-menu-bar">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+        </div>
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 col-lg-3 order-last order-lg-2 order-xl-1">
+        <div class="control-inner">
+          <div class="block-search d-block">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+        </div>
+      </div>
+      {%- elsif settings.use_header_mobile_search_box == false -%}
+      <div class="header-control col-12 col-lg-3 order-lg-2 order-xl-1 d-none d-lg-block">
+        <div class="control-inner">
+          <div class="block-search">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="col-12 col-xl-6 order-first order-xl-2">
+        {%- if section.settings.use_header_announcement and announcements -%}
+          {%- assign responsive_ = section.settings.announcement_reponsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+          {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+          <div class="announcement header-announcement none_sticky{%if section.settings.announcement_onm%} d-none d-lg-block{%endif%}{%if section.settings.announcement_ont%} d-lg-none{%endif%}{%if section.settings.announcement_image%} bg-image lazyload{%endif%}"{%if section.settings.announcement_image%} data-bgset="{{section.settings.announcement_image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.header-announcement','mt':'{{section.settings.announcement_margin_top}}','mb':'{{section.settings.announcement_margin_bottom}}','p':'{{section.settings.announcement_padding}}'}">
+            <div class="section-width w-100">
+              <div class="position-relative">
+                <div class="swiper-container nav-default nav-center-center" data-breakpoints='{{responsive_}}' data-autoplay="true" data-slides-per-view="{{items_}}" data-nav="true" data-delay="10">
+                  <div class="swiper-wrapper">
+                  {%- assign topAnnouncement = section.blocks | where: 'type', 'announcement' -%}
+                  {%- for block in topAnnouncement -%}
+                    {%- if block.settings.message_richtext == blank -%}{%-continue-%}{%- endif -%}
+                    <div class="swiper-slide announcement-item text-center">{{block.settings.message_richtext}}</div>
+                  {%- endfor -%}
+                  </div>
+                  <div class="swiper-button-prev fkt-angle-left fkt-lg fkt-va"></div><div class="swiper-button-next fkt-angle-right fkt-lg fkt-va"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="header-logo col-6 col-lg-4 d-xl-none order-2 text-center text-xl-left">
+        {%- render 'kt_logo_header' -%}
+      </div>
+      <div class="header-control col-3 col-lg-4 col-xl-3 order-3 order-xl-3">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          {%- if shop.customer_accounts_enabled -%}
+          <div class="block-account d-none d-lg-block">
+            <a href="{%if customer%}{{routes.account_url}}{%else%}{{routes.account_login_url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-user"></use></svg></div><span>{{'customer.account.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare d-none d-lg-block">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist d-none d-lg-block">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span>{{'products.wishlist.title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- else -%}
+<div class="header-bottom {{section.settings.width_header}}" style="position: relative;z-index: 13;">
+  <div class="main-header-top kt--drop-w kt--drop-w-d">
+    {%- if section.settings.use_header_announcement or section.settings.use_header_top and settings.color_headt_bg == settings.color_head_bg -%}
+    <div class="clearfix border-top{%unless section.settings.sticky_header_top%} not-sticky{%endunless%}" style="opacity: .5"></div>
+    {%- endif -%}
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="header-control col-1 d-none d-md-block d-lg-none order-1">
+        <div class="control-inner">
+          <div class="mobile-block block-menu-bar">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+        </div>
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 col-lg-3 order-last order-lg-first">
+        <div class="control-inner">
+          <div class="block-search d-block">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+        </div>
+      </div>
+      {%- elsif settings.use_header_mobile_search_box == false -%}
+      <div class="header-control col-12 col-lg-3 d-none d-lg-block">
+        <div class="control-inner">
+          <div class="block-search">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="col-12 col-xl-6 order-first order-xl-2">
+        {%- if section.settings.use_header_announcement and announcements -%}
+          {%- assign responsive_ = section.settings.announcement_reponsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+          {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+          <div class="announcement header-announcement none_sticky{%if section.settings.announcement_onm%} d-none d-lg-block{%endif%}{%if section.settings.announcement_ont%} d-lg-none{%endif%}{%if section.settings.announcement_image%} bg-image lazyload{%endif%}"{%if section.settings.announcement_image%} data-bgset="{{section.settings.announcement_image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.header-announcement','mt':'{{section.settings.announcement_margin_top}}','mb':'{{section.settings.announcement_margin_bottom}}','p':'{{section.settings.announcement_padding}}'}">
+            <div class="section-width w-100">
+              <div class="position-relative">
+                <div class="swiper-container nav-default nav-center-center" data-breakpoints='{{responsive_}}' data-autoplay="true" data-slides-per-view="{{items_}}" data-nav="true" data-delay="10">
+                  <div class="swiper-wrapper">
+                  {%- for block in section.blocks -%}
+                  {%- if block.type == 'announcement' -%}
+                  {%- if block.settings.message_richtext != blank -%}
+                    <div class="swiper-slide announcement-item text-center">{{block.settings.message_richtext}}</div>
+                  {%- endif -%}
+                  {%- endif -%}
+                  {%- endfor -%}
+                  </div>
+                  <div class="swiper-button-prev fkt-angle-left fkt-lg fkt-va"></div><div class="swiper-button-next fkt-angle-right fkt-lg fkt-va"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="header-logo col-auto col-md-6 d-lg-none order-3">
+        {%- render 'kt_logo_header' -%}
+      </div>
+      <div class="header-control col-auto col-md-5 col-lg-3 order-4">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          <div class="mobile-block block-menu-bar d-md-none d-lg-block d-xl-none">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+          {%- if shop.customer_accounts_enabled -%}
+          <div class="block-account">
+            <a href="{%if customer%}{{routes.account_url}}{%else%}{{routes.account_login_url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-user"></use></svg></div><span>{{'customer.account.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare d-none d-lg-block">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span>{{'products.wishlist.title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+<div class="vertical-menu d-none d-xl-block position-fixed not-sticky">
+  <div class="sub-mns-v">
+    {%- render 'menu_import_vt' -%}
+  </div>
+  <div class="d-flex row no-gutters justify-content-between kt_scroll">    
+    <div class="col-12 align-self-start">
+      <div class="row no-gutters">
+        <div class="header-logo col-12">
+          {%- render 'kt_logo_header' -%}
+        </div>
+        <div class="header-menu col-12">
+          <div class="main-header">
+            <nav class="main-navigation d-flex" data-width="1200" data-layout="vertical">
+              {%- render 'menu_import_vt', only_lv0: true -%}
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 align-self-end mt-5 site-header__copyright-content">
+      <div class="socials_ style-01 socials_color">
+        {%-render "kt_socials"-%}
+      </div>
+      <div class="coppyright"> 
+        {%-if section.settings.copyright != blank-%}
+        <p class="mt-2 mb-2">{{section.settings.copyright|html}}</p>
+        {%-else-%}
+        <p class="mt-2 mb-2">
+          <span class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: '/' }}</span>
+          <span class="site-footer__copyright-content">{{ powered_by_link }}</span>
+        </p>
+        {%-endif-%}
+      </div>
+    </div>
+  </div>
+</div>
+{% style %}
+.header-top.style-17{
+  position:relative;
+  z-index:14
+}
+.header.style-17 .vertical-menu{
+  -ms-flex:0 0 20%;
+  flex:0 0 20%;
+  max-width:20%;
+  width:100%
+}
+#header-ontop .header-bottom,#header-ontop .header-top,.content_for_page{
+  padding-left:10px!important;
+  padding-right:10px!important
+}
+@media (min-width:1200px){
+  .main-content,[id*=shopify-section-footer]{
+    -ms-flex:0 0 80%;
+    flex:0 0 80%;
+    max-width:80%;
+    margin-left:20%
+  }
+  [dir="rtl"] .main-content,[dir="rtl"] [id*=shopify-section-footer]{
+    -ms-flex:0 0 80%;
+    flex:0 0 80%;
+    max-width:80%;
+    margin-left:0;
+    margin-right:20%
+  }
+}
+@media (min-width:992px){
+  .left-sidebar .main-content{
+    -ms-flex:0 0 80%;
+    flex:0 0 80%;
+    max-width:80%
+  }
+  .left-sidebar .sidebar{
+    -ms-flex:0 0 20%;
+    flex:0 0 20%;
+    max-width:20%
+  }
+}
+@media (min-width:1200px){
+  #header-ontop .header-bottom,#header-ontop .header-top,.content_for_page{
+    padding-left:30px!important;
+    padding-right:30px!important
+  }
+}
+@media (min-width:1600px){
+  #header-ontop .header-bottom,#header-ontop .header-top,.content_for_page{
+    padding-left:70px!important;
+    padding-right:70px!important
+  }
+}
+@media (min-width:1920px){
+  #header-ontop .header-bottom,#header-ontop .header-top,.content_for_page{
+    max-width:1920px;
+    margin-left:auto!important;
+    margin-right:auto!important
+  }
+}
+
+{%endstyle%}

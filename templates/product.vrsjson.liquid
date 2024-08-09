@@ -1,0 +1,13 @@
+{%-layout none-%}
+[
+  {%- for variant in product.variants %}
+  {%- capture add -%}{"p_options": {{product.options|json}},
+  	{%-if variant.incoming-%}"incoming": {{variant.incoming}},"incoming_date": "{{variant.next_incoming_date | date: format: 'pre_order_date'}}",{%-endif-%}
+  {%- endcapture -%}
+  {%- capture variants -%}
+	  {{variant|json}}
+  {%- endcapture -%}
+  {{variants| remove_first: "{"| prepend: add}}
+	{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+]

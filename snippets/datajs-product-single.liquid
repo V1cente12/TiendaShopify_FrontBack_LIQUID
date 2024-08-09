@@ -1,0 +1,45 @@
+{%- unless section.id -%}
+  {%- unless section_id -%}
+    {% assign section-id = product.id %}
+  {%- else -%}
+    {% assign section-id = section_id %}
+  {%- endunless -%}
+{%- else -%}
+  {% assign section-id = section.id %}
+{%- endunless -%}
+<div class="datajs--{{ section-id }}"
+  data-prImgs="{{product.images|join: ','|default: 'placeholder.png'}}"
+  data-prImgsWidth="{{product.images| map:'width'|join: ',' | default: '300'}}"
+  data-prImgsHeight="{{product.images| map:'height'|join: ',' | default: '300'}}"
+  data-imgUrl="{{imgUrl}}"
+  data-imgspos="{{imgsPos|join:','}}"
+  data-imgspos360="{{pos360|join:','}}"
+  data-vrimgpos="{% if vrimgpos %}{{vrimgpos}}{% else %}{{imgsPos0}}{% endif %}"
+  data-curpos="[{{imgsPos0}},{{imgsPos1}}]" 
+  data-vrs-featured-img='{{vrsFeaturedImage}}'
+  {% if product.metafields.meta.video -%}
+  {%- assign vrsVideo = '1:|' | append: product.metafields.meta.video -%}
+  data-vrsvideo="{{vrsVideo }}"
+  {% else -%}
+  data-vrsvideo="{{vrsVideo | join: ','}}"
+  {%- endif %}></div>
+{% if section_id == 'quickview-template' %}
+<div class="datasettings--{{ section-id }}" data-use-maxheight="false"
+  data-layout-section="7"
+  data-width-section="true"
+  data-use-thumb-vertical="{{settings.use_thumb_vertical}}"
+  data-gallery="{{settings.gallery}}"
+  data-use-inventory-management="{{settings.use_inventory_management}}"
+  data-trust-image-prdsingle="{{settings.trust_image_prdsingle}}"
+  data-swatch-style="{{settings.swatch_style}}"></div>
+{% else %}
+<div class="datasettings--{{ section-id }}" data-use-maxheight="{{settings.use_maxheight}}"
+  data-layout-section="{{section.settings.layout|default: '1'}}"
+  data-width-section="{%-if settings.product_width_content and settings.product_width_section == 'w-100' or settings.product_width_section == 'container' -%}true{%-else-%}false{%-endif-%}"
+  data-use-thumb-vertical="{{settings.use_thumb_vertical}}"
+  data-gallery="{{settings.gallery}}"
+  data-use-inventory-management="{{settings.use_inventory_management}}"
+  data-trust-image-prdsingle="{{settings.trust_image_prdsingle}}"
+  data-swatch-style="{{settings.swatch_style}}"
+  data-wide="{{settings.use_wide}}"></div>
+{% endif %}

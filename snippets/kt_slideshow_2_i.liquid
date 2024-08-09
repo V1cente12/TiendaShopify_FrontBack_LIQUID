@@ -1,0 +1,101 @@
+{%-case block.type-%}
+{%-when 'text'-%}
+<div class="imgRatio-wrap slide_i--{{ block.id }}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" {{ block.shopify_attributes }}>
+  <div class="slide-wrap{% if block.settings.width_section %} container{% endif %}">
+    <div class="slide_t-content">
+      <div class="page-width">
+      {%- unless block.settings.heading == blank -%}
+        <div class="sl-anime slideshow__title">{{- block.settings.heading | html -}}</div>
+      {%- endunless -%}
+      {%- unless block.settings.subheading == blank -%}
+        <div class="sl-anime slideshow__subtitle">{{- block.settings.subheading | html -}}</div>
+      {%- endunless -%}
+      {%- unless block.settings.description == blank -%}
+        <div class="sl-anime slideshow__description">{{- block.settings.description | html -}}</div>
+      {%- endunless -%}
+      {%- if block.settings.textBtn_1 != blank -%}
+        <div class="sl-anime slideshow__button list-inline-item{% if block.settings.textBtn_2 != blank and block.settings.link_2 != blank %} mr-2{% endif %}">{{--}}
+          <a class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" href="{{ block.settings.link_1 | default: '#' }}">{{ block.settings.textBtn_1 | html }}</a>{{--}}
+        </div>
+      {%- endif -%}
+      {%- if block.settings.textBtn_2 != blank -%}
+        <div class="sl-anime slideshow__button list-inline-item last">{{--}}
+          <a class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" href="{{ block.settings.link_2 | default: '#' }}">{{ block.settings.textBtn_2 | html }}</a>{{--}}
+        </div>
+      {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%-when 'video'-%}
+{%- assign iframe = false -%}
+{% if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be' %}
+  {%- assign iframe = true -%}
+{% endif %}
+<div class="imgRatio-wrap slide_i--{{ block.id }}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" {{ block.shopify_attributes }}>
+  <div class="slide-wrap{% if block.settings.width_section %} container{% endif %}">
+    <div class="slide_t-content">
+      <div class="page-width">
+      {%- if iframe -%}
+        <div class="embed-responsive embed-responsive-{{block.settings.as}} {{block.settings.border}}{%if block.settings.shadow%} shadow{%endif%}" style="width: {{block.settings.width | default: '560px'}};max-width: 100%;">
+          {{block.settings.video_url | replace: '<iframe ', '<iframe class="embed-responsive-item"'}}
+        </div>
+      {% else %}
+        <div class="embed-responsive embed-responsive-{{block.settings.as}} {{block.settings.border}}{%if block.settings.shadow%} shadow{%endif%}" style="width: {{block.settings.width | default: '560px'}};max-width: 100%;">
+          <video class="embed-responsive-item" playsinline controls>{{block.settings.video_url|html}}</video>
+        </div>
+      {%- endif-%}
+      </div>
+    </div>
+  </div>
+</div>
+{%-when 'video_btn'-%}
+{%- assign iframe = false -%}
+{% if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be' %}
+  {%- assign iframe = true -%}
+{% endif %}
+<div class="imgRatio-wrap slide_i--{{ block.id }}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" {{ block.shopify_attributes }}>
+  <div class="slide-wrap{% if block.settings.width_section %} container{% endif %}">
+    <div class="slide_t-content">
+      <div class="page-width">
+        <div class="embed-responsive embed-responsive-{{block.settings.as}} {{block.settings.border}}{%if block.settings.shadow%} shadow{%endif%}" style="width: {{block.settings.width | default: '560px'}};max-width: 100%;">
+          <div class="embed-responsive-item video_btn{%if block.settings.image != blank%} bg-image lazyload{%endif%}"{%if block.settings.image != blank%} data-bgset="{%- render 'bgset', image: block.settings.image -%}" data-sizes="auto" data-parent-fit="contain"{%endif%}>
+          {%- if block.settings.video_url -%}
+            {%- if block.settings.btn_style == 'bold' -%}
+            <a href="{{block.settings.video_url}}" class="btn-video btn-iframe"><i class="fkt-play"></i></a>
+            {%- elsif block.settings.btn_style == 'thin' -%}
+            <a href="{{block.settings.video_url}}" class="btn-video btn-iframe play_thin"><i class="fkt-play-outline"></i></a>
+            {%- endif -%}
+          {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%-when 'pin_prd'-%}
+{%- assign product = all_products[block.settings.product] -%}
+<div class="imgRatio-wrap slide_i--{{ block.id }} kt_pin_item{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" {{ block.shopify_attributes }}>
+  <div class="kt_pins slide-wrap">
+    <div class="slide_t-content">
+      <div class="page-width">
+        <div class="button kt_pin" data-product-handle="{{product.handle}}" style="width: {{block.settings.size}}px;height: {{block.settings.size}}px;line-height: {{block.settings.size}}px;background-color: {{block.settings.bg}}">
+          <span class="kt_pin_name" style="width: {{block.settings.size}}px;height: {{block.settings.size}}px;">
+            <span class="kt_pin_icon">+</span>
+            <span class="kt_pin_animate" style="width: {{block.settings.size|plus: 5}}px;height: {{block.settings.size|plus: 5}}px; border-color: {{block.settings.bg | color_modify: 'alpha', 0.5}}"></span>
+          </span>
+        </div>
+        <div style="display: none"><div class="kt_pin_pritem lazyload loadvariant" data-include="{{product.url}}?view=list-mini2" data-product-handle="{{product.handle}}"><div class="lz-place pin-mini2-place"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+{%-when 'html'-%}
+<div class="imgRatio-wrap slide_i--{{ block.id }}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" {{ block.shopify_attributes }}>
+  <div class="slide-wrap{% if block.settings.width_section %} container{% endif %}">
+    <div class="slide_t-content">
+      <div class="page-width">{{ block.settings.html | strip_newlines }}</div>
+    </div>
+  </div>
+</div>
+{%-endcase-%}

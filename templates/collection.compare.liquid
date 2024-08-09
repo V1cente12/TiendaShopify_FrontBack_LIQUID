@@ -1,0 +1,132 @@
+{%layout none%}
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+
+{%- assign products = canonical_url | split: '?q=' | last | split: '%2c' -%}
+<div class="table-responsive table-compare">
+  <table class="table">
+  	{%- assign products_plus = products.size | plus: 1 -%}
+  	<thead>
+			<tr>
+				{%- for i in (1..products_plus) -%}
+		    <th></th>
+				{%- endfor -%}
+			</tr>
+		</thead>
+		<tbody>
+	  	<tr class="cp_prd-thumb">
+	  		<th scope="col" style="width: 218px;vertical-align: middle;">{{'products.compare.product'|t}}</th>
+				{%- for handle in products -%}
+        {%- capture handle -%}{{handle}}{%- endcapture -%}
+        {%- assign prd_handle = handle | replace: '%c2%ae', '®' -%}
+        {%- assign product = all_products[prd_handle] -%}
+	  		<td class="cp-{{product.handle}}" style="width: 218px">
+	  			<a href="#" class="compare-remove" data-pid="{{product.handle}}"><i class="fkt-times"></i></a>
+          {%- render "product-grid-item", product: product, ktlz: ' data-ktlz="onLoad"', section_id: 'compare', grid_layout: '25', st_card: st_card -%}
+	  		</td>
+				{%- endfor -%}
+				{% comment %}<td style="width: 218px">
+					<div class="add_new aspectRatio">
+						<div class="text-center position-absolute">
+							<i class="fkt-plus"></i>
+							<span class="d-block">Add New Product</span>
+						</div>
+					</div>
+				</td>{% endcomment %}
+	  	</tr>
+	  	<tr class="cp_prd-price">
+	  		<th scope="col" style="width: 218px">{{'products.compare.price'|t}}</th>
+				{%- for handle in products -%}
+        {%- capture handle -%}{{handle}}{%- endcapture -%}
+        {%- assign prd_handle = handle | replace: '%c2%ae', '®' -%}
+        {%- assign product = all_products[prd_handle] -%}
+	  		<td class="cp-{{product.handle}}" style="width: 218px">
+		    	<div class="paddi">
+	          {%- render "product-grid-item", product: product, section_id: 'compare', grid_layout: '24', st_card: st_card -%}
+	        </div>
+	  		</td>
+				{%- endfor -%}
+				{% comment %}<td style="width: 218px"></td>{% endcomment %}
+	  	</tr>
+	  	<tr class="cp_prd-availability">
+	  		<th scope="col" style="width: 218px">{{'products.compare.availability'|t}}</th>
+				{%- for handle in products -%}
+        {%- capture handle -%}{{handle}}{%- endcapture -%}
+        {%- assign prd_handle = handle | replace: '%c2%ae', '®' -%}
+        {%- assign product = all_products[prd_handle] -%}
+	  		<td class="cp-{{product.handle}}" style="width: 218px">
+	  			<span class="Availability-{{product.id}}{% if product.available  %} in_stock{% endif %}">
+		  			{% if product.available  %}{{'products.product.in_stock' | t }}{% else %}{{'products.product.out_of_stock' | t }}{% endif %}
+		  		</span>
+	  		</td>
+				{%- endfor -%}
+				{% comment %}<td style="width: 218px"></td>{% endcomment %}
+	  	</tr>
+
+	    <tr class="cp_prd-description">
+	  		<th scope="col" style="width: 218px">{{'products.compare.description'|t}}</th>
+				{%- for handle in products -%}
+        {%- capture handle -%}{{handle}}{%- endcapture -%}
+        {%- assign prd_handle = handle | replace: '%c2%ae', '®' -%}
+        {%- assign product = all_products[prd_handle] -%}
+	  		<td class="cp-{{product.handle}}" style="width: 218px">		
+		    	<div class="product-excerpt">
+			    	{%- if product.metafields.meta.short_description -%}
+	          {{ product.metafields.meta.short_description | html }}
+	          {% elsif product.description contains  '[/short description]' %}
+	          {{ product.description | split: '[/short description]' | first | split: '[short description]'| last | strip_html }}
+	          {%-else-%}
+	          {{ product.description | strip_html | truncatewords: 30 }}
+	          {%-endif-%}
+		      </div>
+		    </td>
+				{%- endfor -%}
+				{% comment %}<td style="width: 218px"></td>{% endcomment %}
+	    </tr>
+				
+	    <tr class="cp_prd-rating">
+	  		<th scope="col" style="width: 218px">{{'products.compare.ratings'|t}}</th>
+				{%- for handle in products -%}
+        {%- capture handle -%}{{handle}}{%- endcapture -%}
+        {%- assign prd_handle = handle | replace: '%c2%ae', '®' -%}
+        {%- assign product = all_products[prd_handle] -%}
+	  		<td class="cp-{{product.handle}}" style="width: 218px">		  			
+      		{%-render 'rating_star', product: product, type: 'collection'-%}
+	  		</td>
+				{%- endfor -%}
+				{% comment %}<td style="width: 218px"></td>{% endcomment %}
+	    </tr>
+
+	  </tbody>
+  </table>
+</div>

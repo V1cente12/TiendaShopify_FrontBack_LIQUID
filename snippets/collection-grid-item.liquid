@@ -1,0 +1,23 @@
+{%- if block.settings.img -%}
+  {%- assign image_item = block.settings.img -%}
+{%- elsif collection.image and collection != empty -%}
+  {%- assign image_item = collection.image -%}
+{%- elsif collection.products.first and collection.products.first.images != empty and collection != empty -%}
+  {%- assign image_item = collection.products.first.featured_image -%}
+{% else %}
+  {% assign image_item = blank %}
+{% endif %}
+
+<div class="banner banner-cat banner-badge mb-2">
+  <div class="position-relative {{block.settings.banner-effect}}">
+    {%-assign width = image_item.width | default: 550.00 -%}{%-assign height = image_item.height | default: 550.00 | plus: 0.00-%}
+    <a href="{{ collection.url }}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% if image_item == blank %} title="550x550 px"{% endif %}></a>
+    <div class="text-content wait-for-css">
+      <a class="banner-link" href="{{ collection.url }}">
+        <h3 class="banner-title">{{ collection.title }}</h3>
+        <h4 class="banner-subtitle">{{'sections.products_section.products_count'| t : count : collection.all_products_count}}</h4>
+        <span class="banner-link-text">{{'collections.list_collection.button_name'|t}}</span>
+      </a>
+    </div>
+  </div>
+</div>

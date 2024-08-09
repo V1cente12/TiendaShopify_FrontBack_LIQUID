@@ -1,0 +1,13 @@
+{%- layout none -%}
+{%- assign prds = canonical_url | split: 'handle=' | last | split: '&' | first | split: '+' -%}
+{%- assign variant = canonical_url | split: 'q=' | last | split: '&' | first | plus: 0 -%}
+{%- if recommendations.performed -%}
+  {% if recommendations.products_count > 0 %}
+    {%- for prd in recommendations.products -%}
+      {%- assign prds = prds | join: '+' | append: '+' | append: prd.handle | split: '+' -%}
+    {%-endfor-%}
+  {%- endif -%}
+{%- endif -%}
+{%- if prds.size >= 2 -%}
+	{%- render 'fbt-content', prds: prds, variant: variant, st_card: '1,1,1,1,1,1/1,1,nonstretch' | split: ',' -%}
+{%- endif -%}

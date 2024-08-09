@@ -1,0 +1,378 @@
+{%- layout none -%}
+{%- if cart.item_count > 0 and settings.ajax_cart != true -%}
+{%- capture contentCart -%}
+{%- for item in cart.items -%}
+{%- assign gift_item = '' -%}
+{%- if settings.use_gift_wrapping and settings.gift_wrap_product != blank and item.product.handle == settings.gift_wrap_product -%}
+  {%- assign gift_item = 'wrap_item' -%}
+{%- endif -%}
+{%- if item.discounted_price == 0 -%}
+  {%- assign gift_item = 'gift_item' -%}
+{%- endif -%}
+{%- if settings.use_gift_wrapping and settings.gift_wrap_product != blank and gift_item == '' and forloop.first -%}
+<div id="is-a-gift" class="d-none">
+  <input type="hidden" name="updates[{{ all_products[settings.gift_wrap_product].selected_or_first_available_variant.id }}]" value="0" id="gift-wrap_product">
+</div>
+{%- endif -%}
+<li class="item__{{item.id}} item__cart item__{{gift_item|default: 'normal'}} d-flex flex-wrap pb-2 position-relative"{% if gift_item == 'wrap_item' %} id="is-a-gift"{% endif %}>
+  {%- if gift_item == 'wrap_item' -%}
+    <input type="hidden" name="updates[{{ item.id }}]" value="1" id="gift-wrap_product">
+  {%- endif -%}
+  <div class="image__cart col-3">
+    <a href="{{ item.variant.url }}">
+      <img width="{{item.image.width}}" height="{{item.image.height}}" class="img-thumbnail lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ item.image| img_url: '104x120', crop:'center'}}" alt="{{ item.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+    </a>
+  </div>
+  <div class="info__cart col-6 p-0">
+    <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+      {%if item.discounted_price == 0 %}<i class="fkt-gift-1 col-auto" style="color: #4CAF50;font-size: 1.6rem;padding-right: .5rem;"></i>{%endif%}
+      <a class="col" href="{{ item.variant.url }}" title="{{ item.product.title | strip_html }}">
+        {%if item.discounted_price == 0 %}{{'cart.gift.label_html'|t }}{%endif%} {{ item.product.title | truncate: 35 }}
+      </a>
+    </h4>
+    {%- unless item.product.has_only_default_variant -%}
+    <div class="variation" title="{{ item.title | escape |strip_html }}">
+      <span>{{item.variant.title}}</span>
+      {%- if settings.edit_it_cart_drawer -%}
+        <a href="javascript:void(0)" class="col-auto p-small product-variable__cart kt__edit-opts fkt-edit" data-view="{{ item.product.url }}" data-vrid="{{item.id}}" data-pid="{{item.product.id}}" data-qty="{{item.quantity}}"></a>
+      {%- endif -%}
+    </div>
+    {%- endunless -%}
+    <span class="price">{%-if item.discounted_price -%}{{ item.discounted_price | money }}{%-else-%}{{ item.original_price | money }}{%-endif-%}</span>
+
+    {%-if item.unit_price -%}
+    {%- capture unit_price_base_unit -%}
+      <span class="base_unit">
+        {%- if item.unit_price_measurement -%}
+          {%- if item.unit_price_measurement.reference_value != 1 -%}
+            {{- item.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ item.unit_price_measurement.reference_unit }}
+        {%- endif -%}
+      </span>
+    {%- endcapture -%}
+    <span class="UnitPrice-{{item.product.id}} text-nowrap">
+      {{item.unit_price_measurement.quantity_value | append: item.unit_price_measurement.quantity_unit}}
+      (<span class="unit_price">{{item.unit_price | money }}</span> / {{unit_price_base_unit}})
+    </span>
+    {%-endif-%}
+  </div>
+  <div class="action__cart col-3">
+    {%-if gift_item == ''-%}
+    <div class="text-center quantity p-0">
+      <div class="control">
+        <a class="btn-number qtyminus quantity-minus" href="#"></a>  
+        <input type="text" data-id="{{ item.variant_id }}" name="updates[{{ item.id }}]" value="{{item.quantity}}" data-min="1" class="input-qty" size="4" pattern="[0-9]*">
+        <a class="btn-number qtyplus quantity-plus" href="#"></a>
+      </div>
+    </div>
+    {%- endif -%}
+    <div class="text-center">
+      <a class="remove-item remove" href="#" title="{{'cart.general.remove'|t }}">{{'cart.general.remove'|t }}</a>
+    </div>
+  </div>  
+  {%- if gift_item == 'wrap_item' and settings.use_gift_message-%}
+  <div class="form-group mt-1 mb-0 col-12">
+    <textarea name="attributes[gift-note]" class="form-control" id="gift-note" placeholder="{{'cart.gift_wrap.input_placeholder'|t }}" rows="3" style="min-height: auto;">{{cart.attributes.gift-note}}</textarea>
+  </div>
+  {%-endif-%}
+</li>
+{%- endfor -%}
+{%- assign cart_items_ids = cart.items | map: 'id' -%}
+
+{%- if settings.cart_upsell_1 != blank or settings.cart_upsell_2 != blank -%}
+<li class="w-100 border-top"></li>
+{%- for i in (1..2) -%}
+  {%- assign cart_upsell_i = 'cart_upsell_' | append: i -%}
+  {%- if settings[cart_upsell_i] == blank -%}{%-continue-%}{%-endif-%}
+
+  {%- assign product = all_products[settings[cart_upsell_i]] -%}   
+  {%- assign item_ids = product.variants |map:'id' -%}
+  {%- assign sum = cart_items_ids.size | plus: item_ids.size -%}
+  {%- assign sum_uniq = cart_items_ids | concat: item_ids | uniq | size -%}
+  {%- if sum != sum_uniq -%}{%-continue-%}{%-endif-%}
+
+  {%- assign compare_at_price = product.compare_at_price -%}
+  {%- assign price = product.price -%}
+  {%- assign price_varies = product.price_varies -%}
+  {%- assign available = product.available-%}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign on_sale = false-%}
+  {%- if compare_at_price > price -%}
+    {%- assign on_sale = true-%}
+  {%- endif-%}
+  {%- assign sold_out = true-%}
+  {%- assign preOrder = false-%}
+  {%- unless available == false-%}
+    {%- assign sold_out = false-%}
+  {%- endunless-%}
+  {%- if product.selected_or_current_variant_variant.inventory_quantity <= 0 and product.selected_or_current_variant_variant.inventory_policy == 'continue' and product.selected_or_current_variant_variant.incoming -%}
+    {%- assign preOrder = true -%}
+  {%- endif -%}
+  {%- if product.title != blank -%}
+  {%- unless product.has_only_default_variant or settings.qs_hide_only_1_opt and product.variants.size == 1 or settings.qs_show_vars_list == false -%}
+    {%- assign show_variant = true -%}
+  {%- endunless -%}
+  {%- endif -%}
+
+  <li class="item__{{current_variant.id}} item__cart item__upsell d-flex flex-wrap pb-2 position-relative">
+    <div class="image__cart col-3">
+      <a href="{{ product.url }}?variant={{current_variant.id}}">
+        <img width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" class="img-thumbnail lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" alt="{{ product.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+      </a>
+    </div>
+    <div class="info__cart col-6 p-0">
+      <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+        <a class="col" href="{{ product.url }}?variant={{current_variant.id}}" title="{{ product.title | escape }}">{{ product.title | truncate: 35 }}</a>
+      </h4>
+      <span class="product-price">
+        <ins class="ProductPrice-{{product.id}}" data-id="{{product.id}}">{{- current_variant.price | money -}}</ins>
+        {%-unless current_variant.compare_at_price <= current_variant.price or current_variant.compare_at_price == null-%}
+        <del class="ComparePrice-{{product.id}}">
+          {{- current_variant.compare_at_price | default: 0 | money -}}
+        </del>
+        {%-endunless-%}
+      </span>
+    </div>
+    <div class="action__cart col-3">
+      <div class="text-center quantity p-0">
+        {%- assign small_text_add = 'products.product.add_small' | t -%}
+        {%- if product.has_only_default_variant -%}
+          {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, label: small_text_add, style_btn: 'btn btn-primary btn-block btn-minwidth-auto text-uppercase btn-cart kt-button' -%}
+        {%- else -%}
+          {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, label: small_text_add, style_btn: 'btn btn-primary btn-block btn-minwidth-auto text-uppercase kt-button' -%}
+        {%- endif -%}
+      </div>
+    </div>  
+  </li>
+{%- endfor -%}
+{%- endif -%}
+        
+{%- if settings.enable_auto_gift == true and settings.auto_gift_product != blank -%}
+  {%- assign product = all_products[settings.auto_gift_product] -%} 
+  {%- if product.title != blank -%}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+    {%- unless cart_items_ids contains product.selected_or_first_available_variant.id -%}
+    <li class="item__{{product.selected_or_first_available_variant.id}} item__gift item__upsell d-flex flex-wrap pb-2 position-relative w-100">
+      <div class="image__cart col-3">
+        <a href="#">
+          <img width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" class="img-thumbnail lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" alt="{{ product.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+        </a>
+      </div>
+      <div class="info__cart col-6 p-0">
+        <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+          <a class="col" href="#" title="{{ product.title | escape }}">{{ product.title | truncate: 35 }}</a>
+        </h4>
+        <span class="product-price">
+          <ins class="ProductPrice-{{product.id}}" data-id="{{product.id}}">{{- current_variant.price | money -}}</ins>
+        </span>
+      </div>
+      <div class="action__cart col-3"></div>
+    </li>
+    {%- endunless -%}
+  {%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- endif -%}
+
+{%- assign gift_wrap = false -%}
+{%- for item in cart.items -%}
+{%- if settings.use_gift_wrapping and item.product.handle == settings.gift_wrap_product -%}
+  {%- assign gift_wrap = item -%}
+  {%- break -%}
+{%- endif -%}
+{%- endfor -%}
+<div class="cart-drawer" data-section-id="cartDrawer" data-section-type="kt-cart-drawer">
+  <div class="cart-drawer__content d-flex flex-wrap align-content-between" style="overflow-y: auto;">
+    <div class="flex-top w-100">
+      <div class="head__cart-drawer text-center border-bottom position-relative">
+        <button type="button" class="close__cart-drawer cls-overlay fkt-close" data-box="cart-drawer" aria-label="Close"></button>
+        <h3 class="title-ajax__cart h5 title m-0">{{ 'cart.general.items_with_count_html' | t: count: cart.item_count }}</h3>
+      </div>
+      <div class="head__cart-drawer text-center border-bottom p-0i has-item"{% if cart.item_count == 0 %} style="display:none"{% endif %}>
+        {%- if settings.use_threshold_in_drawer -%}
+        {%- assign shipping_above = settings.free_shipping_above | remove: '.' | plus: 0 -%}
+        {%- if settings.free_shipping_above_prd != blank -%}
+          {%- assign shipping_above = all_products[settings.free_shipping_above_prd].price -%}
+        {%- endif -%}
+        <div class="spendFreeShip{%if cart.total_price >= shipping_above%} congratulations{%endif%}">
+          <div class="progress">
+            {%- assign percent = cart.total_price | times: 1.0 | divided_by: shipping_above | times: 100.0 -%}
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{percent}}%;" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="{{shipping_above}}"></div>
+          </div>
+          <div class="text_progress">
+            {%- assign shipping_above_html = shipping_above | money -%}
+            {%- if settings.threshold_layout == 'add_more' -%}
+              {%- assign shipping_above_html = shipping_above | minus: cart.total_price | money -%}
+            {%- endif -%}
+            <span{%if settings.threshold_layout == 'add_more'%} class="add_more_price"{%endif%}>{{'products.shipping_threshold.spend_text_html' | t: shipping_above: shipping_above_html}}</span>
+            <span>{{'products.shipping_threshold.congratulations' | t }}</span>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="content__cart-drawer">
+        <div class="spinner-box"><div class="pulse-container"><div class="pulse-bubble pulse-bubble-1"></div><div class="pulse-bubble pulse-bubble-2"></div><div class="pulse-bubble pulse-bubble-3"></div></div></div>
+        <p class="empty h4 no-item m-0 text-center"{% if cart.item_count > 0 %} style="display:none"{% endif %}>{{ 'cart.general.empty' | t }}</p>
+        <form action="{{routes.cart_url}}" method="post" novalidate id="upadteCartDrawer"><ul class="items__cart-drawer ajax__list-cart row p-0 mb-0 kt_scroll">{{contentCart}}</ul></form>
+      </div>
+    </div>
+    <div class="footer__cart-drawer w-100 has-item"{% if cart.item_count == 0 %} style="display:none"{% endif %}>
+      <ul class="nav nav-tabs nav-tabs-bg justify-content-center list-unstyled">
+        <li class="nav-item"><a class="nav-link active" href="#" data-toggle="tooltip" title="{{'cart.drawer.cart_information'|t}}"><i class="fkt-info-circle fkt-lg"></i></a></li>
+        {%- if settings.note_cart_drawer -%}
+        <li class="nav-item"><a class="nav-link{% if cart.note != blank %} has-data{% endif %}" href="#" data-tab-content="tab-floating-note" data-toggle="tooltip" title="{{'cart.drawer.cart_notes'|t}}"><i class="fkt-comment-o fkt-lg"></i></a></li>
+        {%- endif -%}
+        {%- if settings.gift_wrap_cart_drawer and settings.use_gift_wrapping and settings.gift_wrap_product != blank -%}
+        <li class="nav-item"><a class="nav-link" href="#" data-tab-content="tab-floating-gift" data-toggle="tooltip" title="{{'cart.drawer.gift_wrap'|t}}"><i class="fkt-gift fkt-lg"></i></a></li>
+        {%- endif -%}
+        {%- if settings.shipping_calculator and settings.shipping_calculator_cart_drawer -%}
+        <li class="nav-item"><a class="nav-link" href="#" data-tab-content="tab-floating-shipping" data-toggle="tooltip" title="{{'cart.drawer.calculate_shipping_costs'|t}}"><i class="fkt-truck fkt-lg"></i></a></li>
+        {%- endif -%}
+        {%- if settings.coupon_code_cart_drawer -%}
+        <li class="nav-item"><a class="nav-link{%if cart.attributes.discount != blank%} has-data{%endif%}" href="#" data-tab-content="tab-floating-coupon" data-toggle="tooltip" title="{{'cart.drawer.coupon_code'|t}}"><i class="fkt-tag fkt-lg"></i></a></li>
+        {%- endif -%}
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade active show">
+          {%- assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/' -%}
+          <form action="{{checkout_url}}" method="post" novalidate id="upadteCartCheckout">
+            <table class="table">
+              <tbody>
+                <!-- Cart level discounts -->
+                <tr class="summary-discounts{% unless cart.cart_level_discount_applications != blank %} d-none{% endunless %}">
+                  {%- if cart.cart_level_discount_applications != blank -%}
+                  <th>{{'cart.summary_box.discount'|t}}:</th>
+                  <td class="text-nowrap">
+                  {%- for discount_application in cart.cart_level_discount_applications -%}
+                    <span class="cartDiscount">-{{ discount_application.total_allocated_amount | money }}</span>
+                    <span class="question_mark position-relative"> (?)
+                      <div class="info-discount position-absolute text-uppercase">
+                        {{ discount_application.title }}
+                      </div>
+                    </span>
+                  {%- endfor -%}
+                  </td>
+                  {%- else -%}
+                  <th>{{'cart.summary_box.discount'|t}}:</th><td></td>
+                  {%- endif -%}
+                </tr>
+                <!-- Final cart total -->
+                <tr>
+                  <th scope="row">{{'cart.general.subtotal'|t}}: </th>
+                  <td><span class="cartCostTotal">{{ cart.total_price | money }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+            {%- if settings.text_above_cart_drawer != blank -%}
+              <p class="font-italic mb-1">{{ settings.text_above_cart_drawer | html }}</p>
+            {%- endif -%}
+            {%- if settings.terms_conditions -%}
+            <div class="agree_checkbox">
+              <label class="label-for-checkbox">
+                <input type="checkbox" name="checkbox" class="input-checkbox kt_agree" data-layout="checkout">
+                {{settings.terms_and_privacy_conditions | replace: 'p>', 'span>' | replace: '<span>','<span class="d-inline">' | html }}
+              </label>
+            </div>
+            {%- endif -%}
+            <div class="group-button pt-1">
+              {%- if settings.use_atc_cart_drawer -%}
+              <a href="{{routes.cart_url}}" class="btn btn-outline-primary-2 btn-shadow">{{ 'cart.general.view' | t }}</a>
+              {%- endif -%}
+              <button type="submit" class="check-out btn btn-primary kt_agree_swich" data-layout="checkout">{{ 'cart.general.checkout_small' | t }}</button>
+            </div>
+            {%- if settings.use_d_c_b_cart_drawer and additional_checkout_buttons and template.name != 'cart' -%}
+            <div class="kt_agree_swich" data-layout="checkout">
+              <div class="additional-checkout-buttons">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            </div>
+            {%- endif -%}
+            {%- assign img_trust = settings.trust_image_drawer | default: settings.trust_image_ -%}
+            {%- if img_trust != blank -%}
+            <div class="text-center mt-2 mb-4">
+              <img class="lazyload" alt="{{img_trust.alt}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{img_trust| img_url: 'master'}}">
+            </div>
+            {%- endif -%}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content">
+    <div class="tab-pane tab-floating tab-floating-note">
+      <form action="{{routes.cart_url}}" method="post" novalidate id="upadteCartNote">
+        <div class="form-group">
+          <label for="note_cart_drawer">{{ 'cart.general.note' | t }}</label>{{--}}
+          <textarea id="note_cart_drawer" class="form-control" name="note" rows="4">{{ cart.note }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-shadow btn-block kt-button" style="margin-bottom: 1.5rem;">{{ 'cart.general.update_small' | t }}</button>
+        <div class="d-block text-center"><a href="#" class="btn-x-tab-floating">{{'cart.general.close'|t}}</a></div>
+      </form>
+    </div>
+    {%- if settings.shipping_calculator and settings.shipping_calculator_cart_drawer -%}
+    <div class="tab-pane tab-floating tab-floating-shipping">
+      {%- capture currAddress -%}{{cart.attributes.theme_shipping}}{%- endcapture -%}
+      {%- assign currAddress = currAddress | replace:'&quot;','"' | split:','-%}
+      {%- assign zipcode = currAddress[0] | split: '{"zip":"' | last| remove:'"' -%}
+      {%- assign country = currAddress[1] | split: '"country":"' | last| remove:'"' -%}
+      {%- assign province = currAddress[2] | split: '"province":"' | last| remove:'"}' -%}
+      <div class="wrapper__shipping">
+        <div class="get__shipping"{%if currAddress.size == 3 %} data-curr-address='{{cart.attributes.theme_shipping | replace:'&quot;','"'}}'{%endif%}>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="address_country">{{'cart.shipping_box.country'|t}}</label>{{--}}
+              <select class="form-control" id="address_country" name="address[country]"{%if currAddress.size == 3%} data-default="{{country}}"{%endif%}></select>
+            </div>
+            <div class="form-group col-12"{%unless currAddress.size == 3 and zipcode != '1'%} style="display: none"{%endunless%}>
+              <label for="address_province">{{'cart.shipping_box.province'|t}}</label>{{--}}
+              <select class="form-control" id="address_province" name="address[province]"{%if currAddress.size == 3%} data-default="{{province}}"{%endif%}></select>
+            </div>
+            <div class="form-group col-8">
+              <label for="address_zip">{{'cart.shipping_box.zip_code'|t}}</label>{{--}}
+              <input type="text" class="form-control" id="address_zip" name="address[zip]" value="{{zipcode}}" placeholder="Zip/Postal Code" required="">
+            </div>
+            <div class="form-group col-4 align-self-end">
+              <div class="calculate__shipping btn btn-primary btn-minwidth-auto w-100 text-uppercase" data-toggle="tooltip" data-placement="top" title="{{'cart.shipping_box.button_calculate_tooltip'|t}}">{{'cart.shipping_box.button_calculate'|t}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="table" style="margin-top: .5rem">
+        <tr class="summary-shipping-row content__shipping" style="display: none"></tr>
+      </table>
+      <div class="d-block text-center" style="margin-top: 1.5rem;"><a href="#" class="btn-x-tab-floating">{{'cart.general.close'|t}}</a></div>
+    </div>
+    {%- endif -%}
+    {%- if settings.gift_wrap_cart_drawer and settings.use_gift_wrapping and settings.gift_wrap_product != blank -%}
+    {%- assign gift_prd = all_products[settings.gift_wrap_product] -%}
+    <div class="tab-pane tab-floating tab-floating-gift product product-inner" data-href="{{gift_prd.url}}" data-handle="{{gift_prd.handle}}">
+      <form action="{{routes.cart_url}}" method="post" novalidate id="upadteCartGift">
+        <div class="text-center">
+          <input type="checkbox" name="attributes[gift-wrapping]" id="gift-wrapping" style="opacity: 0;position: absolute;visibility: hidden">
+          {%- assign p-gift-price = gift_wrap.price | default: gift_prd.selected_or_first_available_variant.price | money -%}
+          <span class="label">{{'cart.gift_wrap.notices_drawer_html' | t | replace : '#money', p-gift-price}}</span>
+          <label class="btn btn-x-tab-floating btn-primary btn-shadow btn-block{%if gift_prd.has_only_default_variant == false%} kt__quick-shop{%else%} addItemAjax{%endif%} btn-onclick" data-view="{{gift_prd.url}}" data-pid="{{gift_prd.id}}" for="gift-wrapping" style="margin-bottom: 1.5rem;">{{'cart.gift_wrap.button_in_cart_drawer'|t}}</label>          
+          {%-if gift_prd.has_only_default_variant-%}<input type="hidden" name="id" value="{{gift_prd.selected_or_first_available_variant.id}}"><input type="hidden" name="quantity" value="1">{%-endif-%}
+        </div>
+        <div class="d-block text-center"><a href="#" class="btn-x-tab-floating">{{'cart.general.close'|t}}</a></div>
+      </form>
+    </div>
+    {%- endif -%}
+    <div class="tab-pane tab-floating tab-floating-coupon">
+      {%- assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/' -%}
+      <form action="{{checkout_url}}" method="post" novalidate id="upadteCartCoupon">
+        <div class="form-group mb-1">
+          <label for="tab-floating-coupon-input">{{ 'cart.discount_box.title' | t }}</label>{{--}}
+          <input class="form-control" id="tab-floating-coupon-input" type="text" name="discount" value="{{cart.attributes.discount}}" placeholder="{{ 'cart.discount_box.input_placeholder' | t }}">
+        </div>
+        <p class="font-italic" style="margin-bottom: 0.5rem;">{{ 'cart.discount_box.notice' | t }}</p>
+        <button type="submit" class="btn btn-primary btn-shadow btn-block" style="margin-bottom: 1.5rem;">Save Code</button>
+        <div class="d-block text-center"><a href="#" class="btn-x-tab-floating">{{'cart.general.close'|t}}</a></div>
+      </form>
+    </div>
+  </div>
+</div>
+{%-style-%}
+button.close__cart-drawer{display:flex;align-items:center;justify-content:center;width:3rem;height:3rem;margin-top:1rem;margin-right:1rem;padding:0;z-index:9;cursor:pointer;font-size:1.6rem;line-height:1;color:#666;background:0 0;transition:color .35s;border:none;position:absolute;top:0;left:1.5rem}[dir=rtl] button.close__cart-drawer{margin-right:0;margin-left:1rem;left:auto;right:1.5rem}.show-tab-floating .footer__cart-drawer{opacity:.3;pointer-events:none}.cart-drawer{position:fixed;top:0;bottom:0;right:-400px;width:100%;max-width:400px;background-color:#fff;color:#666;overflow:hidden;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out;z-index:1042}[dir=rtl] .cart-drawer{right:auto;left:-400px}.cart-drawer.opend-overlay{right:0}[dir=rtl] .cart-drawer.opend-overlay{right:auto;left:0}.cart-drawer .quantity .btn-number{top:auto;width:50%;border:none;height:20px;font-size:0;padding:0;border:1px solid #ddd}.cart-drawer .quantity:not(:hover) .btn-number{opacity:1}.cart-drawer .quantity .quantity-minus{left:0}[dir=rtl] .cart-drawer .quantity .quantity-minus{left:auto;right:0}.cart-drawer .quantity .quantity-plus{right:.1rem;border-right-color:transparent}[dir=rtl] .cart-drawer .quantity .quantity-plus{left:.1rem;right:auto;border-left-color:#ddd;border-left-color:transparent}.cart-drawer .quantity input.input-qty{border:thin solid #ddd;padding:.1rem 1rem 1.8rem!important;height:4.8rem;width:100%}.cart-drawer .price{font-size:1.4rem}.cart-drawer span[class^=UnitPrice-]{font-size:1.2rem}.cart-drawer a.btn-x-tab-floating{color:#666;font-size:1.4rem;border-bottom:thin solid #999;letter-spacing:.02rem;padding:0 1rem .5rem}.cart-drawer .tab-floating{display:block;position:absolute;top:107%;background:#fff;left:0;width:100%;height:auto;z-index:5;box-shadow:0 -2px 10px #ddd;-webkit-transition:all .3s ease;transition:all .3s ease;padding-bottom:2.5rem!important}.cart-drawer .tab-floating .form-control{background-color:#fff}.cart-drawer .tab-floating .label{color:#666;font-weight:400;margin-bottom:1.1rem;display:block}.cart-drawer .tab-floating.show{top:100%;transform:translateY(-100%);-ms-transform:translateY(-100%);-webkit-transform:translateY(-100%)}.cart-drawer .custom-control{margin-top:0;margin-bottom:0}.cart-drawer .content__shipping{line-height:1.43}.cart-drawer .content__shipping td{min-width:auto;display:inline-block}.cart-drawer .item_shipp+.item_shipp{border-top:none!important}.cart-drawer .item__shipping{padding:0;width:100%}.cart-drawer .item_shipp{padding:.5rem .7rem;border:1px solid #ddd;display:-ms-flexbox;display:flex;-ms-flex-pack:justify;justify-content:space-between;-ms-flex-align:center;align-items:center}.cart-drawer .item_shipp:first-child{border-top-left-radius:.5rem;border-top-right-radius:.5rem}.cart-drawer .item_shipp:last-child{border-bottom-left-radius:.5rem;border-bottom-right-radius:.5rem}.cart-drawer .item_shipp_name,.cart-drawer .item_shipp_price{display:inline-block}.cart-drawer .custom-control.custom-radio .custom-control-label::after,.cart-drawer .custom-control.custom-radio .custom-control-label::before{top:50%;transform:translateY(-50%)}.cart-drawer .item_shipp_price{padding-left:1rem}[dir=rtl] .cart-drawer .item_shipp_price{padding-left:0;padding-right:1rem}.cart-drawer .info-discount{right:-2.5rem}[dir=rtl] .cart-drawer .info-discount{right:auto;left:-2.5rem}.cart-drawer .table{margin-bottom:0}.cart-drawer .table td,.cart-drawer .table th{border:none;font-weight:400;color:#555}.cart-drawer .table th{width:45%;padding:.2rem .5rem .2rem 0;text-align:initial}.cart-drawer .table td{padding:.2rem 0}.head__cart-drawer{padding:1.5rem}.cart-drawer__content{height:100%;overflow:hidden;position:relative}.content__cart-drawer{padding:1.5rem 1.5rem 0 1.5rem;position:relative}.content__cart-drawer.loading{opacity:.6;pointer-events:none}.content__cart-drawer:not(.loading) .spinner-box{opacity:0}ul.items__cart-drawer{min-height:30px;max-height:350px;overflow-y:auto;overflow-x:hidden}h3.title-ajax__cart{font-weight:400;font-size:1.6rem}h3.title-ajax__cart span.text-bold{font-weight:600;color:#222}.footer__cart-drawer{position:relative;padding-top:1.5rem;overflow:hidden;-webkit-transition:all .3s ease;-moz-transition:all .3s ease;-o-transition:all .3s ease;transition:all .3s ease}.footer__cart-drawer .tab-pane{padding:1rem 1.5rem 1.5rem}.footer__cart-drawer .table{margin-bottom:0}.footer__cart-drawer .nav-item{-ms-flex-preferred-size:0;flex-basis:0;-ms-flex-positive:1;flex-grow:1;max-width:100%}.footer__cart-drawer .nav-item i{position:relative}.footer__cart-drawer .nav-item .has-data i:after{content:"";position:absolute;height:1rem;width:1rem;display:inline-block;background-color:#c96;border-radius:1rem;top:0;right:-.5rem}[dir=rtl] .footer__cart-drawer .nav-item .has-data i:after{right:auto;left:-.5rem}.footer__cart-drawer .nav.nav-tabs .nav-item+.nav-item{margin-left:0}[dir=rtl] .footer__cart-drawer .nav.nav-tabs .nav-item+.nav-item{margin-left:.1rem;margin-right:0}.footer__cart-drawer .nav.nav-tabs .nav-item+.nav-item a.nav-link{border-left-width:0}[dir=rtl] .footer__cart-drawer .nav.nav-tabs .nav-item+.nav-item a.nav-link{border-left-width:thin;border-right-width:0}.footer__cart-drawer .group-button{margin:0 -.5rem;display:-ms-flexbox;display:flex;-ms-flex-wrap:nowrap;flex-wrap:nowrap}.footer__cart-drawer .group-button .btn{--width: 100%;flex: 1 1 var(--width);max-width: 100%;margin: 0 .5rem 1rem;padding: 1rem .5rem;min-width: auto;}.tab-floating-gift i{font-size:5rem;line-height:1.2;color:#f44336}.footer__cart-drawer li.nav-item:first-child {pointer-events: none !important;}.cart-drawer .spendFreeShip {padding: .2rem var(--grid-gutter) .5rem;}
+{%-endstyle-%}

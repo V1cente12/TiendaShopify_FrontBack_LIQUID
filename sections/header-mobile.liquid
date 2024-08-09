@@ -1,0 +1,544 @@
+<!-- header-mobile.liquid -->
+<style>
+  .menu-btn-categories {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      z-index: 10;
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.2rem;
+      color: #fff;
+      margin-top: -1.5rem;
+      border-radius: 0;
+      background-color: transparent;
+      cursor: pointer;
+      outline: 0;
+      transition: color .35s;
+  }        
+  .contenedor {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .contenedor1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .imgLagout{
+      height: 60px;
+      width: 60px;
+      background-color: #ededed;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+      float: left;
+      margin-right: 16px;
+      text-align: center;
+  }
+  
+  .blanco{
+    color: white;
+  }
+  
+  .mobile-nav{
+    font-size: 15px;
+  }
+  
+  .mobile-menu-light .mobile-menu li a:not(:hover):not(:focus) {
+      color: black !important;
+  }
+  
+  .inputBusqueda{
+    margin-top: -5px;
+  }
+  
+  .cuenta_{
+    border-radius: 10px;
+    margin: 4px;
+    padding: 6px;
+  }
+  .headermb-content-wrapper.has_search-box {
+      top: 24rem;
+  }
+    
+  @media (min-width: 992px) {
+    .headermb-header .ocultarSearchButtonsDesktop{
+       display: none;
+      height:0px;
+   }
+    .headermb-content-wrapper.has_search-box {
+      top:9rem;
+    }
+  } 
+  </style>
+  <script  type="text/javascript">
+    function detectMob() {
+      return ( ( window.innerWidth <= 800 ) && ( window.innerHeight <= 600 ) );
+  }
+  </script>
+  {%- assign index_active = 1 -%}
+  {%- if canonical_url contains 'category' -%}
+    {%- assign index_active = 2 -%}
+  {%- endif -%}
+  {%- capture content_header_mb -%} 
+  <!-- /////////////////////////////////////////////////////HEADER-MOBILE/////////////////////////////////////////////////////////////// -->
+  
+  
+  <div class="headermb-header">
+    <span class="mobile-menu-close close-menu float-right"><i class="fkt-close"></i></span>
+    <div class="w-100 float-left ocultarSearchButtonsDesktop">
+    {%- if section.settings.use_search -%}
+      <div class="block-search">
+        {% render 'search-bar', search_style: "mobile" %}
+      </div>
+    {%- endif -%}
+  
+  
+   
+    <div>
+          <div style="text-align: center;">
+            <h4>
+            {%- if shop.customer_accounts_enabled -%}
+              {% if customer %}
+                 <b>Bienvenido: </b>{{ customer.first_name }}
+              {% else %}
+                 <b>Bienvenido al GenioX</b>
+              {%- endif -%}
+            {%- endif -%}
+            </h4>
+            <p>Ingresa a tu cuenta para ver tus compras, etc..</p>
+          </div> 
+      
+  {% comment %}     <div class="row contenedor1" >
+          <div class="imgLagout" style="margin-left: 40px;">
+            <svg style="margin-top: 7px;" width="28" height="35" xmlns="http://www.w3.org/2000/svg">
+            <path d="M27.343 33.706l-1.356.64A13.25 13.25 0 0 0 14 26.75c-5.17 0-9.8 2.988-11.978 7.578l-1.356-.643A14.75 14.75 0 0 1 14 25.25a14.75 14.75 0 0 1 13.343 8.456zM14 21.75C8.063 21.75 3.25 16.937 3.25 11S8.063.25 14 .25 24.75 5.063 24.75 11 19.937 21.75 14 21.75zm0-1.5a9.25 9.25 0 1 0 0-18.5 9.25 9.25 0 0 0 0 18.5zm0-2.5v-1.5a5.25 5.25 0 1 0 0-10.5v-1.5a6.75 6.75 0 0 1 0 13.5z" fill="#BBB" fill-rule="nonzero"></path>
+            </svg>
+          </div>
+          <div style="width: 200px;margin-top:5px">
+            <h4>
+            {%- if shop.customer_accounts_enabled -%}
+              {% if customer %}
+                 <b>Bienvenido: </b>{{ customer.first_name }}
+              {% else %}
+                 <b>Bienvenido</b>
+              {%- endif -%}
+            {%- endif -%}
+            </h4>
+            <p>Ingresa a tu cuenta para ver tus compras, etc..</p>
+          </div> 
+      </div> {% endcomment %}
+  
+      <div class="row contenedor" style="margin-top: -10px">
+          <div>
+            {%- if shop.customer_accounts_enabled -%}
+              {% if customer %}      
+                  <button class="btn btn-primary button-search" onclick="location.href = '{{routes.account_url  | append: "?view=orders" }}'">
+                    <span class="blanco">Mis Pedidos</span>
+                  </button>
+                    &nbsp;&nbsp;     
+                  <button class="btn btn-outline-primary-2" onclick="location.href = '{{ routes.account_url  | append: "?view=address" }}'">
+                    <span>Mis direcciones</span>
+                  </button>
+              {% else %}
+                  <button class="btn btn-outline-primary-2" onclick="location.href = '{{routes.account_login_url }}'">
+                    <span>{{"layout.customer.log_in"|t}}</span>
+                  </button>
+                    &nbsp;&nbsp;
+                  <button class="btn btn-primary button-search" onclick="location.href = '{{routes.account_register_url }}'">
+                    <span class="blanco">{{"layout.customer.create_account"|t}}</span>
+                  </button>
+              {%- endif -%}
+            {%- endif -%}
+            
+          </div> 
+      </div>
+    </div>
+    </div>
+    {%- if section.blocks.size > 0 -%}
+    <div class="w-100 float-left" style="padding-top:10px">
+      <div class="d-flex justify-content-start">
+        <div class="overflow-scroll-wrapper">                  
+          <ul class="nav nav-pills-mobile nav-border-anim flex-nowrap" role="tablist">
+            {%- for block in section.blocks -%}
+            <li class="nav-item">
+              <a class="nav-link{%if forloop.index == index_active%} active{%endif%}" data-toggle="tab" href="#tab-{{block.id}}" role="tab" aria-controls="tab-{{block.id}}" aria-selected="{%if forloop.first%}false{%else%}true{%endif%}" data-type="{{block.type}}">{{block.settings.title}}</a>
+            </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+      <div class="border-top" style="opacity: 0.5; margin-top: -5px"></div>
+    </div>
+    {%- endif -%}
+  </div>
+  <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+  
+  
+  <div class="headermb-content-wrapper{% if section.settings.use_search %} has_search-box{% endif %}">
+    <div class="" style="min-height: 100vh">
+    {%- if section.blocks.size > 0 -%}
+      <div class="tab-content tab-container">
+        {%- for block in section.blocks -%}
+        <div id="tab-{{block.id}}" class="tab-pane fade{%if forloop.index == index_active%} show active{%endif%}" role="tabpanel">
+        {%- case block.type -%}
+          {%- when 'item_menu' -%}
+            <nav class="mobile-nav">
+              <ul class="mobile-menu">
+              {%- for link in linklists[block.settings.menu_links].links -%}
+                
+                {%-assign menu_handle = link.handle-%}
+                {%- if menu_handle == 'breakcol' -%}{%- continue -%}{%- endif -%}
+               <span >
+                <li class="my-mmenu-btn {%if link.active%}active{%endif%}">
+                  <a href="{{link.url}}" title="{{link.title}}">
+                    <span onclick="redirecion('{{link.url}}')">
+                     {{link.title | split: '{' | first | split: '[' | first }}
+                      {%-if link.title contains '{'-%}
+                      {%-assign label = link.title |  split: '{' | last  | split: '}' | first-%}
+                      <span class="label-menu {{label | handleize }}">{{label|escape }}<span></span></span> 
+                      {%-endif-%}                  
+                    </span>
+                    {%- if link.links.size > 0 -%}<span class="mmenu-btn"></span>{%- endif -%}
+                  </a >
+                  </span>
+                  {%- if link.links.size > 0 -%}
+                  <ul style="display: none;">
+                    {%- for sub_link in link.links -%}
+                    {%- if sub_link.handle == 'breakcol' -%}{%- continue -%}{%- endif -%}
+                    <li class="my-mmenu-btn{%if link.active%}active{%endif%}">
+                      <a href="{{ sub_link.url }}">
+                        <span onclick="redirecion('{{sub_link.url}}')">
+                          {{sub_link.title | split: '{' | first | split: '[' | first }}
+                          {%-if sub_link.title contains '{'-%}
+                          {%-assign label = sub_link.title |  split: '{' | last  | split: '}' | first-%}
+                          <span class="label-menu {{label | handleize }}">{{label|escape }}<span></span></span> 
+                          {%-endif-%}
+                        </span>
+                        {%- if sub_link.links.size > 0 -%}<span class="mmenu-btn"></span>{%- endif -%}
+                      </a>
+                      {%- if sub_link.links.size > 0 -%}
+                      <ul>
+                        {%- for sub_sub_link in sub_link.links -%}
+                        {%- if sub_sub_link.handle == 'breakcol' -%}{%- continue -%}{%- endif -%}
+                        <li onclick="redirecion('{{sub_sub_link.url}}')">
+                          <a href="{{ sub_sub_link.url }}">
+                            {{sub_sub_link.title | split: '{' | first | split: '[' | first }}
+                            {%-if sub_sub_link.title contains '{'-%}
+                            {%-assign label = sub_sub_link.title |  split: '{' | last  | split: '}' | first-%}
+                            <span class="label-menu {{label | handleize }}">{{label|escape }}<span></span></span> 
+                            {%-endif-%}
+                          </a>
+                        </li>                    
+                        {%- endfor -%}
+                      </ul>
+                      {%- endif -%}
+                    </li>
+                    {%- endfor -%}
+                  </ul>
+                  {%- endif -%}
+                
+                </li>
+              {%- endfor -%}
+              {%- if block.settings.call_us_show -%}
+                <li class="mn-mobile-infor list-phone">
+                  <a class="fkt-phone-square" href="tel:{{settings.phone_contact|default: shop.address.phone| remove: ' '}}">
+                    <span class="label">{{'contact.orther.call_us'|t}}{{settings.phone_contact|default: shop.phone}}</span>
+                  </a>
+                </li>
+                {%- endif -%}
+                {%- if block.settings.email_show -%}
+                <li class="mn-mobile-infor list-email">
+                  <a class="fkt-envelope" href="mailto:{{settings.email_contact|default: shop.address.email}}">
+                    <span class="label">{{'contact.orther.email'|t}}{{settings.email_contact|default: shop.email}}</span>
+                  </a>
+                </li>
+                {%- endif -%}
+                {%- if block.settings.social_contact_show -%}
+                <li class="mn-mobile-infor list-socails">                
+                  <span class="label d-none">{{'contact.orther.contacts_us'|t}}</span>
+                  <div class="socials_ infor d-inline-block">
+                    {%-render "kt_socials"-%}
+                  </div>
+                </li>
+                {%- endif -%}
+                {%- if block.settings.wishlist_show and settings.use_wishlist != '' -%}
+                  {%- assign wishlist_page = pages['wishlist-local'] -%}
+                  {%- if settings.use_wishlist == 'nitro' -%}
+                    {%- assign wishlist_page = pages['wishlist'] -%}
+                  {%- endif -%}
+                  {%- if wishlist_page.title != empty -%}
+                  <li class="mn-mobile-infor list-wishlist">
+                    <a class="fkt-heart-o" href="{{wishlist_page.url}}"><span class="label">{{'products.wishlist.title'|t}}</span> (<span class="wishlistCount wishlist-count" style="background-color: transparent;">0</span>)</a>
+                  </li>
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if block.settings.compare_show and settings.use_compare -%}
+                <li class="mn-mobile-infor list-compare">
+                  <a class="fkt-random" href="javascript:void(0)" onclick="KT.showModalCompare()"><span class="label">{{'products.compare.title'|t}}</span> (<span class="compareCount">0</span>)</a>
+                </li>
+                {%- endif -%}
+  
+                {%- if block.settings.account_show and shop.customer_accounts_enabled -%}
+                <li class="mn-mobile-infor list-link-account">
+                  {%- if customer -%}
+                  <a class="fkt-user" href="{{routes.account_url}}"><span>{{"layout.customer.account"|t}}</span></a>
+                  {%- else -%}
+                  <a class="fkt-user" href="{{routes.account_login_url}}{%unless template.directory == 'customers'%}?checkout_url=/{{canonical_url | remove: shop.url | url_encode }}{%endunless%}"><span>{{"layout.customer.log_in"|t}}</span></a>
+                  <a class="fkt-user" href="{{routes.account_register_url}}"><span>Registrarse</span></a>  
+                {%- endif -%}
+                </li>
+                {%- endif -%}
+                {%- if block.settings.currency_dropdown_show and settings.show_multiple_currencies -%}
+                <li class="list-currency">
+                  <a href="#" title="{{"layout.settings_dropdown.currency_title"|t}}" style="border: none;padding-bottom: 0;"><span class="d-block">{{"layout.settings_dropdown.currency_title"|t}}</span></a>
+                  <div class="block-currency currency-list col-12">
+                    {%- render 'kt_currency_widget', layout: 1 -%}
+                  </div>
+                </li>
+                {%- endif -%}
+              </ul>
+            </nav>
+          {%- when 'item_categories_1' -%}
+            <nav class="mobile-cats-nav">
+              <ul class="mobile-cats-menu list-unstyled">
+                {%- for link in linklists[block.settings.menu_links].links -%}
+                <li><a class="{%if link.title contains '[special]' %}mobile-cats-lead{%endif%}" href="{{link.url}}" aria-label="{{link.title | remove: '[special]'}}">{{link.title | remove: '[special]'}}</a></li>
+                {%- endfor -%}
+              </ul>
+            </nav>
+        {%- endcase -%}
+        </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+      <div class="socials_ style-02 style-02-small text-center">
+        {%-render "kt_socials"-%}
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  <div class="headermb-footer" style="height: 50px;"></div>
+  {%- endcapture -%}
+  {%- if section.settings.use_lazy -%}
+    {%- if template != 'cart.mobile-menu' -%}
+    <aside data-section-id="{{ section.id }}" data-section-type="header-mobile-section">
+      <div class="mobile-menu-container mobile-menu-light">
+        <div class="mobile-menu-wrapper lazyload" data-include="{{routes.cart_url}}?view=mobile-menu"></div>
+      </div>
+    </aside>
+    {%- endif -%}
+    {%- if template == 'cart.mobile-menu' -%}<!--lz_sc-->
+      {{- content_header_mb | strip_newlines | remove: '  ' | remove: '  ' -}}<!--lz_sc-->
+    {%- endif -%}
+  {%- else -%}
+    <aside data-section-id="{{ section.id }}" data-section-type="header-mobile-section">
+      <div class="mobile-menu-container mobile-menu-light">
+        <div class="mobile-menu-wrapper">      
+          {{- content_header_mb | strip_newlines | remove: '  ' | remove: '  ' -}}
+        </div>
+      </div>
+    </aside>
+  {%- endif -%}
+  <script>
+    function redirecion(ruta){
+    window.location.href = ruta;
+    }
+    </script>
+  
+  {% schema %}
+    {
+    "name": "Header mobile",
+    "settings": [
+      {
+        "type": "header",
+        "content": "== Header mobile"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_lazy",
+        "label": "Use Lazyload?"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_search",
+        "label": "Use Search box?",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_menu",
+        "name": "Item menu",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Select menu"
+          },
+          {
+            "type": "link_list",
+            "id": "menu_links",
+            "label": "Choose the parent item menu"
+          },
+          {
+            "type":"text",
+            "id":"title",
+            "label":"Tab title",
+            "default":"Item tab"
+          },
+          {
+            "type": "checkbox",
+            "id": "call_us_show",
+            "label": "Use Call us?"
+          },
+          {
+            "type": "checkbox",
+            "id": "email_show",
+            "label": "Use Email?"
+          },
+          {
+            "type": "checkbox",
+            "id": "wishlist_show",
+            "label": "Use Wishlist?"
+          },
+          {
+            "type": "checkbox",
+            "id": "compare_show",
+            "label": "Use Compare?"
+          },
+          {
+            "type": "checkbox",
+            "id": "account_show",
+            "label": "Use link Account?"
+          },
+          {
+            "type": "paragraph",
+            "content": "-------------------"
+          },
+          {
+            "type": "checkbox",
+            "id": "currency_dropdown_show",
+            "label": "Use Currency dropdown?"
+          },
+          {
+            "type": "paragraph",
+            "content": "-------------------"
+          },
+          {
+            "type": "checkbox",
+            "id": "language_app_show",
+            "label": "Use Language app?"
+          },
+          {
+            "type": "html",
+            "id": "language_app_html",
+            "label": "HTML of Language app?"
+          },
+          {
+            "type": "checkbox",
+            "id": "custom_show",
+            "label": "Use Custom?"
+          },
+          {
+            "type": "html",
+            "id": "custom_html",
+            "label": "HTML of custom?"
+          }
+        ]
+      },
+      {
+        "type": "item_categories_1",
+        "name": "Item categories_1",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Select menu"
+          },
+          {
+            "type": "link_list",
+            "id": "menu_links",
+            "label": "Choose the parent item menu"
+          },
+          {
+            "type":"text",
+            "id":"title",
+            "label":"Tab title",
+            "default":"Item tab"
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
+  <script type="text/javascript">	 
+  window.theme = window.theme || {};
+  theme.HeaderMbSection = (function() {
+    function MbHeader(container) {    
+      $(document).on('click','.mmenu-btn1', function (e) {
+        var $parent = $(this).closest('li'),
+        $targetUl = $parent.find('ul').eq(0);
+        if ( !$parent.hasClass('open') ) {
+          $targetUl.slideDown(300, function () {
+            $parent.addClass('open');
+          });
+        } else {
+          $targetUl.slideUp(300, function () {
+            $parent.removeClass('open');
+          });
+        }
+        e.stopPropagation();
+        e.preventDefault();
+      });
+  
+      function action_addClass() {
+        $('body').addClass('mmenu-active');
+        $('#bg-overlay').addClass('menu-mb-overlay').removeClass('menu-overlay');
+        return false;
+      }
+  
+      function action_removeClass() {
+        $('body').removeClass('mmenu-active');
+        anime({targets: '#bg-overlay.menu-mb-overlay',backgroundColor: 'rgba(0,0,0,0)', duration: 300,easing: 'linear',complete: function(anim) {
+          $('#bg-overlay').removeAttr('style class');
+        }})
+        return false;
+      }
+  
+      $(document).on('click', ".menu-toggle", function() {
+        action_addClass();
+        if ($('.nav-link[data-type="item_menu"]').length > 0) {
+          $('.nav-link[data-type="item_menu"]').first().trigger('click');
+        }
+      })
+      $(document).on('click touchstart', ".mobile-menu-close, #bg-overlay.menu-mb-overlay", function() {
+        action_removeClass();
+      })
+    }
+    MbHeader.prototype = _.assignIn({}, MbHeader.prototype, {
+      onUnload: function() {
+      },
+      onSelect: function(evt) {
+        $('body').addClass('mmenu-active');
+        $('#bg-overlay').addClass('menu-mb-overlay').removeClass('menu-overlay');
+      },
+      onDeselect: function(evt) {
+        $('body').removeClass('mmenu-active');
+        anime({targets: '#bg-overlay.menu-mb-overlay',backgroundColor: 'rgba(0,0,0,0)', duration: 300,easing: 'linear',complete: function(anim) {
+          $('#bg-overlay').removeAttr('style class');
+        }})
+      },
+      onBlockSelect: function(evt) {
+      },
+      onBlockDeselect: function(evt) {
+      }
+    });
+    return MbHeader;
+  })();
+  </script> 

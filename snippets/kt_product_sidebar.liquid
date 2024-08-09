@@ -1,0 +1,157 @@
+<!-- kt_product_sidebar.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo false
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo false
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+-%}
+
+{% assign curr_product = product %}
+{%- for block in section.blocks -%}
+  {%-unless block.type contains 'sb_'-%}{%-continue-%}{%-endunless-%}
+  {%- if block.type == 'sb_related' -%}
+    <div class="special-products">
+      <div class="title-sidebar text-left">
+        <h3 class="m-0">{{block.settings.block_title}}</h3>
+        <div class="clearfix mb-3"></div>
+      </div>
+      {%- if block.settings.recommendations_enable -%}
+        <div class="lazyload" data-include="{{ routes.product_recommendations_url }}?section_id=kt_related-products_sidebar&product_id={{product.id}}&limit={{block.settings.product_items}}"></div>
+      {%- else -%}
+        {%- assign product_limit = block.settings.product_items | plus: 0 | default: 4 -%}
+        {%- assign score = 2 -%}
+        {%- assign count = 0 -%}
+        {%- assign related = false -%}
+        {%- assign all_collection = 'related' -%}
+        {%- assign current_product_id = product.id -%}
+        {%- for c in product.collections -%}{%- if c.handle == all_collection -%}{%- assign collection = c -%}{%- endif -%}{%- endfor -%}
+        {%- if block.settings.product_related_collection != blank and collections[block.settings.product_related_collection].products_count > 0 -%}
+          {%- assign related = true -%}
+          {%- for prd in collections[block.settings.product_related_collection].products -%}                  
+            {%- unless prd.id == current_product_id or prd.available == false -%}
+              {%- assign count = count | plus: 1 -%}
+              <div class="grid-item list mini-list">
+                {%- render 'product-list-item-mini', product: prd, st_card: st_card -%}
+              </div>
+            {%- endunless -%}
+            {%- if count > product_limit or forloop.last -%}{%break%}{%- endif -%}
+          {%- endfor -%}
+        {%- elsif collection and collection.products_count > 1 -%}
+          {%- assign i = 0 -%}
+          {%- assign current_product = product -%}
+          {%- assign current_product_tags = current_product.tags | join: ' ' -%}
+          {%- for prd in collection.products -%}{%- assign s = 0 -%}
+            {%- for tag in prd.tags -%}{%- if current_product_tags contains tag -%}{%- assign s = s | plus: 1 -%}{%- endif -%}{%- endfor -%}
+            {%- if s >= score and i < product_limit and current_product.handle != prd.handle and prd.available -%}{%- assign i = i | plus: 1 -%}
+              {%- if i == 1 -%}{%- assign related = true -%}{%- endif -%}
+              {% assign grid = block.settings.product_display %}
+              <div class="grid-item list mini-list">
+                {%- render 'product-list-item-mini', product: prd, st_card: st_card -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}      
+        {%- elsif collections[product.collections.first.handle] != empty and collections[product.collections.first.handle].products_count > 1 -%}
+          {%- assign i = 0 -%}
+          {%- assign current_product = product -%}
+          {%- assign current_product_tags = current_product.tags | join: ' ' -%}
+          {%- for prd in collections[product.collections.first.handle].products -%}{%- assign s = 0 -%}
+            {%- for tag in prd.tags -%}{%- if current_product_tags contains tag -%}{%- assign s = s | plus: 1 -%}{%- endif -%}{%- endfor -%}
+            {% if s >= 0 and i < product_limit and current_product.handle != prd.handle and prd.available -%}{%- assign i = i | plus: 1 -%}
+              {%- if i == 1 -%}{%- assign related = true -%}{%- endif -%}
+              {%- assign grid = block.settings.product_display -%}
+              <div class="grid-item list mini-list">
+                {%- render 'product-list-item-mini', product: prd, st_card: st_card -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign i = 0 -%}
+          {%- assign current_product = product -%}
+          {%- assign current_product_tags = current_product.tags | join: ' ' -%}
+          {%- for product in collections['all'].products -%}{%- assign s = 0 -%}
+            {%- for tag in prd.tags -%}{%- if current_product_tags contains tag -%}{%- assign s = s | plus: 1 -%}{%- endif -%}{%- endfor -%}
+            {%- if s > score and i < product_limit and current_product.handle != prd.handle and prd.available -%}{%- assign i = i | plus: 1 -%}
+              {%- if i == 1 -%}{%- assign related = true -%}{%- endif -%}
+              {%- assign grid = block.settings.product_display -%}
+              <div class="grid-item list mini-list">
+                {%- render 'product-list-item-mini', product: prd, st_card: st_card -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if related == false %}
+          {%- assign i = 0 -%}
+          {%- assign current_product = product -%}
+          {%- for prd in collections['all'].products -%}
+            {%- if i < product_limit and current_product.handle != prd.handle and prd.available -%}{%- assign i = i | plus: 1 -%}
+            {%- assign grid = block.settings.product_display -%}
+              <div class="grid-item list mini-list">
+                {%- render 'product-list-item-mini', product: prd, st_card: st_card -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif %}
+      {%- endif -%}
+    </div>
+    <div class="clearfix pb-3"></div>
+  {%- elsif block.type == 'sb_tags' and block.settings.tags_list != blank -%}
+    <div class="popular_tags border p-3">
+      <div class="title-sidebar text-left">
+        <h3 class="m-0">{{block.settings.block_title}}</h3>
+        <div class="clearfix mb-5"></div>
+      </div>
+      <ul class="tags_list__sidebar list-unstyled mb-5">
+        {%- assign tags_sidebar = block.settings.tags_list | split: ',' -%}
+        {%- for tag in tags_sidebar -%}
+          <li class="item_tags list-inline-item">
+            <a href="{{routes.all_products_collection_url}}/{{tag|handleize}}">{{tag|lstrip|rstrip}}</a>                    
+          </li>
+        {%- endfor -%}
+      </ul>
+      <a href="{{routes.all_products_collection_url}}" class="view_all">{{'general.sidebar.view_all'|t}}</a>
+    </div>
+    <div class="clearfix pb-3"></div>
+  {%- elsif block.type == 'sb_banner' and block.settings.img != blank -%}
+    <div class="block_banner mb-3 mt-2 text-center">
+      <div class="banner-effect1" style="position: relative">
+        <a href="{{block.settings.url}}"><img src="{{block.settings.img|img_url:'master'|img_tags}}"></a>
+      </div>
+    </div>
+  {%- elsif block.type == 'sb_custom' -%}
+    <div class="block_custom mb-3 mt-2">
+      {% if block.settings.text != blank %}
+        {{block.settings.text|html}}
+      {% endif %}
+      {% if block.settings.page != blank %}
+        {{pages[block.settings.page].content|html}}
+      {% endif %}
+    </div>      
+  {%- endif -%}
+{%- endfor -%}

@@ -1,0 +1,374 @@
+<!-- md_featured_product_2.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- assign product = all_products[section.blocks[0].settings.featured_product] -%}
+{%- unless product.has_only_default_variant or settings.qs_hide_only_1_opt == true and product.variants.size == 1 or settings.qs_show_vars_list == false -%}
+  {%- assign show_variant = true -%}
+{%- endunless -%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {% assign block = section.blocks[0] %}
+      {% if section.blocks.size > 0 %} 
+      <div class="row">
+        <div class="col-prd col-12 col-lg-5 text-center">
+          {%- if block.settings.title_section != blank -%}
+          <div class="section-title w-100">
+            <h3 class="title">{{block.settings.title_section}}</h3>
+            {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img width="{{block.settings.image.width}}" height="{{block.settings.image.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[360, 540, 720]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image.alt | escape }}" style="padding-bottom:{{block.settings.image.height | times: 1.00 | divided_by: block.settings.image.width | times: 100.00000000}}%">
+            {%- if block.settings.url.type == 'product_link' -%}
+              {%- assign product = block.settings.url.object -%}
+              {%- assign compare_at_price = product.compare_at_price -%}
+              {%- assign price = product.price -%}
+              {%- assign price_varies = product.price_varies -%}              
+              {%- assign on_sale = false -%}
+              {%- if compare_at_price > price -%}
+                {%- assign on_sale = true -%}
+              {%- endif -%}
+              {%- assign sold_out = true -%}
+              {%- assign preOrder = false -%}
+              {%- unless available == false -%}
+                {%- assign sold_out = false -%}
+              {%- endunless -%}
+              {%- if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming -%}
+                {%- assign preOrder = true -%}
+              {%- endif -%}
+              <h2 class="product-name"><a href="{{product.url | within: collection}}" tabindex="0">{{product.title}}</a></h2>
+              {%- render 'product-item-prices', product:product, on_sale: on_sale, price_varies: price_varies-%}
+              <a href="{{block.settings.url|default:'#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+        {%- if block.settings.image_banner -%}
+        <div class="col-banner col-12 col-lg-7">
+          {%- assign img_url = block.settings.image_banner | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <img width="{{block.settings.image_banner.width}}" height="{{block.settings.image_banner.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[360, 540, 720, 830]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_banner.alt | escape }}" style="padding-bottom:{{block.settings.image_banner.height | times: 1.00 | divided_by: block.settings.image_banner.width | times: 100.00000000}}%">
+        </div>
+        {%- endif -%}
+      </div>
+      {% endif %}
+		</div>
+	</div>
+</div> 
+<noscript class="banner-css" data-section-type="md_featured_product_2">
+  {%-capture banner-css-%}
+  {%-style-%}
+  .md_featured_product_2 .col-prd {
+    padding: 7rem 0;
+  }
+  .md_featured_product_2 .title {
+    margin-bottom: 3.5rem;
+  }
+  .md_featured_product_2 h2.product-name {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -.75px;
+  }
+  .md_featured_product_2 h2.product-name a {
+    color: #000;
+  }
+  .md_featured_product_2 .product-price {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -.75px;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  @media (min-width: 992px){    
+    .md_featured_product_2 .col-banner img {
+      position: absolute;
+      padding-left: 6rem;
+    }
+    [dir="rtl"] .md_featured_product_2 .col-banner img {
+      padding-left: 0;
+      padding-right: 6rem;
+    }
+  }
+  {%-endstyle-%}
+  {%-endcapture-%}
+  {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Featured 2",
+    "class": "md_featured_product_2",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Featured 2",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Product",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Title"
+          },
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Title"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Featured image",
+            "info": "Size suggestion: 475 x 188 pixels"
+          },
+          {
+            "type": "url",
+            "id": "url",
+            "label": "Link to"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<span>SHOP NOW<\/span><i class=\"fkt-angle-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-outline-primary-2",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Banner"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_banner",
+            "label": "Featured Banner",
+            "info": "Size suggestion: 475 x 188 pixels"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured 2",
+        "category": "03. Section products"
+      }
+    ]
+  }
+{% endschema %}

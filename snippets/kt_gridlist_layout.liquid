@@ -1,0 +1,83 @@
+{%- if settings.coll_gridlist_enable -%}
+<ul class="show-grid-list kt--drop-i ml-2 list-unstyled">
+  <li class="list-inline-item">
+    <span{%unless layout_gl != 'list'%} data-ktpjax{% endunless %} class="show-grid{%if layout_gl != 'list'%} active{% endif %}" data-href="2grid{{limit_pds}}">{%- render 'icon-ly', col: 'grid' -%}</span>
+  </li>
+  <li class="list-inline-item">
+    <span{%unless layout_gl == 'list'%} data-ktpjax{% endunless %} class="show-list{%if layout_gl == 'list'%} active{% endif %}" data-href="list{{limit_pds}}">{%- render 'icon-ly', col: 'list' -%}</span>
+  </li>
+  <li class="kt--drop-in">
+    <ul class="list-unstyled">
+      <li class="table-view text-center d-none d-sm-inline-block">
+        <ul class="m-0 p-0 list-inline">
+          <li class="list-inline-item">
+            <span{%unless gl == '2'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '2'%} active{% endif %}" data-href="2grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6"{%endunless%}>{%- render 'icon-ly', col: '2' -%}</span>
+          </li>
+          <li class="list-inline-item d-none d-sm-inline-block">
+            <span{%unless gl == '3'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '3'%} active{% endif %}" data-href="3grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4"{%endunless%}>{%- render 'icon-ly', col: '3' -%}</span>
+          </li>
+          <li class="list-inline-item d-none d-lg-inline-block">
+            <span{%unless gl == '4'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '4'%} active{% endif %}" data-href="4grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-lg-3"{%endunless%}>{%- render 'icon-ly', col: '4' -%}</span>
+          </li>
+          <li class="list-inline-item d-none d-lg-inline-block">
+            <span{%unless gl == '5'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '5'%} active{% endif %}" data-href="5grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-lg-2-10"{%endunless%}>{%- render 'icon-ly', col: '5' -%}</span>
+          </li>
+          <li class="list-inline-item d-none d-xl-inline-block">
+            <span{%unless gl == '6'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '6'%} active{% endif %}" data-href="6grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-md-2-10 col-xl-2"{%endunless%}>{%- render 'icon-ly', col: '6' -%}</span>
+          </li>
+        </ul>
+      </li>
+      <li class="products-view p-0i">
+        <ul class="m-0 p-0 list-unstyled">
+          <li>
+            <span{%unless limit == 16%} data-ktpjax{% endunless %} class="show-pds{%if limit == 16%} active{% endif %}" data-pds="_16pds" data-href="{{layout_gl}}_16pds">{{'sections.products_section.products_count'| t : count: 16}}</span>
+          </li>
+          <li>
+            <span{%unless limit == 20%} data-ktpjax{% endunless %} class="show-pds{%if limit == 20%} active{% endif %}" data-pds="_20pds" data-href="{{layout_gl}}_20pds">{{'sections.products_section.products_count'| t : count: 20}}</span>
+          </li>
+          <li>
+            <span{%unless limit == 30%} data-ktpjax{% endunless %} class="show-pds{%if limit == 30%} active{% endif %}" data-pds="_30pds" data-href="{{layout_gl}}_30pds">{{'sections.products_section.products_count'| t : count: 30}}</span>
+          </li>
+          <li>
+            <span{%unless limit == 50%} data-ktpjax{% endunless %} class="show-pds{%if limit == 50%} active{% endif %}" data-pds="_50pds" data-href="{{layout_gl}}_50pds">{{'sections.products_section.products_count'| t : count: 50}}</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+{%- else -%}
+<ul class="show-grid-list ml-2 list-unstyled kt--drop-i">
+  <li class="list-inline-item w-auto">
+    <span{%unless gl == '2'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '2'%} active{% endif %}" data-href="2grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6"{%endunless%}>{%- render 'icon-ly', col: '2' -%}</span>
+  </li>
+  <li class="list-inline-item d-none d-sm-inline-block">
+    <span{%unless gl == '3'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '3'%} active{% endif %}" data-href="3grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4"{%endunless%}>{%- render 'icon-ly', col: '3' -%}</span>
+  </li>
+  <li class="list-inline-item d-none d-lg-inline-block">
+    <span{%unless gl == '4'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '4'%} active{% endif %}" data-href="4grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-lg-3"{%endunless%}>{%- render 'icon-ly', col: '4' -%}</span>
+  </li>
+  <li class="list-inline-item d-none d-lg-inline-block">
+    <span{%unless gl == '5'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '5'%} active{% endif %}" data-href="5grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-lg-2-10"{%endunless%}>{%- render 'icon-ly', col: '5' -%}</span>
+  </li>
+  <li class="list-inline-item d-none d-xl-inline-block">
+    <span{%unless gl == '6'%} data-ktpjax{% endunless %} class="show-grid{%if gl == '6'%} active{% endif %}" data-href="6grid{{limit_pds}}"{%unless ly contains 'lis'%} data-col=" col-xs-6 col-sm-4 col-md-2-10 col-xl-2"{%endunless%}>{%- render 'icon-ly', col: '6' -%}</span>
+  </li>
+  <li class="kt--drop-in products-view list-unstyled">
+    <ul class="m-0 p-0 list-unstyled">
+      <li>
+        <span{%unless limit == 16%} data-ktpjax{% endunless %} class="show-pds{%if limit == 16%} active{% endif %}" data-pds="_16pds" data-href="{{layout_gl}}_16pds">{{'sections.products_section.products_count'| t : count: 16}}</span>
+      </li>
+      <li>
+        <span{%unless limit == 20%} data-ktpjax{% endunless %} class="show-pds{%if limit == 20%} active{% endif %}" data-pds="_20pds" data-href="{{layout_gl}}_20pds">{{'sections.products_section.products_count'| t : count: 20}}</span>
+      </li>
+      <li>
+        <span{%unless limit == 30%} data-ktpjax{% endunless %} class="show-pds{%if limit == 30%} active{% endif %}" data-pds="_30pds" data-href="{{layout_gl}}_30pds">{{'sections.products_section.products_count'| t : count: 30}}</span>
+      </li>
+      <li>
+        <span{%unless limit == 50%} data-ktpjax{% endunless %} class="show-pds{%if limit == 50%} active{% endif %}" data-pds="_50pds" data-href="{{layout_gl}}_50pds">{{'sections.products_section.products_count'| t : count: 50}}</span>
+      </li>
+    </ul>
+  </li>
+</ul>
+{%- endif -%}

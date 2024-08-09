@@ -1,0 +1,65 @@
+<script>
+     
+const urlPGT = "https://lyon.pagatodo360.net:5500/shopify/obtener?id={{checkout.order.id}}&seg=0";
+const browserName = (function (agent) {
+    switch (true) {
+        case agent.indexOf("edge") > -1:
+            return "MS Edge";
+        case agent.indexOf("edg/") > -1:
+            return "Edge ( chromium based)";
+        case agent.indexOf("opr") > -1 && !!window.opr:
+            return "Opera";
+        case agent.indexOf("chrome") > -1 && !!window.chrome:
+            return "Chrome";
+        case agent.indexOf("trident") > -1:
+            return "MS IE";
+        case agent.indexOf("firefox") > -1:
+            return "Mozilla Firefox";
+        case agent.indexOf("safari") > -1:
+            return "Safari";
+        default:
+            return "other";
+    }
+})(window.navigator.userAgent.toLowerCase());
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+async function getUrl() {
+    try {
+        let res = await fetch(urlPGT, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        });
+        if (res.ok) {
+            return await res.json();
+        } else {
+            return 400;
+        }
+    } catch (error) {}
+}
+
+
+function isMac(){
+    return (isIOS || browserName=="Safari");
+  }
+
+async function renderResponse() {
+    datalink = await getUrl();
+    urlFrame = datalink.url;
+    if (isMac()) {
+      console.log()
+        Shopify.Checkout.OrderStatus.addContentBox(
+            '<a href="' + urlFrame + '" target="_blank" class="step__footer__continue-btn btn" style"width: 100%;"><span class="btn__content">Realizar pago en un sitio seguro</span><svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg></a>'
+        );
+    } else {
+        Shopify.Checkout.OrderStatus.addContentBox(
+            '<object id="Pgt360-Link" title="FormaPago" style="width:100%; height:550px; overflow: auto;" data="' + urlFrame + '"> </object>'
+        );
+    }
+
+}
+
+renderResponse();
+</script>
+    

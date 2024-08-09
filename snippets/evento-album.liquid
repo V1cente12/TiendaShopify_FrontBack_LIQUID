@@ -1,0 +1,165 @@
+<style>
+.album{
+    background-image: linear-gradient(360deg,rgb(12 9 13), rgb(49 40 41));
+    padding-top: 30px;
+}
+
+.album h1{
+    font-size: 40px;
+    color: red;
+    text-align: center;
+}
+
+.album h2{
+    color: white;
+    text-align: center;
+}
+
+
+
+@media only screen and (min-width: 0px) and  (max-width: 360px) {
+    .album-spotify {
+        padding-top: 90px;
+    }
+
+    .disc{
+        width: 80%;
+    }
+    .cd{
+        left: 33%;
+        top: -20%!important;
+        width: 35%;
+    }
+}
+
+@media only screen and (min-width: 361px) and  (max-width: 767px) {
+    .album-spotify{
+        padding-top: 100px;
+    }
+    .disc{
+        width: 50%;
+    }
+    .cd{
+        left: 38%;
+        top: -20%!important;
+        width: 25%;
+    }
+}
+
+@media only screen and (min-width: 768px) and  (max-width: 955px) {
+    .album-spotify{
+        padding-top: 50px;
+    }
+
+    .disc{
+        width: 58%;
+        padding-top: 60px;
+    }
+    .cd{
+        left: 59%;
+        top: 29%!important;
+        width: 35%;
+    }
+}
+
+
+@media only screen and (min-width: 956px) and  (max-width: 1172px) {
+    .album-spotify{
+        padding-top: 50px;
+    }
+
+    .disc{
+        width: 52%;
+        padding-top: 80px;
+    }
+    .cd{
+        left: 59%;
+        top: 30%!important;
+        width: 35%;
+    }
+}
+
+@media only screen and (min-width: 1173px) and  (max-width: 1500px) {
+    .album-spotify{
+        padding-top: 50px;
+    }
+
+    .disc{
+        width: 37%;
+        padding-top: 55px;
+    }
+    .cd{
+        left: 56%;
+        top: 23%!important;
+        width: 25%;
+    }
+}
+
+@media only screen and (min-width: 1501px) {
+    .album-spotify{
+        padding-top: 50px;
+    }
+
+    .disc{
+        width: 32%;
+        padding-top: 20px;
+    }
+    .cd{
+        left: 55%;
+        top: 12%!important;
+        width: 25%;
+    }
+}
+
+
+    .disc{
+        position: relative;
+        z-index: 10;
+    }
+
+    .cd{
+        position: absolute;
+        z-index: 9;
+        animation: spin 15s linear infinite;
+    }
+
+    .album-spotify{
+        padding-bottom: 80px;
+        text-align: center;
+        margin: auto;
+    }
+
+    .disc_cover{
+        text-align: center;
+    }
+    .spotify{
+        border-radius:12px
+    }
+</style>
+<div class="album">
+  
+    <div>
+        <h1> Lanzamiento del nuevo Álbum</h1>
+    </div>
+  
+    <div>
+        <h2>Christian Nodal</h2>
+    </div>
+
+    <div class="row album-spotify">
+        <div class="col-md-6 " style="margin-bottom: 20px;">
+            <div>
+                <img class="disc" src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/PORTADA_DISCO.jpg?v=1647293809" alt="">
+                {% comment %} <img class="cd" src=https://cdn.shopify.com/s/files/1/0573/4478/6617/files/evento-cd.png?v=1646938725" alt=""> {% endcomment %}
+            </div>     
+        </div> 
+        <div class="col-md-6  ">
+            <iframe class="spotify" 
+                src="https://open.spotify.com/embed/playlist/37i9dQZF1DX84rAVfgMv7C?utm_source=generator" 
+                width="80%" height="380" 
+                frameBorder="0" allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+            </iframe>
+        </div>   
+    </div>
+</div>

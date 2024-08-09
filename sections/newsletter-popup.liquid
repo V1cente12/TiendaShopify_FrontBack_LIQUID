@@ -1,0 +1,154 @@
+<!-- newsletter-popup.liquid -->
+<section id="newsletterModal" class="modal fade" aria-hidden="false" role="dialog" tabindex="-1" data-pause="{{section.settings.time_popup_delay|default: 2}}" data-scroll="{{section.settings.scroll_popup_delay|default: 0}}" data-mobile-display="{{settings.newsletter_popup_hide_mobile}}" data-section-id="newsletterModal" data-section-type="kt-newsletter-modal">
+  <div class="modal-dialog modal-dialog-centered{%if section.settings.use_banner%} modal-lg{%endif%}">
+    <div class="modal-content">
+      <div class="content-item kt-popup-newsletter w-100 position-relative">
+        <button class="close" aria-label="Close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+        <div class="row no-gutters align-items-center">
+          <div class="col-12{%if section.settings.use_banner%} col-lg-7{%endif%} p-2 text-center">
+            <div class="px-1">              
+              {%- if section.settings.popup_newsletter_logo -%}
+              <img src="{{section.settings.popup_newsletter_logo|img_url: 'master'}}" class="logo" alt="logo">
+              {%- endif -%}
+              <h2 class="popup-title">
+                {{section.settings.popup_newsletter_title|html}}
+              </h2>
+              <div class="popup-desc">
+                {{section.settings.popup_newsletter_description|html}}
+              </div>
+              {%- assign text_btn_ = 'general.newsletter_form.submit_popup'|t -%}
+              {%- render 'kt_newsletter_form', section: section, class_form: 'form-subscribe mt-3', style_btn: 'btn-dark', text_btn: text_btn_ -%}
+              <div class="custom-control custom-checkbox mt-5">
+                <input type="checkbox" class="custom-control-input" id="hideforever" required="">
+                <label class="custom-control-label" for="hideforever">{{'general.newsletter_form.checkbox_popup'|t}}</label>
+              </div>
+            </div>
+          </div>
+          {%-if section.settings.use_banner-%}
+          <div class="col-12 col-lg-5 d-none d-lg-block">
+            {%- liquid
+              assign image_item = section.settings.popup_newsletter_banner
+              assign width = image_item.width
+              assign height = image_item.height
+              assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+            -%}
+            <img width="{{width}}" height="{{height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[150, 240, 540]" data-aspectratio="{{ image_item.aspect_ratio }}" data-sizes="auto" alt="{{ image_item.alt | escape }}" style="padding-bottom:{{height | times: 1.00 | divided_by: width | times: 100.00000000}}%">
+          </div>
+          {%-endif-%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{%-capture newsletter-css-%}
+{%style%}
+  @media (min-width: 992px){
+    #newsletterModal .modal-lg {
+      max-width: 970px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+  #newsletterModal .logo {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 0;
+    display: block;
+    padding: 0;
+    max-width: 25rem;
+  }
+  #newsletterModal .popup-title {
+    font-size: 4.6rem;
+    font-weight: 700;
+    letter-spacing: -.025em;
+    color: #222;
+    margin-bottom: 1rem;
+    line-height: 1.4em;
+  }
+  #newsletterModal .popup-desc {
+    font-size: 1.4rem;
+    line-height: 24px;
+    color: #999999;
+  }
+  #newsletterModal form{
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #newsletterModal .btn.btn-dark{
+    min-width: 7rem;
+    padding-top: 1.15rem;
+    padding-bottom: 1.15rem;
+  }
+  #newsletterModal form input[type="email"]{
+    height: 46px;
+  }
+  #newsletterModal .btn.btn-dark i{
+    display: none;
+  }
+  #newsletterModal .custom-control-label{
+    color: #999999;
+  }
+{%endstyle%}
+{%-endcapture-%}
+{{ newsletter-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%schema%}
+  {
+    "name": "Newsletter popup",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Disable: Theme settings > Gadget > NEWSLETTER"
+      },
+      {
+        "type":"checkbox",
+        "id": "use_banner",
+        "label": "Use banner?",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_newsletter_banner",
+        "label": "Banner image",
+        "info": "Size suggestion: 396 x 420 px"
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_newsletter_logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_newsletter_title",
+        "label": "Title",
+        "default": "GET <span class=\"text-primary\">25<light>%<\/light><\/span> OFF"
+      },
+      {
+        "type": "richtext",
+        "id": "popup_newsletter_description",
+        "label": "Text content",
+        "default": "<p>Subscribe to the Molla eCommerce newsletter to<br\/> receive timely updates from your favorite products.<\/p>"
+      },
+      {
+        "type": "header",
+        "content": "== Show popup after Settings"
+      },
+      {
+        "type": "text",
+        "id": "time_popup_delay",
+        "label": "__ Popup delay",
+        "info": "Show popup after some time (in milisecond). Integer",
+        "default": "15000"
+      },
+      {
+        "type": "text",
+        "id": "scroll_popup_delay",
+        "label": "__ Show after user scroll down the page",
+        "info": "Set the number of pixels users have to scroll down before popup opens (100 -5000). Integer",
+        "default": "800"
+      }
+    ]
+  }
+{%endschema%}

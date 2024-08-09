@@ -1,0 +1,227 @@
+{
+  "form": {
+    "id": "zyt3Kz",
+    "name": "Registration",
+    "handle": "registration-817",
+    "theme_id": "128303464653",
+    "settings": {
+      "locales": {
+        "back": "Back",
+        "next": "Next",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Please fix errors before continuing",
+        "is_invalid": "{{label}} is invalid",
+        "email_taken": "Email has already been taken",
+        "phone_taken": "Phone number has already been taken",
+        "server_error": "Could not save form, please try again later",
+        "step_counter": "Step {{current}} of {{total}}",
+        "verify_email": "Check your email for a verification link to activate your account.",
+        "not_available": "An error occurred while saving your account, please try again in a few minutes.",
+        "create_account": "Create account",
+        "update_account": "Actualizar perfil",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Creating account...",
+        "updating_account": "Actualizando...",
+        "reset_password_link": "Reset your password",
+        "invalid_email_domain": "Email contains an invalid domain name",
+        "reset_password_email_sent": "Check your inbox for a link to reset your password.",
+        "reset_password_too_many_attempts": "You tried to reset your password too many times. Please wait and try again later."
+      },
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": true,
+      "goBackAfterSubmission": false,
+      "cancelButtonRedirectUrl": "\/account",
+      "postSubmissionRedirectUrl": "\/account",
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2022-01-06T15:59:47Z",
+    "updated_at": "2022-02-16T16:58:25Z",
+    "revision_ids": [
+      "3qTev4g",
+      "OzTXZGn",
+      "2ETz7O4",
+      "Z6Trwpg"
+    ]
+  },
+  "revision": {
+    "id": "OzTXZGn",
+    "created_at": "2022-01-06T16:48:38Z",
+    "updated_at": "2022-02-16T15:11:25Z",
+    "embed_version": "4.9.0",
+    "published_at": "2022-02-16T15:11:25Z",
+    "fields": [
+      {
+        "id": 151775,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "text",
+        "stepId": 143582,
+        "default": "",
+        "label": "Nombre",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank"
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 154175,
+        "dataColumn": {
+          "key": "last_name",
+          "label": "Last name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 143582,
+        "default": "",
+        "label": "Apellido",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank"
+          }
+        ],
+        "sensitive": null,
+        "preset": "last_name",
+        "autotag": null
+      },
+      {
+        "id": 901769,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "email",
+        "stepId": 143582,
+        "default": "",
+        "label": "Email",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Please provide a valid email address"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank"
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 704906,
+        "dataColumn": {
+          "key": "password",
+          "label": "Password",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "text",
+        "stepId": 143582,
+        "default": "",
+        "label": "Password",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank"
+          },
+          {
+            "metadata": {
+              "mandatory": true,
+              "staticOperator": true,
+              "comparandFieldProps": {
+                "min": 5
+              }
+            },
+            "operator": "longer_than",
+            "comparand": 5,
+            "errorMessage": "Password is too short"
+          }
+        ],
+        "sensitive": true,
+        "preset": "password",
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 143582,
+        "title": "Step 1",
+        "description": ""
+      }
+    ],
+    "rules": [
+
+    ]
+  }
+}

@@ -1,0 +1,601 @@
+<!-- md_banner_collections_template_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+  	{%- for block in section.blocks -%}
+    {%- if block.settings.turnoff -%}{%-continue-%}{%- endif -%}
+    {%- case block.type-%}
+    {%- when '1'-%}
+			<div class="row align-items-center imgs__banner_collections_template1">
+				<div class="col-12 col-md-4 item__1">
+          {%- assign collection = collections[block.settings.collection_1] -%}
+          <div class="item_banner position-relative {{block.settings.banner-effect}}">
+            <div class="text-content text-center position-absolute wait-for-css">
+              <h3>{{block.settings.titlex_1 | default: collection.title}}<br/>
+                <span class="stitle">{{'sections.products_section.products_count'| t: count : collection.all_products_count}}</span>
+              </h3>
+              {%- if block.settings.name_btn_1 == blank -%}
+                <a href="{{collection.url|default:'#'}}" class="btn btn-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 280.00 | plus: 0.00-%}
+            <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="380x280 px"{% endunless %}></a>
+          </div>
+				</div>
+        <div class="col-12 col-md-4 item__2 mt-2 mt-md-0">
+          {%- assign collection = collections[block.settings.collection_2] -%}
+          <div class="item_banner position-relative {{block.settings.banner-effect}}">
+            <div class="text-content text-center position-absolute wait-for-css">
+              <h3>{{block.settings.titlex_2 | default: collection.title}}<br/>
+                <span class="stitle">{{'sections.products_section.products_count'| t: count : collection.all_products_count}}</span>
+              </h3>
+              {%- if block.settings.name_btn_2 == blank -%}  
+                <a href="{{collection.url|default:'#'}}" class="btn btn-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 280.00 | plus: 0.00-%}
+            <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="380x280 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 item__3 mt-2 mt-md-0">
+          {%- assign collection = collections[block.settings.collection_3] -%}
+          <div class="item_banner position-relative {{block.settings.banner-effect}}">
+            <div class="text-content text-center position-absolute wait-for-css">                
+              <h3>{{block.settings.titlex_3 | default: collection.title}}<br/>
+                <span class="stitle">{{'sections.products_section.products_count'| t: count : collection.all_products_count}}</span>
+              </h3>
+              {%- if block.settings.name_btn_3 == blank -%}  
+                <a href="{{collection.url|default:'#'}}" class="btn btn-link" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_3 -%}
+            {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 280.00 | plus: 0.00-%}
+            <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="380x280 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      <noscript class="banner-css" data-section-type="imgs__banner_collections_template1">
+        {%style%}
+          .imgs__banner_collections_template1 h3 {
+            color: #333333;
+            font-weight: 400;
+            font-size: 2rem;
+            line-height: 1.3;
+            margin-bottom: .9rem;
+            letter-spacing: -.03em;
+          }
+          .imgs__banner_collections_template1 h3 .stitle {
+            color: #999999;
+            font-weight: 300;
+            font-size: 1.6rem;
+            line-height: 1.2;
+            letter-spacing: 0;
+            margin-bottom: .9rem;
+          }
+          .imgs__banner_collections_template1 .item_banner{
+            overflow: hidden;
+          }
+          .imgs__banner_collections_template1 .btn {
+            min-width: auto;
+            padding: 0;
+            opacity: 0;
+            -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+          }
+          .imgs__banner_collections_template1 .text-content {
+            z-index: 1;
+            left: 3rem;
+            padding: 1.1rem 2rem .7rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            -webkit-transform: translateY(30px);
+            transform: translateY(30px);
+            -ms-transform: translateY(30px);
+            -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+          }
+          .imgs__banner_collections_template1 .item_banner:hover .text-content {
+            background-color: white;
+            -webkit-transform: translateY(0px);
+            transform: translateY(0px);
+            -ms-transform: translateY(0px);
+          }
+          .imgs__banner_collections_template1 .item_banner:hover .btn {
+            opacity: 1;
+          }
+        {%endstyle%}
+      </noscript>  
+    {%- when'2'-%}
+      <div class="row align-items-center imgs__banner_collections_template2">
+        <div class="col-12 col-lg-6 item__1">
+          {%- assign collection = collections[block.settings.collection_1] -%}
+          <div class="item_banner position-relative {{block.settings.banner-effect}}">
+            <div class="text-content text-center position-absolute wait-for-css">
+              <h3><a href="{{collection.url|default:'#'}}">{{block.settings.titlex_1 | default: collection.title}}</a></h3>
+              {%- if block.settings.name_btn_1 == blank -%}
+              <a href="{{collection.url|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 565.00 | plus: 0.00-%}
+            <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="580x565 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 item__2 mt-2 mt-lg-0">
+          {%- assign collection = collections[block.settings.collection_2] -%}
+          <div class="item_banner position-relative {{block.settings.banner-effect}}">
+            <div class="text-content text-center position-absolute wait-for-css">
+              <h3><a href="{{collection.url|default:'#'}}">{{block.settings.titlex_2 | default: collection.title}}</a></h3>
+              {%- if block.settings.name_btn_2 != blank -%}
+                <a href="{{collection.url|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 565.00 | plus: 0.00-%}
+            <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="280x565 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 mt-2 mt-lg-0">
+          <div class="row">
+            <div class="col-12 item__3">
+              {%- assign collection = collections[block.settings.collection_3] -%}
+              <div class="item_banner position-relative {{block.settings.banner-effect}}">
+                <div class="text-content text-center position-absolute wait-for-css">
+                  <h3><a href="{{collection.url|default:'#'}}">{{block.settings.titlex_3 | default: collection.title}}</a></h3>
+                  {%- if block.settings.name_btn_3 != blank -%}  
+                    <a href="{{collection.url|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                  {%- endif -%}
+                </div>
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 272.00 | plus: 0.00-%}
+                <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="280x272 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 item__4 mt-2">
+              {%- assign collection = collections[block.settings.collection_4] -%}
+              <div class="item_banner position-relative {{block.settings.banner-effect}}">
+                <div class="text-content text-center position-absolute wait-for-css">
+                  <h3><a href="{{collection.url|default:'#'}}">{{block.settings.titlex_4 | default: collection.title}}</a></h3>
+                  {%- if block.settings.name_btn_4 == blank -%}  
+                    <a href="{{collection.url|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+                  {%- endif -%}
+                </div>
+                {%- assign image_item = block.settings.image_4 -%}
+                {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 272.00 | plus: 0.00-%}
+                <a href="{{collection.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless image_item %} title="280x272 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%-capture banner-css-%}
+      <noscript class="banner-css" data-section-type="imgs__banner_collections_template2">
+        {%style%}
+          .imgs__banner_collections_template2 h3 {
+            color: #fff;
+            font-weight: 600;
+            font-size: 2rem;
+            line-height: 1.25;
+            margin-bottom: .6rem;
+            letter-spacing: -.025em;
+            -webkit-transition: all .35s ease;
+            transition: all .35s ease;
+            opacity: 0;
+            -webkit-transform: translateY(50px);
+            transform: translateY(50px);
+          }
+          .imgs__banner_collections_template2 h3 a {
+            color: inherit;
+          }
+          .imgs__banner_collections_template2 .banner-link {
+            display: inline-block;
+            font-weight: 400;
+            font-size: 1.4rem;
+            line-height: 1.5;
+            letter-spacing: -.01em;
+            color: #ebebeb;
+            text-transform: uppercase;
+            opacity: 0;
+            -webkit-transform: translateY(50px);
+            transform: translateY(50px);
+            -webkit-transition: all .35s ease;
+            transition: all .35s ease;
+          }
+          .imgs__banner_collections_template2 .banner-link:hover {
+            color: #ebebeb;
+            text-decoration: none !important;
+            -webkit-box-shadow: 0 1px 0 0 #ffF;
+            box-shadow: 0 1px 0 0 #ffF;
+          }
+          .imgs__banner_collections_template2 .item_banner{
+            overflow: hidden;
+          }
+          .imgs__banner_collections_template2 .text-content {
+            z-index: 1;
+            left: 3rem;
+            left: 0;
+            right: 0;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+          }
+          .imgs__banner_collections_template2 .item_banner:hover h3 {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0);
+          }
+          .imgs__banner_collections_template2 .item_banner:hover .banner-link {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0);
+          }
+        {%endstyle%}
+      </noscript>
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    {%- endcase -%}
+    {%- endfor -%}
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{% schema %}
+  {
+    "name": "Banner collections tpl 1",
+    "class": "md_banner_collections_template_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Banner collections template 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 px"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview demo](#)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Banners type 1",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 1",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 1 settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 280 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_1",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_1",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 280 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_2",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_2",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 280 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_3",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_3",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          }
+        ]
+      },
+      {
+        "type": "2",
+        "name": "Banners type 2",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 2",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 2 settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 565 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_1",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_1",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 565 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_2",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_2",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 272 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_3",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_3",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "paragraph",
+            "content": "====================== Banner 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 272 px"
+          },
+          {
+            "type":"collection",
+            "id":"collection_4",
+            "label": "Collection"
+          },
+          {
+            "type":"text",
+            "id":"titlex_4",
+            "label": "Title"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collections template 1",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

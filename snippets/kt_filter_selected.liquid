@@ -1,0 +1,12 @@
+<ul class="kt--fl-sl list-unstyled">
+  {%-if current_tags-%}
+  {%- for current_tag in current_tags -%}
+  {%- capture link -%}
+  {{ current_tag | link_to_remove_tag: current_tag }}
+  {%- endcapture -%}
+  <li class="kt--fl-sl-i" style="margin-right: 0 !important;">
+    <a data-pjax-filter href="{{link|split: 'href="'|last|split:'"'|first}}"><span class="remove_kt--filter-sl" data-action="remove">{{current_tag|split: '  '|last}}<i class="fkt-close" aria-hidden="true"></i></span></a>
+  </li>
+  {%- endfor -%}
+  {%-endif-%}
+</ul>

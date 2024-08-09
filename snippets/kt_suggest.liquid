@@ -1,0 +1,32 @@
+{%- assign template_id = template | split: '.' | first -%}
+{%- assign st = 'display_' | append: template_id -%}
+{%- if settings[st] -%}
+  {%- assign collection_opj = collections[settings.collection_suggest] | default: collections['all'] -%}
+  <div class="kt-products-suggest hidden-xs" style="display: none">
+    <div class="product-suggest">
+      {%- if settings.show_close_suggest -%}<span class="suggest-close">×</span>{%- endif -%}
+      <div class="table_suggest">
+        <div class="table-cell-top img">
+          <a href="/">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-shop_thumbnail" alt=""> 
+          </a>
+        </div>
+        <div class="table-cell-top">
+          <span style="font-size: 12px">{{'general.suggest.title' | t}}</span>
+          <a href="{{ ps.url | within: collection_opj }}" class="product-title">{{shop.name}}</a>
+          {%- if settings.use_suggest -%}
+          {%- assign ago_suggest = 'now' | date: '%S' | plus:0 -%}
+          <div class="minutes-ago">
+            <span class="minute-number">{%- if ago_suggest == 0 -%}1{%- else -%}{{ago_suggest}}{%- endif -%}</span> <span>{{'general.suggest.minutes_ago' | t}}</span>
+          </div>
+          {%- endif -%}
+          {%- if settings.use_fake_location and settings.fake_location != blank -%}
+          {%- assign arr_fake_location = settings.fake_location | replace: ' | ', '|' | replace: ' |', '|' | replace: '| ', '|' | split: '|' -%}
+          {%- assign ago_index = 'now' | date: '%S' | plus:0 -%}
+          <div class="from-ago">{{'general.suggest.from' | t}} <span class="from">{%- if ago_index > arr_fake_location.size -%}{%- assign ago_index = 0 -%}{%- endif -%}{{arr_fake_location[ago_index]}}</span></div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

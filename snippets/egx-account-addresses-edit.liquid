@@ -1,0 +1,238 @@
+<!--egx-account-addresses-edit.liquid-->
+<div id="EditAddress_{{ address.id }}" class="form-vertical d-none">
+
+    {%- form 'customer_address', address, class:'edit_customer_address' -%}
+        <h3 class="title-addresses__myAccount mt-4">{{ 'customer.addresses.edit_address' | t }}</h3>
+        <div class="fields-address__myAccount">
+        <!--
+                      <div class="row">
+                        <div class="col-md-5 form-field" id="billing_first_name_field">
+                          <label for="AddressFirstName_{{ form.id }}">{{ 'customer.addresses.first_name' | t }} <span title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                          {% assign ciudades = 'Santa Cruz,Cochabamba,La Paz,Oruro,Tarija,Chuquisaca' | split:',' %}
+                          <select name="address-{{ form.id }}[city]"  required class="idAddressCity form-control" id="AddressFirstName1_{{ form.id }}" onchange="cambiarCiudadUpdate({{ form.id }})">
+                            {%- if form.city == blank -%}
+                                <option value="">-- SELECCIONA TU CIUDAD --</option>
+                              {%- endif -%} 
+                              <option value="">-- SELECCIONA TU CIUDAD --</option> 
+                              {% for city in ciudades %}                 
+                                {%- if city == form.city -%}
+                                   <option selected value="{{city}}">{{city}}</option>
+                                {%- else -%}               
+                                    <option value="{{city}}">{{city}}</option>
+                                {%- endif -%}              
+                              {% endfor %}
+                          </select>
+                          <small ></small>
+                        </div>
+                      </div>
+                      -->
+        <div class="row">
+            <div class="col-md-5 form-field egx_ocultar" id="billing_first_name_field">
+                <label for="AddressFirstName_{{ form.id }}">{{ 'customer.addresses.first_name' | t }} <span
+                        title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                <input type="text" id="AddressFirstName_{{ form.id }}" class="idAddressFirstName form-control"
+                    name="address[first_name]" value="{{ form.first_name }}" required>
+                <small></small>
+            </div>
+            <div class="col-md-5 form-field" id="billing_last_name_field">
+                <label for="AddressLastName_{{ form.id }}">Alias <span title="Este campo es obligatorio"
+                        class="colorRojo">(*)</span></label>
+                <input type="text" id="AddressLastName_{{ form.id }}" class="textoRef idAddressLastName form-control"
+                    name="address[last_name]" value="{{ form.last_name }}" required>
+                <small></small>
+                <div>
+                    <span class="spanTitle">Ej: Casa, Trabajo, Otros.</span>
+                </div>
+            </div>
+            <div class="col-md-7 form-field" id="billing_phone_field">
+                <label for="AddressPhone_{{ form.id }}">{{ 'customer.addresses.phone' | t }} <span
+                        title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                <input type="text" minlength="7" maxlength="8"
+                    onkeypress="return event.charCode>=48 && event.charCode<=57" id="AddressPhone_{{ form.id }}"
+                    class="idAddressPhone form-control" name="address[phone]" required value="{{ form.phone }}">
+                <small></small>
+            </div>
+        </div>
+
+
+
+
+
+        <!--
+            <div class="row">
+                <div class="col-md-6 form-field" >
+                    <label for="AddressCity_{{ form.id }}">{{ 'customer.addresses.city' | t }} <span title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                    {% assign citys = settings.citys | split: ',' %}
+                    {% assign ciudades = 'Santa Cruz,Cochabamba,La Paz,Oruro,Tarija,Chuquisaca' | split:',' %}
+                    <select name="address-{{ form.id }}[city]"  required class="idAddressCity form-control" id="address_selectcity{{ form.id }}" onchange="cambiarCiudadUpdate({{ form.id }})">
+                            {%- if form.city == blank -%}
+                              <option value="">-- SELECCIONA TU CIUDAD --</option>
+                            {%- endif -%} 
+                            <option value="">-- SELECCIONA TU CIUDAD --</option> 
+                            {% for city in ciudades %}                 
+                              {%- if city == form.city -%}
+                                 <option selected value="{{city}}">{{city}}</option>
+                              {%- else -%}               
+                                  <option value="{{city}}">{{city}}</option>
+                              {%- endif -%}              
+                            {% endfor %}
+                    </select>
+                    <small ></small>
+                </div> 
+            </div>
+        -->
+        <label for="AddressCompany_{{ form.id }}" style="display:none">{{ 'customer.addresses.company' | t }}</label>
+        <input type="text" id="AddressCompany_{{ form.id }}" class="form-control" name="address[company]"
+            value="{{ form.company }}" style="display:none">
+
+
+        <div>
+            <div class="col-md-6" id="billing_state_field" style="display:none">
+                <label for="AddressCountry_{{ form.id }}">{{ 'customer.addresses.country' | t }}</label>
+                <select class="form-control address-country-option" data-form-id="{{ form.id }}" id="AddressCountry_{{ form.id }}" name="address[country]" data-default="{{ form.country }}">{{
+                    country_option_tags }}
+                </select>
+            </div>
+            <div class="col-md-2" id="billing_postcode_field" style="display:none">
+                <label for="AddressZip_{{ form.id }}">{{ 'customer.addresses.zip' | t }}</label>
+                <input type="text" class="form-control" id="AddressZip_{{ form.id }}" name="address[zip]" value="{{ form.zip }}" autocapitalize="characters">
+            </div>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col-md-5 form-field" id="billing_city_field">
+
+                <input type="text" class="form-control" id="AddressCity_{{ form.id }}" name="address[city]"
+                    value="{{ form.city }}" style="display:none">
+                {% assign citys = settings.citys | split: ',' %}
+                <label for="AddressCity_{{ form.id }}">{{ 'customer.addresses.city' | t }} <span
+                        title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                {% assign ciudades = 'Santa Cruz,Cochabamba,La Paz,Oruro,Tarija,Chuquisaca' | split:',' %}
+
+                <select name="address-{{ form.id }}[city]" required class="idAddressCity form-control"
+                    id="AddressFirstName1_{{ form.id }}" onchange="cambiarCiudadUpdate({{ form.id }})">
+                    {%- if form.city == blank -%}
+                    <option value="">-- SELECCIONA TU CIUDAD --</option>
+                    {%- endif -%}
+                    <option value="">-- SELECCIONA TU CIUDAD --</option>
+                    {% for city in ciudades %}
+                    {%- if city == form.city -%}
+                    <option selected value="{{city}}">{{city}}</option>
+                    {%- else -%}
+                    <option value="{{city}}">{{city}}</option>
+                    {%- endif -%}
+                    {% endfor %}
+                </select>
+
+                <small id="statusCiudadEdit"></small>
+
+
+                <!--
+                            <select name="address-{{ form.id }}[city]" class="form-control" id="address-{{ form.id }}[selectcity]" onchange="cambiarCiudadUpdate({{ form.id }})">
+                              {% for city in citys %}                 
+                                {%- if city == form.city -%}
+                                   <option selected value="{{city}}">{{city}}</option>
+                                {%- else -%}               
+                                    <option value="{{city}}">{{city}}</option>
+                                {%- endif -%}              
+                              {% endfor %}
+                            </select>
+                            -->
+            </div>
+
+
+            <div class="col-sm-7 form-field" id="billing_address_1_field">
+                <label for="AddressAddress1New">{{ 'customer.addresses.address1' | t }} <span
+                        title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                <input type="text" class="idAddressAddress form-control textoRef" required
+                    placeholder="Introduce una ubicación" name="address[AddressAddressComplemento]"
+                    id="AddressAddress1_New_Complemento{{ form.id }}"
+                    onkeyup="EditUnirDireccionReferencia({{ form.id }})">
+                <small></small>
+                <div>
+                    <span id="statusAddressEdit1" class="spanTitle">Ej: Calle Velasco, entre Pari y Suarez de Figueroa
+                        #213.</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 form-field provinceUpdate egx_ocultar" id="AddressProvinceContainer_{{ form.id }}">
+                <label for="AddressProvince_{{ form.id }}">{{ 'customer.addresses.address2' | t }} <span
+                        title="Este campo es obligatorio" class="colorRojo">(*)</span></label>
+                <select class="idAddressProvince form-control " id="AddressProvince_{{ form.id }}" required
+                    name="address[address2]" value="{{ form.address2 }}" data-default="{{ form.address2 }}">
+                </select>
+                <small></small>
+            </div>
+        </div>
+        <!--
+        {% render 'egx-alert-warning-estatico',titulo: 'Estimado Usuario.', subTitulo: 'Por el momento, solo enviamos productos a estas Cuidades y Zonas en Bolivia.' %}
+        -->
+
+
+
+        <div class="row" style="display:none">
+            <div class="col-sm-6" id="billing_address_1_field">
+                <label for="AddressAddress1_{{ form.id }}">{{ 'customer.addresses.address1' | t }}</label>
+                <input type="text" class="form-control" id="AddressAddress1_{{ form.id }}" name="address[address1]" value="{{ form.address1 }}">
+            </div>
+            <!--
+            <div class="col-sm-6" id="billing_address_2_field" >
+                <label for="AddressAddress2_{{ form.id }}">{{ 'customer.addresses.address2' | t }}</label>
+                <input type="text" class="form-control" id="AddressAddress2_{{ form.id }}" name="address[address2]" value="{{ form.address2 }}">
+            </div>
+            -->
+        </div>
+
+
+        <div class='row btnUsarUbicacion'>
+            <button type="button" class="btn btn_cancel btn-outline-primary-2" onclick="geolocationEdit({{ form.id }})">Usar ubicación actual</button>
+        </div>
+
+        <div class="mensajeDireccionEdit"></div>
+
+
+
+
+        <div class='row'>
+            <div class="col-sm-12">
+                <div class="map_parent">
+                    <div id="map_{{ form.id }}" class="map">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col-sm-12 form-field" id="billing_address_2_field">
+                <label for="AddressAddress2New">Referencias</label>
+                <input type="text" class="form-control textoRef" id="AddressAddress2_New_Complemento{{ form.id }}"
+                    onkeyup="EditUnirDireccionReferencia({{ form.id }})">
+                <small></small>
+                <span class="spanTitle">Ej: Edificio Don Luis, 1er piso.</span>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="agree_checkbox">
+                <label for="address_default_address_{{ form.id }}" style="display: inline-block;margin: 0">
+                    {{ form.set_as_default_checkbox }} {{ 'customer.addresses.set_default' | t }}</label>
+                <span class="clear"></span>
+            </div>
+            <div>
+                <button id="submit_{{ form.id }}" type="submit" onclick="ValidarEdit(event)"
+                    class="btnSubmit editForm btn btn-primary mr-3" value="{{ 'customer.addresses.update' | t }}">{{
+                    'customer.addresses.update' | t }}</button>
+                <button type="button" class="btn address-edit-toggle btn_cancel btn-outline-primary-2"
+                    data-form-id="{{ form.id }}">{{ 'customer.addresses.cancel' | t }}</button>
+            </div>
+        </div>
+    </div>
+    {%- endform -%}
+</div>

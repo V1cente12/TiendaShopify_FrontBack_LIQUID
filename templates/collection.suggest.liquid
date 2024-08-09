@@ -1,0 +1,5 @@
+{%- layout none -%}
+{%- assign products = collection.products | where: 'available', true -%}
+[{%- for product in products -%}
+{"title": {{product.title | json}},"image": "{{product.featured_image | img_url: '85x108', crop: 'center' }}","url": "{{product.url}}"}{%-unless forloop.last-%},{%-endunless-%}
+{%- endfor -%}]

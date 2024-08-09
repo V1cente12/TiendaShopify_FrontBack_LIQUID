@@ -1,0 +1,276 @@
+<!-- md_our_stores.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      <div class="row">
+      {%- for block in section.blocks -%}
+        <div class="col-md-6">
+          <div class="store">
+            <div class="row">
+              <div class="col-sm-5 col-xl-6">
+                <figure class="store-media">                        
+                  {%- assign image_item = block.settings.store_image -%}
+                  <div class="img__banner lazyload" style="padding-bottom: 100%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+                </figure>
+              </div>
+              <div class="col-sm-7 col-xl-6">
+                <div class="store-content mt-2 mt-xl-0">
+                  <h3 class="store-title">{{block.settings.store_name}}</h3>
+                  <address>{{block.settings.store_address}}</address>
+                  <div><a href="tel:{{block.settings.store_phone}}">{{block.settings.store_phone}}</a></div>
+                  {{block.settings.store_hours}}
+                  {%- if block.settings.store_map != blank -%}
+                  <a href="{{block.settings.store_map}}" class="btn btn-link" target="_blank">{{block.settings.store_btnmap}}</a>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+<noscript class="banner-css" data-section-type="md_our_stores">
+{%-capture banner-css-%}
+{%-style-%}
+  .md_our_stores .stores {
+    margin-bottom: 5rem;
+  }
+  .md_our_stores .store {
+    margin-bottom: 3rem;
+    color: #999999;
+  }
+  .md_our_stores .store address,
+  .md_our_stores .store div {
+    font-weight: 300;
+    font-style: normal;
+    margin-bottom: 0;
+  }
+  .md_our_stores .store a:not(.btn) {
+    color: inherit;
+  }
+  .md_our_stores .store a:not(.btn):hover,
+  .md_our_stores .store a:not(.btn):focus {
+    color: var(--primary); 
+  }
+  .md_our_stores .store .btn.btn-link {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top: 2.1rem;
+  }
+  .md_our_stores .store-media {
+    margin-bottom: 0;
+  }
+  .md_our_stores .store-title {
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0;
+    margin-bottom: 0.8rem;
+    margin-top: -0.2rem;
+  }
+  .md_our_stores .store-subtitle {
+    font-weight: 400;
+    font-size: 1.4rem;
+    letter-spacing: 0;
+    margin-bottom: 0.4rem;
+    margin-top: 3.2rem;
+  }
+{%-endstyle-%}
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%-endunless-%}
+{%- endunless -%}
+{%schema%}
+  {
+    "name": "Our Stores",
+    "class": "md_our_stores",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Our Stores",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item I&Q",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "store_image",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap",
+            "label": "Name button",
+            "default": "View Map<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Our Stores",
+        "category": "10. Contact",
+        "blocks": [
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

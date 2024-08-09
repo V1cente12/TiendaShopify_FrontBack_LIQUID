@@ -1,0 +1,182 @@
+{%-layout none-%}
+{%-assign url_check = canonical_url | split: '?q=' | last | split: '&' | first-%}
+{%-assign url_variant = url_check | split: '+' -%}
+{%-assign limit_ = url_variant[0] | remove: 'limit_' | plus: 0-%}
+{%-assign limit_per_row = url_variant[1] | remove: 'limitpr_' | plus: 0-%}
+{%-assign blog_ly = url_variant[2] | remove: 'layout_'-%}
+{%- case limit_per_row -%}
+{%- when 2 -%}
+{%- assign grid_item_width = ' col-sm-6' -%}
+{%- when 3 -%}
+{%- assign grid_item_width = ' col-sm-6 col-lg-4' -%}
+{%- when 4 -%}
+{%- assign grid_item_width = ' col-sm-6 col-md-6 col-lg-3' -%}
+{%- when 5 -%}
+{%- assign grid_item_width = ' col-sm-6 col-md-4 col-lg-2-10' -%}
+{%- when 6 -%}
+{%- assign grid_item_width = ' col-sm-6 col-md-4 col-md-2-10 col-xl-2' -%}
+{%- endcase -%}
+{%- if blog_ly == '1' -%}
+	{%- for article in blog.articles limit: limit_ -%}
+	<div class="swiper-slide{{grid_item_width}}">
+	    <article class="item-blog type01 entry entry-display">
+	      <figure class="entry-media">
+	      {% if article.image %}
+	        <a href="{{ article.url }}">
+	          {%- assign image_item = article.image -%}
+	          {%-assign width = image_item.width | default: 277.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+	          <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+	          </div>
+	        </a>
+	      {% endif %}
+	      </figure>
+	      <div class="entry-body text-center">
+	        <div class="entry-meta">
+	          <a href="#">{{ article.published_at | date: '%b %d, %Y' }}</a>
+	          {% if blog.comments_enabled? %}
+	          <span class="comment">, {{'blogs.comments.comments_with_count'|t:count:article.comments_count}}</span>
+	          {% endif %}
+	        </div>
+	        <h2 class="entry-title">
+	          <a href="{{ article.url }}">{{ article.title }}</a>
+	        </h2>
+	        <div class="entry-content">
+	          <p>{{article.excerpt_or_content|strip_html|truncate:100}}</p>
+	          <a href="{{ article.url }}" class="btn btn-link read-more">{{'blogs.general.read_more_button'|t}}</a>
+	        </div>
+	      </div>
+	    </article>
+	</div>
+	{%-endfor-%}
+{%- endif -%}
+{%- if blog_ly == '2' -%}
+	{%- for article in blog.articles limit: limit_ -%}
+	<div class="swiper-slide">
+    <article class="item-blog type02 entry entry-display mb-0i">
+      <figure class="entry-media">
+      {% if article.image %}
+        <a href="{{ article.url }}">
+          {%- assign image_item = article.image -%}
+          {%-assign width = image_item.width | default: 277.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+          <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+          </div>
+        </a>
+      {% endif %}
+      </figure>
+      <div class="entry-body text-center">
+        <div class="entry-meta">
+          <a href="#">{{ article.published_at | date: '%b %d, %Y' }}</a>
+          {% if blog.comments_enabled? %}
+          <span class="comment">, {{'blogs.comments.comments_with_count'|t:count:article.comments_count}}</span>
+          {% endif %}
+        </div>
+        <h2 class="entry-title">
+          <a href="{{ article.url }}">{{ article.title }}</a>
+        </h2>
+        <div class="entry-content">
+          <a href="{{ article.url }}" class="btn btn-link read-more">{{'blogs.general.read_more_button'|t}}</a>
+        </div>
+      </div>
+    </article>
+	</div>
+	{%-endfor-%}
+{%- endif -%}
+{%- if blog_ly == '3' -%}
+	{%- for article in blog.articles limit: limit_ -%}
+	<div class="swiper-slide{{grid_item_width}}">
+    <article class="item-blog type03 entry entry-display">
+      <figure class="entry-media">
+      {% if article.image %}
+        <a href="{{ article.url }}">
+          {%- assign image_item = article.image -%}
+          {%-assign width = image_item.width | default: 277.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+          <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+          </div>
+        </a>
+      {% endif %}
+      </figure>
+      <div class="entry-body text-center">
+        <div class="entry-meta">
+          <a href="#">{{ article.published_at | date: '%b %d, %Y' }}</a>
+          {% if blog.comments_enabled? %}
+          <span class="comment">, {{'blogs.comments.comments_with_count'|t:count:article.comments_count}}</span>
+          {% endif %}
+        </div>
+        <h2 class="entry-title">
+          <a href="{{ article.url }}">{{ article.title }}</a>
+        </h2>
+        <div class="entry-content">
+          <p>{{article.excerpt_or_content|strip_html|truncate:100}}</p>
+          <a href="{{ article.url }}" class="btn btn-link read-more">{{'blogs.general.read_more_button'|t}}</a>
+        </div>
+      </div>
+    </article>
+  </div>
+	{%-endfor-%}
+{%- endif -%}
+{%- if blog_ly == '4' -%}
+	{%- for article in blog.articles limit: limit_ -%}
+	<div class="swiper-slide{{grid_item_width}}">
+    <article class="item-blog type04 entry entry-display">
+      <figure class="entry-media">
+      {% if article.image %}
+        <a href="{{ article.url }}">
+          {%- assign image_item = article.image -%}
+          {%-assign width = image_item.width | default: 277.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+          <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+          </div>
+        </a>
+      {% endif %}
+      </figure>
+      <div class="entry-body">
+        <div class="entry-meta">
+          <a href="#">{{ article.published_at | date: '%b %d, %Y' }}</a>
+          {% if blog.comments_enabled? %}
+          <span class="comment">, {{'blogs.comments.comments_with_count'|t:count:article.comments_count}}</span>
+          {% endif %}
+        </div>
+        <h2 class="entry-title">
+          <a href="{{ article.url }}">{{ article.title }}</a>
+        </h2>
+        <div class="entry-content">
+          <p>{{article.excerpt_or_content|strip_html|truncate:100}}</p>
+          <a href="{{ article.url }}" class="btn btn-link read-more">{{'blogs.general.read_more_button'|t}}</a>
+        </div>
+      </div>
+    </article>
+  </div>
+	{%-endfor-%}
+{%- endif -%}
+{%- if blog_ly == '6' -%}
+  {%- for article in blog.articles limit: limit_ -%}
+  <div class="swiper-slide{{grid_item_width}}">
+    <article class="item-blog">
+      <figure class="entry-media">
+      {% if article.image %}
+        <a href="{{ article.url }}">
+          {%- assign image_item = article.image -%}
+          {%-assign width = image_item.width | default: 277.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+          <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+          </div>
+        </a>
+      {% endif %}
+      </figure>
+      <div class="entry-body">
+        <div class="entry-meta">
+          <a href="#">{{ article.published_at | date: '%b %d, %Y' }}</a>
+          {% if blog_.comments_enabled? %}
+          <span class="comment"><span class="comma">,</span> {{'blogs.comments.comments_with_count'|t:count:article.comments_count}}</span>
+          {% endif %}
+        </div>
+        <h2 class="entry-title">
+          <a href="{{ article.url }}">{{ article.title }}</a>
+        </h2>
+        <div class="entry-content">
+          <p>{{article.excerpt_or_content|strip_html|truncate:100}}</p>
+          <a href="{{ article.url }}" class="btn btn-link read-more">{{'blogs.general.read_more_button'|t}}</a>
+        </div>
+      </div>
+    </article>
+  </div>
+  {%-endfor-%}
+{%- endif -%}

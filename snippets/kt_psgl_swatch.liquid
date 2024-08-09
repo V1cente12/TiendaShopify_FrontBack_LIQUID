@@ -1,0 +1,88 @@
+{%- liquid
+  assign size_guide = false
+  if product.metafields.meta.size_guide
+    assign size_guide = true
+  elsif collection.handle or product.collections.first.handle
+    if collection.handle and collection.metafields.meta.size_guide
+      assign size_guide = true
+    else
+      for collection in product.collections
+        if collection.metafields.meta.size_guide
+          assign size_guide = true
+          break
+        endif
+      endfor
+    endif
+  endif
+  if settings.size_guide != blank and size_guide == false
+  assign size_guide = true
+  endif
+
+  unless section_id
+    assign section_id = section.id
+  endunless
+-%}
+
+{%- capture productOptionStyle -%}
+  {%- for i in (1..5) -%}
+  {%-assign op_swatch = 'op_swatch' | append: i -%}
+  {%-assign op_style = 'option_style_' | append: i -%}
+  {%-assign color_watched = 'is_use' | append: i -%}
+  {%-assign op_attach = 'op' | append: i | append: '_attach'-%}
+  {%-assign op_pre_select = 'op' | append: i | append: '_pre_select'-%}
+  {%-assign op_size = 'op' | append: i | append: '_size'-%}
+  "name": "{{settings[op_swatch] | downcase}}",{{settings[op_style]}},{{settings[color_watched]}},{{settings[op_attach]}},{{settings[op_pre_select]}},{{settings[op_size]}}{%-unless forloop.last-%},{%-endunless-%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- unless product.has_only_default_variant -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign idx0 = forloop.index0 -%}
+    {%- assign option_name = option.name | downcase -%}
+    {%- assign checkOptStyle = '"name": "' | append: option_name | append: '",' -%}
+    {%- if productOptionStyle contains checkOptStyle -%}
+      {%- assign styleOptions = productOptionStyle | split: checkOptStyle | last | split: '}' | first | split: ',' -%}
+    {%- else -%}
+      {%- assign styleOptions = 'combobox,false,false,false,20' | split: ',' -%}
+    {%- endif -%}
+    {%- assign toolTip = false -%}
+    {%- if styleOptions[0] == "not_select circle" or styleOptions[0] == "not_select square" -%}
+      {%- assign toolTip = true -%}
+    {%- endif -%}
+    {%- if styleOptions[0] != 'combobox' %}
+    <style>.fake_select[data-name-option="{{ option.name }}"]{--width:{{styleOptions[4]}}px;--height:{{styleOptions[4]}}px}</style>
+    {%- endif -%}
+    <div class="selector-wrapper --js-selector product-form__item{%if option.values.size == 1%} one-option{%endif%} opt__{{ option.name | handle}}{%if styleOptions[3] == 'true'%} op_pre_select{%endif%} animated" data-n-opt="{{ option.name }}" data-js-opt="{{ idx0 }}--{{ section_id }}"{%if styleOptions[3] == 'true'%} data-op-pre-select="true"{%endif%}>
+      <label for="SglOptSelector-{{ idx0 }}--{{ section_id }}"{% unless settings.use_name_opt %} class="d-none"{% endunless %}>{{ option.name }}<span>: </span></label>
+      <div class="fake_select {{styleOptions[0]}}" data-name-option="{{ option.name }}">
+        <label data-change-label="{{ idx0 }}--{{ section_id }}">{{--}}
+          <span class="js-change-label">{%if styleOptions[3] == 'true'%}{{'products.product.label_select' | t}}{{ option_name }}{%else%}{{ option.selected_value }}{%endif%}</span><span class="ico fkt-angle-down"></span>{{--}}
+        </label>
+        <ul id="kt_{{ option.name | handleize }}{{product.id}}" class="list-inline m-0">
+          {%- for value in option.values -%}
+          <li class="--js-opt _{{ value | handleize}}{%if styleOptions[1] == 'true'%} color_sw{%else%} sw{%endif%}{% if option.selected_value == value and styleOptions[3] != 'true' %} selected{% endif %}" data-value="{{ value | escape}}">
+            {%-if styleOptions[0] == 'not_select radio_button' or styleOptions[0] == 'not_select radio_button inline'-%}<span class="check_btn"></span>{%-endif-%}
+            {%-if styleOptions[1] == 'true'-%}<span class="swatch{%if settings.swatch_style == 'image_variant'%} bg-contain{%endif%}" data-color="{{ value | handleize}}"{%if toolTip%} data-toggle="tooltip" title="{{ value | escape }}"{% endif %}></span>{%-endif-%}
+            <span class="option_title">{{ value }}{%if idx0 == 0%}<span class="kt_price_lable"></span>{%endif%}<span class="kt_flash_lable"></span></span>
+          </li>
+          {%-endfor -%}
+        </ul>
+      </div>
+      {%-if styleOptions[2] == 'true' and size_guide -%}
+      <div class="sizeGuide_attach"><a href="#" data-target="#sizeModal" data-toggle="modal" class="btn fkt-th-list"><span>{{'products.product.size_chart' | t}}</span></a></div>
+      {%-endif-%}
+      {%-if styleOptions[0] == 'combobox with_out_variant_image'-%}
+      <div class="w-100">
+        <ul class="fake_select variant_image list-inline row mb-0">
+          {%- for value in option.values -%}
+            <li class="--js-opt _{{ value | handleize}}{% if option.selected_value == value and styleOptions[3] != 'true' %} selected{% endif %} col-3 col-md-2" data-value="{{ value | escape}}">
+              <div class="aspectRatio" style="padding-bottom: 100%">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="{{ value | escape }}">
+              </div>
+            </li>
+            {%-endfor -%}
+        </ul>
+      </div>
+      {%-endif-%}
+    </div>
+  {% endfor -%}
+{%- endunless -%}

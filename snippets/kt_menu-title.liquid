@@ -1,0 +1,6 @@
+<span{%if link.title contains '[b]'%} class="t-bold"{%endif%}>{{- link.title | split: '{' | first | remove: '[title]' | remove: '[b]' | split: 'CSS_' | first | strip -}}
+  {%- if link.title contains '{' -%}
+  {%- assign label = link.title |  split: '{' | last  | split: '}' | first -%}
+  <span class="label-menu _{{label | handleize }}"><span>{{- label | escape -}}</span></span> 
+  {%- endif -%}
+</span>

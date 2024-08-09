@@ -1,0 +1,339 @@
+<!-- kt_instagram_2.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Instagram-{{ section.id }}" data-section-type="instagram-section" class="{{width_section_}} {%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {%- if section.settings.title_section != blank or section.settings.stitle_section != blank -%}
+      <div class="section-title {{section.settings.title_align}} w-100">
+        {%- if section.settings.reverse -%}
+        <p class="sub-title">{{section.settings.stitle_section}}</p>
+        {%- endif -%}
+        <h3 class="title">{{section.settings.title_section}}</h3>
+        {%- unless section.settings.reverse -%}
+        <p class="sub-title">{{section.settings.stitle_section}}</p>
+        {%- endunless -%}
+      </div>
+      <div class="clearfix" style="margin-bottom: {{section.settings.margin_btitle}}rem"></div>
+      {%- endif -%}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <div class="swiper-container-fuild position-relative">
+        <div class="swiper-container" data-breakpoints='{{responsive_}}' data-slides-per-view="{{items_}}" data-dots="false" data-nav="false">
+          <div id="instagramWrapper-{{ section.id }}" class="swiper-wrapper instagramWrapper" data-use-slide="true" data-access-token="{{settings.accessToken_instagram}}" data-limit="{{section.settings.images_limit}}" data-tag="{{settings.byTag_instagram}}">
+          </div>
+          {% if section.settings.load_btn %}
+          <div class="col-lg-12 p-0 mt-3 {{section.settings.title_align}}">
+            <a class="btn {{section.settings.style_btn}} {{section.settings.style_btn_rounded}}{%if section.settings.btn_shadow%} btn-shadow{%endif%} button-more text-uppercase" href="{{collections[section.settings.products].url}}">{{section.settings.name_btn}}</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+
+{% schema %}
+  {
+    "name": "Instagram 2",
+    "class": "kt_instagram_2",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Instagram 2",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 20\n  },\n  \"768\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 6,\n    \"spaceBetween\": 20\n  }\n}"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "Title"
+      },
+      {
+        "type": "text",
+        "id": "title_section",
+        "label": "Title",
+        "default": "Follow Us On Instagram"
+      },
+      {
+        "type": "text",
+        "id": "stitle_section",
+        "label": "Subtitle",
+        "default": "Wanna share your style with us?"
+      },
+      {
+        "type":"checkbox",
+        "id": "reverse",
+        "label": "Reverse title and subtitle?"
+      },
+      {
+        "type": "select",
+        "id": "title_align",
+        "options": [
+          {
+            "value": "text-left",
+            "label": "Left"
+          },
+          {
+            "value": "text-center",
+            "label": "Center"
+          },
+          {
+            "value": "text-right",
+            "label": "Right"
+          }
+        ],
+        "label": "Align title",
+        "default": "text-center"
+      },
+      {
+        "type": "range",
+        "id": "margin_btitle",
+        "min": 1,
+        "max": 9,
+        "step": 0.2,
+        "unit": "rem",
+        "label": "Margin bottom of title",
+        "default": 3
+      },
+      {
+        "type": "paragraph",
+        "content": "Limit items"
+      },
+      {
+        "type": "range",
+        "id": "images_limit",
+        "min": 4,
+        "max": 20,
+        "step": 1,
+        "label": "Limit images",
+        "default": 12
+      },
+      {
+        "type": "header",
+        "content": "Button loadmore"
+      },
+      {
+        "type": "checkbox",
+        "id": "load_btn",
+        "label": "Use load button?",
+        "default": false
+      },
+      {
+        "type":"text",
+        "id":"name_btn",
+        "label": "Name button",
+        "default":"@Midas Instagram"
+      },
+      {
+        "type": "select",
+        "id": "style_btn",
+        "label": "Button style",
+        "default": "btn-outline-darker",
+        "options": [
+          {
+            "value": "btn-primary",
+            "label": "Default"
+          },
+          {
+            "value": "btn-white",
+            "label": "White"
+          },
+          {
+            "value": "btn-primary-white",
+            "label": "White 2"
+          },
+          {
+            "value": "btn-outline-primary-2",
+            "label": "Border"
+          },
+          {
+            "value": "btn-outline-gray",
+            "label": "Border gray"
+          },
+          {
+            "value": "btn-outline-lightgray",
+            "label": "Border lightgray"
+          },
+          {
+            "value": "btn-outline-dark",
+            "label": "Border dark"
+          },
+          {
+            "value": "btn-outline-darker",
+            "label": "Border darker"
+          },
+          {
+            "value": "btn-outline-white",
+            "label": "Border white"
+          },
+          {
+            "value": "btn-outline-white-2",
+            "label": "Border white 2"
+          },
+          {
+            "value": "btn-outline-white-3",
+            "label": "Border white 3"
+          },
+          {
+            "value": "btn-outline-white-4",
+            "label": "Border white 4"
+          },
+          {
+            "value": "btn-link",
+            "label": "Simple Button"
+          },
+          {
+            "value": "btn-link btn-link-dark",
+            "label": "Simple Button dark"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "style_btn_rounded",
+        "label": "Button style radius",
+        "options": [
+          {
+            "value": "",
+            "label": "Square"
+          },
+          {
+            "value": "btn-rounded",
+            "label": "Rounded Corners"
+          },
+          {
+            "value": "btn-round",
+            "label": "Rounded"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "btn_shadow",
+        "label": "Use shadow for button?"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Instagram 2",
+        "category": "09. Socials"
+      }
+    ]
+  }
+{% endschema %}

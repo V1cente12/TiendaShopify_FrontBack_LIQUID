@@ -1,0 +1,2016 @@
+<!-- md_banner_template_6.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+    {%-for block in section.blocks-%}
+    {%-if block.settings.turnoff-%}{%-continue-%}{%-endif-%}
+    {%-case block.type -%}
+    {%-when '1'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center justify-content-center imgs__banner_template26{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}">
+        <div class="col-12 col-md-6 col-lg-4 item__banner item__1 order-1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 360.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="360x500 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 item__banner item__2 mt-1 mt-lg-0 order-last order-lg-2">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <div class="bg-white h-100 d-flex align-items-center justify-content-center">
+                <div class="content-flex">
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+                  {%- if block.settings.text_clip_2 -%}
+                  <span class="banner-text-clip" style="background-image: url('{{block.settings.image_2 | img_url: '430x540'}}')">{{block.settings.text_clip_2}}</span>
+                  {%- endif -%}
+                  {%- if block.settings.text_info_2 -%}
+                  <small class="banner-info" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.text_info_2}}</small>
+                  {%- endif -%}
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                </div>
+              </div>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 430.00 -%}{%-assign height = image_item.height | default: 540.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="430x540 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 item__banner item__3 mt-1 mt-md-0 order-3">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+              <a href="{{block.settings.image_link_3|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_3 -%}
+            {%-assign width = image_item.width | default: 360.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="360x500 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template26">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template26{
+            margin-right: -5px;
+            margin-left: -5px;
+          }
+          .imgs__banner_template26 [class^="col-"],
+          .imgs__banner_template26 [class*=" col-"],
+          .imgs__banner_template26 .col,
+          .imgs__banner_template26 .col-auto{
+            padding-right: 5px;
+            padding-left: 5px;
+          }
+          .imgs__banner_template26 a.img__banner{
+            z-index:0;
+          }
+          .imgs__banner_template26 .banner-subtitle{
+            color:var(--color);
+            font-weight:400;
+            font-size:1.3rem;
+            line-height:1.2;
+            letter-spacing:0;
+            margin-bottom:1rem;
+            text-transform:uppercase
+          }
+          .imgs__banner_template26 .banner-title{
+            color:var(--color);
+            font-weight:700;
+            font-size:3rem;
+            line-height:1.2;
+            margin-bottom:1.4rem;
+            letter-spacing:-.025em;
+            text-transform:uppercase;
+            font-family: 'Playfair Display', serif;
+          }
+          .imgs__banner_template26 .text-content{
+            text-align: center;
+            z-index:1;
+            width: 100%;
+            {{cssAlign}}:50%;
+            top:50%;
+            -webkit-transform:translate(-50%,-50%);
+            transform:translate(-50%,-50%);
+            -ms-transform:translate(-50%,-50%)
+          }
+          .imgs__banner_template26 .banner-link{
+            line-height:1;
+            padding:.8rem 1.5rem;
+            min-width:0;
+            border-width: .2rem;
+            text-transform:uppercase;
+            text-decoration:none!important;
+            white-space:nowrap
+          }
+          .imgs__banner_template26 .item__2 .text-content{
+            left: 15%;
+            right: 15%;
+            top: 15%;
+            bottom: 15%;
+            transform: none;
+            width: auto;
+          }
+          .imgs__banner_template26 .item__2 .banner-subtitle{
+            margin-bottom:1rem;
+          }
+          .imgs__banner_template26 .item__2 .banner-title{
+            margin-bottom:1.4rem;
+          }
+          .imgs__banner_template26 .banner-text-clip{
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 10rem;
+            display: block;
+            font-weight: 700;
+            line-height: 1;
+            background-position: center;
+          }
+          .imgs__banner_template26 .banner-info{
+            display: block;
+            margin-bottom:1.4rem;
+            color:var(--color);
+          }
+          @media screen and (min-width: 1200px){
+            .imgs__banner_template26 .item__2 {
+              flex: 0 0 37.4%;
+              max-width: 37.4%;
+            }
+            .imgs__banner_template26 .item__1,
+            .imgs__banner_template26 .item__3 {
+              flex: 0 0 31.3%;
+              max-width: 31.3%;
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '2'-%}
+      {%- assign use_css = false -%}
+      <div class="row no-gutters align-items-center imgs__banner_template27{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}">
+        <div class="col-12 col-lg-6 item__banner item__1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              {%- if block.settings.text_info_1 -%}
+              <small class="banner-info" style="--color: {{block.settings.color_text_info_1}}">{{block.settings.text_info_1}}</small>
+              {%- endif -%}
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 960.00 -%}{%-assign height = image_item.height | default: 600.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="960x600 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="row no-gutters">
+            <div class="col-12 col-lg-6">                
+              <div class="row no-gutters">
+                <div class="col-12 col-md-6 col-lg-12 item__banner item__2">
+                  <div class="position-relative {{block.settings.banner-effect}}">
+                    {%- unless block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+                    <div class="text-content position-absolute wait-for-css">
+                      <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+                      <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+                      <a href="{{block.settings.image_link_2|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                    </div>
+                    {%- assign use_css = true -%}
+                    {%- endunless -%}
+                    {%- assign image_item = block.settings.image_2 -%}
+                    {%-assign width = image_item.width | default: 480.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+                    <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="480x300 px"{% endunless %}></a>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-12 item__banner item__3">
+                  <div class="position-relative {{block.settings.banner-effect}}">
+                    {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                    <div class="text-content position-absolute wait-for-css">
+                      <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+                      <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+                      <a href="{{block.settings.image_link_3|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                    </div>
+                    {%- assign use_css = true -%}
+                    {%- endunless -%}
+                    {%- assign image_item = block.settings.image_3 -%}
+                    {%-assign width = image_item.width | default: 480.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+                    <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="480x300 px"{% endunless %}></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="row no-gutters">
+                <div class="col-12 col-md-6 col-lg-12 item__banner item__4">
+                  <div class="position-relative {{block.settings.banner-effect}}">
+                    {%- unless block.settings.titlex_4 == blank and block.settings.stitle_4 == blank and block.settings.name_btn_4 == blank -%}  
+                    <div class="text-content position-absolute wait-for-css">
+                      <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_4}}">{{block.settings.stitle_4}}</h4>
+                      <h3 class="banner-title" style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4}}</h3>
+                      <a href="{{block.settings.image_link_4|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+                    </div>
+                    {%- assign use_css = true -%}
+                    {%- endunless -%}
+                    {%- assign image_item = block.settings.image_4 -%}
+                    {%-assign width = image_item.width | default: 480.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+                    <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="480x300 px"{% endunless %}></a>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-12 item__banner item__5">
+                  <div class="position-relative {{block.settings.banner-effect}}">
+                    {%- unless block.settings.titlex_5 == blank and block.settings.stitle_5 == blank and block.settings.name_btn_5 == blank -%}  
+                    <div class="text-content position-absolute wait-for-css">
+                      <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_5}}">{{block.settings.stitle_5}}</h4>
+                      <h3 class="banner-title" style="--color: {{block.settings.color_titlex_5}}">{{block.settings.titlex_5}}</h3>
+                      <a href="{{block.settings.image_link_5|default:'#'}}" class="btn btn-rounded btn-outline-primary-2 banner-link" aria-label="{{block.settings.name_btn_5| strip_html}}">{{block.settings.name_btn_5}}</a>
+                    </div>
+                    {%- assign use_css = true -%}
+                    {%- endunless -%}
+                    {%- assign image_item = block.settings.image_5 -%}
+                    {%-assign width = image_item.width | default: 480.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+                    <a href="{{block.settings.image_link_5|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_5 %} title="480x300 px"{% endunless %}></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template27">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template27 a.img__banner{
+            z-index:0;
+            min-height: 20rem;
+          }
+          .imgs__banner_template27 .banner-title{
+            color:var(--color);
+            font-weight:700;
+            font-size:3rem;
+            line-height:1.2;
+            margin-bottom:1.4rem;
+            letter-spacing:-.025em;
+            text-transform:uppercase;
+            font-family: 'Playfair Display', serif;
+          }
+          .imgs__banner_template27 .banner-subtitle{
+            color:var(--color);
+            font-weight:400;
+            font-size:1.3rem;
+            line-height:1.2;
+            letter-spacing:0;
+            margin-bottom:1rem;
+            text-transform:uppercase
+          }
+          .imgs__banner_template27 .text-content{
+            text-align: center;
+            z-index:1;
+          }
+          .imgs__banner_template27 .banner-link{
+            line-height:1;
+            padding:.8rem 1.5rem;
+            min-width:0;
+            border-width: .2rem;
+            text-transform:uppercase;
+            text-decoration:none!important;
+            white-space:nowrap
+          }
+          .imgs__banner_template27 .item__1 .text-content{
+            width: 100%;
+            {{cssAlign}}:50%;
+            top:50%;
+            -webkit-transform:translate(-50%,-50%);
+            transform:translate(-50%,-50%);
+            -ms-transform:translate(-50%,-50%)
+          }
+          .imgs__banner_template27 .item__1 .banner-subtitle{
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Playfair Display';
+            letter-spacing: 0;
+            text-transform: none;
+            font-style: italic;
+          }
+          .imgs__banner_template27 .item__1 .banner-title{
+            font-size: 5rem;
+            letter-spacing: -.025em;
+            margin-bottom: 1.4rem;
+          }
+          .imgs__banner_template27 .item__1 .banner-info{
+            color:var(--color);
+            font-size: 1.3rem;
+            font-weight: 300;
+            letter-spacing: 0;
+            color: #e7e6ea;
+            display: block;
+            margin-bottom:2.5rem;
+          }
+          .imgs__banner_template27 .item__1 .banner-link{
+            padding:1.2rem 1.5rem;
+          }
+          .imgs__banner_template27 .item__2 .text-content,
+          .imgs__banner_template27 .item__5 .text-content{
+            {{cssAlign}}: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+          .imgs__banner_template27 .item__3 .text-content,
+          .imgs__banner_template27 .item__4 .text-content{
+            {{cssAlign_rev}}: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+          .imgs__banner_template27 .item__3 .banner-title,
+          .imgs__banner_template27 .item__3 .banner-subtitle,
+          .imgs__banner_template27 .item__4 .banner-title,
+          .imgs__banner_template27 .item__4 .banner-subtitle{
+            color: #fff;
+          }
+          .imgs__banner_template27 .banner-text-clip{
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 10rem;
+            display: block;
+            font-weight: 700;
+            line-height: 1;
+            background-position: center;
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '3'-%}
+      {%- assign use_css = false -%}
+      <div class="row no-gutters align-items-center imgs__banner_template28{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}">
+        <div class="col-12 col-md-4 item__banner item__1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn btn-underline btn-underline-dark" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 390.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="390x500 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 item__banner item__2">          
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 390.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="390x500 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 item__banner item__3">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+              <a href="{{block.settings.image_link_3|default:'#'}}" class="btn btn-underline btn-underline-dark" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_3 -%}
+            {%-assign width = image_item.width | default: 390.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="390x500 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 item__banner item__4">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_4 == blank and block.settings.stitle_4 == blank and block.settings.name_btn_4 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_4}}">{{block.settings.stitle_4}}</h4>
+              <h3 class="banner-title mb-1i" style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4}}</h3>
+              <p class="banner-description" style="--color: {{block.settings.color_description_4}}">{{block.settings.description_4}}</p>
+              <a href="{{block.settings.image_link_4|default:'#'}}" class="btn btn-underline btn-underline-primary" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_4 -%}
+            {%-assign width = image_item.width | default: 1170.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="1170x500 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template28">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template28 {
+            position: relative;
+          }
+          .imgs__banner_template28:before{
+            content: '';
+            position: absolute;
+            box-shadow: 0 0 25px 10px #ddd;
+            top: 5rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 0;
+          }
+          .imgs__banner_template28 a.img__banner{
+            z-index:0;
+            min-height: 50rem;
+          }
+          .imgs__banner_template28 .text-content{
+            text-align: center;
+            z-index:1;
+            width: 100%;
+            padding: 0px 2rem;
+            {{cssAlign}}: 50%;
+            bottom:20%;
+            -webkit-transform:translateX(-50%);
+            transform:translateX(-50%);
+            -ms-transform:translateX(-50%)
+          }
+          .imgs__banner_template28 .banner-subtitle{
+            color: var(--color);
+            font-weight:400;
+            font-size:1.3rem;
+            line-height:1.2;
+            margin-bottom:3rem;
+            text-transform:uppercase;
+            letter-spacing: .1rem;
+          }
+          .imgs__banner_template28 .banner-title{
+            color: var(--color);
+            font-weight:400;
+            font-size:4rem;
+            line-height:1.2;
+            margin-bottom:4.5rem;
+            letter-spacing:-.01em;
+            text-transform:uppercase;
+            font-family: 'Playfair Display', serif;
+          }
+          .imgs__banner_template28 .banner-description{
+            color: var(--color);
+            font-weight: 400;
+            font-size: 1.4rem;
+            line-height: 1.2;
+            margin-bottom: 4.5rem;
+            letter-spacing: .2rem;
+            font-family: 'Playfair Display', serif;
+          }
+          .imgs__banner_template28 .btn {
+            min-width: 13.5rem;
+            padding: 1.2rem 2rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+          }
+          .imgs__banner_template28 .item__4 .text-content{
+            padding: 0px 1rem;
+            bottom: 50%;
+            -webkit-transform:translate(-50%,50%);
+            transform:translate(-50%,50%);
+            -ms-transform:translate(-50%,50%);
+          }
+          .imgs__banner_template28 .item__1 h3,
+          .imgs__banner_template28 .item__1 h4,
+          .imgs__banner_template28 .item__4 h3,
+          .imgs__banner_template28 .item__4 h4,
+          .imgs__banner_template28 .item__4 p {
+            color: #fff;
+          }
+          .imgs__banner_template28 .item__1 .img__banner:not(.none-bg),
+          .imgs__banner_template28 .item__3 .img__banner:not(.none-bg) {
+            background-color: #f7f7f7;
+          }
+          @media (min-width: 768px){              
+            .imgs__banner_template28 .item__4 .text-content{
+              max-width: 47rem;
+              {{cssAlign}}: auto;
+              {{cssAlign_rev}}: 10%;
+              -webkit-transform: translateY(50%);
+              transform: translateY(50%);
+              -ms-transform: translateY(50%);
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '4'-%}
+      {%- assign use_css = false -%}
+      <div class="row imgs__banner_template29{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}">
+        <div class="col-12 col-md-5 pr-md-0 item__banner item__1 mb-1">
+          {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+          <div class="text-content wait-for-css wait-inline">
+            <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+            <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+            <p class="banner-desc" style="--color: {{block.settings.color_desc_1}}">{{block.settings.desc_1}}</p>
+          </div>
+          {%- assign use_css = true -%}
+          {%- endunless -%}
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 472.00 -%}{%-assign height = image_item.height | default: 530.00 | plus: 0.00-%}
+            <div style="max-width: {{width}}px">
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="472x530 px"{% endunless %}></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 offset-md-1 pl-md-0">
+          <div class="item__banner item__2 w-100">
+            <div class="position-relative {{block.settings.banner-effect}}">
+              {%- assign image_item = block.settings.image_2 -%}
+              {%-assign width = image_item.width | default: 590.00 -%}{%-assign height = image_item.height | default: 532.00 | plus: 0.00-%}
+              <div style="max-width: {{width}}px">
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="590x532 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+          <div class="item__banner item__3 w-100 mt-1">                      
+            <div class="position-relative {{block.settings.banner-effect}}">
+              {%- assign image_item = block.settings.image_3 -%}
+              {%-assign width = image_item.width | default: 472.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+              <div style="max-width: {{width}}px">
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="472x300 px"{% endunless %}></a>                  
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template29">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template29 {
+            position: relative;
+          }
+          .imgs__banner_template29 a.img__banner{
+            z-index:0;
+          }
+          .imgs__banner_template29 .text-content{
+            margin-top: 2rem;
+            width: 100%;
+          }
+          .imgs__banner_template29 .banner-subtitle{
+            color: var(--color);
+            font-weight: 700;
+            font-size: 2.4rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            letter-spacing: .001rem;
+          }
+          .imgs__banner_template29 .banner-title{
+            color: var(--color);
+            font-weight:700;
+            font-size:4.5rem;
+            line-height:1;
+            margin-bottom:2.5rem;
+            letter-spacing:-.01em;
+          }
+          .imgs__banner_template29 .banner-desc{
+            color: var(--color);
+            font-weight: 400;
+            font-size: 1.6rem;
+            line-height: 1.5;
+            margin-bottom: 4.5rem;
+            letter-spacing: .02rem;
+          }
+          @media (min-width: 768px){
+            .imgs__banner_template29 .banner-title{
+              font-size:6rem;
+            }
+            .imgs__banner_template29 .item__banner.item__3{
+              margin-top: 10rem !important;
+            }
+          }
+          @media (min-width: 576px){
+            .imgs__banner_template29 .banner-title{
+              font-size:6rem;
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '5'-%}
+      {%- assign use_css = false -%}
+      <div class="row imgs__banner_template30{%unless forloop.first%}{%if section.blocks.size > 1%} mt-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-lg-6">
+          <div class="row">
+            <div class="col-12 item__banner item__1">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- if block.settings.titlex_1 != blank -%}
+                <div class="text-content position-absolute wait-for-css">
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endif -%}
+                {%- assign image_item = block.settings.image_1 -%}
+                {%-assign width = image_item.width | default: 690.00 -%}{%-assign height = image_item.height | default: 340.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="690x340 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 item__banner item__2 mt-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  {%- if block.settings.stitle_2 -%}
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+                  {%- endif -%}
+                  {%- if block.settings.titlex_2 -%}
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.name_btn_2 -%}
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn btn-underline" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                  {%- endif -%}
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_2 -%}
+                {%-assign width = image_item.width | default: 335.00 -%}{%-assign height = image_item.height | default: 340.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="335x340 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 item__banner item__3 mt-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  {%- if block.settings.stitle_3 -%}
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+                  {%- endif -%}
+                  {%- if block.settings.titlex_3 -%}
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.name_btn_3 -%}
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn btn-underline" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                  {%- endif -%}
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 335.00 -%}{%-assign height = image_item.height | default: 340.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="335x340 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 item__banner item__4 mt-gutter mt-lg-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_4 == blank and block.settings.stitle_4 == blank and block.settings.name_btn_4 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              {%- if block.settings.stitle_4 -%}
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_4}}">{{block.settings.stitle_4}}</h4>
+              {%- endif -%}
+              {%- if block.settings.titlex_4 -%}
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4}}</h3>
+              {%- endif -%}
+              {%- if block.settings.name_btn_4 -%}
+              <a href="{{block.settings.image_link_4|default:'#'}}" class="btn btn-outline-white-2" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+              {%- endif -%}
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_4 -%}
+            {%-assign width = image_item.width | default: 690.00 -%}{%-assign height = image_item.height | default: 700.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="690x700 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template30">
+        {%-capture banner-css-%}
+        {%style%}            
+          .imgs__banner_template30 a.img__banner{
+            z-index:0;
+            min-height: 28rem;
+          }
+          .imgs__banner_template30 .banner-title{
+            color:var(--color);
+            font-weight:700;
+            font-size:3rem;
+            line-height:1.2;
+            margin-bottom:.5rem;
+            letter-spacing:-.025em;
+            text-transform:uppercase;
+          }
+          .imgs__banner_template30 .banner-subtitle{
+            color:var(--color);
+            font-weight:400;
+            font-size:1.6rem;
+            line-height:1.2;
+            letter-spacing:0;
+            margin-bottom:1rem;
+          }
+          .imgs__banner_template30 .item__banner.item__1 .banner-title{
+            font-weight:400; 
+            font-size:1.6rem;
+            line-height:1.2;
+            letter-spacing:0;
+            margin-bottom:1rem;
+            text-transform:uppercase;
+          }
+          .imgs__banner_template30 .text-content{
+            text-align: center;
+            z-index:1;
+            width: 100%;
+            {{cssAlign}}:50%;
+            top:50%;
+            -webkit-transform:translate(-50%,-50%);
+            transform:translate(-50%,-50%);
+            -ms-transform:translate(-50%,-50%)
+          }
+          .imgs__banner_template30 .btn-underline {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            min-width: auto;
+          }
+          .imgs__banner_template30 .btn-outline-white-2 {
+            border-width: .2rem;
+            margin-top: 1rem;
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-endcase -%}
+    {%-endfor -%}
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Template 6",
+    "class": "md_banner_template_6",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Template 6",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 px"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview demo](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-banner-template.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Banners type 26",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 26",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 26 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 360 x 500 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Online mega deal"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Camping Gear<br>&amp; Accessories"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Shop now"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 430 x 540 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Summer"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Clearance"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"text_clip_2",
+            "label": "Big text",
+            "default":"50%"
+          },
+          {
+            "type":"text",
+            "id":"text_info_2",
+            "label": "Info",
+            "default":"* Donec sit amet vulputate<br> velit.Aenean tempus nisl"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Discover Now"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 338 x 202 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default": "Lightning deals"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Sports &amp;<br>Outdoors"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"Shop Now"
+          }
+        ]
+      },
+      {
+        "type": "2",
+        "name": "Banners type 27",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 27",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 27 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 960 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Trending"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Camping & Hiking"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"text_info_1",
+            "label": "Info",
+            "default": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Donec odio. Quisque volutpat mattis eros."
+          },
+          {
+            "type": "color",
+            "id": "color_text_info_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Discover now"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Women's"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Active &amp;<br> Fitness"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Shop Now"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default": "Men's"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Surf Gear &amp;<br>Accessories"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"Shop Now"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_4",
+            "label": "Sub title",
+            "default": "New Arrivals"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"Deepest discount<br> of the season"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"Shop Now"
+          },
+          {
+            "type": "header",
+            "content": "Image 5"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_5",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_5",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_5",
+            "label": "Sub title",
+            "default": "Lightning deals"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_5",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_5",
+            "label": "Title",
+            "default":"Sports &amp;<br>Outdoors"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_5",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_5",
+            "label": "Name button",
+            "default":"Shop Now"
+          }
+        ]
+      },
+      {
+        "type": "3",
+        "name": "Banners type 28",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 28",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 28 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 960 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Clearance"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Earrings & Rings<br>Save 30%"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Shop Clearance"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Bracelets<br>& Anklets"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"Shop Now"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 480 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_4",
+            "label": "Sub title",
+            "default": "Exclusive"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"Our New Romantic Collection 2019"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"description_4",
+            "label": "Description",
+            "default":"Nullam malesuada eratut turpis. Suspendisse urnanibh viverra non, semper suscipit, posuere a pede."
+          },
+          {
+            "type": "color",
+            "id": "color_description_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"Shop The Collection"
+          }
+        ]
+      },
+      {
+        "type": "4",
+        "name": "Banners type 29",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 29",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 29 settings"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Material & Design"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#222"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Product<br>Gallery"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#222"
+          },
+          {
+            "type":"textarea",
+            "id":"desc_1",
+            "label": "Description",
+            "default":"Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis."
+          },
+          {
+            "type": "color",
+            "id": "color_desc_1",
+            "label": "Color",
+            "default": "#666"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 472 x 530 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 590 x 532 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 472 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          }
+        ]
+      },
+      {
+        "type": "5",
+        "name": "Banners type 30",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 30",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Banners type 30 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 690 x 340 px"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"<span>Spring Sale<\/span><br><span>up to<\/span><br><span>40% off<\/span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 335 x 340 px"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Yoga Clothing"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"<span>Women<\/span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 335 x 340 px"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default": "Yoga Clothing"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"<span>Men<\/span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 690 x 700 px"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_4",
+            "label": "Sub title",
+            "default": "Find Your Yoga Mat"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"<span>Yoga Mats<\/span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"SHOP YOGA MATS"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Template 6",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

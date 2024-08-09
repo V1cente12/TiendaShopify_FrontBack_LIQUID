@@ -1,0 +1,117 @@
+{%- liquid
+  layout none
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+{%- liquid
+  assign compare_at_price = product.compare_at_price 
+  assign price = product.price 
+  assign price_varies = product.price_varies 
+  assign available = product.available
+  assign on_sale = false
+  if compare_at_price > price 
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true 
+  endif
+-%}
+{%- if product.title != blank -%}
+{%- unless product.has_only_default_variant or st_card[13] == 'true' and product.variants.size == 1 or st_card[4] == 'false' -%}
+  {%- assign show_variant = true -%}
+{%- endunless -%}
+{%- endif -%}
+
+<td class="product-col">
+  <div class="product d-flex align-content-stretch">
+    <figure class="product-media">
+      <a href="{{ product.url | within: product.collections.last }}">        
+        <img width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" class="img-thumbnail lazyload mll-lz" src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" data-src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" alt="{{ item.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+      </a>
+    </figure>
+    <div class="w-100">
+      <h3 class="product-title">
+        <a href="{{ product.url | within: product.collections.last }}" title="{{ product.title | strip_html }}">{{ product.title | html }}</a>
+      </h3>
+      <div class="d-md-none">
+        {%- render "product-grid-item", grid_layout: '24', st_card: st_card -%}
+        {%- if product.available -%}
+        <span class="wishlist-item-in-stock in-stock">{{ 'products.product.in_stock' | t }}</span> 
+        {%- else -%}
+        <span class="wishlist-item-out-of-stock out-of-stock">{{ 'products.product.out_of_stock' | t }}</span> 
+        {%- endif -%}
+        <div class="clearfix mt-1"></div>                    
+        {%- if settings.use_add_to_cart_btn -%}
+          <div class="product product-inner --card{% if show_variant %} ktlz{%endif%}"{%unless product.has_only_default_variant%} data-href="{{product.handle}}"{{ktlz}}{%endunless%}>
+            <form method="post" action="{{ routes.cart_add_url }}"{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-wishlist-mb" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-wishlist-mb" data-options="{{product.options.size}}" data-pr-vrs{%endunless%} style="width: 100%;">
+              {%- if product.has_only_default_variant -%}
+                {%- render 'kt_button_no_variant', preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+              {%- else -%}
+                {%- render 'kt_button_has_variant', action: 'quickshop', preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase kt-button' -%}
+              {%- endif -%}
+            </form>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</td>
+<td class="price-col">
+  {%- render "product-grid-item", grid_layout: '24', wishlist: wishlist, st_card: st_card -%}
+</td>
+<td class="stock-col">
+  {%- if product.available -%}
+  <span class="in-stock">{{ 'products.product.in_stock' | t }}</span> 
+  {%- else -%}
+  <span class="out-of-stock">{{ 'products.product.out_of_stock' | t }}</span> 
+  {%- endif -%}
+</td>
+<td class="action-col">
+{%- if settings.use_add_to_cart_btn -%}
+  <div class="product product-inner --card{% if show_variant %} ktlz{%endif%}"{%unless product.has_only_default_variant%} data-href="{{product.handle}}"{{ktlz}}{%endunless%}>
+    <form method="post" action="{{ routes.cart_add_url }}"{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-wishlist" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-wishlist" data-options="{{product.options.size}}" data-pr-vrs{%endunless%}>
+      {%- if product.has_only_default_variant -%}
+        {%- render 'kt_button_no_variant', preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+      {%- else -%}
+        {%- render 'kt_button_has_variant', action: 'quickshop', preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase kt-button' -%}
+      {%- endif -%}
+    </form>
+  </div>
+{%- endif -%}
+</td>
+<td class="remove-col">
+  <button class="wishlist-remove btn btn-remove" data-action="remove" data-id="{{product.id}}" data-email="{{customer.email}}" data-customer_id="{{customer.id}}" data-handle="{{product.handle}}"><i class="fkt-close"></i></button>
+</td>

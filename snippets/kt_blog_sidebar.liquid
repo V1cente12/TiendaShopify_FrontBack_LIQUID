@@ -1,0 +1,82 @@
+{%- if section.settings.search -%}
+<div class="widget widget-search">
+  <h3 class="widget-title">{{'blogs.sidebar.title_search'|t}}</h3>
+  <form action="/search">
+    <label for="ws" class="sr-only">{{'blogs.sidebar.placeholder_search'|t}}</label>
+    <input type="search" class="form-control" name="q" id="ws" placeholder="{{'blogs.sidebar.placeholder_search'|t}}" required="">
+    <input type="hidden" name="type" value="article">
+    <button type="submit" class="btn"><i class="fkt-search"></i><span class="sr-only">{{'blogs.sidebar.button_search'|t}}</span></button>
+  </form>
+</div>
+{%- endif -%}
+{%- if section.settings.catt and section.blocks.size > 0 -%}
+<div class="widget widget-cats">
+  <h3 class="widget-title">{{ 'blogs.sidebar.title_categories' | t }}</h3>
+  <ul class="list-unstyled">
+    {%- for block in section.blocks -%}
+    {%- if block.type == 'blog' -%}
+    <li class="cat-item{%if block.settings.blog == blog.handle%} active{%endif%}">
+      <a href="{{blogs[block.settings.blog].url}}" title="{{blogs[block.settings.blog].title}}">{{blogs[block.settings.blog].title}}<span>{{blogs[block.settings.blog].articles_count}}</span></a>        
+    </li>
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>
+{%- endif -%}
+{%- if section.settings.recent_posts and blog.articles_count > 1 -%}
+<div class="widget"> 
+  <h3 class="widget-title">{{ 'blogs.sidebar.title_popular_post' | t }}</h3>
+  <ul class="posts-list list-unstyled">
+    {%- for article_ in blog.articles limit: 6 -%}
+    {%- unless article_.id == article.id -%}
+    <li>
+      <figure>
+        <a href="{{ article_.url }}">
+          <img src="{{ article_.image | img_url: '200x200', crop: 'center' }}">
+        </a>
+      </figure>
+      <div>
+        <span>{{ article_.published_at | date: "%b %d, %Y" }}</span>
+        <h4><a href="{{ article_.url }}">{{ article_.title | truncatewords: 5 }}</a></h4>
+      </div>
+    </li>        
+    {%- endunless -%}
+    {%- endfor -%}
+  </ul>
+</div>
+{%- endif -%}
+{%- if section.settings.tags and blog.all_tags.size > 0-%}
+<div class="widget widget_tag_cloud">
+  <h3 class="widget-title">{{ 'blogs.sidebar.title_tags' | t }}</h3>
+  <div class="tagcloud">
+  {%-if section.settings.blog_tags_ != blank-%}                
+  {%-assign tags = section.settings.blog_tags_ | split: ','-%}
+    {%- for tag in tags -%}
+    <a class="tag-link-position-{{forloop.index}}" href="{{ shop.url}}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}">{{ tag | strip }}</a>
+    {%- endfor -%}
+  {%-else-%}
+    {%- if blog.all_tags != blank -%}
+    {%- for tag in blog.all_tags limit: 15 -%}
+    <a class="tag-link-position-{{forloop.index}}" href="{{ shop.url}}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+    {%- endfor -%}
+    {%- endif -%}
+  {%- endif -%}
+  </div>
+</div>
+{%- endif -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'sb_banner' and block.settings.img != blank -%}
+    <div class="widget widget-banner-sidebar text-center">
+      <div class="banner-sidebar">
+        <a href="{{block.settings.url}}"><img src="{{block.settings.img|img_url:'master'|img_tags}}"></a>
+      </div>
+    </div>
+  {%- elsif block.type == 'sb_about' -%}
+    <div class="widget widget-text">
+      <h3 class="widget-title">{{ 'blogs.sidebar.title_about_blog' | t }}</h3>
+      <div class="widget-text-content">
+        <p>{{block.settings.html}}</p>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endfor -%}

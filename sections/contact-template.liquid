@@ -1,0 +1,1056 @@
+<!-- contact-template.liquid -->
+{{page.content}}
+{%- liquid
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'item_banner' -%}
+  {%-unless block.settings.off_block-%}
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_banner">
+    <div class="content_{{block.id}}{%if block.settings.image %} bg-image lazyload{%endif%}"{%if block.settings.image %} data-bgset="{{block.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="text-content text-center">
+          <h2 class="text-white">{{block.settings.html_content}}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_i_and_q' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_i_and_q">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="row">
+          <div class="col-lg-6">
+            <h2 class="title mb-1">{{block.settings.title_1}}</h2>
+            {{block.settings.html_desciption_1}}
+            <div class="row">
+              <div class="col-sm-7">
+                <div class="contact-info">
+                  <h3>{{block.settings.title_1_1}}</h3>
+                  <ul class="contact-list list-unstyled">
+                    {%- if block.settings.address_1_1 != blank -%}
+                    <li>
+                      <i class="fkt-map-marker"></i>
+                      {{block.settings.address_1_1}}
+                    </li>
+                    {%- endif -%}
+                    {%- if block.settings.phone_1_1 != blank -%}
+                    <li>
+                      <i class="fkt-phone"></i>
+                      <a href="tel:{{block.settings.phone_1_1}}">{{block.settings.phone_1_1}}</a>
+                    </li>
+                    {%- endif -%}
+                    {%- if block.settings.email_1_1 != blank -%}
+                    <li>
+                      <i class="fkt-envelope"></i>
+                      <a href="mailto:{{block.settings.email_1_1}}">{{block.settings.email_1_1}}</a>
+                    </li>
+                    {%- endif -%}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="contact-info">
+                  <h3>{{block.settings.title_1_2}}</h3>
+                  <ul class="contact-list list-unstyled">
+                    {%- if block.settings.openning_1_2 != blank -%}
+                    <li>
+                      <i class="fkt-clock-o"></i>
+                      <span class="text-dark">{{block.settings.openning_1_2}}</span>
+                    </li>
+                    {% endif %}
+                    {%- if block.settings.openning_1_22 != blank -%}
+                    <li>
+                      <i class="fkt-calendar"></i>
+                      <span class="text-dark">{{block.settings.openning_1_22}}</span>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <h2 class="title mb-1">{{block.settings.title_2}}</h2>
+            <p class="mb-2">{{block.settings.html_desciption_2}}</p>
+              {%- assign formId = 'ContactForm' -%}
+              {%- form 'contact', class: 'contact-form mb-3' -%}
+              {% render 'form-status', form: form, form_id: formId %}
+              <div class="row">
+                <div class="col-12 col-sm-6">
+                  <label for="cname" class="sr-only">{{ 'contact.form.name' | t }} </label>
+                  <input type="text" class="form-control" id="cname" name="contact[name]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'contact.form.name' | t }} *" required="">
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label for="cemail" class="sr-only">{{ 'contact.form.email' | t }} </label>
+                  <input type="email" class="form-control" id="cemail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }} *" required="">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <label for="cphone" class="sr-only">{{ 'contact.form.phone' | t }}</label>
+                  <input type="tel" class="form-control" id="cphone" name="contact[phone]" placeholder="{{ 'contact.form.phone' | t }}">
+                </div>
+              </div>
+              <label for="cmessage" class="sr-only">{{ 'contact.form.message' | t }}</label>
+              <textarea class="form-control" cols="30" rows="4" id="cmessage" name="contact[body]" required="" placeholder="{{ 'contact.form.message' | t }} *"></textarea>
+
+              <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                <span>{{ 'contact.form.submit' | t }}</span>
+                <i class="fkt-long-arrow-right"></i>
+              </button>
+            {%- endform -%}
+          </div>
+        </div>            
+        <hr class="mt-4 mb-5">
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_our_stores' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_our_stores">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <h2 class="title text-center mb-4">{{block.settings.title}}</h2>
+        <div class="row justify-content-center">
+          {%- for i in (1..6) -%}
+          {%- assign store_image = 'store_image_' | append: i -%}
+          {%- if block.settings[store_image] != blank -%}
+          {%- assign store_name = 'store_name_' | append: i -%}
+          {%- assign store_address = 'store_address_' | append: i -%}
+          {%- assign store_phone = 'store_phone_' | append: i -%}
+          {%- assign store_hours = 'store_hours_' | append: i -%}
+          {%- assign store_hours = 'store_hours_' | append: i -%}
+          {%- assign store_map = 'store_map_' | append: i -%}
+          {%- assign store_btnmap = 'store_btnmap_' | append: i -%}
+          <div class="col-md-6">
+            <div class="store">
+              <div class="row">
+                <div class="col-sm-5 col-xl-6">
+                  <figure class="store-media">                        
+                    {%- assign image_item = block.settings[store_image] -%}
+                    <div class="img__banner lazyload" style="padding-bottom: 100%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+                  </figure>
+                </div>
+                <div class="col-sm-7 col-xl-6">
+                  <div class="store-content mt-2 mt-xl-0">
+                    <h3 class="store-title">{{block.settings[store_name]}}</h3>
+                    <address>{{block.settings[store_address]}}</address>
+                    <div><a href="tel:{{block.settings[store_phone]}}">{{block.settings[store_phone]}}</a></div>
+
+                    {{block.settings[store_hours]}}
+                    {%- if block.settings[store_map] != blank -%}
+                    <a href="{{block.settings[store_map]}}" class="btn btn-link" target="_blank"><span>{{block.settings[store_btnmap]}}</span><i class="fkt-long-arrow-right"></i></a>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_map' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="about-testimonials {{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_map">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        {{block.settings.iframe|html}}            
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- endif -%}
+{%- endfor -%}
+<style>
+  [data-block="item_banner"] .text-content{
+    min-height: 450px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  [data-block="item_banner"] .text-content h2{
+    font-weight: 400;
+    letter-spacing: -.025em;
+    margin-bottom: 0;
+  }
+  [data-block="item_banner"] .text-content h2 span{
+    display: block;
+    font-size: 1.6rem;
+    margin-top: .4rem;
+    letter-spacing: 0;
+  }
+
+  [data-block="item_map"] iframe{
+    display: block;
+    width: 100% !important;
+    height: 280px !important;
+  }
+
+  @media (min-width: 768px) {
+    [data-block="item_map"] iframe{
+      height: 380px !important;
+    }
+  }
+  @media (min-width: 992px) {
+    [data-block="item_map"] iframe{
+      height: 492px !important;
+    }
+  }
+
+  .direction-link {
+    display: inline-block;
+    margin-top: 1rem;
+    line-height: 1;
+  }
+
+  .contact-info h3 {
+    margin-top: 0.5rem;
+    font-weight: 400;
+    font-size: 1.8rem;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-list {
+    max-width: 270px;
+    list-style: none;
+    padding-{{cssAlign}}: 0;
+  }
+  .contact-list li {
+    position: relative;
+    padding-{{cssAlign}}: 3rem;
+    margin-bottom: 1.4rem;
+  }
+  .contact-list a {
+    color: inherit;
+  }
+  .contact-list a:hover,
+  .contact-list a:focus {
+    color: {{settings.color_primary}};
+  }
+  .contact-list i {
+    display: inline-block;
+    position: absolute;
+    {{cssAlign}}: 0;
+    top: 0.3rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: {{settings.color_primary}};
+  }
+
+  .stores {
+    margin-bottom: 5rem;
+  }
+
+  .store {
+    margin-bottom: 3rem;
+    color: #999999;
+  }
+  .store address,
+  .store div {
+    font-weight: 300;
+    font-style: normal;
+    margin-bottom: 0;
+  }
+  .store a:not(.btn) {
+    color: inherit;
+  }
+  .store a:not(.btn):hover,
+  .store a:not(.btn):focus {
+    color: {{settings.color_primary}}; 
+  }
+  .store .btn.btn-link {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top: 2.1rem;
+  }
+
+  .store-media {
+    margin-bottom: 0;
+  }
+
+  .store-title {
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0;
+    margin-bottom: 0.8rem;
+    margin-top: -0.2rem;
+  }
+
+  .store-subtitle {
+    font-weight: 400;
+    font-size: 1.4rem;
+    letter-spacing: 0;
+    margin-bottom: 0.4rem;
+    margin-top: 3.2rem;
+  }
+</style>
+{%schema%}
+  {
+    "name": "Contact page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_banner",
+        "name": "Item Banner",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920 x 497 pixels"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html_content",
+            "label": "Text content",
+            "default": "About us<span>Who we are</span>"
+          }
+        ]
+      },
+      {
+        "type": "item_i_and_q",
+        "name": "Item I&Q",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box Information"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Contact Information"
+          },
+          {
+            "type": "html",
+            "id": "html_desciption_1",
+            "label": "Text desciption",
+            "default": "<p class=\"mb-3\">Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui, eu pulvinar nunc sapien ornare nisl. Phasellus pede arcu, dapibus eu, fermentum et, dapibus sed, urna.<\/p>"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 1"
+          },
+          {
+            "type": "text",
+            "id": "title_1_1",
+            "label": "Title",
+            "default": "The Office"
+          },
+          {
+            "type": "text",
+            "id": "address_1_1",
+            "label": "Address",
+            "default": "70 Washington Square South New York, NY 10012, United States"
+          },
+          {
+            "type": "text",
+            "id": "phone_1_1",
+            "label": "Phone",
+            "default": "+92 423 567"
+          },
+          {
+            "type": "text",
+            "id": "email_1_1",
+            "label": "Email",
+            "default": "info@midas.com"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 2"
+          },
+          {
+            "type": "text",
+            "id": "title_1_2",
+            "label": "Title",
+            "default": "The Office"
+          },
+          {
+            "type": "text",
+            "id": "openning_1_2",
+            "label": "Opening time 1",
+            "default": "Monday-Saturday<br>11am-7pm ET"
+          },
+          {
+            "type": "text",
+            "id": "openning_1_22",
+            "label": "Opening time 2",
+            "default": "Sunday<br>11am-6pm ET"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box Questions"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "The Office"
+          },
+          {
+            "type": "html",
+            "id": "html_desciption_2",
+            "label": "Text desciption",
+            "default": "<p class=\"mb-2\">Use the form below to get in touch with the sales team</p>"
+          }
+        ]
+      },
+      {
+        "type": "item_our_stores",
+        "name": "Item Our Stores",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Meet Our Team"
+          },
+          {
+            "type": "header",
+            "content": "Members setting"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Stores 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_1",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_1",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_1",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_1",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_1",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_1",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_1",
+            "label": "Name button",
+            "default": "View Map"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_2",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_2",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_2",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_2",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_2",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_2",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_2",
+            "label": "Name button",
+            "default": "View Map"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_3",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_3",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_3",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_3",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_3",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_3",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_3",
+            "label": "Name button",
+            "default": "View Map"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_4",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_4",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_4",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_4",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_4",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_4",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_4",
+            "label": "Name button",
+            "default": "View Map"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 5"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_5",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_5",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_5",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_5",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_5",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_5",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_5",
+            "label": "Name button",
+            "default": "View Map"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Member 6"
+          },
+          {
+            "type": "image_picker",
+            "id": "store_image_6",
+            "label": "Store image",
+            "info": "Size suggestion: 500 x 500 pixels"
+          },
+          {
+            "type": "text",
+            "id": "store_name_6",
+            "label": "Store name",
+            "default": "Wall Street Plaza"
+          },
+          {
+            "type": "text",
+            "id": "store_address_6",
+            "label": "Address",
+            "default": "88 Pine St, New York, NY 10005, USA"
+          },
+          {
+            "type": "text",
+            "id": "store_phone_6",
+            "label": "Phone number",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "html",
+            "id": "store_hours_6",
+            "label": "Store Hours",
+            "default": "<h4 class=\"store-subtitle\">Store Hours:<\/h4><div>Monday - Saturday 11am to 7pm<\/div><div>Sunday 11am to 6pm<\/div>"
+          },
+          {
+            "type": "url",
+            "id": "store_map_6",
+            "label": "Map url"
+          },
+          {
+            "type": "text",
+            "id": "store_btnmap_6",
+            "label": "Name button",
+            "default": "View Map"
+          }
+        ]
+      },
+      {
+        "type": "item_map",
+        "name": "Item Map",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "w-100"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "iframe",
+            "label": "Map iframe",
+            "default": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d24157.401117843983!2d-73.966489!3d40.813132!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x577933f947e52750!2zxJDhuqFpIGjhu41jIENvbHVtYmlh!5e0!3m2!1svi!2sus!4v1565752574420!5m2!1svi!2sus\" width=\"100%\" height=\"450\" frameborder=\"0\" style=\"border:0\" allowfullscreen><\/iframe>"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

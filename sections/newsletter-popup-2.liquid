@@ -1,0 +1,132 @@
+<!-- newsletter-popup.liquid -->
+<section id="newsletterModal" class="style-02 modal fade" aria-hidden="false" role="dialog" tabindex="-1" data-pause="{{section.settings.time_popup_delay|default: 2}}" data-scroll="{{section.settings.scroll_popup_delay|default: 0}}" data-mobile-display="{{settings.newsletter_popup_hide_mobile}}" data-section-id="newsletterModal" data-section-type="kt-newsletter-modal">
+  <div class="modal-dialog modal-dialog-ended modal-lg">
+    <div class="modal-content">
+      <div class="content-item kt-popup-newsletter container-fluid wide position-relative py-2 py-md-4">
+        <button class="close" aria-label="Close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="row align-items-center">
+          <div class="col-12 col-md-7 px-2">
+            <h2 class="popup-title">
+              {{section.settings.popup_newsletter_title|html}}
+            </h2>
+            <div class="popup-desc">
+              {{section.settings.popup_newsletter_description|html}}
+            </div>
+          </div>
+          <div class="col-12 col-md-5 px-2">
+            {% render 'kt_newsletter_form', section: section, class_form: 'form-subscribe mt-3 mt-md-0', style_btn: 'btn-outline-white btn-icon' %}
+            <div class="custom-control custom-checkbox mt-1 mb-0">
+              <input type="checkbox" class="custom-control-input" id="hideforever" required="">
+              <label class="custom-control-label" for="hideforever">{{'general.newsletter_form.checkbox_popup'|t}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{%-capture newsletter-css-%}
+{%style%}
+  .modal-dialog-ended {
+    min-height: 100%;
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    margin: 0 auto;
+  }
+  .modal:not(.show) .modal-dialog-ended {
+    -webkit-transform: translate(0,25%);
+    transform: translate(0,25%);
+  }
+  #newsletterModal {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  #newsletterModal .modal-dialog {
+    max-width: none;
+    width: 100%;
+  }
+  #newsletterModal .modal-content{
+    background-color: #333;
+  }
+  #newsletterModal .popup-title {
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -.025em;
+    color: #fff;
+    margin-bottom: 1rem;
+    line-height: 1.4em;
+  }
+  #newsletterModal .popup-desc {
+    font-size: 1.4rem;
+    line-height: 1.5;
+    color: #aaa;
+  }
+  #newsletterModal .popup-desc p{
+    margin-bottom: 0;
+  }
+  #newsletterModal form .btn{
+    min-width: 7rem;
+    padding-top: 1.15rem;
+    padding-bottom: 1.15rem;
+  }
+  #newsletterModal form input[type="email"]{
+    height: 4.6rem;
+  }
+  #newsletterModal .custom-control-label{
+    color: #999999;
+  }
+  #newsletterModal .msg.success {
+    color: #fff !important;
+  }
+  #newsletterModal .msg.success .code {
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+{%endstyle%}
+{%-endcapture-%}
+{{ newsletter-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%schema%}
+  {
+    "name": "Newsletter popup 2",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Disable: Theme settings > Gadget > NEWSLETTER"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_newsletter_title",
+        "label": "Title",
+        "default": "Subscribe Us to receive a Voucher"
+      },
+      {
+        "type": "richtext",
+        "id": "popup_newsletter_description",
+        "label": "Text content",
+        "default": "<p>Get 15% off first purchase!<\/p>"
+      },
+      {
+        "type": "header",
+        "content": "== Show popup after Settings"
+      },
+      {
+        "type": "text",
+        "id": "time_popup_delay",
+        "label": "__ Popup delay",
+        "info": "Show popup after some time (in milisecond). Integer",
+        "default": "15000"
+      },
+      {
+        "type": "text",
+        "id": "scroll_popup_delay",
+        "label": "__ Show after user scroll down the page",
+        "info": "Set the number of pixels users have to scroll down before popup opens (100 -5000). Integer",
+        "default": "800"
+      }
+    ]
+  }
+{%endschema%}

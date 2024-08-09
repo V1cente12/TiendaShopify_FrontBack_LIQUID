@@ -1,0 +1,722 @@
+<!-- order-template.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+  
+  assign tracking_url = false  
+  assign columnFoot = 2
+  for line_item in order.line_items
+  	if line_item.fulfillment.tracking_url
+    	assign tracking_url = true 
+        assign columnFoot = 3
+        break
+    endif
+  endfor
+-%}
+{%-render 'sc_css' -%}
+
+<style>
+  .fondoDiv{
+  	background: #FAFAFA;
+    border-radius: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+                         
+  }
+</style>
+
+<div class="{{width_section_}}">
+  <div class="section-width container-fluid wide">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+</div>
+<div class="border-top" style="opacity: 0.3"></div>
+<div class="page-content {{width_section_}}">
+  <div class="dashboard content_{{section.id}}{%if section.settings.image %} bg-image lazyload{%endif%}"{%if section.settings.image  %} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width container-fluid wide">
+      <div class="row">
+        <aside class="col-12 col-md-4 col-lg-3">
+          <ul class="nav nav-dashboard flex-column list-unstyled" role="tablist">
+            <!--
+            <li class="nav-item">
+              <a class="nav-link" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="false">{{ 'customer.account.dashboard' | t }}</a>
+            </li>
+            -->
+            <li class="nav-item">
+              <a class="nav-link" href="{{routes.account_url}}/addresses?view=address">{{ 'customer.addresses.title' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">{{ 'customer.orders.title_orders' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a  class="nav-link active" id="tab-order-link" data-toggle="tab" href="#tab-order" role="tab" aria-controls="tab-order" aria-selected="false">{{order.name}}</a>
+            </li>
+            <li class="nav-item">
+              <a onclick="getTarjetas()" class="nav-link" id="tab-tarjetas-link" data-toggle="tab" href="#tab-tarjetas" role="tab" aria-controls="tab-tarjetas" aria-selected="false">Tarjetas EGX Prepago</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>
+            </li>
+          </ul>
+        </aside>
+        <div class="col-12 col-md-8 col-lg-9">
+          <div class="tab-content">
+            <div class="tab-pane fade" id="tab-tarjetas" role="tabpanel" aria-labelledby="tab-tarjetas-link">
+              {%-render 'tarjetas'-%}
+            </div>
+            <!--
+            <div class="tab-pane fade" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+              <p>{{ 'customer.account.hello' | t }} <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.email}}{%-endif-%}</span> (not <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.email}}{%-endif-%}</span>? <a href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>) 
+                <br>
+                {{ 'customer.account.dashboard_info_html' | t }}.</p>
+            </div>
+            -->
+            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+              {%- if customer.orders.size == 0 -%}
+              <p>{{ 'customer.orders.none' | t }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-outline-primary-2">
+                <span>{{ 'customer.orders.button_back_to_shop' | t }}</span>
+                <i class="fkt-long-arrow-right"></i>
+              </a>
+              {%- else -%}
+              {%- paginate customer.orders by 20 -%}
+              <div class="table-responsive">
+                <table class="table">
+                      <thead>
+                        <tr>
+                          <th>{{ 'customer.orders.order_number' | t }}</th>
+                          <th>{{ 'customer.orders.date' | t }}</th>
+                          <th>{{ 'customer.orders.products' | t }}</th>
+                          {% comment %}<th>{{ 'customer.orders.payment_status' | t }}</th>{% endcomment %}
+                          <th>{{ 'customer.orders.total' | t }}</th>
+                          <th>{{ 'customer.orders.payment_status' | t }}</th>
+                          <th>Estado del Pedido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {%- for order in customer.orders -%}
+                      <tr>
+                        <td data-label="{{ 'customer.orders.order_number' | t }}">
+                          <a href="{{ order.customer_url }}">{{ order.name }}</a>
+                        </td>
+                        <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                        <td data-label="{{ 'customer.orders.products' | t }}">
+                          {{ order.line_items[0].product.title | truncatewords: 5}}
+                          {%- assign count = order.line_items.size | minus: 1 -%}
+                          {%if order.line_items.size > 1%}{{ 'customer.orders.items_with_count' | t : count: count }}{%endif%}
+                        </td>
+                        {% comment %}<td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>{% endcomment %}
+                        <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                           {% render "pedido_estadoPago", estadoPago: order.financial_status %}
+                        </td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                           {% render "pedido_estadoCumplimiento-Preparacion", obj: order %}
+                        </td>
+                      </tr>
+                      {%- endfor -%}
+                      </tbody>
+                </table>
+              </div>
+              {%-if paginate.pages > 1-%}
+              <div class="pagination_ text-center clearfix">
+                {%- render 'pagination', paginate: paginate, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+              </div>
+              {%-endif-%}
+              {%- endpaginate -%}
+              {%- endif -%}
+            </div>
+            <div class="tab-pane fade active show" id="tab-order" role="tabpanel" aria-labelledby="tab-order-link">
+              {%- assign order_date = order.created_at | time_tag: format: "month_day_year_hours_minute_meridian" -%}
+              <p>{{ 'customer.order.title' | t }} <mark class="order-number">{{order.name}}</mark> {{ 'customer.order.date' | t }} <mark class="order-date">{{order_date}}</mark> {{ 'customer.order.and_currently' | t }} <mark class="order-status">{{ order.fulfillment_status_label }}</mark>.</p>
+               {% for tag in order.tags %}
+  					{% if tag == "Entregado" %}
+						{% assign flag = "true" %}
+                    {% endif %}
+				{% endfor %}
+              {%- if order.cancelled -%}
+              {%- assign cancelled_at = order.cancelled_at | time_tag: format: "month_day_year_hours_minute_meridian" -%}
+              <p>{{ 'customer.order.cancelled' | t }} <mark class="order-cancelled">{{cancelled_at}}</mark></p>
+              <p>{{ 'customer.order.cancelled_reason' | t }} <mark class="order-cancelled_reason">{{order.cancel_reason}}</mark></p>
+              {%- endif -%}
+              <div class="order-customer-info mt-3">
+                <h3 class="title" style="font-size: 1.8rem;">{{ 'customer.order.customer_details' | t }}</h3>
+                <div class="table-responsive">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>{{ 'customer.order.email' | t }}:</th>
+                        <td>{{order.email}}</td>
+                      </tr>
+                      {%- if order.note != blank -%}
+                      <tr>
+                        <th>{{ 'customer.order.note' | t }}:</th>
+                        <td>{{ order.note }}</td>
+                      </tr>
+                      {%- endif -%}
+                    </tbody>
+                  </table>
+                </div>
+                <!--NUEVO-->
+                <div class="row " style="margin-top: -20px;margin-bottom: 20px;"> 
+                  	<div class="col-lg-6 col-md-6 col-sm-6" style="padding-top: 30px;">            
+                      <div class="fondoDiv" style="position: sticky;height: 100%;">
+                        <div class="col-lg-12 col-md-12 col-sm-12" >
+                            <h3 class="h6">Estado del Pedido</h3>
+                        		{% render "step_pedido_estados", estado: order %}
+                          </div>
+                      </div>
+                	</div>                
+                  	<div class="col-lg-6 col-md-6 col-sm-6" style="padding-top: 30px;">        
+          
+                  		<div  class="fondoDiv" > 
+                          <div class="col-lg-12 col-md-12 col-sm-12" >
+                            <h3 class="h6">Pago</h3>
+                            <div class="border-top mb-1" style="opacity: 0.3"></div>
+                            <p><strong>{{ 'customer.order.payment_status' | t }}:</strong> 
+                              {% render "pedido_estadoPago", estadoPago: order.financial_status %}
+                            </p>
+
+                            {% if order.financial_status == 'pending' %}
+                                <div class="cart-notification alert alert-warning alert-dismissible fade show" role="alert">
+                                    <i class="fkt-lg fkt-info-circle mr-1"></i> No olvides <strong id="timer_count">realizar tu pago.</strong>
+                                </div>
+
+                                <a class="btn btn-primary btn-rounded" href="{{ order.order_status_url }}" target="_blank"> Pagar pedido</a>
+                              {% endif %}
+                          </div>
+                        </div><br>
+                        <div class="fondoDiv"> 
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+								                <h3 class="h6">{{ 'customer.order.shipping' | t }}</h3>
+                                <div class="border-top mb-1" style="opacity: 0.3"></div>
+                                <p><strong>Estado del Pedido:</strong> 
+                                  {% render "pedido_estadoCumplimiento-Preparacion", obj: order %}
+                                </p>
+
+                                <p><strong>Persona a recibir el pedido:</strong> 
+                                  {{ customer.first_name }} {{ customer.last_name }}
+                                </p>
+                                <p class="">
+                                  <strong>{{'customer.addresses.title'|t}}: </strong>
+
+                                  {%comment%}--------------------------------------------- {%endcomment%}
+                                  {%unless order.tags ==blank%}
+                                      {% if order.tags contains "pick_up" %}
+                                          {{ order.fulfillment.tracking_number }} 
+                                      {%else%}  
+                                          {{order.shipping_address.address1 }}
+                                              {% if order.shipping_address.address1 == blank %}
+                                                {{order.shipping_address.address2 }}
+                                              {% endif %}
+                                      {% endif %}
+                                  {%endunless%}
+
+                                  {%if order.tags ==blank%} 
+                                      {{order.shipping_address.address1 }}
+                                          {% if order.shipping_address.address1 == blank %}
+                                              {{order.shipping_address.address2 }}
+                                          {% endif %}
+                                  {% endif %}
+
+                                  {%comment%}--------------------------------------------- {%endcomment%}
+                                  {% if order.shipping_address.city != blank %}, 
+                                  {{order.shipping_address.city}}
+                                  {% endif %}
+                                  {% if order.shipping_address.province != blank %}, 
+                                  {{order.shipping_address.province}}
+                                  {% endif %}
+
+
+                                  {%comment%}--------------------------------------------- {%endcomment%}
+                                  {%unless order.tags ==blank%}
+                                        {% unless order.tags contains "pick_up" %}
+                                            {% if order.shipping_address.country != blank %},       
+                                                {{order.shipping_address.country}}
+                                            {% endif %} 
+                                        {%endunless%}
+                                  {%endunless%}
+                                  {%if order.tags ==blank%} 
+                                        {% if order.shipping_address.country != blank %},       
+                                           {{order.shipping_address.country}}
+                                        {% endif %}
+                                  {% endif %} 
+                                    {%comment%}--------------------------------------------- {%endcomment%}
+                                </p>
+                                {%- if order.shipping_address.phone != blank -%}
+                                <p class="">
+                                  <strong>{{'customer.addresses.phone'|t}}: </strong>
+                                  {{order.shipping_address.phone}}
+                                </p>
+                                {%- endif -%}
+                            </div>
+                          </div>
+
+                  	</div>
+                </div> 
+           
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+
+                     
+          {%comment%}--------------------------------------------- 
+                 		{% if flag %}
+				      <th>Deja tu calificación</th>
+					    {% elsif tracking_url %}
+					  <th>Rastrear entrega</th>
+				         {%- endif -%}
+
+          --------------------------------------------- {%endcomment%}
+
+          {%comment%}------------------NUEVO---------------------- {%endcomment%} 
+          {% if flag %}
+            <th>Deja tu calificación</th>
+          {% else  %}
+              {% if tracking_url %}
+                  {%unless order.tags ==blank%}
+                  {% if order.tags contains "pick_up" %}
+                      <th>Código guia</th>
+                  {%else%}
+                      <th>Rastrear entrega</th>
+                  {% endif %}      
+                  {%endunless%}
+              {% endif %} 
+          {%if order.tags ==blank%}      
+            <th>Rastrear entrega</th>    
+          {% endif %}   
+          {% endif %} 
+        {%comment%}--------------------------------------------- {%endcomment%}
+
+                      <th>{{ 'cart.label.product' | t }}</th>             
+                      <th class="text-right">{{ 'cart.label.total' | t }}</th>
+                      <th class="text-right" style="">Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for line_item in order.line_items %}
+                    <tr>
+
+          {%comment%}--------------------------------------------- 
+                    {% if flag %}
+                      <td><a href="{{ line_item.url }}">⭐⭐⭐⭐</a></td>
+                      {% elsif line_item.fulfillment.tracking_url %}
+                      <td><a href="{{ line_item.fulfillment.tracking_url }}" target="_blank">Rastrear pedido {{ line_item.fulfillment.tracking_number}}</a></td>
+                    {%- endif -%}
+          --------------------------------------------- {%endcomment%}     
+          {%comment%}------------------NUEVO---------------------- {%endcomment%}  
+          {% if flag %}
+            <td><a href="{{ line_item.url }}">⭐⭐⭐⭐</a></td>
+          {% else  %}
+              {% if tracking_url %}
+                  {%unless order.tags ==blank%}
+                      {% if order.tags contains "pick_up" %}
+                          <td><a readonly="readonly" target="_blank"> Código guia {{ line_item.fulfillment.tracking_number}}</a></td>
+                      {%else%}
+                          <td><a href="{{ line_item.fulfillment.tracking_url }}" target="_blank">Rastrear pedido {{ line_item.fulfillment.tracking_number}}</a></td>
+                      {% endif %}      
+                  {%endunless%}
+              {% endif %} 
+          {%if order.tags ==blank%}      
+          <td><a href="{{ line_item.fulfillment.tracking_url }}" target="_blank">Rastrear pedido {{ line_item.fulfillment.tracking_number}}</a></td>   
+          {% endif %}   
+          {% endif %} 
+          {%comment%}---------------------------------------- {%endcomment%}   
+
+
+                      <td class="product-col">
+                        <div class="product w-100 d-flex align-items-start align-items-md-center">
+                          <figure class="product-media">
+                            <a href="{{ line_item.url }}">
+                              <img alt="{{ line_item.title | escape |strip_html }}" src="{{ line_item.variant.featured_image | default: line_item.product.featured_image | img_url: '104x120', crop:'top' }}">
+                            </a>
+                          </figure>
+                          <div class="cart__meta">
+                            <h3 class="product-title">
+                              <a href="{{ line_item.url }}">{{ line_item.product.title }} <span style="color: #999;">
+                                <br>
+                            	{{ line_item.original_line_price | money }}	
+                                (x{{line_item.quantity}})</span></a>
+                            </h3>
+                            {% if line_item.line_level_discount_allocations.size > 0 %}
+                      		  <div class="text-nowrap">
+                          		{% for discount_allocation in line_item.line_level_discount_allocations %}
+                          				<span style="color: #00A01A; font-weight: 400; font-size: 12px;"> 
+                                           {{ discount_allocation.discount_application.title }}
+                                        </span>
+                                		<span style="color: #00A01A; font-weight: 400; font-size: 12px;">({{ discount_allocation.amount | times: -1 | money }})</span>
+                               	 {%- endfor -%}
+                             	</div>
+                      		 {% endif %}
+                            {% unless line_item.variant.title contains 'Default' %}
+                            <div class="cart__meta-text">
+                              {% for option in line_item.product.options %}
+                              {{ option }}: {{ line_item.variant.options[forloop.index0] }}<br>
+                              {% endfor %}
+                            </div>
+                            {% endunless %}
+                            {%- assign property_size = line_item.properties | size -%}
+                            {% if property_size > 0 %}
+                              <div class="cart__meta-text">
+                                {% for p in line_item.properties %}
+                                  {% unless p.last == blank %}
+                                      {% if p.last contains 'h5' %}
+                                        <div class="bundle_properties">{{ p.first }}: {{ p.last}}</div>
+                                      {% else %}
+                                    {{ p.first }}:
+                                    {% if p.last contains '/uploads/' %}
+                                      <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                                    {% else %}
+                                      {{ p.last}}                    
+                                    {% endif %}
+                                    {% endif %}
+                                  {% endunless %}
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </td>
+                      <td class="total-col text-right">
+                        <span>{{ line_item.line_price | money }}</span>
+                         <!-- salio de aqui el descuento con (?)-->
+                      </td>
+                      <!-- NUEVO 10012022-->
+                      <td class="total-col text-right" style="width:296px;">                             
+                        <div class="">
+                          <!--  <button style="width: 152px;" class="btn btn-primary btn-rounded" onclick="window.location.href='{{ line_item.url | append: "&val=3#div_id" }}'">Agregar Reseña</button>-->
+                        	<a href="{{ line_item.url | append: "&val=3#div_id" }}" class="forgot-link mt-1 mb-1"><u>Agregar Reseña</u></a>
+                        </div>                                               
+                     
+                        {%- liquid                              
+                            assign sold_out = false
+                            if line_item.product.available == false
+                            	assign sold_out = true
+                            endif
+                            
+                        -%}     
+                         <div class="" style="margin-top: 5px;">
+                         <!--{% render 'kt_button_no_variant', product: line_item.product, preOrder: false, sold_out: sold_out, style_btn: 'btn btn-primary btn-rounded' %}-->
+                      	<a href="https://elgeniox.com/" class="forgot-link mt-1 mb-1"><u>Volver a comprar</u></a>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+
+
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="{{columnFoot}}" scope="row">{{ 'customer.order.subtotal' | t }}:</th>
+                      <td data-label="{{ 'customer.order.subtotal' | t }}"><span class="shopify-Price-amount amount">{{ order.subtotal_price | money }}</span></td>
+                    </tr>
+                    {%- for discount in order.discounts -%}
+                    {%- unless discount.code == blank -%}
+                    <tr class="order_summary discount_">
+                      <th colspan="{{columnFoot}}" scope="row">{{ 'customer.order.discount' | t }}: "{{ discount.code }}"</th>
+                      <td data-label="{{ 'customer.order.discount' | t }}">{{ discount.savings | money }}</td>
+                    </tr>
+                    {%- endunless -%}
+                    {%- endfor -%}
+                    {%- for shipping_method in order.shipping_methods -%}
+                    <tr>
+                      <th colspan="{{columnFoot}}" scope="row">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }}):</th>
+                      <td data-label="{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})"><span class="shopify-Price-amount amount">{{ shipping_method.price | money }}</span></td>
+                    </tr>
+                    {%- endfor -%}
+                    <tr>
+                      <th colspan="{{columnFoot}}" scope="row">{{ 'customer.order.total' | t }}:</th>
+                      <td data-label="{{ 'customer.order.total' | t }}"><span class="shopify-Price-amount amount"><b>{{ order.total_price | money }}</b></span></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "Order page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem",
+        "default": "3rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ]
+  }
+{% endschema %}
+{%-style-%}
+/* Dashboard */
+@media (min-width: 992px) {
+  .dashboard .col-lg-3 {
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+  .dashboard .col-lg-9 {
+    -ms-flex: 0 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
+  }
+}
+.dashboard label {
+  margin-bottom: 0.2rem;
+}
+.dashboard .form-control {
+  margin-bottom: 1.3rem;
+}
+.dashboard .form-control + .form-control {
+  margin-top: 2rem;
+}
+.dashboard .form-control:not(:focus) {
+  background-color: #f9f9f9;
+}
+.dashboard .tab-pane {
+  padding: 0;
+  border: none;
+  line-height: 2.15;
+  padding-bottom: 2rem;
+}
+.dashboard .tab-pane p {
+  margin-bottom: 1rem;
+}
+.dashboard .btn {
+  min-width: 123px;
+}
+.dashboard h3 {
+  font-size: 2rem;
+}
+
+.nav-dashboard {
+  margin-top: -1rem;
+}
+.nav-dashboard .nav-link {
+  overflow: hidden;
+  position: relative;
+  font-weight: 300;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  padding: 1.4rem 0;
+  border-bottom: thin solid #ebebeb;
+}
+.nav-dashboard .nav-link:before {
+  font-family: "molla";
+  content: '\f112';
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: -15px;
+  margin-top: -7.5px;
+  transition: all 0.3s;
+  opacity: 0;
+}
+[dir="rtl"] .nav-dashboard .nav-link:before {
+  content: '\f111';
+  left: auto;
+  right: -15px;
+}
+.nav-dashboard .nav-link:hover, .nav-dashboard .nav-link:focus, .nav-dashboard .nav-link.active {
+  color: var(--primary);
+}
+[dir="ltr"] .nav-dashboard .nav-link.active {
+  padding-left: 2rem;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active {
+  padding-right: 2rem;
+}
+.nav-dashboard .nav-link.active:before {
+  left: 0;
+  opacity: 1;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active:before {
+  left: auto;
+  right: 0;
+}
+.card-dashboard {
+  margin-bottom: 3rem;
+  background-color: #f9f9f9;
+  border: thin solid #ebebeb;
+}
+.card-dashboard .card-title {
+  letter-spacing: 0;
+  margin-bottom: 0.5rem;
+}
+.card-dashboard .card-body {
+  padding: 4rem 2.8rem 2rem;
+}
+
+.dashboard .table {
+  margin-bottom: 3rem;
+  line-height: normal;
+}
+.dashboard .table th {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #333;
+}
+.dashboard .table thead th {
+  padding-top: 0.8rem !important;
+}
+.dashboard .table th,
+.dashboard .table thead th,
+.dashboard .table td {
+  border-top: none;
+  border-bottom: thin solid #ebebeb;
+}
+.dashboard .table th,
+.dashboard .table td {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.dashboard .table td {
+  vertical-align: middle;
+}
+.dashboard .table tfoot th, .dashboard .table tfoot td {
+  border-bottom: none;
+  text-align: right;
+}
+[dir="rtl"] .dashboard .table tfoot th, .dashboard .table tfoot td {
+  text-align: left;
+}
+[dir="ltr"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-left: 1rem;
+}
+[dir="rtl"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-right: 1rem;
+}
+.dashboard .table .product-col {
+  min-width: 280px;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .info-discount {
+  top: 100%;
+  margin-top: 20px;
+  right: 0;
+  width: 250px;
+  padding: 2px 10px;
+  border-radius: 2px;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+  background-color: #d1ecf1;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .question_mark:hover .info-discount {
+  margin-top: 10px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.order-customer-info p {
+  line-height: normal;
+}
+.order-customer-info strong {
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+{%-endstyle-%}

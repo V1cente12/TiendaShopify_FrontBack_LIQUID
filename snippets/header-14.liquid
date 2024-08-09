@@ -1,0 +1,129 @@
+{%- if settings.use_header_mobile_logo_center -%}
+<div class="{{section.settings.width_header}}">
+  <div class="main-header kt--drop-w kt--drop-w-d">
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="header-control col-3 d-xl-none order-first">
+        <div class="w-100">
+          <div class="control-inner">
+            <div class="mobile-block block-menu-bar">
+              <a href="#" class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-auto order-1 order-md-2">
+        <div class="row align-items-center justify-content-between">
+          <div class="header-logo col-12 col-xl-auto text-center text-lg-left">
+            {%- render 'kt_logo_header' -%}
+          </div>
+          <div class="header-menu horizon-menu col-12 col-xl-auto d-none d-xl-block">
+            <nav class="main-navigation" data-width="1200">
+              {%- render 'menu_import' -%}
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="header-control col-3 col-md-3 col-xl-auto order-2">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          <div class="block-search d-none d-xl-block">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare d-none d-xl-block">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist d-none d-xl-block">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span class="title">{{'products.wishlist.title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 d-md-none order-last">
+        <div class="control-inner">
+          <div class="block-search d-block">
+            {% render 'search-bar', search_style: "show-input" %}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- else -%}
+<div class="{{section.settings.width_header}}">
+  <div class="main-header kt--drop-w kt--drop-w-d">
+    {%- if section.settings.use_header_announcement or section.settings.use_header_top and settings.color_headt_bg == settings.color_head_bg -%}
+    <div class="clearfix border-top{%unless section.settings.sticky_header_top%} not-sticky{%endunless%}" style="opacity: .5"></div>
+    {%- endif -%}
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="col-5 col-md-auto order-1 order-md-2">
+        <div class="row align-items-center justify-content-between flex-nowrap">
+          <div class="control-inner col-auto d-none d-md-block d-xl-none">
+            <div class="mobile-block block-menu-bar">
+              <a href="#" class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></a>
+            </div>
+          </div>
+          <div class="header-logo col-12 col-xl-auto">
+            {%- render 'kt_logo_header' -%}
+          </div>
+          <div class="header-menu horizon-menu col-12 col-xl-auto d-none d-xl-block">
+            <nav class="main-navigation flex-wrap" data-width="1200">
+              {%- render 'menu_import' -%}
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="header-control col-7 col-md-auto order-3">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          <div class="mobile-block block-menu-bar d-md-none">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+          <div class="block-search d-none d-md-block">
+            {%- render 'search-bar', search_style: "show-input-line" -%}
+          </div>
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span class="title">{{'products.wishlist.title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 order-last d-md-none">
+        <div class="control-inner">
+          <div class="block-search d-block">
+            {% render 'search-bar', search_style: "show-input" %}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endif -%}

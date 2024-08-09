@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+    	{%if settings.favicon_xml != blank%}
+      <square150x150logo src="{{settings.favicon_xml | img_url: '150x150'}}"/>
+      {%endif%}
+      <TileColor>{{settings.color_primary}}</TileColor>
+    </tile>
+  </msapplication>
+</browserconfig>

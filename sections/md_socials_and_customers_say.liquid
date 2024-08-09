@@ -1,0 +1,356 @@
+<!-- md_socials_and_customers_say.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css' -%}
+
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%} swiper-fixed-fshadow"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}{%if section.settings.dark_mode%} dark-mode{%endif%}{%if section.settings.use_round%} round_mode{%endif%}">
+      <div class="row">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'socials' -%}
+        <div class="col-12 col-lg-6 text-center">
+          <div class="cta-wrapper">
+            <div class="section-title w-100 mx-auto" style="max-width: 360px;">
+              <h3 class="title">{{block.settings.title_socials|html}}</h3>
+              <p class="sub-title">{{block.settings.stitle_socials|html}}</p>
+            </div>
+            <div class="socials_ style-03 social-icons-colored">
+              {%- render "kt_socials" -%}
+            </div>
+          </div>
+        </div>
+        {%- elsif block.type == 'customers_say' -%}
+        <div class="col-12 col-lg-6 text-center">
+          <div class="cta-wrapper" style="max-width: 580px">
+            <div class="section-title w-100">
+              <h3 class="title">{{block.settings.title_customers|html}}</h3>
+            </div>
+            <div class="swiper-container-fuild position-relative nav-center-outside nav-style-default nav-mode-default">
+              <div class="swiper-container customers_say-slide" data-slides-per-view="1" data-dots="true" data-nav="true" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}" data-pagination=".swiper-pagination-{{block.id}}">
+                <div class="swiper-wrapper">
+                {%- for i in (1..5) -%}
+                  {%- assign content = 'content_' | append: i -%}
+                  {%- if block.settings[content] != blank -%}
+                  {%- assign name = 'name_' | append: i -%}
+                  {%- assign info = 'info_' | append: i -%}
+                  <div class="swiper-slide w-100 style_01" {{ block.shopify_attributes }}>
+                    <blockquote class="testimonial{%unless block.settings.image %} testimonial-icon{%endunless%} text-center" {{ block.shopify_attributes }}>
+                      <p style="font-style: normal;">“ {{block.settings[content]}} ”</p>
+                      <cite style="padding-bottom: 1.5rem;display: block;">{{block.settings[name]}}<span>{{block.settings[info]}}</span></cite>
+                    </blockquote>
+                  </div>
+                  {%- endif -%}
+                {%- endfor -%}
+                </div>
+                <div class="swiper-pagination swiper-pagination-{{block.settings.dots_mode}} swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}-{{block.id}}"></div>
+              </div>
+              <div class="swiper-buttons position-absolute">
+                <div class="content-buttons position-relative">
+                  <div class="swiper-button-prev sw-btn-prev-{{block.id}} fkt-2x fkt-va"></div>
+                  <div class="swiper-button-next sw-btn-next-{{block.id}} fkt-2x fkt-va"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {%- endif -%}
+      {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%-endif-%}
+{% schema %}
+  {
+    "name": "Socails & Customers say",
+    "class": "md_call_to_action md_socials_and_customers_say",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Socails & Customers say",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "radio",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920x pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "color",
+        "id": "color_title",
+        "label": "Color title",
+        "default": "#333"
+      },
+      {
+        "type": "color",
+        "id": "color_desc",
+        "label": "Color description",
+        "default": "#ccc"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview design](#)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "socials",
+        "name": "Socials",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Socials settings"
+          },
+          {
+            "type": "text",
+            "id": "title_socials",
+            "label": "Title",
+            "default": "Shop Social"
+          },
+          {
+            "type": "html",
+            "id": "stitle_socials",
+            "label": "Description",
+            "default": "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. "
+          }
+        ]
+      },
+      {
+        "type": "customers_say",
+        "name": "Customers say",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title_customers",
+            "label": "Title",
+            "default": "Our Costumers Say"
+          },
+          {
+            "type": "header",
+            "content": "___Say 1"
+          },
+          {
+            "type": "text",
+            "id": "name_1",
+            "label": "Name customer",
+            "default": "Charly Smith"
+          },
+          {
+            "type": "text",
+            "id": "info_1",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "html",
+            "id": "content_1",
+            "label": "Content",
+            "default": " Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis."
+          },
+          {
+            "type": "header",
+            "content": "___Say 2"
+          },
+          {
+            "type": "text",
+            "id": "name_2",
+            "label": "Name customer",
+            "default": "Damon Stone"
+          },
+          {
+            "type": "text",
+            "id": "info_2",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "html",
+            "id": "content_2",
+            "label": "Content",
+            "default": "Impedit, ratione sequi, sunt incidunt magnam et. Delectus obcaecati optio eius error libero perferendis nesciunt atque."
+          },
+          {
+            "type": "header",
+            "content": "___Say 3"
+          },
+          {
+            "type": "text",
+            "id": "name_3",
+            "label": "Name customer",
+            "default": "John Smith"
+          },
+          {
+            "type": "text",
+            "id": "info_3",
+            "label": "Info",
+            "default": "Customer"
+          },
+          {
+            "type": "html",
+            "id": "content_3",
+            "label": "Content",
+            "default": "Perferendis perspiciatis, voluptate, distinctio earum veritatis animi tempora eget blandit nunc tortor eu nibh."
+          },
+          {
+            "type": "header",
+            "content": "___Say 4"
+          },
+          {
+            "type": "text",
+            "id": "name_4",
+            "label": "Name customer"
+          },
+          {
+            "type": "text",
+            "id": "info_4",
+            "label": "Info"
+          },
+          {
+            "type": "html",
+            "id": "content_4",
+            "label": "Content"
+          },
+          {
+            "type": "header",
+            "content": "___Say 5"
+          },
+          {
+            "type": "text",
+            "id": "name_5",
+            "label": "Name customer"
+          },
+          {
+            "type": "text",
+            "id": "info_5",
+            "label": "Info"
+          },
+          {
+            "type": "html",
+            "id": "content_5",
+            "label": "Content"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Socails & Customers say",
+        "category": "05. Element",
+        "blocks": [
+          {
+            "type": "socials"
+          },
+          {
+            "type": "customers_say"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

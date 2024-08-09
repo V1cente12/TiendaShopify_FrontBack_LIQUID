@@ -1,0 +1,19 @@
+{%- liquid
+  if settings.use_quickview
+    render 'md-quickviewModal'
+  endif
+  if settings.use_compare
+    render 'kt_compare'
+  endif
+-%}
+{%- if settings.sticky_icon_cart -%}
+<div class="block-minicart icon-fixed">
+  <div class="mini-cart">
+    <a {%if settings.type_ajax_cart == "drawer"%}href="javascript:void(0)" onclick="KT.drawOpen()"{%elsif settings.type_ajax_cart == 'popup'%} onclick="KT.popupOpen()"{% else %}href="{{routes.cart_url}}"{%endif%} class="icon-link">
+    {%-render 'icon-cart', pos: 'sticky'-%}<span class="count cartCount fixed">{{ cart.item_count }}</span><span class="total d-none">{{ 0 | money }}</span>
+    </a>
+  </div>
+</div>
+{%- endif -%}
+<a href="#" class="scroll_top position-fixed border" title="Scroll to Top"><i class="fkt-angle-up fkt-lg" aria-hidden="true"></i></a>
+{%-if settings.use_snow-%}<div id="snow_ef_t4"></div>{%-endif-%}

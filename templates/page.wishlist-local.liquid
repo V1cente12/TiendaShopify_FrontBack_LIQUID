@@ -1,0 +1,228 @@
+<div class="container">
+  <div class="border-top" style="border-color: rgba(235, 235, 235, 0.55) !important"></div>
+  {%-render 'kt_breadcrumb'-%}
+  <div class="wishlist-page row no-gutters pb-7">
+    <div class="col-12" role="main" itemscope="itemscope" itemtype="http://schema.org/CreativeWork">
+      <div class="card" style="opacity:0">
+        <div class="bar-loading bounce"></div>
+      </div>
+      {%- if wishlist_count != 0 -%}
+      <table class="table table-wishlist">
+        <thead>
+          <tr>
+            <th>{{'products.wishlist.tablet_label_product'|t}}</th>
+            <th>{{'products.wishlist.tablet_label_price'|t}}</th>
+            <th>{{'products.wishlist.tablet_label_status'|t}}</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="wishlist-page-items">
+          {%- for i in (1..3) -%}
+          <tr class="wishlist-page-item">
+            <td class="product-col">
+              <div class="product d-flex align-content-stretch">
+                <figure class="product-media"><div class="lz-place"></div></figure>
+                <div class="w-100"><div class="lz-place"></div></div>
+              </div>
+            </td>
+            <td class="price-col"><div class="lz-place"></div></td>
+            <td class="stock-col"><div class="lz-place"></div></td>
+            <td class="action-col"><div class="lz-place"></div></td>
+            <td class="remove-col"><div class="lz-place"></div></td>
+          </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+      {%- endif -%}
+      <div class="wishlist-empty"{% if wishlist_count != 0 %} style="display:none"{% endif %}>
+        <div class="icon_place"><i class="fkt-heart-o"></i></div>
+        <div class="text-center cart-empty-content{% if cart.item_count > 0 %} d-none{%endif%}">
+          <div class="imgKT"><img class="mx-auto my-5" src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/favoritos.png?v=1651671625" alt="" style="max-width: 200px"></div>
+          <div class="empty-cart-text mb-3">{{ 'cart.general.guest_note_html' | t }}</div>
+          <div class="text-center h2 mb-5">{{ 'products.wishlist.no_products_wishlist' | t }}</div>
+          <p class="return-to-shop"><a href="/" class="btn btn-outline-primary wc-backward mb-3">{{ 'cart.general.continue_shopping' | t }}</a></p>
+        </div>      </div>
+      <h3 class="mt-5 h2 text-center" style="display: none">{{ 'products.wishlist.info_wishlist_html' | t }}</h3>
+    </div>
+  </div>
+</div>
+{%style%}
+.table-wishlist th, .table-wishlist thead th, .table-wishlist td {
+  border-top: none;
+  border-bottom: thin solid #ebebeb;
+}
+.table-wishlist th, .table-wishlist td {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1.4rem;
+  padding-bottom: 1.4rem;
+}
+.table-wishlist th {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #999999;
+  text-align: left;
+}
+[dir="rtl"] .table-wishlist th {
+  text-align: right;
+}
+.table-wishlist td {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  vertical-align: middle;
+}
+.table-wishlist .btn.add_to_cart_button:before {
+  font-size: 1.8rem;
+  margin: 0 .5rem;
+}
+.table-wishlist .product-col {
+  min-width: 250px;
+}
+.table-wishlist .price-col {
+  width: 180px;
+  font-weight: 400;
+  font-size: 1.6rem;
+}
+.table-wishlist .product-price {
+  margin-bottom: 0;
+  line-height: 1.86;
+}
+.table-wishlist .stock-col {
+  width: 160px;
+  font-weight: 400;
+  font-size: 1.6rem;
+}
+.table-wishlist .action-col {
+  width: 202px;
+}
+.table-wishlist .remove-col {
+  padding-right: 0;
+  padding-left: 0;
+  width: 55px;
+  text-align: right;
+}
+[dir="rtl"] .table-wishlist .remove-col {
+  text-align: left;
+}
+.table-wishlist .remove-col .btn-remove {
+  border: none;
+  background-color: transparent;
+  min-width: auto;
+}
+.table-wishlist .remove-col .btn-remove i{
+  margin: 0;
+}
+.table-wishlist .product-col .product {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  box-shadow: none;
+}
+[dir="ltr"] .table-wishlist .product-col .product-media {
+  display: inline-block;
+  margin: 0;
+  margin-right: 2.8rem;
+  flex-shrink: 0;
+  max-width: 60px;
+}
+[dir="rtl"] .table-wishlist .product-col .product-media {
+  display: inline-block;
+  margin: 0;
+  margin-left: 2.8rem;
+  flex-shrink: 0;
+  max-width: 60px;
+}
+.table-wishlist .product-col .product-title {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  margin: 0;
+  padding-right: 4rem;
+}
+.table-wishlist .product-col .product-title a {
+  color: inherit;
+}
+.table-wishlist .in-stock {
+  color: #a6c76c;
+}
+.table-wishlist .out-of-stock {
+  color: #ef837b;
+}
+@media (max-width: 767px) {
+  .table-wishlist  {
+    margin-top: 30px;
+  }
+
+  .table-wishlist thead {
+    display: none;
+  }
+  .table-wishlist tr {
+    display: block;
+    border-bottom: thin solid #ebebeb;
+    position: relative;
+
+    margin-top: 10px;
+    border-radius: 20px;
+    border: 1px solid #8f8f8f;
+  }
+
+  .table-wishlist figure{
+    max-width: 120px !important;
+    padding-left: 10px !important;
+  }
+  .table-wishlist td {
+    display: inline-block;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  .table-wishlist .product-col {
+    width: 100%;
+    border: none;
+    min-width: auto;
+  }
+  .table-wishlist .price-col, .table-wishlist .stock-col, .table-wishlist .action-col {
+    display: none;
+  }
+  .table-wishlist .remove-col {
+    width: auto;
+    border: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    position: absolute;
+    right: 0;    
+    top: 1rem;
+    z-index: 1;
+  }
+
+  .table-wishlist .remove-col .btn-remove {
+    font-size: 20px;
+    margin-top: -10px;
+    color: #ec9121;
+  }
+  [dir="rtl"] .table-wishlist .remove-col {
+    right: auto;
+    left: 0;
+  }
+}
+.product-media .lz-place {
+  width: 60px;
+}
+.product-media+.w-100 .lz-place:before {
+  padding-top: 60px;
+  background-size: 30rem 24px, 14rem 18px;
+  background-position: left 0, left 36px;
+}
+.price-col .lz-place:before,
+.stock-col .lz-place:before,
+.action-col .lz-place:before {
+  padding-top: 24px;
+  background-size: 12rem 24px;
+}
+.remove-col .lz-place:before {
+  padding-top: 24px;
+  background-size: 24px 24px;
+}
+{%endstyle%}

@@ -1,0 +1,1194 @@
+<!-- kt_top_banner.liquid -->
+{%- assign handles_used = '' -%}
+{%- for block in section.blocks -%}
+  {%- liquid
+    if block.settings.off_section
+      continue
+    endif
+    if cart.attributes.theme_mobile == 'true' and block.settings.off_mobile or cart.attributes.theme_mobile == 'false' and block.settings.off_desktop
+      continue
+    endif
+    if block.settings.off_mobile
+      assign visible = 'd-none d-lg-block'
+    endif
+    if block.settings.off_desktop
+      assign visible = 'd-lg-none'
+    endif
+    assign listHandle = block.settings.by_handle_11 | default: ''
+    for i in (1..3)
+      assign by_handle = 'by_handle_' | append: i
+      if listHandle != ''
+        assign listHandle = listHandle | join: ',' | append: ',' | append: block.settings[by_handle] | split: ','
+      else
+        assign listHandle = block.settings[by_handle] | split: ','
+      endif
+    endfor
+    assign listHandle = listHandle | uniq
+    if block.type == 'list_coll_banner' and template.name == "list-collections"
+      assign listHandle = 'all_handle' | split: ','
+    endif
+    if block.type == 'cart_banner' and template.name == "cart"
+      assign listHandle = 'all_handle' | split: ','
+    endif
+    if block.type == 'account_banner' and template.name == "account"
+      assign listHandle = 'all_handle' | split: ','
+    endif
+    if listHandle.size == 0
+      continue
+    else
+      if handles_used != ''
+        assign handles_used = handles_used | concat: listHandle
+      else
+        assign handles_used = listHandle
+      endif
+    endif
+    if block.type == 'list_coll_banner' and template.name != "list-collections"
+      continue
+    endif
+    if block.type == 'collection_banner' and template.name != "collection"
+      continue
+    endif
+    if block.type == 'product_banner' and template.name != "product"
+      continue
+    endif
+    if block.type == 'blog_banner' and template.name != "blog" 
+      continue
+    endif
+    if block.type == 'article_banner' and template.name != "article"
+      continue
+    endif
+    if block.type == 'page_banner' and template.name != "page"
+      continue
+    endif
+    if block.type == 'cart_banner' and template.name != "cart"
+      continue
+    endif
+    if block.type == 'account_banner' and template.name != "account"
+      continue
+    endif
+    assign curr_handle = collection.handle | default: product.handle | default: article.handle | default: blog.handle | default: page.handle | default: page.handle
+    unless listHandle contains 'all_handle'
+      unless listHandle contains curr_handle
+        continue
+      endunless
+    endunless
+    assign width_section = block.settings.width_section
+    assign width_content = block.settings.width_content
+    capture width_section_
+      if width_section == 'container-fluid wide' and width_content == false
+        echo 'w-100'
+      else
+        echo width_section
+      endif
+    endcapture
+    capture width_content_
+      if width_content and width_section == 'w-100'
+        echo 'container'
+      elsif width_section == 'container-fluid wide' and width_content == false
+        echo 'container-fluid wide'
+      else
+        echo 'w-100'
+      endif
+    endcapture
+  -%}
+  {% assign ft_img = collection.image | default: block.settings.image %}
+  {%-style-%}
+  {%- if block.settings.image != blank and block.settings.image_mb != blank -%}
+    .content_{{block.id}} {
+      background-image: url('{{ block.settings.image_mb | img_url: 'master'}}');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center 40%;
+      padding-bottom: 20.8333% !important;
+    }
+    @media (min-width: 768px){
+      .content_{{block.id}} {
+        background-image: url('{{block.settings.image | img_url: 'master'}}');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center 40%;
+        padding-bottom: 20.8333% !important;
+      }
+    }
+  {%- elsif block.settings.image != blank -%}
+    .content_{{block.id}} {
+      background-image: url('{{ block.settings.image | img_url: 'x414'}}');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center 40%;
+      padding-bottom: 20.8333% !important;
+    }
+    @media (min-width: 768px){
+      .content_{{block.id}} {
+        background-image: url('{{block.settings.image | img_url: 'master'}}');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center 40%;
+        padding-bottom: 20.8333% !important;
+      }
+    }
+  {%- elsif ft_img != blank -%}
+    .content_{{block.id}} {
+      background-image: url('{{ ft_img | img_url: 'x414'}}');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center 40%;
+      padding-bottom: 20.8333% !important;
+    }
+    @media (min-width: 768px){
+      .content_{{block.id}} {
+        background-image: url('{{ft_img | img_url: 'master'}}');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center 40%;
+        padding-bottom: 20.8333% !important;
+      }
+    }
+  {%- endif -%}
+
+
+	@media screen and (max-width: 991px)
+    {
+        #backimg_{{block.id}} {
+          margin-top: 33px;
+          padding-left: 10px;
+          padding-right: 10px; 
+          margin-bottom: -50px;
+       }
+    }
+  {%-endstyle-%}
+
+  {%-render 'sc_css', sc: block-%}
+  {%- assign pageTitle = article.title | default: blog.title | default: page.title | default: collection.title -%}
+
+
+  <div id="backimg_{{block.id}}" class="{{width_section_}} {{visible}}">
+
+
+  
+
+
+    <div class="container ba content_{{block.id}} position-relative" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      {%- if ft_img == blank -%}
+      <div class="row mt-5 mb-7 section-width {{width_content_}}" style="text-align: center;display: contents;">
+        {%- unless block.settings.html == blank -%}
+        <div class="text-content">        
+          {{- block.settings.html|replace: 'pageTitle', pageTitle | html -}}
+        </div>
+        {%- endunless -%}
+      </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+  
+  {%-break-%}
+{%- endfor -%}
+
+{% schema %}
+  {
+    "name": "(Banner) Page top",
+    "class": "kt_top_banner",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "(Banner) Page top",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Note*: You can use the word \"pageTitle\" to display the current page name."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "list_coll_banner",
+        "name": "Collections list",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Fullwidth No Sidebar<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem",
+            "default": "12.5rem 0"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "collection_banner",
+        "name": "Collection page",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "collection",
+            "id": "by_handle_1",
+            "label": "The collection uses banner image"
+          },
+          {
+            "type": "collection",
+            "id": "by_handle_2",
+            "label": "The collection uses banner image"
+          },
+          {
+            "type": "collection",
+            "id": "by_handle_3",
+            "label": "The collection uses banner image"
+          },
+          {
+            "type": "textarea",
+            "id": "by_handle_11",
+            "label": "The list handle of collection uses banner image",
+            "info": "Ex: collection-1,collection-2,... or all_handle"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "product_banner",
+        "name": "Product page",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "product",
+            "id": "by_handle_1",
+            "label": "The product uses banner image"
+          },
+          {
+            "type": "product",
+            "id": "by_handle_2",
+            "label": "The product uses banner image"
+          },
+          {
+            "type": "product",
+            "id": "by_handle_3",
+            "label": "The product uses banner image"
+          },
+          {
+            "type": "textarea",
+            "id": "by_handle_11",
+            "label": "The list handle of product uses banner image",
+            "info": "Ex: product-1,product-2,... or all_handle"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "blog_banner",
+        "name": "Blog",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "blog",
+            "id": "by_handle_1",
+            "label": "The blog uses banner image"
+          },
+          {
+            "type": "blog",
+            "id": "by_handle_2",
+            "label": "The blog uses banner image"
+          },
+          {
+            "type": "blog",
+            "id": "by_handle_3",
+            "label": "The blog uses banner image"
+          },
+          {
+            "type": "textarea",
+            "id": "by_handle_11",
+            "label": "The list handle of blog uses banner image",
+            "info": "Ex: blog-1,blog-2,... or all_handle"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "article_banner",
+        "name": "Blog post",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "article",
+            "id": "by_handle_1",
+            "label": "The article uses banner image"
+          },
+          {
+            "type": "article",
+            "id": "by_handle_2",
+            "label": "The article uses banner image"
+          },
+          {
+            "type": "article",
+            "id": "by_handle_3",
+            "label": "The article uses banner image"
+          },
+          {
+            "type": "textarea",
+            "id": "by_handle_11",
+            "label": "The list handle of article uses banner image",
+            "info": "Ex: article-1,article-2,... or all_handle"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "page_banner",
+        "name": "Page",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "page",
+            "id": "by_handle_1",
+            "label": "The page uses banner image"
+          },
+          {
+            "type": "page",
+            "id": "by_handle_2",
+            "label": "The page uses banner image"
+          },
+          {
+            "type": "page",
+            "id": "by_handle_3",
+            "label": "The page uses banner image"
+          },
+          {
+            "type": "textarea",
+            "id": "by_handle_11",
+            "label": "The list handle of page uses banner image",
+            "info": "Ex: page-1,page-2,... or all_handle"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "cart_banner",
+        "name": "Cart page",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">Grid Columns<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      },
+      {
+        "type": "account_banner",
+        "name": "Account page",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "off_section",
+            "label": "Turn off section?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Text content",
+            "default": "<div class=\"page-header text-center\"><h1 class=\"page-title\">My Account<span>Shop<\/span><\/h1><\/div>",
+            "info": "Note*: You can use the word \"pageTitle\" to display the current page name."
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "select",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Background image",
+            "info": "Size suggestion: 1920x pixels"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Background mobile image",
+            "info": "Size suggestion: 768x pixels"
+          },
+          {
+            "type": "url",
+            "id": "link_banner",
+            "label": "Link banner"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

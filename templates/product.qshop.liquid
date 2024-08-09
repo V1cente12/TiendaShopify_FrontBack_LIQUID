@@ -1,0 +1,87 @@
+{%-layout none-%}
+{%- liquid
+  assign on_sale = false
+  if product.compare_at_price > product.price 
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true 
+  endif
+	unless product.has_only_default_variant or st_card[13] == 'true' and product.variants.size == 1 or st_card[4] == 'false'
+  	assign show_variant = true
+	endunless
+-%}
+<div class="product product-inner ktlz" data-href="{{product.handle}}" data-ktlz="instant">
+	<form method="post" action="{{ routes.cart_add_url }}"{%if product.title%}{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-qs" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-qs" data-options="{{product.options.size}}" data-pr-vrs{%endunless%}{%endif%}>
+		<div class="modal-header">
+			<div class="product-body">
+				<h2 class="product-name">
+					<a href="{{product.url}}" tabindex="0">{{product.title}}</a>
+				</h2>
+				{%- render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+			</div>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+		</div>
+    <div class="modal-body">
+			<div class="row">
+				<div class="col-5">
+					<div class="product-thumb images is-default">
+			      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+			      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?variant={{product.selected_or_first_available_variant.id}}&view=imgcard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+					</div>
+				</div>
+				<div class="col-7">
+		      {%-if show_variant-%}
+		      <div class="product-variants-wrapper product-variants-wrapper-qs">
+		        <div class="prd-variants">
+		          {%- for i in (1..product.options.size) -%}
+		            <div class="prd--option{{i}} animated-background" data-n-opt="{{product.options[forloop.index0] | escape}}"></div>
+		          {%- endfor -%}
+		        </div>
+		        <div class="quantity">
+		        	<label for="qty-qs">{{'products.product.quantity'|t}}<span>: </span></label>
+		        	<div class="control">
+		        		<a class="btn-number qtyminus quantity-minus" href="#"></a>
+		        		<input type="text" data-step="1" name="quantity" data-min="1" value="1" id="qty-qs" class="input-qty input-text qty" size="4" pattern="[0-9]*">
+		        		<a class="btn-number qtyplus quantity-plus" href="#"></a>
+		        	</div>
+		        </div>
+		      </div>
+		      {%-endif-%}
+				</div>
+			</div>
+    </div>
+		<div class="modal-footer">
+			<div class="product-button-wrapper-qs">
+      {%- if settings.use_add_to_cart_btn -%}
+              
+      {%- if product.selected_or_first_available_variant.available -%}
+	      <div data-submit class="btn btn-primary btn-rounded btn-block fkt-cart-plus text-uppercase kt-button btn-onclick add_to_cart_button addItemAjax" data-view="{{product.url}}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}">
+            <span class="text-nowrap addItemAjax-text">{{'products.product.add_to_cart'|t}}</span>
+              </div>
+          {%- else -%}
+	      <div data-submit class="btn btn-primary btn-rounded btn-block fkt-cart-plus text-uppercase kt-button btn-onclick add_to_cart_button addItemAjax sold_out disabled" data-view="{{product.url}}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap addItemAjax-text">{{'products.product.sold_out'|t}}</span></div>
+      {%- endif -%}
+      {%- endif -%}
+			</div>
+          
+          
+          
+          <div id="finalizar_compra" class="product-button-wrapper-qs">
+      {%- if settings.use_add_to_cart_btn -%}
+              
+      {%- if product.selected_or_first_available_variant.available -%}
+            <a href="/cart" class="check-out btn-outline-primary-2 btn-rounded" data-layout="checkout"><i class="fkt-long-arrow-right"></i><span>Ir a mi carrito</span></a>
+      {%- endif -%}
+      {%- endif -%}
+			</div>
+          
+		</div>
+		<input type="hidden" name="id" value="{{product.selected_or_first_available_variant.id}}">
+	</form>
+</div>

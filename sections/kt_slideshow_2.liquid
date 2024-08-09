@@ -1,0 +1,1459 @@
+<!-- kt_slideshow.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+
+{%-render 'sc_css'-%}
+{%-capture slideshow-css-%}
+{%- style -%}
+{%- assign section_id = '.slide_i--' | append: section.id -%}
+{{- section.settings.css_section | replace: ".section_id", section_id | strip_newlines -}}
+{%- assign fullscreen = section.settings.fullscreen -%}
+{%- for block in section.blocks-%}
+  {%- if block.type == 'item' and block.settings.turnoff == false -%}
+  {%- assign image_item = block.settings.image -%}
+  {%- assign height = image_item.height | default: 782 -%}
+  {%- assign width = image_item.width | default: 1920 -%}
+  {%- assign first_ratio = height | times: 1.00 | divided_by: width | times: 100.00000000 | append: '%' -%}
+  {%- assign image_item_mb = block.settings.image_mb | default: image_item -%}
+  {%- assign size = section.settings.h_reponsive | default : '414' | prepend: 'x' -%}
+  {%- if image_item != blank and block.settings.lazypreload -%}
+    .slide_i--{{ section.id }}{{forloop.index}} .imgRatio-img {
+      background-image: url('{{image_item_mb | img_url: size}}');
+    }
+    @media (min-width: 768px){
+      .slide_i--{{ section.id }}{{forloop.index}} .imgRatio-img {
+        background-image: url('{{image_item | img_url: 'master'}}');
+      }
+    }
+  {%- endif -%}
+  .slide_i--{{ section.id }}{{forloop.index}} .imgRatio:before {
+    padding-bottom: {{image_item_mb.height | times: 1.00 | divided_by: image_item_mb.width | times: 100.00000000}}%;
+  }
+  {%- if block.settings.image_mb != blank -%}
+  @media (min-width: 768px){
+    .slide_i--{{ section.id }}{{forloop.index}} .imgRatio:before {
+      padding-bottom: {{first_ratio}};
+    }
+  }
+  {%- endif -%}
+  {%- endif -%}
+  {%-assign align = block.settings.text_alignment | default: 'initial' -%}
+  {%-assign align_mb = block.settings.text_alignment_mb | default: align -%}
+  {%-assign left = block.settings.text_alignment_left -%}
+  {%-assign top = block.settings.text_alignment_top -%}
+  {%-assign left_mb = block.settings.text_alignment_left_mb | default: left -%}
+  {%-assign top_mb = block.settings.text_alignment_top_mb | default: top -%}
+  .slide_i--{{ block.id }} .slide_t-content {
+    --x: {{left_mb | append:'%'}};
+    --y: {{top_mb | append:'%'}};
+  }
+  .slide_i--{{ block.id }} .page-width {
+    text-align: {{align_mb}};
+    --x: -{{left_mb | append:'%'}};
+    --y: -{{top_mb | append:'%'}};
+  }
+  [dir="rtl"] .slide_i--{{ block.id }} .page-width {
+    --x: {{left_mb | append:'%'}};
+  }
+  @media (min-width: 768px) {
+    .slide_i--{{ block.id }} .slide_t-content {
+      --x: {{left | append:'%'}};
+      --y: {{top | append:'%'}};
+    }    
+    .slide_i--{{ block.id }} .page-width {
+      text-align: {{align}};
+      --x: -{{left | append:'%'}};
+      --y: -{{top | append:'%'}};
+    }
+    [dir="rtl"] .slide_i--{{ block.id }} .page-width {
+      --x: {{left | append:'%'}};
+    }
+  }
+  {%- if block.type == 'text' -%}  
+  {%- capture settings_fonts -%}
+    {{-settings.font_base_family.family-}},
+    {{-settings.font_main_header_family.family-}},
+    {{-settings.font_section_sub_title_family.family-}}
+  {%- endcapture -%}
+  {%- assign fonts = settings_fonts | split: ',' | uniq -%}
+  {%- if block.settings.heading == blank and block.settings.subheading == blank and block.settings.description == blank -%}{%-continue-%}{%- endif -%}
+  {%- unless block.settings.heading == blank -%}
+    .slide_i--{{ block.id }} .slideshow__title{
+      font-family: {{-block.settings.font_heading.family-}};
+      font-weight: {{-block.settings.font_heading.weight-}};
+      font-style: {{-block.settings.font_heading.style-}};
+    }
+    {%- unless fonts contains block.settings.font_heading.family -%}
+      {%- assign fonts = fonts | join: ',' | append: block.settings.font_heading.family | split: ',' -%}
+      {{- block.settings.font_heading | font_face | strip_newlines -}}
+    {%- endunless -%}
+  {%- endunless -%}
+  {%- unless block.settings.subheading == blank -%}
+    .slide_i--{{ block.id }} .slideshow__subtitle{
+      font-family: {{-block.settings.font_subheading.family-}};
+      font-weight: {{-block.settings.font_subheading.weight-}};
+      font-style: {{-block.settings.font_subheading.style-}};
+    }
+    {%- unless fonts contains block.settings.font_subheading.family -%}
+      {%- assign fonts = fonts | join: ',' | append: block.settings.font_subheading.family | split: ',' -%}
+      {{- block.settings.font_subheading | font_face | strip_newlines -}}
+    {%- endunless -%}
+  {%- endunless -%}
+  {%- unless block.settings.description == blank -%}
+    .slide_i--{{ block.id }} .slideshow__description{
+      font-family: {{-block.settings.font_description.family-}};
+      font-weight: {{-block.settings.font_description.weight-}};
+      font-style: {{-block.settings.font_description.style-}};
+    }
+    {%- unless fonts contains block.settings.font_description.family -%}
+      {%- assign fonts = fonts | join: ',' | append: block.settings.font_description.family | split: ',' -%}
+      {{- block.settings.font_description | font_face | strip_newlines -}}
+    {%- endunless -%}
+  {%- endunless -%}
+  {%- endif -%}
+  {%- assign block_id = ' .slide_i--' | append: block.id -%}
+  {{- block.settings.css_block | replace: ".block_id", block_id -}}
+{%-endfor -%}
+
+{%- unless section.settings.fullscreen -%}
+  {%- if section.settings.h_reponsive != blank -%}
+  .slide_i--{{ section.id }} .imgRatio:before{
+    padding-bottom: {{section.settings.h_reponsive | append : 'px' | replace: 'autopx', first_ratio}};
+  }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_768 != blank -%}
+    @media (min-width: 768px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_768 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_992 != blank -%}
+    @media (min-width: 992px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_992 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_1200 != blank-%}
+    @media (min-width: 1200px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_1200 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_1400 != blank-%}
+    @media (min-width: 1400px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_1400 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+{%- endunless -%}
+{%- endstyle -%}
+{%-endcapture-%}
+{{ slideshow-css | strip_newlines | remove: '  ' | remove: '  '  }}
+
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" id="Swiper-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="swiper-section">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">  
+    <div class="section-width {{width_content_}} kt_home_slide">
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 | floor -%}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container{%if section.settings.no_overflow%} swiper-no-overflow{%endif%}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-scrollbar="{{section.settings.use_scrollbar}}" data-delay="{{section.settings.autoplay_speed}}" data-no-overflow="{{section.settings.no_overflow}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks-%}
+            {%- if block.type != 'item' or block.settings.turnoff -%}{%-continue-%}{%- endif -%}
+            {%- assign image_item = block.settings.image -%}
+            <div class="swiper-slide slide_i slide_i--{{ section.id }} slide_i--{{ section.id }}{{forloop.index}}" data-slide-blockid="{{ block.id }}" {{ block.shopify_attributes }}>
+              <a class="imgRatio{%if fullscreen%} f-height{%endif%}" href="{{ block.settings.link_1 | default: '#'}}">
+              {%- if image_item != blank and block.settings.lazypreload == false or block.type == 'video'-%}
+                <div class="item-slide{%if block.settings.image_mb != blank%} d-none d-md-block{%endif%} imgRatio-img lazyload" data-bgset="{%- render 'bgset', image: image_item, prioritize: 'height' -%}" data-sizes="auto"></div>
+                {%-if block.settings.image_mb != blank-%}
+                  {%- assign image_item = block.settings.image_mb -%}
+                  <div class="item-slide d-md-none imgRatio-img lazyload" data-bgset="{%- render 'bgset', image: image_item, prioritize: 'height' -%}" data-sizes="auto"></div>
+                {%- endif -%}
+              {%- else -%}
+                <div class="item-slide imgRatio-img"></div>
+              {%- endif -%}
+              </a>
+              {%- for bl in section.blocks offset: forloop.index -%}
+                {%- if bl.type == 'item' -%}{%- break -%}{%- endif -%}
+                {%- render 'kt_slideshow_2_i', block: bl -%}
+              {%- endfor -%}
+            </div>
+            {%-endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+          <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.id}}"></div>
+          {%- endif -%}
+          {%- if section.settings.use_scrollbar -%}
+          <div class="swiper-scrollbar scrollbar-primary"></div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.use_navigation -%}
+        <div class="swiper-buttons position-absolute">{{--}}
+          <div class="content-buttons position-relative">{{--}}
+            <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>{{--}}
+            <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>{{--}}
+          </div>{{--}}
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Master 2",
+    "class": "kt_slideshow css_builded",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Slideshow Master 2",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slider settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "no_overflow",
+        "label": "___Display external content?"
+      },
+      {
+        "type": "checkbox",
+        "id": "fullscreen",
+        "label": "___Use slideshow full screen?"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "___Use Autoplay?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "___Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "___Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_scrollbar",
+        "label": "___Use Scrollbar?"
+      },
+      {
+        "type": "header",
+        "content": "Height slider settings"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive",
+        "label": "Mobile",
+        "placeholder": "350"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_768",
+        "label": "On screen up 768px",
+        "placeholder": "400"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_992",
+        "label": "On screen up 992px",
+        "placeholder": "400"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_1200",
+        "label": "On screen up 1200px",
+        "placeholder": "600"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_1400",
+        "label": "On screen up 1400px",
+        "placeholder": "600"
+      },
+      {
+        "type": "range",
+        "id": "autoplay_speed",
+        "min": 5,
+        "max": 60,
+        "step": 1,
+        "unit": "s",
+        "label": "Change slides every",
+        "default": 7
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "== Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"992\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"1200\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  }\n}"
+      },
+      {
+        "type": "header",
+        "content": "CSS Custom"
+      },
+      {
+        "type":"html",
+        "id": "css_section",
+        "label": "Css for section",
+        "info": "Key start: .section_id"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item slide (parent)",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info" : "Width >= 1920px"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Image mobile",
+            "info" : "Width <= 768px"
+          },
+          {
+            "type":"checkbox",
+            "id": "lazypreload",
+            "label": "Preload?",
+            "info": "Used only for the first item of the first section."
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "TURN OFF BLOCK"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Item",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"html",
+            "id": "css_block",
+            "label": "Css for item",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "name": "Item text (child)",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Heading"
+          },
+          {
+            "type": "html",
+            "id": "heading",
+            "label": "Text"
+          },
+          {
+            "type": "font_picker",
+            "label": "Font family",
+            "id": "font_heading",
+            "default": "poppins_n7"
+          },
+          {
+            "type": "header",
+            "content": "Subheading"
+          },
+          {
+            "type": "html",
+            "id": "subheading",
+            "label": "Text"
+          },
+          {
+            "type": "font_picker",
+            "id": "font_subheading",
+            "label": "Font family",
+            "default": "poppins_n7"
+          },
+          {
+            "type": "header",
+            "content": "Description"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Text"
+          },
+          {
+            "type": "font_picker",
+            "id": "font_description",
+            "label": "Font family",
+            "default": "poppins_n4"
+          },
+          {
+            "type": "header",
+            "content": "Display settings"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "Text alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "label": "Center",
+                "value": "center"
+              },
+              {
+                "label": "Right",
+                "value": "right"
+              }
+            ],
+            "default": "center"
+          },
+          {
+            "type": "paragraph",
+            "content": "============ Mobile"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "select",
+            "id": "text_alignment_mb",
+            "label": "Text alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "label": "Center",
+                "value": "center"
+              },
+              {
+                "label": "Right",
+                "value": "right"
+              }
+            ],
+            "default": "center"
+          },
+          {
+            "type": "header",
+            "content": "Buttons"
+          },
+          {
+            "type": "text",
+            "id": "textBtn_1",
+            "label": "Name button 1"
+          },
+          {
+            "type": "url",
+            "id": "link_1",
+            "label": "Link 1"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button Style 1",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button Radius 1 1",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button 1?"
+          },
+          {
+            "type": "paragraph",
+            "content": "========"
+          },
+          {
+            "type": "text",
+            "id": "textBtn_2",
+            "label": "Name button 2"
+          },
+          {
+            "type": "url",
+            "id": "link_2",
+            "label": "Link 2"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button Style 2",
+            "default": "btn-outline-primary-2",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button Radius 1 2",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button 2?"
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Text (child)",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_section",
+            "label": "Max width textbox",
+            "default": true,
+            "info": "Max width = 1200px"
+          }
+        ]
+      },
+      {
+        "type": "video",
+        "name": "Item video (child)",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Video settings"
+          },
+          {
+            "type": "textarea",
+            "id": "video_url",
+            "label": "Video link",
+            "default": "<source type=\"video/mp4\" src=\"\/\/cdn.shopify.com\/s\/files\/1\/1958\/5719\/files\/video_slideshow.mp4?7643285812109313593\"><source type=\"video/webm\" src=\"\/\/cdn.shopify.com\/s\/files\/1\/1958\/5719\/files\/video_slideshow.webm?7643285812109313593\">",
+            "info" : "Background video(URL from Files or Iframe video)"
+          },
+          {
+            "type": "header",
+            "content": "Display settings"
+          },
+          {
+            "type": "text",
+            "id": "width",
+            "label": "Width",
+            "default": "560px"
+          },
+          {
+            "type": "select",
+            "id": "as",
+            "label": "Aspect ratios",
+            "default": "16by9",
+            "options": [
+              {
+                "value": "21by9",
+                "label": "21:9"
+              },
+              {
+                "value": "16by9",
+                "label": "16:9"
+              },
+              {
+                "value": "4by3",
+                "label": "4:3"
+              },
+              {
+                "value": "1by1",
+                "label": "1:1"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "border",
+            "label": "Border",
+            "default": "rounded",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "rounded",
+                "label": "Rounded Corners"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "shadow",
+            "label": "Use shadow for frame?"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "paragraph",
+            "content": "============ Mobile"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Video (child)",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_section",
+            "label": "Max width textbox",
+            "default": true,
+            "info": "Max width = 1200px"
+          },
+          {
+            "type":"html",
+            "id": "css_block",
+            "label": "Css for item",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      },
+      {
+        "type": "video_btn",
+        "name": "Item video button (child)",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Video settings"
+          },
+          {
+            "id": "video_url",
+            "type": "video_url",
+            "label": "Video URL",
+            "accept": ["youtube", "vimeo"],
+            "default": "https://www.youtube.com/watch?v=YbJOTdZBX1g",
+            "info": "Suport youtube and vimeo"
+          },
+          {
+            "type": "header",
+            "content": "Display settings"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image poster"
+          },
+          {
+            "type": "select",
+            "id": "btn_style",
+            "label": "Button style",
+            "options": [
+              { "value": "bold", "label": "Bold" },
+              { "value": "thin", "label": "Thin" }
+            ],
+            "default": "bold"
+          },
+          {
+            "type": "text",
+            "id": "width",
+            "label": "Width",
+            "default": "560px"
+          },
+          {
+            "type": "select",
+            "id": "as",
+            "label": "Aspect ratios",
+            "default": "16by9",
+            "options": [
+              {
+                "value": "21by9",
+                "label": "21:9"
+              },
+              {
+                "value": "16by9",
+                "label": "16:9"
+              },
+              {
+                "value": "4by3",
+                "label": "4:3"
+              },
+              {
+                "value": "1by1",
+                "label": "1:1"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "border",
+            "label": "Border",
+            "default": "rounded",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "rounded",
+                "label": "Rounded Corners"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "shadow",
+            "label": "Use shadow for frame?"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "paragraph",
+            "content": "============ Mobile"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Video button (child)",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_section",
+            "label": "Max width textbox",
+            "default": true,
+            "info": "Max width = 1200px"
+          },
+          {
+            "type":"html",
+            "id": "css_block",
+            "label": "Css for item",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      },
+      {
+        "type": "pin_prd",
+        "name": "Item Pin (child)",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Pin settings"
+          },
+          {
+            "id": "product",
+            "type": "product",
+            "label": "Product"
+          },
+          {
+            "type": "header",
+            "content": "Display settings"
+          },
+          {
+            "type": "range",
+            "id": "size",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Size",
+            "default": 30
+          },
+          {
+            "type": "color",
+            "id": "bg",
+            "label": "__ Select Color",
+            "default": "#f76b6a"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Pin product (child)",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"html",
+            "id": "css_block",
+            "label": "Css for item",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "name": "Item HTML (child)",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "HTML settings"
+          },
+          {
+            "id": "html",
+            "type": "html",
+            "label": "Html"
+          },
+          {
+            "type": "header",
+            "content": "Display settings"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "paragraph",
+            "content": "============ Mobile"
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_top_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment top",
+            "default": 50
+          },
+          {
+            "type": "range",
+            "id": "text_alignment_left_mb",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "%",
+            "label": "Textbox alignment left (with rtl is right)",
+            "default": 16
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "HTML (child)",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type":"html",
+            "id": "css_block",
+            "label": "Css for item",
+            "info": "Key start: .block_id",
+            "placeholder": ".block_id {}"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Master 2",
+        "category": "01. Hero banner",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

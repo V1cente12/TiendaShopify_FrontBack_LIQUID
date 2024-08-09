@@ -1,0 +1,261 @@
+{%-capture fbt-prds-css-%}
+{%-style-%}
+	.fbt-prds.lazyloaded{
+		-ms-flex-align: center;
+    align-items: center;
+  }
+	.fbt-media .swiper-slide {
+		width: auto;
+	}
+	.fbt-media .swiper-container {
+    min-height: 100%;
+  }
+  .fbt-media .swiper-scrollbar{
+    transition: all .3s;
+  }
+  .fbt-media .swiper-container-horizontal .swiper-scrollbar:not(:hover){
+  	opacity: .3;
+    height: 3px;
+  }
+  .fbt-media .img{
+		width: 10rem;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		align-items: center;
+  }
+  .fbt-media .img .aspectRatio {
+    background-color: transparent;
+	}
+  .fbt-media img{
+    background-size: 40px;
+  }
+	.fbt-media span.fkt-plus {
+    padding: 0 1rem;
+	}
+  .fbt-prd-name a:not(:hover){
+  	color: #666;
+  }
+  .fbt-info {
+  	display: none;
+    text-align: initial;
+  }
+  @media(min-width: 768px){
+  	.fbt-info {
+	  	display: block;
+	  }
+	  .fbt-media {
+	    -ms-flex: 0 0 auto;
+	    flex: 0 0 auto;
+      width: auto;
+	    max-width: 66.666667%;
+		}
+	  .fbt-prds-sc .fbt-media .img{
+			width: 13.5rem;
+	  }
+		.fbt-btn {
+	    -ms-flex: 0 0 auto;
+	    flex: 0 0 auto;
+      width: auto;
+	    max-width: 33.333333%;
+		}
+  }
+  @media(max-width: 768px){
+  	.fbt-btn {
+	    text-align: center;
+		}
+  	.fbt-btn h4, .fbt-btn .product-price{
+  		display: inline-block;
+	    margin-bottom: 1.3rem;
+	    vertical-align: middle;
+	    margin-top: 1rem;
+  	}
+  }
+  .fbt-info .fbt-vars-price {
+  	display: inline-block;
+  }
+  .fbt-info .form-control-sm {
+		height: 2.6rem !important;
+    padding: .25rem .5rem;
+		font-size: 1.3rem;
+		line-height: 1.5;
+		border-radius: .2rem;
+		margin-bottom: 0;
+		display: inline-block;
+		width: auto;
+		background-color: transparent;
+		color: #000;
+	}
+  .fbt-info .product-price {
+    display: inline-block;
+    margin-bottom: 0;
+	}
+	.fbt-prds-sc .fbt-title h3{
+	  font-size: {{settings.fsize_section_title_mb}}rem;
+	  font-weight: {{settings.fweight_section_title}};
+	}
+	@media(min-width: 768px){
+		.fbt-prds-sc .fbt-title h3{
+		  font-size: {{settings.fsize_section_title}}rem;
+		}
+	}
+	.img {
+		position: relative;
+    display: block;
+    cursor: pointer;
+	}
+	.img a{
+    pointer-events: none;
+	}
+	.img:hover .fkt-binoculars {
+		opacity: 1;
+	}
+	.img .fkt-binoculars {
+		position: absolute;
+    text-align: center;
+    fill: #333333;
+    top: 50%;
+    left: 50%;
+    margin-left: -1.4rem;
+    margin-top: -1.4rem;
+    line-height: 1;
+    min-height: 2.8rem;
+    min-width: 2.4rem;
+    border-radius: .2rem;
+    padding: .2rem;
+    background-color: rgb(255 255 255 / .9);
+    width: 2.8rem;
+    opacity: 0;
+    transition: all .3s;
+    z-index: 1;
+    pointer-events: none;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+	}
+	.fbt-info .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #444;
+    background-color: #444;
+    border: none;
+	}
+	.fbt-info .custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before,
+	.fbt-info .custom-checkbox .custom-control-input:disabled:indeterminate ~ .custom-control-label::before {
+    opacity: .5;
+	}	
+  .fbt-prds-sc .order-last .border-top{
+		display: none;
+  }
+  .btn.fbt-view {
+    --border: transparent;
+    border-color: var( --border);
+    --color_bg: transparent;
+    --color: var(--primary);
+    padding: .2rem 1rem;
+    min-width: auto;
+    border-width: 0 0 1px;
+	}
+{%-endstyle-%}
+{%-endcapture-%}
+{{ fbt-prds-css | strip_newlines | remove: '  ' | remove: '  '  }}
+{%- assign product_id = product.id -%}
+{%- if recommendations.performed -%}
+	{%- assign handle = canonical_url | split: 'handle=' | last | split: '&' | first -%}
+	{%- assign product_id = all_products[handle].id -%}
+{%- endif -%}
+<svg class="d-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path id="icon-enlarge" d="M20,1.4H4A2.6,2.6,0,0,0,1.4,4V20A2.6,2.6,0,0,0,4,22.6H20A2.6,2.6,0,0,0,22.6,20V4A2.6,2.6,0,0,0,20,1.4ZM4,21.4A1.4,1.4,0,0,1,2.6,20V14A1.4,1.4,0,0,1,4,12.6h6A1.4,1.4,0,0,1,11.4,14v6A1.4,1.4,0,0,1,10,21.4ZM21.4,20A1.4,1.4,0,0,1,20,21.4H12.18A2.58,2.58,0,0,0,12.6,20V14A2.6,2.6,0,0,0,10,11.4H4a2.58,2.58,0,0,0-1.4.42V4A1.4,1.4,0,0,1,4,2.6H20A1.4,1.4,0,0,1,21.4,4ZM19,5.6V8.4a.6.6,0,1,1-1.2,0V7l-3.38,3.38a.6.6,0,1,1-.85-.85L17,6.2H15.6a.6.6,0,0,1,0-1.2h2.8A.6.6,0,0,1,19,5.6Z"/></svg>
+<div class="col-12 mt-1 order-first"></div>
+<div class="col-12 fbt-title">
+	{%- assign title_html = 'products.fbt_products.title_html' | t -%}
+	{%- assign sub_title_html = 'products.fbt_products.sub_title_html' | t -%}
+	{%- if title_html != blank -%}
+		<h3 class="mb-0">{{'products.fbt_products.title_html' | t }}</h3>
+	{%- endif -%}
+	{%- if sub_title_html != blank -%}
+		<p class="mb-2">{{'products.fbt_products.sub_title_html' | t }}</p>
+	{%- endif -%}
+</div>
+<div class="col-12 order-1 fbt-media" data-section-id="fbt" id="Swiper-fbt" data-section-type="swiper-section">
+	<div class="swiper-container" data-slides-per-view="auto" data-space-between="0" data-scrollbar="true" data-mousewheel="true">
+    <div class="swiper-wrapper">
+    	{% assign price_sum = 0 %}
+    	{% assign c_price_sum = 0 %}
+    	{%- assign prd_cprice = null -%}
+			{%- for handle in prds -%}
+			{%- assign prd = all_products[handle] -%}
+    	<div class="swiper-slide">
+    		<div class="d-flex align-items-center mb-1 fbt-item-{{prd.id}}">
+					<div{%if settings.use_quickview%} class="img quick-view kt-button" data-view="{{prd.url}}" data-target="#md_qvModal"{%else%} class="img" onclick="window.open('{{prd.url}}','_blank')"{%endif%}>
+						
+                      	{%unless prd.id == product_id%}<span class="fkt-binoculars"></span>{%endunless%}
+                      
+                      	{%- if prd.featured_image != null -%}
+                          {%- render 'image-grid-item',st_card: st_card, product: prd, as_r: '1/1', second_thumb: 'false', masonry: 'false', img_size: '[240]' -%}
+                        {%- else-%}
+                          {% render "product-img-nulo" %}
+                        {%- endif -%}
+                      						
+					
+              		</div>
+				{% unless forloop.last %}<span class="fkt-plus"></span>{% endunless %}
+              
+    		</div>
+      </div>
+    	{%- assign price_sum = price_sum | plus: prd.price -%}
+    	{%- assign prd_cprice = prd.compare_at_price | default: prd.price -%}
+    	{%- assign c_price_sum = c_price_sum | plus: prd_cprice -%}
+			{%- endfor -%}
+    </div>
+    <div class="swiper-scrollbar"></div>
+	</div>
+</div>
+<div class="col-12 order-4 order-md-2 mt-1 mt-md-0 fbt-btn">
+	<h4>{{'products.fbt_products.price_label_label' | t }}</h4>
+	<div class="product-price">
+		<ins>{{ price_sum | money }}</ins>
+		<del{%if c_price_sum <= price_sum%} style="display: none;"{%endif%}>{{ c_price_sum | money }}</del>
+	</div>
+	{%- capture cssbtn -%}{{settings.atc_btn}} {{settings.atc_btn_rounded}}{% if settings.atc_btn_shadow%} btn-shadow{%endif%}{%- endcapture -%}
+	<div data-submit class="btn {{cssbtn}} addItemsAjax w-100">{{'products.fbt_products.add_button_html' | t }}</div>
+</div>
+<div class="col-12 mt-1 fbt-info order-3">	
+{%- for handle in prds -%}
+	{%- assign prd = all_products[handle] -%}
+	{%- assign slect_variant = prd.selected_or_first_available_variant -%}
+	{%- if forloop.first and variant != '' and  variant != 0 -%}
+		{%- assign slect_variant = prd.variants | where: 'id', variant | first -%}
+	{%- endif -%}
+	<div class="fbt-item{% unless prd.has_only_default_variant %} ktlz{%endunless%}" data-href="{{prd.handle}}" data-pid="{{prd.id}}" data-ktlz="onLoad">
+		<div class="form-ajax-- ktlz-form-pid-{{prd.id}}">
+			<div class="custom-control custom-checkbox mb-0">
+				<input type="checkbox" class="custom-control-input" id="ip_{{prd.id}}" checked="checked"{%if prd.id == product_id%} disabled {%endif%}>		
+		    <label class="custom-control-label fbt-prd-name" for="ip_{{prd.id}}">{{prd.title | strip_html }}</label>
+				<div class="fbt-vars-price">
+					<select class="form-control form-control-sm{%if prd.has_only_default_variant or prd.id == product_id%} d-none{%endif%} prd-mirror-{{prd.id}}">
+				  {%- for variant in prd.variants -%}				    
+			      <option{% if variant == slect_variant %} selected="selected"{% endif %} value="{{ variant.id }}"{% if variant.inventory_quantity > 0 %} data-inventory-quantity="{{variant.inventory_quantity}}"{%endif%}{%if variant.incoming%} data-incoming="{{variant.next_incoming_date | date: format: 'pre_order_date'}}"{%endif%} data-price="{{variant.price}}" data-cprice="{{variant.compare_at_price|default:variant.price}}">{{ variant.title }}{% unless variant.available %} {{'products.product.sold_out' | t }}{% endunless %}</option>
+				  {%- endfor -%}
+					</select>
+					<input type="hidden" name="updates[{{slect_variant.id}}]" value="1">
+					<span> - </span>
+			    <div class="product-price" name="id"> {% comment %} name="id" block worker from inserting input id{% endcomment %}
+						<ins>{{ slect_variant.price | money }}</ins>
+						<del>{{ slect_variant.compare_at_price | money }}</del>
+					</div>
+				</div>
+			</div>
+	  </div>
+	</div>
+{%- endfor -%}
+</div>
+<div class="col-12 order-last text-center d-md-none">
+	<div class="btn fbt-view mt-1">
+		<span class="more">{{'products.fbt_products.view_more_html' | t }}</span>
+		<span class="less" style="display: none;">{{'products.fbt_products.view_less_html' | t }}</span>
+	</div>
+</div>
+<div class="col-12 mb-2 order-last"><div class="w-100 border-top mt-3"></div></div>

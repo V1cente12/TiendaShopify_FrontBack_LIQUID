@@ -1,0 +1,406 @@
+<!-- md_list_item_cattegories_4.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="md_catt--{{ section.id }}" data-section-type="swiper-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      {%-assign block = section.blocks | where: 'type', 'title' | first -%}
+      {%- if block -%}
+        <div class="heading" style="margin-bottom:{{block.settings.margin_btitle}}rem">
+          <div class="section-title {{block.settings.title_align}} w-100">
+            {%- if block.settings.reverse -%}
+            <p class="sub-title">{{block.settings.stitle_section}}</p>
+            {%- endif -%}
+            <h3 class="title">{{block.settings.title_section}}</h3>
+            {%- unless block.settings.reverse -%}
+            <p class="sub-title">{{block.settings.stitle_section}}</p>
+            {%- endunless -%}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container" data-breakpoints='{{responsive_}}' data-slides-per-view="{{items_}}" data-dots="true" data-nav="false" data-observer="true" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+          {%- for block in section.blocks -%}
+          {%- if block.type == 'title' -%}{%-continue-%}{%- endif -%}
+            <div class="swiper-slide grid-item">
+              <div class="item-- position-relative">
+                {%- assign image_item = block.settings.image -%}
+                {%-assign width = image_item.width | default: 216.00 -%}{%-assign height = image_item.height | default: 138.00 | plus: 0.00-%}
+                <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="216x138 px"{% endunless %}></a>
+                {%- if block.settings.linklist != blank and linklists[block.settings.linklist].title != blank -%}
+                <div class="text-content wait-for-css wait-inline">
+                  <h4 class="banner-title">{{linklists[block.settings.linklist].title}}</h4>
+                  {%-if linklists[block.settings.linklist].links.size > 0-%}
+                  <ul class="">
+                    {%-for link in linklists[block.settings.linklist].links-%}
+                    <li class="">
+                      <a href="{{ link.url }}"><i class="fkt-angle-right"></i> {{link.title}}</a>
+                    </li>
+                    {%-endfor-%}
+                  </ul>
+                  {%-endif-%}
+                  <a href="{{block.settings.link|default:'#'}}" class="cat-link" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+                </div>                  
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}
+          </div>
+          <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-outside swiper-pagination-{{section.id}}"></div>
+        </div>
+      </div>
+      {%-capture banner-css-%}
+      <noscript class="banner-css" data-section-type="md_list_item_categories_4">
+        {%style%}
+        .md_list_item_categories_4 .swiper-container {
+          padding: 15px 10px;
+          margin: -15px -10px;
+        }
+        .md_list_item_categories_4 .item-- {
+          background-color: var(--bg);
+          padding-bottom: 1.5rem;
+          min-height: 160px;
+          padding: 1rem 1rem 1.5rem;
+          border-radius: .4rem;
+          transition: box-shadow .3s,border-color .3s;
+          border: 1px solid transparent;
+          box-shadow: 0 5px 8px 0 rgb(0 0 0 / 5%);
+        }
+        .md_list_item_categories_4 .item--:hover {
+          border-color: #e1e1e1;
+          box-shadow: 0 5px 8px 0 rgb(0 0 0 / 15%);
+        }
+        .md_list_item_categories_4 .img__banner {
+          margin: 1.5rem 0;
+        }
+        .md_list_item_categories_4 .text-content {
+          padding: 0 10px;
+          font-size: 1.4rem;
+        }
+        .md_list_item_categories_4 .text-content h4 {
+          font-size: 1.6rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: -.18px;
+          line-height: 1.3;
+        }
+        .md_list_item_categories_4 .text-content ul {
+          margin: 1.5rem 0;
+          padding: 0;
+          list-style: none;
+        }
+        .md_list_item_categories_4 .text-content a {
+          white-space: nowrap;
+          color: #666;
+          display: block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .md_list_item_categories_4 .text-content a i {
+          font-size: 1rem;
+          transform: translateY(-1px);
+          display: inline-block;
+        }
+        .md_list_item_categories_4 .text-content a.cat-link {
+          color: var(--secondary);
+        }
+        .md_list_item_categories_4 .text-content a.cat-link:hover {
+          color: var(--btn_color_bg_hv);
+        }
+        @media (min-width: 992px) {          
+          .md_list_item_categories_4 .text-content {
+            padding: 0 10px 5px 20px;
+            font-size: 1.5rem;
+          }
+          .md_list_item_categories_4 .text-content h4 {
+            font-size: 1.8rem;
+          }
+        }
+        {%endstyle%}
+      </noscript>
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{%-endif-%}
+
+{% schema %}
+  {
+    "name": "List categories 4",
+    "class": "md_list_item_categories_4",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "List categories",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "outside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "__Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 0\n  },\n  \"375\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 20\n  },\n  \"1500\": {\n    \"slidesPerView\": 6,\n    \"spaceBetween\": 20\n  }\n}"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "title",
+        "name": "Item title",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Explore Popular Categories"
+          },
+          {
+            "type": "text",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Our Entire Product Range"
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "label": "Margin bottom of title",
+            "default": 3
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item category",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Size suggestion: 452 x 300 px"
+          },
+          {
+            "type":"link_list",
+            "id":"linklist",
+            "label":"Link list"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<i class=\"fkt-angle-right\"><\/i> More Parts"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "List categories 4",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "title"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

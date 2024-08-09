@@ -1,0 +1,602 @@
+{%- comment -%}
+------- Swatch -----------
+{%- endcomment -%}
+{%- liquid
+  assign pos360 = ''
+  assign optVr1 = ''
+  assign imgsPos = ''
+  assign imgsPos0 = 0
+  assign imgsPos1 = 0
+  
+  assign gallery_opt = 0
+  assign gallery_opt_ = 'option1'
+  if product.tags contains 'gll_otp2'
+    assign gallery_opt = 1
+    assign gallery_opt_ = 'option2'
+  endif
+  if product.tags contains 'gll_otp3'
+    assign gallery_opt = 2
+    assign gallery_opt_ = 'option3'
+  endif
+  assign variants = product.variants
+  assign offset = 0
+  for value in product.options_with_values[gallery_opt].values
+    assign variants_by_option = variants | where: gallery_opt_, value
+    for media in product.media offset: offset
+      if media.preview_image.src == variants_by_option.first.featured_image.src
+        if imgsPos == ''
+          assign imgsPos =  media.position | append: ","| split: ','
+        else
+          assign imgsPos = imgsPos | join: ',' | append: ","  | append: media.position | split: ','
+        endif
+        assign offset = media.position | minus: 1
+        break
+      endif
+    endfor
+  endfor
+
+  assign imgsPosCheckLast = imgsPos
+  for media in product.media
+    if media.alt == 'kt_360'
+      assign pos360 = forloop.index | append: "," | append: product.media.size | split: ','
+    endif
+  endfor
+  if pos360 != ''
+    assign lastPos = "," | append: pos360[0]
+  elsif product.media.size == 1
+    assign lastPos = "," | append: 2
+  else
+    assign lastPos = "," | append: product.media.size
+  endif
+  if imgsPos == ''
+    assign imgsPos = '1' | append: lastPos | split: ','
+  else
+    if settings.gallery == false
+      assign imgsPos = '1' | append: lastPos | split: ','
+    else
+      assign imgsPos = imgsPos | join: ',' | append: lastPos | split: ','
+    endif
+  endif
+  assign imgsPos0 = imgsPos[0] | plus:0
+  assign imgsPos1 = imgsPos[1] | plus:0
+  if imgsPos0 >= imgsPos1
+    assign imgsPos = '1' | append: lastPos | split: ','
+    assign imgsPos0 = imgsPos[0] | plus:0
+    assign imgsPos1 = imgsPos[1] | plus:0
+  endif
+
+  assign imgPos = product.selected_or_first_available_variant.featured_media.position | default: 1
+
+  for imgspr in imgsPos
+    assign idx = forloop.index
+    assign idx_ = forloop.index | minus: 2
+    assign imgsPos0Int = imgspr | plus: 0
+    assign imgsPos1Int = imgsPos[idx] | plus: 0
+    if imgsPos0Int <= imgPos and imgPos < imgsPos1Int or imgsPos0Int > imgPos and imgPos < imgsPos1Int
+      assign imgsPos0 = imgsPos0Int
+      assign imgsPos1 = imgsPos1Int
+      break
+    endif
+    assign imgsPosLast = imgsPos.last | plus:0
+    if imgsPos0Int == imgsPosLast
+      if imgsPosCheckLast contains imgsPos.last
+        assign imgsPos0 = imgsPosLast
+        assign imgsPos1 = imgsPosLast
+      else
+        assign imgsPos0 = imgsPos[idx_] | plus:0
+        assign imgsPos1 = imgsPosLast
+        assign vrimgpos = imgsPos1
+      endif
+    endif
+  endfor
+-%}
+{%- comment -%}
+------- Check one image -----------
+{%- endcomment -%}
+{%- liquid
+  assign checkOneImage = imgsPos0 | plus: 1
+  assign checkOneImage_ = false
+  if product.media.size == 1
+    assign checkOneImage_ = true
+  endif
+
+  assign settings_gallery = settings.gallery
+  if settings_gallery
+    if checkOneImage == imgsPos1 and checkOneImage != product.media.size
+      assign checkOneImage_ = true
+    endif
+    if checkOneImage > product.media.size
+      assign checkOneImage_ = true
+    endif
+    assign imgsPos1- = imgsPos1 | minus: 1
+    if imgsPos0 == imgsPos1- and checkOneImage != product.media.size
+      assign checkOneImage_ = true
+    endif
+  endif
+-%}
+{%- if template.suffix == 'prd-additional' -%}
+<!-- unique_tabs -->
+  {%-for block in section.blocks-%}
+    {%-if block.type == "tb_unique"-%}
+    {{-block.settings|json-}}|
+    {%-endif-%}
+  {%-endfor-%}
+<!-- end_unique_tabs -->
+{%- else -%}
+
+  <div class="datajs--{{ section.id | default: product.id }}"{{-' '-}}
+    data-imgUrl="{{'no-image.jpg' | asset_img_url: 'master' | replace: 'no-image.jpg', 'kiti'}}"{{-' '-}}
+    data-imgspos="{{imgsPos|join:','}}"{{-' '-}}
+    data-imgspos360="{{pos360|join:','}}"{{-' '-}}
+    data-vrimgpos="{% if vrimgpos %}{{vrimgpos}}{% else %}{{imgsPos0}}{% endif %}"{{-' '-}}
+    data-curpos="[{{imgsPos0}},{{imgsPos1}}]"{{-' '-}}
+    data-df-variant="{{product.has_only_default_variant|json}}"></div>
+    {%- assign video5_visible = product.media | where: 'media_type', 'video' | first -%}
+    {%- assign external_video_visible = product.media | where: 'media_type', 'external_video' | first -%}
+    {%- assign model_visible = product.media | where: 'media_type', 'model' | first -%}
+  <div class="datasettings--{{ section.id | default: product.id }}" data-use-maxheight="{{settings.use_maxheight}}"{{-' '-}}
+    data-use-qty="{{settings.show_quantity_selector}}"{{-' '-}}
+    data-layout-section="{{section.settings.layout|default: '1'}}"{{-' '-}}
+    data-width-section="{%-if settings.product_width_content and settings.product_width_section == 'w-100' or settings.product_width_section == 'container' -%}true{%-else-%}false{%-endif-%}"{{-' '-}}
+    data-use-thumb-vertical="{{settings.use_thumb_vertical}}"{{-' '-}}
+    data-gallery="{{settings.gallery}}"{{-' '-}}
+    data-swatch-style="{{settings.swatch_style}}"{{-' '-}}
+    data-wide="{{settings.use_wide}}"{{-' '-}}
+    data-stickyATC="{{settings.show_sticky_add}}"{{-' '-}}
+    data-video5="{%-if video5_visible -%}true{%-else-%}false{%-endif-%}"{{-' '-}}
+    data-external-video="{%-if external_video_visible -%}true{%-else-%}false{%-endif-%}"{{-' '-}}
+    data-model="{%-if model_visible -%}true{%-else-%}false{%-endif-%}"></div>
+
+  <div class="lazyload lazypreload" data-include="{{product.url}}?view=sizeGuide"></div>
+  {%- if settings.show_sticky_add and template.suffix != 'mix-a-match' -%}
+  <div class="lazyload lazypreload" data-include="{{product.url}}?view=stickyATC"></div>
+  {%- endif -%}
+  {%- case section.settings.layout -%}
+    {%- when '1' -%}
+      {%- render 'product-layout1', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+     
+      <div class="tab-details-product tabs_style_{{section.settings.layout_tabs}}">
+        {%-render 'kt_product_tabs', style: section.settings.layout_tabs-%}
+      </div>
+ {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+    {%- when '2' -%}
+      {%- render 'product-layout2', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+      <div class="tab-details-product tabs_style_{{section.settings.layout_tabs}}">
+        {%-render 'kt_product_tabs', style: section.settings.layout_tabs-%}
+      </div>
+    {%- when '3' -%}
+      {%- render 'product-layout3', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+    {%- when '4' -%}
+      {%- render 'product-layout4', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1 -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+      <div class="tab-details-product tabs_style_{{section.settings.layout_tabs}}">
+        {%-render 'kt_product_tabs', style: section.settings.layout_tabs-%}
+      </div>
+    {%- when '5' -%}
+      {%- render 'product-layout5', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1 -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+    {%- when '6' -%}
+      {%- render 'product-layout6', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1 -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+    {%- when '7' -%}
+      {%- render 'product-layout7', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+    {%- when '8' -%}
+      {%- render 'product-layout8', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+      {%- if settings.use_fbt and settings.use_fbt_box == false -%}
+        {%-render 'fbt-layout', layout: 'fbt-prds-sc'%}
+      {%- endif -%}
+      <div class="tab-details-product tabs_style_{{section.settings.layout_tabs}}">
+        {%-render 'kt_product_tabs', style: section.settings.layout_tabs-%}
+      </div>
+    {%- when '9' -%}
+      {%- render 'product-layout9', imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1, checkOneImage_: checkOneImage_ -%}
+  {%- endcase -%}
+  {%- if settings.img_type_prd_single == 'normal' -%}
+  <style>.product-page .product-images .aspectRatio{padding-bottom: {{1|divided_by: product.featured_image.aspect_ratio | times: 100.00000000}}%;}</style>
+  {%- endif -%}
+  <script>var initialSlide = {{ imgPos | minus: imgsPos0 }};</script>
+  {%-unless product == empty-%}
+    <script type="application/json" id="ProductJson-{{ section.id }}">
+      {{- product | json -}}
+    </script>
+    <script type="application/json" id="ModelJson-{{ section.id }}">
+      {{- product.media | where: 'media_type', 'model' | json -}}
+    </script>
+  {%-endunless-%}
+
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Product Single Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "select",
+        "id": "layout",
+        "label": "-- Layout",
+        "options": [
+          {
+            "value": "1",
+            "label": "Layout 1 (Default)"
+          },
+          {
+            "value": "2",
+            "label": "Layout 2 (Center)"
+          },
+          {
+            "value": "3",
+            "label": "Layout 3 (Sidebar 1)"
+          },
+          {
+            "value": "4",
+            "label": "Layout 4 (Gallery Images)"
+          },
+          {
+            "value": "5",
+            "label": "Layout 5 (Masonry Images)"
+          },
+          {
+            "value": "6",
+            "label": "Layout 6 (List Images 1)"
+          },
+          {
+            "value": "7",
+            "label": "Layout 7 (Sidebar 2)"
+          },
+          {
+            "value": "8",
+            "label": "Layout 8 (List Images 2)"
+          },
+          {
+            "value": "9",
+            "label": "Layout 9 (Sidebar 3)"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "layout_tabs",
+        "label": "-- Layout Product tabs",
+        "info": "Product layout 3, 4, 5, 6, 7 cannot be changed.",
+        "options": [
+          {
+            "value": "0",
+            "label": "Normal"
+          },
+          {
+            "value": "1",
+            "label": "Layout 1(Tab list Horizontal)"
+          },
+          {
+            "value": "2",
+            "label": "Layout 2(Tab list Horizontal)"
+          },
+          {
+            "value": "3",
+            "label": "Layout 3(Accordions)"
+          }
+        ]
+      },
+      {
+        "type":"checkbox",
+        "id": "use_d_c_b",
+        "label": "Dynamic checkout buttons",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "== Item tabs & Content sidebar"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "tb_description",
+        "name": "Tab description",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Description"
+          },
+          {
+            "type": "radio",
+            "id": "tab_width",
+            "label": "Max width tab",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container",
+            "info": "Note: [Description full width](https:\/\/cdn.shopify.com\/s\/files\/1\/0264\/6972\/8316\/files\/Description_fullwitdh_settings.png?42564) + [Example](https:\/\/codepen.io\/kiti\/pen\/qBdoMXa?editors=1000)"
+          }
+        ]
+      },
+      {
+        "type": "tb_details",
+        "name": "Tab details",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Additional information"
+          },
+          {
+            "type": "checkbox",
+            "id": "show_vendor",
+            "label": "Show vendor",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "show_type",
+            "label": "Show type",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "show_sku",
+            "label": "Show SKU",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "show_weight",
+            "label": "Show weight",
+            "default": true
+          }
+        ]
+      },
+      {
+        "type": "tb_shipping",
+        "name": "Tab Shipping & Returns",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Shipping & Returns"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_shipping_info",
+            "label": "(Upsell) Use Shipping rates by location?",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "use_delivery_time",
+            "label": "(Upsell) Use Delivery time?",
+            "default": true,
+            "info": "Config: Theme settings > (Upsell) Delivery time"
+          }
+        ]
+      },
+      {
+        "type": "tb_review",
+        "name": "Tab review",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Review(s)"
+          }
+        ]
+      },
+      {
+        "type": "tb_customize_politicas",
+        "name": "Tab Customize Politicas",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Why buy from us?"
+          },
+          {
+            "type": "page",
+            "id": "tab_page_html",
+            "label": "Choose page"
+          },
+          {
+            "type": "text",
+            "id": "tab_html_href",
+            "label": "Content tab - Href"
+          },
+          {
+            "type": "text",
+            "id": "tab_html_header",
+            "label": "Content tab - Header"
+          },
+          {
+            "type": "html",
+            "id": "tab_html",
+            "label": "Content tab",
+            "default": "<li><a href=\"#\">10 years guarantee</a></li><li>Identical to the originals</li><li><a href=\"#\">High-quality materials</a></li><li>+300.000 happy customers</li><li><a href=\"#\">100% legal</a></li>"
+          },
+          {
+            "type": "html",
+            "id": "tab_html_footer",
+            "label": "Content tab - footer"
+          }
+        ]
+      },
+      {
+        "type": "tb_customize",
+        "name": "Tab Customize",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Why buy from us?"
+          },
+          {
+            "type": "page",
+            "id": "tab_page_html",
+            "label": "Choose page"
+          },
+          {
+            "type": "text",
+            "id": "tab_html_header",
+            "label": "Content tab - Header"
+          },
+          {
+            "type": "html",
+            "id": "tab_html",
+            "label": "Content tab",
+            "default": "<li><a href=\"#\">10 years guarantee</a></li><li>Identical to the originals</li><li><a href=\"#\">High-quality materials</a></li><li>+300.000 happy customers</li><li><a href=\"#\">100% legal</a></li>"
+          },
+          {
+            "type": "html",
+            "id": "tab_html_footer",
+            "label": "Content tab - footer"
+          }
+        ]
+      },
+      {
+        "type": "tb_unique",
+        "name": "Tab Unique",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "show_tab",
+            "label": "Show Tab",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tab_title",
+            "label": "Tab Tilte",
+            "default": "Tab Unique"
+          },
+          {
+            "type": "text",
+            "id": "tab_key",
+            "label": "Key",
+            "info": "[Tutorial:](https://support.the4.co/)"
+          }
+        ]
+      },
+      {
+        "type": "sb_related",
+        "name": "Sidebar Related items",
+        "settings": [
+          {
+            "type": "text",
+            "id": "block_title",
+            "label": "Block Tilte",
+            "default": "Related Product"
+          },
+          {
+            "type": "collection",
+            "id": "product_related_collection",
+            "label": "Choose collection"
+          },
+          {
+            "type": "checkbox",
+            "id": "recommendations_enable",
+            "label": "Use Shopify recommendations"
+          },
+          {
+            "type": "range",
+            "id": "product_items",
+            "min": 1,
+            "max": 30,
+            "step": 1,
+            "label": "Limit products",
+            "default": 8
+          }
+        ]
+      },
+      {
+        "type": "sb_banner",
+        "name": "Sidebar Banner",
+        "settings": [
+          { 
+            "type":"image_picker",
+            "id":"img",
+            "label":"Banner image"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "sb_custom",
+        "name": "Sidebar Custom HTML",
+        "settings": [
+          { 
+            "type":"textarea",
+            "id":"text",
+            "label":"HTML"
+          },
+          { 
+            "type":"page",
+            "id":"page",
+            "label":"Page HTML"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,270 @@
+{%- liquid
+  unless key
+    assign key = 'thumb'
+  endunless
+  unless masonry
+    assign masonry = false
+  endunless
+  unless section_id
+    assign section_id = section.id
+  endunless
+  assign ST_img_type_prd_single = settings.img_type_prd_single
+-%}
+
+  {%-style-%}
+	@media screen and (min-width: 576px) and (max-width: 767px)
+    {
+        .viewContainerVertical {
+           margin-top: 80px !important;   
+       }
+    }
+
+  .fondoBlanco{
+      background-color: #ffffff;
+    }
+  {%-endstyle-%}
+
+<div class="viewContainerVertical swiper-container {{key}}s-wrapper {{key}}s-wrapper-{{ section_id }} nav-style-default nav-mode-default" {{dataJs}} data-observer="true">{{- -}}
+  <div class="swiper-wrapper p-sgl__{{key}}s p-sgl__{{key}}s-{{ section_id }}">
+    {%- assign index_image = 0 -%}
+    {%- assign forIdx = 0 -%}
+    {%- assign positionIdx = 0 -%}
+    {%- assign as_r = settings.aspect_ratio | default: settings.aspect_ratio_default | split: '/' -%}
+    {%- assign aspect_ratioW = as_r | first | strip | plus: 0.00 -%}
+    {%- assign aspect_ratioH = as_r | last | strip | plus: 0.00 -%}
+    {%- if ST_img_type_prd_single == 'normal' -%}
+    {%- assign aspect_ratioW = product.featured_image.width | plus: 0.00 -%}
+    {%- assign aspect_ratioH = product.featured_image.height | plus: 0.00 -%}
+    {%- endif -%}
+    {%- for media in product.media -%}
+      {%- if media.media_type == 'image' -%}
+        {%- assign image = product.images[index_image] -%}
+        {%- assign index_image = index_image | plus: 1 -%}
+      {%- endif -%}
+      {%- if media.alt == "kt_360" -%}{%-break-%}{%- endif -%}
+      
+      {%- if settings.gallery -%}
+        {%- assign kt_visible = false -%}
+        {%- if imgsPos0 <= forloop.index and imgsPos1 > forloop.index -%}
+          {%- assign kt_visible = true -%}
+        {%- endif -%}
+        {%- if imgsPos0 == imgsPos1 and imgsPos0 == forloop.index -%}
+          {%- assign kt_visible = true -%}
+        {%- endif -%}
+        {%- if imgsPos0 == imgsPos1 and imgsPos0 == forloop.index and imgsPos1 == product.media.size or forloop.index == imgsPos1 and imgsPos1 == product.media.size -%}
+          {%- assign kt_visible = true -%}
+        {%- endif -%}
+        {%- assign prevlastPositionImage = imgsPos.size | minus: 2 -%}
+        {%- assign lastPositionImage = imgsPos.size | minus: 1 -%}
+        {%- if imgsPos[prevlastPositionImage] != imgsPos[lastPositionImage] and forloop.index == imgsPos1 and imgsPos1 == product.media.size -%}
+          {%- assign kt_visible = true -%}
+        {%- endif -%}
+        {%- unless kt_visible -%}{%-continue-%}{%-endunless-%}
+      {%- endif -%}
+
+      {%- capture image_fit -%}
+      {%- render 'kt_image_fit', width: aspect_ratioW, height: aspect_ratioH, image_item: media.preview_image -%}
+      {%- endcapture -%}
+
+      {%- if masonry -%}
+        {%- assign positionCss = 'one_hundred' -%}
+        {%- unless forIdx == 0 -%}
+          {%- assign positionCss = 'sixties' -%}
+          {%- if positionIdx == 1 or positionIdx == 2 -%}
+          {%- assign positionCss = 'forty' -%}
+            {%- if positionIdx == 2 -%}
+              {%- assign positionIdx = -1 -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- assign positionIdx = positionIdx | plus: 1 -%}
+        {%- endunless -%}
+      {%- endif -%}
+      {%- assign forIdx = forIdx | plus: 1 -%}
+      <div class="swiper-slide p-sgl__{{key}}s-item {{positionCss}} gallery-{{media.media_type}}{%if ST_img_type_prd_single == 'stretch'%} is-cover{%else%} is-contain{%endif%}" data-src="{{ media.src | img_url: 'master'}}">
+        {%- if key == 'thumb'-%}
+        <div class="p-sgl__{{key}} p-sgl__{{key}}--{{ section_id }} aspectRatio{% if media.media_type == 'external_video' %} bg-black{% endif %}" data-src="{{ media.preview_image.src | img_url: '720x720' }}"{%if image.attached_to_variant?%} title="{{image.variants.first.title | escape}}"{%endif%}{%if image.attached_to_variant?%} data-id="{{image.variants.first.id}}"{%endif%} style="--ar_i: {{1.00 | divided_by: media.aspect_ratio | times: 100.00000000}}%;">{{--}}
+          {%- if forIdx > 5 -%}
+          <img width="{{media.preview_image.width}}" height="{{media.preview_image.height}}" class="p-sgl__{{key}}-image lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ media.preview_image.src | img_url: '220x220' }}" alt="{{ media.preview_image.alt | default: product.title | escape }}" style="padding-bottom: {{1.00 | divided_by: media.aspect_ratio | times: 100.00000000}}%">
+          {%- else -%}
+          <img width="{{media.preview_image.width}}" height="{{media.preview_image.height}}" class="p-sgl__{{key}}-image" src="{{ media.preview_image.src | img_url: '220x220' }}" alt="{{ media.preview_image.alt | default: product.title | escape }}">
+          {%- endif -%}
+          {%- case media.media_type -%}
+            {% when 'external_video' or 'video' %}
+              <div class="btn play">
+                <i class="fkt-play m-0i" aria-hidden="true"></i>
+              </div>
+            {% when 'model' %}
+              <div class="btn play p-0i">
+                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--full-color icon-3d-badge-full-color" viewBox="0 0 26 26"><path class="icon-3d-badge-full-color-element" d="M19.13 8.28L14 5.32a2 2 0 0 0-2 0l-5.12 3a2 2 0 0 0-1 1.76V16a2 2 0 0 0 1 1.76l5.12 3a2 2 0 0 0 2 0l5.12-3a2 2 0 0 0 1-1.76v-6a2 2 0 0 0-.99-1.72zm-6.4 11.1l-5.12-3a.53.53 0 0 1-.26-.38v-6a.53.53 0 0 1 .27-.46l5.12-3a.53.53 0 0 1 .53 0l5.12 3-4.72 2.68a1.33 1.33 0 0 0-.67 1.2v6a.53.53 0 0 1-.26 0z" opacity=".6" style="isolation:isolate"></path></svg>
+              </div>
+          {%- endcase -%}
+        </div>
+        {%- elsif key == 'photo' -%}
+        {% for collection in product.collections %}
+        {% if collection.title == "Feliz día de la amistad" %}
+        {% if collection.metafields.custom.cucarda_producto_img2 != blank %}
+          <img class="bajo" src="{{collection.metafields.custom.cucarda_producto_img2  | img_url: 'master'}}" >
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        <div class="fondoBlanco p-sgl__{{key}} p-sgl__{{key}}-{{forloop.index}} p-sgl__{{key}}--{{ section_id }} aspectRatio{% if media.media_type == 'external_video' or media.media_type == 'video' %} bg-black{% endif %}" data-src="{{ media.preview_image.src | img_url: '720x720' }}"{%if image.attached_to_variant? %} title="{{image.variants.first.title | escape}}"{%endif%}{%if image.attached_to_variant?%} data-id="{{image.variants.first.id}}"{%endif%} style="--ar_i: {{1.00 | divided_by: media.aspect_ratio | times: 100.00000000}}%;">
+          <!-- 		//////////////////////script etiqueta de descuento sobre la imagen del producto////////////////////////////////		 -->
+         
+        {%if product.variants.first.compare_at_price <= product.variants.first.price or product.variants.first.compare_at_price != null%}
+        {% assign _discount_price = product.variants.first.compare_at_price | minus: product.variants.first.price %}
+        {% assign _percent = _discount_price | times: 100 | divided_by: product.variants.first.compare_at_price %}
+        {%- assign current_variant = product.selected_or_first_available_variant -%}
+        {%- assign money_save = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price| round -%}
+      	{%- if money_save >0 and money_save < 20 -%}
+         <div class="flashs1">   
+            <span class="onsaleoferta_prod">   
+              <span class="text">Oferta</span> 
+            </span>
+           </div> 
+   		{%- else -%}
+        {%- if money_save >= 20 and money_save < 40 -%}
+         <div class="flashs1">   
+            <span class="onsale3">   
+              <span class="text">-{{ _percent }}%</span> 
+            </span>
+           </div> 
+   		{%- else -%}
+   		{%- if money_save >= 40 and money_save < 50-%}    
+   		<div class="flashs1"> 
+        <span class="onsale4">
+        <span class="text">-{{ _percent }}%</span>
+    	</span>
+        </div>
+  		 {%- else -%}
+   		{%- if money_save >= 50 -%}
+        <div class="flashs1">
+   		<span class="onsale5">
+        		<span class="text">-{{ _percent }}%</span>  
+   		 </span>
+         </div> 
+
+ 		 {%- endif -%}
+ 		 {%- endif -%}
+         {%- endif -%}      
+		{%- endif -%} 
+        {%- endif -%} 
+<!--   		/////////////////////////////////////////////////////	       -->
+          {%- assign img_url = media.preview_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          {%- unless media.media_type == 'external_video' or media.media_type == 'video' -%}
+          {%-if forloop.first-%}
+          <img width="{{media.preview_image.width}}" height="{{media.preview_image.height}}" class="p-sgl__{{key}}-image lazyload {{image_fit}}" src="{{media.preview_image | img_url: '335x'}}" data-src="{{ img_url }}" data-widths="[335, 550, 700, 850, 900]" data-aspectratio="{{ media.preview_image.aspect_ratio }}" data-sizes="auto" alt="{{ media.alt | default: product.title | escape}}" data-srcfix="{{media.preview_image.src | img_url: 'master' }}"{%unless media.media_type != 'image'%} data-size="{{media.preview_image.width}}x{{media.preview_image.height}}"{%endunless%} srcset="{{media.preview_image | img_url: '335x'}} 335w, {{media.preview_image | img_url: '500x'}} 550w, {{media.preview_image | img_url: '700x'}} 700w, {{media.preview_image | img_url: '850x'}} 850w, {{media.preview_image | img_url: '900x'}} 900w">
+          {%-else-%}
+          <img width="{{media.preview_image.width}}" height="{{media.preview_image.height}}" class="p-sgl__{{key}}-image lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[335, 550, 700, 850, 900]" data-aspectratio="{{ media.preview_image.aspect_ratio }}" data-sizes="auto" alt="{{ media.alt | default: product.title | escape }}" data-srcfix="{{media.preview_image.src | img_url: 'master' }}"{%unless media.media_type != 'image'%} data-size="{{media.preview_image.width}}x{{media.preview_image.height}}"{%endunless%} style="padding-bottom: {{1.00 | divided_by: media.aspect_ratio | times: 100.00000000}}%;">
+          {%-endif-%}
+          {%- endunless -%}
+          {%- case media.media_type -%}
+            {% when 'external_video' %}
+              <div class="video_content video_content_{{media.id}} embed-responsive embed-responsive-16by9">
+                <div class="position-absolute" style="top: 0;left: 0;width: 100%;height: 100%;">
+                  <div class="position-relative" style="width: 100%;height: 100%;">
+                    {%- if media.host == 'youtube' -%}                        
+                    <div class="bgndVideo" data-property="{videoURL:'https://www.youtube.com/watch?v={{media.external_id}}', quality:'highres', stopMovieOnBlur: false, containment: '.video_content_{{media.id}} .position-relative', vol: 100}"></div>
+                    {%- else -%}
+                    <iframe src="https://player.vimeo.com/video/{{media.external_id}}?autoplay=1&loop=1&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            {% when 'video' %}
+              <div class="video_content video_content_{{media.id}}">
+                {{ media | video_tag: controls: true, loop : true, preload: 'none', image_size: "720x", class: "video-element"  }}
+              </div>
+            {% when 'model' %}
+              <div class="video_content model_content model_content_{{media.id}}">
+                {{ media | model_viewer_tag: image_size: "720x", reveal: 'interaction', toggleable: true, data-model-id: media.id }}
+              </div>
+          {%- endcase -%}
+          {%- if ST_img_type_prd_single == 'normal' and masonry -%}
+          <style media="(min-width: 992px)">.product-page .aspectRatio.p-sgl__{{key}}-{{forloop.index}}{padding-bottom: {{1.00 | divided_by: media.aspect_ratio | times: 100.00000000}}%}</style>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      </div>
+      {%- assign forloop.index = forloop.index | plus: 1 -%}
+    {%- endfor -%}
+    {%- if masonry -%}
+    <div class="grid-sizer"></div>
+    {%- endif -%}
+  </div>
+  {%- if key == 'photo' -%}
+  <div class="swiper-button-next sw-btn-next-{{section_id}} fkt-angle-right fkt-2x fkt-va"></div><div class="swiper-button-prev sw-btn-prev-{{section_id}} fkt-angle-left fkt-2x fkt-va"></div>
+  {%- if section_id == 'quickview-template' and settings.qv_use_thumb == false -%}
+  <div class="swiper-pagination swiper-pagination-{{section_id}}"></div>{%- endif -%}
+  {%- endif -%}
+</div>
+<style>
+.flashs1 {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1.6rem;
+    letter-spacing: -.01em;
+    min-width: 45px;
+    text-align: center;
+    z-index: 1;
+}
+ .flashs1>span {
+    line-height: 1.4;
+    border-radius: 50px;
+    width: 6rem;
+    height: 6rem
+}
+
+.flashs1>span {
+    justify-content: center;
+    -ms-flex-pack: center;
+    align-items: center;
+    -ms-flex-align: center;
+    display: flex;
+    display: -ms-flexbox;
+    padding: 0.5rem 0.9rem;
+}
+.onsale3 {
+    background-color:  #f0af25;
+}
+.onexclusive, .onnew, .onsale3 {
+    text-align: center;
+    padding: 0 10px;
+    color: #fffefe;
+}
+.onsale4 {
+    background-color:  {{ settings.color_pr_onsale }};
+}
+.onexclusive, .onnew, .onsale4 {
+    text-align: center;
+    padding: 0 10px;
+    color: #fffefe;
+}
+.onsale5 {
+    background-color: #e53939;
+}
+.onexclusive, .onnew, .onsale5 {
+    text-align: center;
+    padding: 0 10px;
+    color: #fffefe;
+}
+.onsaleoferta_prod {
+    background-color: #a6c76c;
+}
+.onexclusive, .onnew, .onsaleoferta_prod {
+    text-align: center;
+    padding: 0 10px;
+    color: #fffefe;
+   font-size:1.5rem;
+} 
+.bajo {
+    position: absolute;
+    top: 10px;
+    right: 5%;
+    width: 95px;
+    z-index: 10;
+}
+
+</style>

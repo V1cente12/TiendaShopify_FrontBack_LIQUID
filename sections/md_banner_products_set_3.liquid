@@ -1,0 +1,565 @@
+<!-- md_banner_products_set_3.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {%- for block in section.blocks -%}
+      {%- assign grid_ly = section.settings.product_grid_layout | default: settings.product_grid_layout -%}
+      {%- assign prd_count = 0 -%}
+      {%- assign prd_count_col_1 = 0 -%}
+      {%- assign prd_count_col_2 = 0 -%}
+      {%- if block.settings.product_1 != blank -%}
+      {%- assign prd_count = prd_count | plus: 1 -%}
+      {%- assign prd_count_col_1 = prd_count_col_1 | plus: 1 -%}
+      {%- endif -%}
+      {%- if block.settings.product_2 != blank -%}
+      {%- assign prd_count = prd_count | plus: 1 -%}
+      {%- assign prd_count_col_1 = prd_count_col_1 | plus: 1 -%}
+      {%- endif -%}
+      {%- if block.settings.product_3 != blank -%}
+      {%- assign prd_count = prd_count | plus: 1 -%}
+      {%- assign prd_count_col_2 = prd_count_col_2 | plus: 1 -%}
+      {%- endif -%}
+      {%- if block.settings.product_4 != blank -%}
+      {%- assign prd_count = prd_count | plus: 1 -%}
+      {%- assign prd_count_col_2 = prd_count_col_2 | plus: 1 -%}
+      {%- endif -%}
+      <div class="banner-set{%if section.blocks.size > 1%}{%unless forloop.last%} mb-7{%endunless%}{%endif%}">
+        <div class="heading text-center wait-for-css wait-inline">
+          <h4 class="subtitle text-primary">{{block.settings.stitle}}</h4>
+          <h2 class="title">{{block.settings.title}}</h2>
+          <p class="title-desc">{{block.settings.desc}}</p>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-6">
+            <div class="banner-set-main banner-effect1">
+              {%- assign image_item = block.settings.image_banner -%}
+              {%-assign width = image_item.width | default: 520.00 -%}{%-assign height = image_item.height | default: 708.00 | plus: 0.00-%}
+              <a href="{{block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_banner %} title="520x708 px"{% endunless %}></a>
+              <div class="text-content wait-for-css wait-inline">
+                <div class="banner-title">
+                  <a href="{{block.settings.image_link|default:'#'}}">{{block.settings.title_banner}}</a>
+                </div>
+                <p>{{block.settings.desc_banner}}</p>
+                <a href="{{block.settings.image_link|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12{%if prd_count == 3 and prd_count_col_1 == 1%} col-md-4{%endif%}{%if prd_count == 3 and prd_count_col_1 == 2%} col-md-8{%endif%} col-lg-3 order-lg-first">
+            <div class="row justify-contents-center mt-5 mt-lg-10">
+              {%- if block.settings.product_1 != blank -%}
+              <div class="col-12 col-xs-6{%if prd_count == 3 and prd_count_col_1 == 1%} col-md-12{%endif%} col-lg-12">
+                <div class="grid-item p-style-{{grid_ly}}">
+                  {%- render "product-grid-item", product: all_products[block.settings.product_1], grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+              </div>
+              {%- endif -%}
+              {%- if block.settings.product_2 != blank -%}
+              <div class="col-12 col-xs-6{%if prd_count == 3 and prd_count_col_1 == 1%} col-md-12{%endif%} col-lg-12 mt-3 mt-sm-0{%if prd_count == 3 and prd_count_col_2 == 1%} mt-md-0{%endif%} mt-lg-7">
+                <div class="grid-item p-style-{{grid_ly}}">
+                  {%- render "product-grid-item", product: all_products[block.settings.product_2], grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+          <div class="col-12{%if prd_count == 3 and prd_count_col_2 == 2%} col-md-8{%endif%}{%if prd_count == 3 and prd_count_col_2 == 1%} col-md-4{%endif%} col-lg-3">
+            <div class="row justify-contents-center mt-5 mt-lg-10">
+              {%- if block.settings.product_3 != blank -%}
+              <div class="col-12 col-xs-6{%if prd_count == 3 and prd_count_col_2 == 1%} col-md-12{%endif%} col-lg-12">
+                <div class="grid-item p-style-{{grid_ly}}">
+                  {%- render "product-grid-item", product: all_products[block.settings.product_3], grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+              </div>
+              {%- endif -%}
+              {%- if block.settings.product_4 != blank -%}
+              <div class="col-12 col-xs-6{%if prd_count == 3 and prd_count_col_2 == 1%} col-md-12{%endif%} col-lg-12 mt-3 mt-sm-0{%if prd_count == 3 and prd_count_col_1 == 1%} mt-md-0{%endif%} mt-lg-7">
+                <div class="grid-item p-style-{{grid_ly}}">
+                  {%- render "product-grid-item", product: all_products[block.settings.product_4], grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+		</div>
+	</div>
+</div>
+{%-capture banner-css-%}
+<noscript class="banner-css" data-section-type="md_banner_products_set_3">
+  {%style%}
+    .md_banner_products_set_3 .heading {
+      margin-bottom: 4.3rem;
+    }
+    .md_banner_products_set_3 .heading h4 {
+      font-weight: 400;
+      font-size: 1.6rem;
+      letter-spacing: -.025em;
+      margin-bottom: 1.8rem;
+    }
+    .md_banner_products_set_3 .heading h2 {
+      font-weight: 600;
+      font-size: 3rem;
+      letter-spacing: -.025em;
+      margin-bottom: 1.5rem;
+    }
+    .md_banner_products_set_3 .heading p {
+      color: #666666;
+      font-weight: 300;
+      font-size: 1.6rem;
+      line-height: 1.5;
+      margin-bottom: 0;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .md_banner_products_set_3 .banner-set-main {
+      margin-bottom: 0;
+      z-index: 0;
+    }
+    .md_banner_products_set_3 .text-content {
+      display: block;
+      width: calc(100% - 35px);
+      width: -o-calc(100% - 35px);
+      width: -ms-calc(100% - 35px);
+      width: -moz-calc(100% - 35px);
+      width: -webkit-calc(100% - 35px);
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+      position: relative;
+      left: auto;
+      right: auto;
+      top: 0;
+      bottom: auto;
+      background-color: #fff;
+      margin-top: -150px;
+      padding: 2rem;
+      z-index: 2;
+    }
+    .md_banner_products_set_3 .text-content .banner-title {
+      font-weight: 600;
+      font-size: 2.4rem;
+      letter-spacing: -.025em;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      max-width: 265px;
+    }
+    .md_banner_products_set_3 .text-content .banner-title a {
+      color: #333333;
+    }
+    .md_banner_products_set_3 .text-content p {
+      margin-bottom: 1.5rem;
+    }
+    .md_banner_products_set_3 .text-content .banner-link i{
+      margin-right: .5rem;
+    }
+    .md_banner_products_set_3 .text-content .banner-link:hover,
+    .md_banner_products_set_3 .text-content .banner-link:focus {
+      text-decoration: none;
+      -webkit-box-shadow: 0 1px 0 0 {{settings.color_primary}};
+      box-shadow: 0 1px 0 0 {{settings.color_primary}};
+    }
+    .md_banner_products_set_3 .p-style-06 .product-body{
+      padding: 1rem 0rem 2rem;
+    }
+    .md_banner_products_set_3 .p-style-07 .product-price{
+      font-size: 1.4rem;
+    }
+    .md_banner_products_set_3 .p-style-07 .product-name {
+      margin-bottom: .5rem !important;
+    }
+    @media (min-width: 768px) {
+      .md_banner_products_set_3 .banner-set-main {
+        margin-left: 3rem;
+        margin-right: 3rem;
+      }
+      .md_banner_products_set_3 .text-content {
+        padding: 6rem;
+        width: calc(100% - 70px);
+        width: -o-calc(100% - 70px);
+        width: -ms-calc(100% - 70px);
+        width: -moz-calc(100% - 70px);
+        width: -webkit-calc(100% - 70px);
+      }
+      .md_banner_products_set_3 .text-content .banner-title {
+        font-size: 3rem;
+      }
+    }
+    @media (min-width: 1200px) {
+      .md_banner_products_set_3 .text-content {
+        padding: 6rem 8rem;
+      }
+    }
+  {%endstyle%}
+</noscript>
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%- endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Product set 3",
+    "class": "md_banner_products_set md_banner_products_set_3",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Product set 3",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "select",
+        "id": "product_grid_layout",
+        "label": "Product card grid layout",
+        "options": [
+          {
+            "label": "Default",
+            "value": ""
+          },
+          {
+            "label": "Layout 1",
+            "value": "01"
+          },
+          {
+            "label": "Layout 2",
+            "value": "02"
+          },
+          {
+            "label": "Layout 3",
+            "value": "03"
+          },
+          {
+            "label": "Layout 4",
+            "value": "04"
+          },
+          {
+            "label": "Layout 5",
+            "value": "05"
+          },
+          {
+            "value": "06",
+            "label": "Layout 6"
+          },
+          {
+            "value": "07",
+            "label": "Layout 7"
+          },
+          {
+            "value": "08",
+            "label": "Layout 8"
+          },
+          {
+            "value": "09",
+            "label": "Layout 9"
+          },
+          {
+            "value": "10",
+            "label": "Layout 10"
+          },
+          {
+            "value": "11",
+            "label": "Layout 11"
+          },
+          {
+            "value": "12",
+            "label": "Layout 12"
+          },
+          {
+            "value": "13",
+            "label": "Layout 13"
+          },
+          {
+            "value": "14",
+            "label": "Layout 14"
+          },
+          {
+            "value": "15",
+            "label": "Layout 15"
+          },
+          {
+            "value": "16",
+            "label": "Layout 16"
+          },
+          {
+            "value": "04 p-style-17",
+            "label": "Layout 17"
+          },
+          {
+            "value": "04 p-style-18",
+            "label": "Layout 18"
+          },
+          {
+            "value": "04 p-style-19",
+            "label": "Layout 19"
+          },
+          {
+            "value": "02 p-style-20",
+            "label": "Layout 20"
+          },
+          {
+            "value": "21",
+            "label": "Layout 21"
+          },
+          {
+            "value": "26",
+            "label": "Layout 22"
+          },
+          {
+            "value": "02 p-style-27",
+            "label": "Layout 23"
+          },
+          {
+            "value": "28",
+            "label": "Layout 24"
+          }
+        ],
+        "default": "01",
+        "info": "[Preview](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-Product-grid.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Products",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "dark_mode",
+            "label": "Dark mode?"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Title"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Subtitle",
+            "default": "Womens Clothing"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Refresh Your Wardrobe"
+          },
+          {
+            "type": "textarea",
+            "id": "desc",
+            "label": "Description",
+            "default": "Discover this season’s latest trends with the newest additions to <br>our women’s clothing collection."
+          },
+          {
+            "type": "paragraph",
+            "content": "=Product"
+          },
+          {
+            "type": "product",
+            "id": "product_1",
+            "label": "Product 1"
+          },
+          {
+            "type": "product",
+            "id": "product_2",
+            "label": "Product 2"
+          },
+          {
+            "type": "product",
+            "id": "product_3",
+            "label": "Product 3"
+          },
+          {
+            "type": "product",
+            "id": "product_4",
+            "label": "Product 4"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Banner"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_banner",
+            "label": "Image banner",
+            "info": "Size suggestion: 575 x 630 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Banner content"
+          },
+          {
+            "type": "html",
+            "id": "title_banner",
+            "label": "Title",
+            "default": "Dresses for all occasions."
+          },
+          {
+            "type": "html",
+            "id": "desc_banner",
+            "label": "Description",
+            "default": "Nail your on and off duty style with our new season collection of women’s dresses."
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<span>DISCOVER NOW</span><i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Set 3",
+        "category": "03. Section products"
+      }
+    ]
+  }
+{% endschema %}

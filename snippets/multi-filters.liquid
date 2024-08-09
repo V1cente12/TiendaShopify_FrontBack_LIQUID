@@ -1,0 +1,316 @@
+{%- comment -%}{{ canonical_url | split: 'q=' | last | json }}{%- endcomment -%}
+{%-liquid
+  assign view = cart.attributes.theme_coll_layout | split: '_'
+  assign limit = settings.coll_limit
+  if view.size == 2
+    assign limit = view[1] | replace: 'pds','' | plus: 0
+  endif
+-%}
+{%- comment -%}check curent filters{%- endcomment -%}
+{%- liquid
+  assign pagi = limit
+  assign idx_pagi = 0
+  assign filters = canonical_url | replace: '%3a',':' | replace: '%2c',',' | split: 'q='
+  if filters.size == 2
+    assign filters = canonical_url | replace: '%3a',':' | replace: '%2c',',' | split: 'q=' | last
+    assign flts_ = filters
+    if canonical_url contains 'page_'
+      assign page = canonical_url | split: 'page_' | last | split: '+' | first | plus: 0
+      assign less_page = 'page_' | append: page
+      assign filters = filters | remove: less_page
+    endif
+    if canonical_url contains 'avai_'
+      assign avai = canonical_url | split: 'avai_' | last | split: '+' | first
+      assign less_avai = 'avai_' | append: avai
+      assign filters = filters | remove: less_avai
+    endif
+    if canonical_url contains 'preorder_'
+      assign preorder = canonical_url | split: 'preorder_' | last | split: '+' | first
+      assign less_preorder = 'preorder_' | append: preorder
+      assign filters = filters | remove: less_preorder
+    endif
+    if canonical_url contains 'offp_'
+      assign offset = canonical_url | split: 'offp_' | last | split: '+' | first | plus: 0
+      assign less_offset = 'offp_' | append: offset
+      assign filters = filters | remove: less_offset
+    endif
+    if canonical_url contains 'mipr_'
+      assign pmin = canonical_url | split: 'mipr_' | last | split: '+' | first | plus: 0
+      assign less_pmin = 'mipr_' | append: pmin
+      assign filters = filters | remove: less_pmin
+    endif
+    if canonical_url contains 'mapr_'
+      assign pmax = canonical_url | split: 'mapr_' | last | split: '+' | first | plus: 0
+      assign less_pmax = 'mapr_' | append: pmax
+      assign filters = filters | remove: less_pmax
+    endif
+    if canonical_url contains 'miw_'
+      assign wmin = canonical_url | split: 'miw_' | last | split: '+' | first | plus: 0
+      assign less_wmin = 'miw_' | append: wmin
+      assign filters = filters | remove: less_wmin
+    endif
+    if canonical_url contains 'maw_'
+      assign wmax = canonical_url | split: 'maw_' | last | split: '+' | first | plus: 0
+      assign less_wmax = 'maw_' | append: wmax
+      assign filters = filters | remove: less_wmax
+    endif
+  else
+    assign filters = ''
+  endif
+assign filters = filters | split: '+' | uniq | join: '   ' | strip | split: '   '
+-%}
+
+{%- assign idx_pagi_obj = '' -%}
+{%- assign all_attrs = '' | split: '' -%}
+{%- paginate collection.products by 1000 -%}
+  {%- assign filters_mipr = collection.products | sort: 'price' | first -%}
+  {%- assign filters_mapr = collection.products | sort: 'price' | reverse | first -%}
+  {%- assign filters_miw = 0 -%}{%- assign filters_maw = 0 -%}
+  {%- for product in collection.products -%}
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+    {%- assign weight = product.variants | sort: 'weight' | map: 'weight' | first | plus: 0.00 -%}
+    {%- if forloop.first or weight < filters_miw -%}{%- assign filters_miw = weight -%}{%- endif -%}
+    {%- if weight > filters_maw -%}{%- assign filters_maw = weight -%}{%- endif -%}
+    {%- comment -%}check price{%- endcomment -%}
+    {%- if pmin or pmax -%}
+      {%- if pmin and product.price_min < pmin -%}{%-continue-%}{%- endif -%}
+      {%- if pmax and product.price_min > pmax -%}{%-continue-%}{%- endif -%}
+    {%- endif -%}
+    {%- if wmin or wmax -%}
+      {%- assign flt_wmin = wmin | plus: 0.00 -%}
+      {%- assign flt_wmax = wmax | plus: 0.00 -%}
+      {%- if wmin and weight < flt_wmin -%}{%-continue-%}{%- endif -%}
+      {%- if wmax and weight > flt_wmax -%}{%-continue-%}{%- endif -%}
+    {%- endif -%}
+    {%- comment -%}save all attributes{%- endcomment -%}
+    {%- capture attrs_full -%}
+      Vendor{{-' '-}}{{-product.vendor-}}{{-', '-}}Type{{-' '-}}{{-product.type -}}{{-', '-}}
+      {%- comment -%}check available{%- endcomment -%}
+      Avai{{-' '-}}{{-product.available-}}{{-', '-}}
+      {%- comment -%}check preorder{%- endcomment -%}
+      {%- if current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue' and current_variant.incoming -%}
+        Preorder true{{-', '-}}
+      {%- else -%}
+        Preorder false{{-', '-}}
+      {%- endif -%}
+      {%- unless product.has_only_default_variant -%}
+      {%- for product_option in product.options_with_values -%}
+        {%- for value in product_option.values -%}
+          {{--}}{{- product_option.name -}}{{-' '-}}{{- value -}}{%- unless forloop.last -%}{{-', '-}}{%- endunless -%}
+        {%- endfor -%}{%- unless forloop.last %}{{-', '-}}{%- endunless -%}
+      {%- endfor -%}
+      {%- endunless -%}{{-', '-}}{{-product.tags | join: ', '-}}{{--}}
+    {%- endcapture -%}
+    {%- assign attrs_full = attrs_full | replace: ', , ', ', ' | split: ', ' | uniq -%}
+    {%- assign all_attrs = all_attrs | concat: attrs_full | uniq -%}
+    {%- comment -%}check attributes{%- endcomment -%}
+    {%- unless filters.size == 0 or filters.size == 1 and filters[0] == '' -%}
+      {%- capture attrs -%}
+        vendor-{{product.vendor | handle }}{{-', '-}}type-{{product.type | handle }}{{-', '-}}
+        {%- comment -%}check available{%- endcomment -%}
+        avai-{{-product.available-}}{{-', '-}}
+        {%- comment -%}check preorder{%- endcomment -%}
+        {%- if current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue' and current_variant.incoming -%}
+          preorder-true{{-', '-}}
+        {%- else -%}
+          preorder-false{{-', '-}}
+        {%- endif -%}
+        {%- unless product.has_only_default_variant -%}
+        {%- for product_option in product.options_with_values -%}
+          {%- for value in product_option.values -%}
+            {{--}}{{- product_option.name | handle -}}{{-'-'-}}{{- value | handle -}}{%- unless forloop.last -%}{{-', '-}}{%- endunless -%}
+          {%- endfor -%}{%- unless forloop.last %}{{-', '-}}{%- endunless -%}
+        {%- endfor -%}
+        {%- endunless -%}{{-', '-}}{{-product.tags | join: '-_-' | handle | split: '-_-' | join: ', '-}}{{--}}
+      {%- endcapture -%}
+      {%- assign attrs = attrs | replace: ', , ', ', ' | split: ', ' | uniq -%}
+      {%- assign continue = true -%}
+      
+      {%- assign count_filters = 0 -%}
+      {%- for attr in filters -%}
+        {%- assign attr_ = attr | split: ':' -%}
+        {%- assign attr_its = attr_[1] | split: ',' -%}
+        {%- for attr_it in attr_its -%}
+          {%- if attr_[0] == 'nkey' -%}
+          {%- assign attr_check = attr_it -%}
+          {%- else -%}
+          {%- assign attr_check = attr_[0] | append: '-' | append: attr_it -%}
+          {%- endif -%} 
+          {%- if attrs contains attr_check -%}{%- assign count_filters = count_filters | plus: 1 -%}{%- endif -%}
+        {%-endfor-%}
+        {%- if count_filters >= filters.size -%}{%- assign continue = false -%}{%-break-%}{%- endif -%}
+      {%- endfor -%}
+      
+      {%- if continue -%}{%-continue-%}{%- endif -%}
+    {%- endunless -%}
+    {%- assign idx_pagi = idx_pagi | plus: 1 -%}
+    {%- assign idx_pagi_obj = idx_pagi_obj | append: forloop.index0 | append: ', ' -%}
+  {%- endfor -%}
+  {%- assign idx_pagi_obj = idx_pagi_obj | split: ', ' -%}
+  {%- assign pagi_pages = idx_pagi_obj.size | plus: 0.00 | divided_by: pagi | ceil -%}
+  {%- if idx_pagi_obj.size > pagi -%}
+    {%- capture offp_obj -%}
+    {%- assign i_start_page = 0 -%}
+    {%- assign y_crr_page = 0 -%}
+    {%- for i in idx_pagi_obj -%}
+      {%- if forloop.index0 == i_start_page -%}
+        {{-i-}}{{-', '-}}
+        {%- assign y_crr_page = y_crr_page | plus: 1 -%}
+        {%- assign i_start_page = y_crr_page | times: pagi -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    {%- assign offp_obj = offp_obj | split: ', ' -%}
+  {%- endif -%}
+
+  {%- unless page -%}{%- assign page = 1 -%}{%- endunless -%}
+  <!--flt_or-->
+  {%- comment -%}create label results{%- endcomment -%}
+  {%- liquid
+    assign page_offset = page | minus: 1
+    assign current_offset = page_offset | times: limit | plus: 1
+    assign current_product_size = page_offset | times: limit | plus: limit
+    if current_product_size > idx_pagi
+      assign current_product_size = idx_pagi
+    endif
+    if limit > idx_pagi
+      echo 'collections.general.results_limit_html' | t: count: idx_pagi
+    else
+      echo 'collections.general.results_with_count_html' | t: count: current_offset, curent_count: current_product_size, pr_count: idx_pagi
+    endif
+  -%}{{--}}
+  <!--flt_or-->{{--}}
+  {%- comment -%}create pagination{%- endcomment -%}
+  {%- if collection.sort_by != blank -%}{%- assign sort_by = '&sort_by=' | append: collection.sort_by -%}{%- endif -%}
+  {%- if pagi_pages > 1 -%}
+    {%- assign flts_ = flts_ | remove: less_page | remove: less_offset | split: '+' | uniq | join: '+' -%}
+    {%- assign settings_collection_layout = settings.coll_layout -%}
+    {%- if settings_collection_layout == 'default' -%}
+      <ul class="list--inline pagination d-flex flex-wrap flex-lg-nowrap justify-content-center align-items-center">{{--}}
+        <li>
+          {%- capture load_href -%}
+            {%- if page > 2 -%}
+              {%- if flts_ -%}
+                {{-'?q='-}}{{-flts_-}}{{-'+page_'-}}
+              {%- else -%}
+                {{-'?q=page_'-}}
+              {%- endif -%}
+              {%- assign page_ne = page | minus: 1 -%}
+              {{- page_ne -}}
+              {%- if offp_obj -%}
+                {%- assign i_obj = page_ne | minus: 1 -%}
+                {{-'+offp_'-}}{{-offp_obj[i_obj]-}}{{-sort_by-}}
+              {%- endif -%}
+            {%- else -%}
+              {{-'?q='-}}{{-flts_-}}{{-sort_by-}}
+            {%- endif -%}
+          {%- endcapture -%}
+          <a data-pjax-filter href="{{ load_href }}" class="btn-prev btn--narrow{% unless page != 1 %} disabled{%endunless%}">{{--}}
+            <i class="fkt-long-arrow-{{cssAlign}}" aria-hidden="true"></i><span>{{'general.pagination.previous'|t}}</span>{{--}}
+          </a>{{--}}
+        </li>
+        {%- assign is_link_count = 0 -%}
+        {%- assign dots_count = 0 -%}
+        {%- for i in (1..pagi_pages) -%}
+          {%- assign is_link = false -%}
+          {% if i != page %}        
+            {%- if i == 1 -%}{%- assign is_link = true -%}{%- endif -%}
+            {%- if i == pagi_pages -%}{%- assign is_link = true -%}{%- endif -%}
+            {%- if pagi_pages <= 8 -%}{%- assign is_link = true -%}{%- endif -%}
+            {%- if pagi_pages > 8 -%}
+              {%- assign mi_page = page | minus: 2 -%}
+              {%- assign ma_page = page | plus: 2 -%}
+              {%- if i >= mi_page and i <= ma_page -%}
+                {%- assign is_link = true -%}
+              {%- endif -%}
+              {%- if i == ma_page and ma_page < pagi_pages -%}
+                {%- assign dots_count = 0 -%}
+              {%- endif -%}
+            {%- endif -%}
+          {% endif %}
+          {%- if is_link -%}
+            {%- capture load_href -%}
+              {%- if i > 1 -%}
+                {%- if flts_ -%}
+                  {{-'?q='-}}{{-flts_-}}{{-'+page_'-}}
+                {%- else -%}
+                  {{-'?q=page_'-}}
+                {%- endif -%}
+                {%- assign page_ne = i -%}
+                {{- page_ne -}}
+                {%- if offp_obj -%}
+                  {%- assign i_obj = page_ne | minus: 1 -%}
+                  {{-'+offp_'-}}{{-offp_obj[i_obj]-}}{{-sort_by-}}
+                {%- endif -%}
+              {%- else -%}
+                {{-'?q='-}}{{-flts_-}}{{-sort_by-}}
+              {%- endif -%}
+            {%- endcapture -%}
+            <li class="list-inline-item"><a data-pjax-filter href="{{ load_href }}" class="page-numbers btn--narrow">{{ i }}</a></li>
+            {%- assign is_link_count = is_link_count | plus: 1 -%}
+          {%- else -%}
+            {%- if i == page -%}
+              <li class="list-inline-item"><span class="page-numbers current">{{ i }}</span></li>
+            {%- elsif dots_count == 0 -%}
+              <li class="list-inline-item"><span class="page-numbers dots">...</span></li>
+              {%- assign dots_count = dots_count | plus: 1 -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%} 
+        <li>
+          {%- capture load_href -%}
+            {%- assign page_ne = page | plus: 1 -%}        
+            {%- if page_ne <= pagi_pages -%}
+              {%- if flts_ -%}
+                {{-'?q='-}}{{-flts_-}}{{-'+page_'-}}
+              {%- else -%}
+                {{-'?q=page_'-}}
+              {%- endif -%}
+              {{- page_ne -}}
+              {%- if offp_obj -%}
+                {%- assign i_obj = page_ne | minus: 1 -%}
+                {{-'+offp_'-}}{{-offp_obj[i_obj]-}}{{-sort_by-}}
+              {%- endif -%}
+            {%- else -%}
+              {{-'?q='-}}{{-flts_-}}{{-sort_by-}}
+            {%- endif -%}
+          {%- endcapture -%}
+          <a data-pjax-filter href="{{ load_href }}" class="btn-next btn--narrow{% unless page < pagi_pages %} disabled{%endunless%}">{{--}}
+            <span>{{'general.pagination.next'|t}}</span><i class="fkt-long-arrow-{{cssAlign_rev}}" aria-hidden="true"></i>{{--}}
+          </a>{{--}}
+        </li>{{--}}
+      </ul>
+    {%- else -%}
+      {%- capture load_href -%}
+        {%- if flts_ -%}
+          {{-'?q='-}}{{-flts_-}}{{-'+page_'-}}
+        {%- else -%}
+          {{-'?q=page_'-}}
+        {%- endif -%}
+        {%- assign page_ne = page | plus: 1 -%}
+        {{- page_ne -}}
+        {%- if offp_obj -%}
+          {%- assign i_obj = page_ne | minus: 1 -%}
+          {{-'+offp_'-}}{{-offp_obj[i_obj]-}}
+        {%- endif -%}
+        {{-sort_by-}}
+      {%- endcapture -%}
+      <div class="loadMore"{% unless page < pagi_pages %} style="display:none"{% endunless %}><a data-pjax-filter href="{{load_href}}" class="btn btn-primary btn-loadmore btn-onclick" data-page="page_{{- page | plus: 1 -}}" data-action="{{settings_collection_layout}}" data-text-button="{{'collections.general.load_more'|t}}" data-text-loading="{{'collections.general.loading'|t}}">{{'collections.general.load_more'|t}}</a></div>
+    {%- endif -%}
+  {%- endif -%}{{--}}
+  <noscript>currTags_handleize = {{- filters | json -}};collectionTags = {{- all_attrs | json -}};collectionTagsHandle = {{- all_attrs | join: "___" | handle | split: '___' | json -}};currPage = {{page}};{{--}}
+  {%- assign mipr = filters_mipr.price_min | default: filters_mipr.price -%}
+  {%- assign mapr = filters_mapr.price_min | default: filters_mapr.price -%}
+  fltSlider = { {{--}}
+    mipr: {{- mipr -}},{{--}}
+    mipr_crr: {{- pmin | default: mipr -}},{{--}}
+    mapr: {{- mapr -}},{{--}}
+    mapr_crr: {{- pmax | default: mapr -}},{{--}}
+    miw: {{- filters_miw -}},{{--}}
+    wmin_crr: {{- wmin | default: filters_miw -}},{{--}}
+    maw: {{- filters_maw -}},{{--}}
+    wmax_crr: {{- wmax | default: filters_maw -}}{{--}}
+  };{{--}}
+  if (offp_obj == undefined){var offp_obj = {{-offp_obj | json-}} }{{--}}
+  </noscript>{{--}}
+{%- endpaginate -%}

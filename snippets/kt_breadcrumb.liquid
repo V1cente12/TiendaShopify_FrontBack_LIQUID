@@ -1,0 +1,114 @@
+{%-unless breadcrumb_style-%}
+  {%- assign breadcrumb_style = '' -%}
+{%-endunless-%}
+{%-unless breadcrumb_width-%}
+  {%- assign breadcrumb_width = '' -%}
+{%-endunless-%}
+{%-if use_prd_nav-%}
+  {%- assign prd_nav = false -%}
+  {%- if collection.previous_product.title != blank or collection.next_product.title != blank-%}
+    {%- assign prd_nav = true -%}
+  {%- endif -%}
+{%- endif -%}
+
+  {%-style-%}
+	@media screen and (max-width: 991px)
+    {
+        .viewBreadcrumbs {
+           margin-top: 25px !important;   
+       }
+    }
+  {%-endstyle-%}
+
+<div class="viewBreadcrumbs breadcrumbs{{breadcrumb_style}} row align-items-center justify-content-between d-none d-md-flex">
+  <div class="col-{%if prd_nav%}auto{%else%}12{%endif%}{{breadcrumb_width}}">
+    <ul class="breadcrumbs_content list-unstyled">
+      {% for collection in collection.title %}
+        {%- if collection == 'Cyberweek20' or  collection == 'Cyberweek40' or  collection == 'Cyberweek50' -%}
+         <li class="home">
+          <a title="{{'general.breadcrumb.homepage'|t}}" href="https://elgeniox.com/collections/cyberweek" itemprop="url">
+            <span>Cyberweek</span>
+          </a>
+         </li>
+         
+        {% else %}
+      	 <li class="home">
+          <a title="{{'general.breadcrumb.homepage'|t}}" href="{{ routes.root_url }}" itemprop="url">
+            <span>{{'general.breadcrumb.homepage'|t}}</span>
+          </a>
+         </li>
+        {% endif %}
+      {% endfor %}
+      {%-if template contains 'product'-%}
+        {%-if product.collections.size > 0-%}
+        <li>
+          <a title="{{collection.title | default: product.collections.first.title }}" href="{{ collection.url | default: product.collections.first.url }}" itemprop="url">
+            <span>{{ collection.title | default: product.collections.first.title }}</span>
+          </a>
+        </li>
+        {%-endif-%}
+        <li><span>{{ product.title | strip_html | truncatewords: 4 }}</span></li>
+      {%-elsif template contains 'collection' and collection.handle-%}
+        {%-if current_tags-%}
+          <li>{{ collection.title | link_to: collection.url }}</li>
+        {%-else -%}
+          <li><span>{{ collection.title | strip_html | truncatewords: 4  }}</span></li>
+        {%-endif-%}
+      {%-elsif template == 'article'-%}
+      <li>{{ blog.title | link_to: blog.url }}</li>        
+      <li><span>{{ article.title | strip_html | truncatewords: 4 }}</span></li>
+      {%-elsif template == 'blog'-%}
+      <li><span>{{ blog.title | strip_html | truncatewords: 4 }}</span></li>
+      {%-elsif template contains 'addresses' or template contains 'order'-%}
+      <li>
+        <a title="{{'customer.account.title'|t}}" href="{{ routes.account_url }}">
+          <span>{{'customer.account.title'|t}}</span>
+        </a>
+      </li>
+      <li><span>{{ page_title }}</span></li>
+      {%-elsif template == 'search'-%}
+        {%- assign searchTerms = search.terms -%}
+        {%- for coll_search in collections -%}
+        {%- if search.terms contains coll_search.id %}
+        {%- assign coll_search_obj = coll_search -%}
+        {%- assign isCollection = coll_search.id | append:' ' -%}
+        {%- assign searchTerms = coll_search.title | append: "-" | append: search.terms | remove:isCollection -%}
+        {%- break -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- if coll_search_obj -%}
+        <li>
+          <a title="{{coll_search_obj.title }}" href="{{ coll_search_obj.url }}">
+            <span>{{ coll_search_obj.title }}</span>
+          </a>
+        </li>      
+        <li><span>{{ search.terms | remove: isCollection | escape }}</span></li>
+        {%- else -%}
+        <li><span>{{ page_title | strip_html | truncatewords: 4 }}</span></li>
+        {%- endif -%}
+      {%-else-%}
+      <li><span>{{ page_title | strip_html | truncatewords: 4 }}</span></li>
+      {%-endif-%}
+    </ul>
+  </div>
+  {%if prd_nav %}
+  <div class="col-auto d-none d-md-block">
+    <ul class="breadcrumbs_nav_products list-unstyled">
+      {%- if collection.previous_product.title != blank-%}
+      <li>
+        <a class="nav_products_prev" href="{{collection.previous_product}}" title="{{collection.previous_product.title}}">
+          <span>{{'general.pagination.previous'|t}}</span>
+        </a>
+      </li>
+      {%- endif -%}
+      {%- if collection.next_product.title != blank-%}
+      <li>
+        <a class="nav_products_next" href="{{collection.next_product}}" title="{{collection.next_product.title}}">
+          <span>{{'general.pagination.next'|t}}</span>
+        </a>
+      </li>
+      {%- endif -%}
+    </ul>
+  </div>
+  {%endif%}
+</div>

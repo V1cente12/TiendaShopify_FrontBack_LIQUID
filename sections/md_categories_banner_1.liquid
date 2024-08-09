@@ -1,0 +1,344 @@
+<!-- md_categories_banner_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      <div class="row">
+        <div class="col-xl-3 d-none d-xl-block">
+          <div class="sidenav-title">{{section.settings.title_categories}}</div>
+          <nav class="side-nav lazyload" data-include="{{routes.root_url}}?section_id=kt_mega_mn-vertical"><div class="lz-place"></div>
+          {%-style-%}.side-nav .lz-place:before {background-size: 85% 18px,85% 18px,85% 18px,85% 18px,85% 18px,85% 18px,85% 18px,85% 18px,85% 18px,85% 18px;background-position: 20px 20px,20px 56px,20px 92px,20px 128px,20px 164px,20px 200px,20px 236px,20px 272px,20px 308px,20px 344px;padding-top: 38rem;}
+          {%-endstyle-%}
+          </nav>
+        </div>
+        {%- for block in section.blocks -%}
+        <div class="col-lg-8 col-xl-6">
+          <div class="banner {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 416.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="480x565 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-6 col-lg-4 col-xl-3 mt-2 mt-lg-0">
+          <div class="banner {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 262.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="280x262 px"{% endunless %}></a>
+          </div>
+          <div class="banner {{block.settings.banner-effect}} mt-2 d-none d-lg-block">
+            {%- assign image_item = block.settings.image_3 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 135.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="280x135 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3 mt-2">
+          <div class="banner {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_4 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 262.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="280x262 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-lg-9 mt-2">
+          <div class="banner {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_5 -%}
+            {%-assign width = image_item.width | default: 880.00 -%}{%-assign height = image_item.height | default: 262.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_5|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_5 %} title="880x262 px"{% endunless %}></a>
+          </div>
+        </div>
+        {%- endfor -%}
+      </div>
+		</div>
+	</div>
+</div>
+{%-style-%}
+.side-nav {
+  position: relative;
+  margin: 0;
+}
+.sidenav-title {
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  padding: 1.45rem 3rem;
+  color: #fff;
+  background-color: #333;
+  text-transform: uppercase;
+}
+.md_categories_banner_1 .menu-vertical {
+  background-color: #f8f8f8;
+}
+.md_categories_banner_1 .menu-vertical li.title_lv1 > a {
+  color: #333;
+}
+{%-endstyle-%}
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Categories and banners",
+    "class": "md_categories_banner_1",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Categories",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container-fluid wide"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Categories settings"
+      },
+      {
+        "type": "text",
+        "id": "title_categories",
+        "label": "Title",
+        "default": "Browse Categories"
+      },
+      {
+        "type": "header",
+        "content": "Banner settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Banners",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "paragraph",
+            "content": "======================= Banner 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 416 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================= Banner 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 262 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================= Banner 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 135 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================= Banner 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 262 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================= Banner 5"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_5",
+            "label": "Image banner",
+            "info": "Size suggestion: 880 x 262 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_5",
+            "label": "Link to"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Categories and banners",
+        "category": "02. Section Banner",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

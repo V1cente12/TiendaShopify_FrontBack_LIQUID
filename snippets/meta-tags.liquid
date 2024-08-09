@@ -1,0 +1,126 @@
+<link rel="canonical" href="{{ canonical_url }}">
+{% comment %}<link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin="">
+<link rel="preconnect" href="https://monorail-edge.shopifysvc.com" crossorigin="">{% endcomment %}
+<link rel="preload" href="{{'style-speed.css' | asset_url}}" as="style">
+{%- if dir_body == 'ltr' -%}
+<link rel="preload" href="{{'style.min.css' | asset_url}}" as="style">
+<link rel="preload" href="{{'theme.min.css' | asset_url}}" as="style">
+{%- else -%}
+<link rel="preload" href="{{'style-rtl.min.css' | asset_url}}" as="style">
+<link rel="preload" href="{{'theme-rtl.min.css' | asset_url}}" as="style">
+{%- endif -%}
+<link rel="preload" href="{{'kiti-var.css' | asset_url}}" as="style">
+{% comment %}<link rel="preload" href="{{'jquery-3.4.1.min.js' | asset_url}}" as="script">
+{%- if settings.logo -%}
+{%- capture image_size -%}{{ settings.logo_max_width }}x{%- endcapture -%}
+{%- capture image_size2x -%}{{ settings.logo_max_width }}x@2x{%- endcapture -%}
+<link rel="preload" href="{{settings.logo | img_url: image_size2x}}" as="image"{% if settings.logo_mobile %} media="(min-width: 576px)"{% endif %}>
+{%- if settings.logo_mobile -%}
+<link rel="preload" href="{{settings.logo_mobile | img_url: image_size2x}}" as="image" media="(max-width: 575px)">
+{%- endif -%}
+{%- elsif settings.body_logo_svg != blank %}
+<link rel="preload" href="{{settings.body_logo_svg | img_url: 'master' }}" as="image" media="(min-width: 576px)">
+{%- endif -%}{% endcomment %}
+<noscript>
+  {{-'swatch-color.css' | asset_url | stylesheet_tag-}}
+  {{-'molla-icon.css' | asset_url | stylesheet_tag-}}
+  {{-'theme.font.css' | asset_url | stylesheet_tag-}}
+</noscript>
+{%- capture seo_title -%}
+{{- page_title | remove_newlines -}}
+{%- if current_tags -%}
+{%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+{%- endif -%}
+{%- if current_page != 1 -%}
+&ndash; {{ 'general.meta.page' | t: page: current_page -}}
+{%- endif -%}
+{%- unless page_title contains shop.name -%}
+&ndash; {{ shop.name -}}
+{%- endunless -%}
+{%- endcapture -%}
+<title>{{- seo_title -}}</title>
+{%- if page_description -%}
+<meta name="description" content="{{ page_description | split: '[/short description]' | last | escape }}">
+{%- endif -%}
+<meta name="author" content="{{shop.name}}">
+<!-- Favicon -->
+{%- if settings.apple_touch_icon != blank -%}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ settings.apple_touch_icon | img_url: '180x180' }}">
+{%- endif -%}
+{%- if settings.favicon != blank -%}
+<link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | img_url: '32x32' }}">
+{%- endif -%}
+{%- if settings.favicon != blank -%}
+<link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | img_url: '16x16' }}">
+{%- endif -%}
+{%- if settings.favicon_print != blank -%}
+<link rel="mask-icon" href="{{settings.favicon_print| file_url}}" color="{{settings.color_body_text}}">
+{%- endif -%}
+{%- if settings.favicon != blank -%}
+<link rel="shortcut icon" href="{{ settings.favicon | img_url: '48x48' }}">
+{%- endif -%}
+{%- if settings.use_app -%}
+<link rel="manifest" href="{{'site.webmanifest.json' | asset_url}}">
+<meta name="apple-mobile-web-app-title" content="{{shop.name | escape}}">
+<meta name="application-name" content="{{shop.name | escape}}">
+<meta name="msapplication-TileColor" content="{{settings.color_primary}}">
+<meta name="msapplication-config" content="{{'browserconfig.xml' | asset_url}}">
+<meta name="theme-color" content="{{settings.color_body_bg}}">
+{%- endif -%}
+
+{%- if template contains 'index' -%}
+{%- if settings.home_page_keywords != '' and settings.home_page_keywords != null -%}
+<meta name="keywords" content="{{settings.home_page_keywords | escape}}"/>
+{%- else- -%}
+<meta name="keywords" content="{{shop.name | escape}}, {{shop.domain}}"/>
+{%- endif- -%}
+{%- elsif template contains 'product'-%}
+<meta name="keywords" content="{{product.title | escape}},{%- for collection in product.collections -%}{{collection.title | escape}}, {%- endfor -%}{%- if product.tags.size > 0 -%}{%- for tag in product.tags -%}{{tag | escape}}, {%- endfor -%}{%- endif -%}{{shop.name | escape}}, {{shop.domain}}"/>
+{%- elsif template contains 'collection' -%}
+<meta name="keywords" content="{{collection.title | escape}}, {{shop.name | escape}}, {{shop.domain}}"/>
+{%- elsif template contains 'blog' -%}
+<meta name="keywords" content="{{blog.title | escape }}, {{shop.name | escape}}, {{shop.domain}}"/>
+{%- elsif template contains 'article' -%}
+<meta name="keywords" content="{{article.title | escape}}, {{blog.title | escape}}, {%- if article.tags.size > 0-%}{%- for tag in article.tags -%}{{tag | escape}}, {%- endfor -%}{%- endif -%}{{shop.name | escape}}, {{shop.domain}}"/>
+{%- else -%}
+<meta name="keywords" content="{{page_title | escape}}, {{shop.name | escape}}, {{shop.domain}}"/>
+{%- endif -%}
+
+{%- assign og_title = page_title  -%}
+{%- assign og_url = canonical_url -%}
+{%- assign og_type = 'website' -%}
+{%- assign og_description = page_description | split: '[/short description]' | last | default: shop.description | default: shop.name -%}
+{%- comment -%} Template specific overides {%- endcomment -%}
+{%- if template.name == 'product' -%}
+{%- assign og_title = product.title | strip_html -%}
+{%- assign og_type = 'product' -%}
+{%- capture og_image_tags -%}{%- for image in product.images limit:3 -%}<meta property="og:image" content="http:{{ image.src | product_img_url: '1024x1024' }}">{%- endfor -%}{%- endcapture -%}
+{%- capture og_image_secure_url_tags -%}{%- for image in product.images limit:3 -%}<meta property="og:image:secure_url" content="https:{{ image.src | product_img_url: '1024x1024' }}">{%- endfor -%}{%- endcapture -%}
+{%- elsif template.name == 'article' -%}
+{%- assign og_title = article.title | strip_html -%}
+{%- assign og_type = 'article' -%}
+{%- assign og_description = article.excerpt_or_content | strip_html -%}
+{%- if article.image -%}
+{%- capture og_image_tags -%}<meta property="og:image" content="http:{{ article.image | img_url: '1024x1024' }}">{%- endcapture -%}
+{%- capture og_image_secure_url_tags -%}<meta property="og:image:secure_url" content="https:{{ article.image | img_url: '1024x1024' }}">{%- endcapture -%}
+{%- endif -%}
+{%- elsif template.name == 'password' -%}
+{%- assign og_title = shop.name -%}
+{%- assign og_url = shop.url -%}
+{%- assign og_description = shop.description | default: shop.name -%}
+{%- endif -%}
+<meta property="og:site_name" content="{{ shop.name  | escape}}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape}}">
+<meta property="og:type" content="{{ og_type | escape}}">
+<meta property="og:description" content="{{ og_description | escape }}">
+{%- if template.name == 'product' -%}
+<meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html }}">
+<meta property="og:price:currency" content="{{ shop.currency }}">
+{%- endif -%}
+{{- og_image_tags -}}
+{{- og_image_secure_url_tags -}}
+<meta name="twitter:site" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | escape }}">

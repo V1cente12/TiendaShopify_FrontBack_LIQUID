@@ -1,0 +1,43 @@
+<section id="askModal" class="modal fade" aria-hidden="false" aria-labelledby="askModalLabel" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header p-2 py-1i">
+        <h3 class="modal-title">{{'products.ask_about.name_button'|t}}</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body p-2">
+        <div class="content-item">
+          <p>{{'products.ask_about.title_popup'|t}}</p>
+          <div class="ask-layout-product">
+            <div class="contact-form form-default">
+              {%- form 'contact', id: 'ask-form', class: 'contact-form' -%}
+              {% render 'form-status', form: form, form_id: formId %}
+              <input type="hidden" name="contact[product name]" value="{{product.title | escape}}" class="form-control">
+              <input type="hidden" name="contact[product link]" value="{{canonical_url}}" class="form-control">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <textarea name="contact[body]" class="form-control" rows="8" placeholder="{{'products.ask_about.your_message'|t}}" required=""></textarea>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="contact[name]" value="" class="form-control" placeholder="{{'products.ask_about.your_name'|t}}" required="">
+                  </div>
+                  <div class="form-group">
+                    <input type="email" name="contact[email]" autocorrect="off" autocapitalize="off" value="" class="form-control" placeholder="{{'products.ask_about.your_email'|t}}" required="">
+                  </div>
+                  <div class="form-group">
+                    <input type="tel" name="contact[phone]" pattern="[0-9\-]*" value="" class="form-control" placeholder="{{'products.ask_about.your_phone'|t}}" required="">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">{{'products.ask_about.button'|t}}</button>
+              {%-endform-%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

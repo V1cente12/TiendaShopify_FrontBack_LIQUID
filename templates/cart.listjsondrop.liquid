@@ -1,0 +1,57 @@
+{%- layout none -%}
+{%- if cart.item_count > 0 -%}
+{%- for item in cart.items -%}
+{%- assign gift_item = '' -%}
+{%- if settings.use_gift_wrapping and item.product.handle == settings.gift_wrap_product -%}
+  {%- assign gift_item = 'wrap_item' -%}
+{%- endif -%}
+{%- if item.discounted_price == 0 -%}
+  {%- assign gift_item = 'gift_item' -%}
+{%- endif -%}
+<li class="item__{{item.id}} item__cart item__{{gift_item|default: 'normal'}} d-flex flex-nowrap justify-content-between">
+  <div class="card" style="display:none"><div class="bar-loading ifinite"></div></div>
+  <div class="info_itemCart info">            
+    <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+      {%-if item.discounted_price == 0 -%}<i class="fkt-gift-1 col-auto" style="color: #4CAF50;font-size: 1.6rem;padding-right: .5rem;"></i>{%-endif-%}
+      <a class="col" href="{{ item.variant.url }}" title="{{ item.product.title | strip_html }}">
+        {%-if item.discounted_price == 0 -%}{{'cart.gift.label_html'|t }}{%-endif-%} {{ item.product.title | truncate: 35 }}
+      </a>
+    </h4>
+    {%- unless item.variant.title contains 'Default' -%}
+    <div class="variation" title="{{ item.title | escape |strip_html }}"><span>{{item.variant.title}}</span></div>
+    {%- endunless -%}
+    <span class="price">{{ item.quantity | append : " x " }}{%-if item.discounted_price -%}{{ item.discounted_price | money }}{%-else-%}{{ item.original_price | money }}{%-endif-%}</span>
+
+    {%- if item.unit_price -%}
+    {%- capture unit_price_base_unit -%}
+      <span class="base_unit">
+        {%- if item.unit_price_measurement -%}
+          {%- if item.unit_price_measurement.reference_value != 1 -%}
+            {{- item.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ item.unit_price_measurement.reference_unit }}
+        {%- endif -%}
+      </span>
+    {%- endcapture -%}
+    <span class="UnitPrice-{{item.product.id}} text-nowrap">
+      {{item.unit_price_measurement.quantity_value | append: item.unit_price_measurement.quantity_unit}}
+      (<span class="unit_price">{{item.unit_price | money }}</span> / {{unit_price_base_unit}})
+    </span>
+    {%- endif -%}
+  </div>
+  <div class="thumb-wrapper d-flex flex-nowrap align-items-center">
+    
+    <div class="thumb">     
+      {%- if item.image != null -%}
+      	<img alt="{{ item.title | escape |strip_html }}" src="{{ item.image| img_url: '104x120', crop:'top'}}">
+      {%- else -%}		         		
+        {% render "product-img-nulo" %}
+      {%- endif -%}
+    </div> 
+               
+    
+    <a onclick="Shopify.KT_removeItem('{{ item.variant_id }}');$(this).parents('li.item__{{item.id}}').find('div.card').show(100);" class="remove-item remove" title="{{'cart.general.remove'|t }}"><i class="fkt-times" aria-hidden="true"></i></a>
+  </div>
+</li>
+{%- endfor -%}
+{%- endif -%}

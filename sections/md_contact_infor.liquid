@@ -1,0 +1,290 @@
+<!-- md_contact_infor.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      {% assign block = section.blocks[0] %}
+      <div class="row">
+        <div class="col-md-4">
+          <div class="contact-box text-center">
+            {%- if block.settings.title_1 != blank -%}
+            <h3>{{block.settings.title_1}}</h3>
+            <address>{{block.settings.address_1}}</address>
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="contact-box text-center">
+            {%- if block.settings.title_2 != blank -%}
+            <h3>{{block.settings.title_2}}</h3>
+            {%- if block.settings.email_2 != blank -%}
+            <div><a href="mailto:{{block.settings.email_2}}">{{block.settings.email_2}}</a></div>
+            {%- endif -%}
+            <div>
+            {%- if block.settings.phone_2_1 != blank -%}
+              <a href="tel:{{block.settings.phone_2_1}}">{{block.settings.phone_2_1}}</a>
+            {%- endif -%}
+            {%- if block.settings.phone_2_2 != blank -%}
+              , <a href="tel:{{block.settings.phone_2_2}}">{{block.settings.phone_2_2}}</a>
+            {%- endif -%}
+            </div>
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="contact-box text-center">
+            {%- if block.settings.title_3 != blank -%}
+            <h3>{{block.settings.title_3}}</h3>
+            <div class="socials_ style-01 socials_color justify-content-center">
+              {%-render "kt_socials"-%}
+            </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<noscript class="banner-css" data-section-type="md_contact_infor">
+{%-capture banner-css-%}
+{%-style-%}
+  .md_contact_infor .contact-info h3 {
+    margin-top: 0.5rem;
+    font-weight: 400;
+    font-size: 1.8rem;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+  .md_contact_infor .contact-list {
+    max-width: 270px;
+    list-style: none;
+    padding-left: 0;
+  }
+  .md_contact_infor .contact-list li {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.4rem;
+  }
+  .md_contact_infor .contact-list a {
+    color: inherit;
+  }
+  .md_contact_infor .contact-list a:hover,
+  .md_contact_infor .contact-list a:focus {
+    color: var(--primary);
+  }
+  .md_contact_infor .contact-list i {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--primary);
+  }
+{%-endstyle-%}
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%-endunless-%}
+{%- endunless -%}
+{%schema%}
+  {
+    "name": "Infor",
+    "class": "md_contact_infor",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Infor",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Box text 1"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Office"
+          },
+          {
+            "type": "text",
+            "id": "address_1",
+            "label": "Address",
+            "default": "1 New York Plaza, New York, <br>NY 10004, USA"
+          },
+          {
+            "type": "header",
+            "content": "Box text 2"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Start a Conversation"
+          },
+          {
+            "type": "text",
+            "id": "email_2",
+            "label": "Email",
+            "default": "info@midas.com"
+          },
+          {
+            "type": "text",
+            "id": "phone_2_1",
+            "label": "Phone 1",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "text",
+            "id": "phone_2_2",
+            "label": "Phone 2",
+            "default": "+1 987-976-1234"
+          },
+          {
+            "type": "header",
+            "content": "Box text 3"
+          },
+          {
+            "type": "text",
+            "id": "title_3",
+            "label": "Title",
+            "default": "Social"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Infor",
+        "category": "10. Contact",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

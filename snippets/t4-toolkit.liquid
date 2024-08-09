@@ -1,0 +1,333 @@
+<style>
+  @-webkit-keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+  }
+  #t4-toolkit {
+    top: 50%;
+    right: 0;
+    z-index: 13;
+  }
+  #t4-toolkit strong {
+    color: #212529;
+  }
+  #t4-toolkit .dropdown-toggle {
+    border-radius: 5px;
+    min-width: auto;
+    -webkit-animation-duration: 1.25s;
+            animation-duration: 1.25s;
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+    -webkit-animation-name: shimmer;
+            animation-name: shimmer;
+    -webkit-animation-timing-function: linear;
+            animation-timing-function: linear;
+    background: #1dbdc7;
+    background: linear-gradient(to right, #1dbdc7 8%, #2bf3ff 18%, #1dbdc7 33%);
+    background-size: 800px 104px;
+    position: relative;
+    border-color: #1dbdc7;
+    box-shadow: none;
+  }
+  #t4-toolkit .dropdown:not(.show) .dropdown-toggle::before {
+    display: none;
+  }
+  #t4-toolkit .dropdown-item.active, #t4-toolkit .dropdown-item:active{
+    background-color: #1dbdc7;
+  }
+  #t4-toolkit .dropdown-toggle.loading::after {
+    border-color: #1ebec8 #ffffff #ffffff #ffffff;
+  }
+  #t4-toolkit .dropdown-toggle.loading svg {
+    opacity: 0;
+  }
+</style>
+<div id="t4-toolkit" class="position-fixed">
+  <div class="dropdown dropleft">
+    <a class="btn btn-secondary dropdown-toggle" href="#" id="toolkitDrop" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Toolkit">
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;width: 24px;height: 24px;fill: #fff;" xml:space="preserve">
+      <path d="M22.078,18.027l-8.41-7.798c0.002-0.001,0.004-0.003,0.006-0.004l0.346-0.16c0.296,0.217,0.645,0.332,0.997,0.332
+        c0.433,0,0.866-0.165,1.196-0.495l1.909-1.908c0.319-0.319,0.496-0.744,0.496-1.196s-0.176-0.877-0.496-1.196l-3.708-3.708
+        c-0.639-0.639-1.754-0.639-2.393,0l-1.908,1.909C9.793,4.123,9.617,4.548,9.617,5c0,0.365,0.12,0.709,0.332,0.998L9.79,6.342
+        C9.076,7.884,7.884,9.076,6.342,9.79L5.997,9.95c-0.662-0.485-1.596-0.434-2.193,0.163l-1.908,1.909
+        c-0.659,0.66-0.659,1.732,0,2.392l3.708,3.708c0.319,0.319,0.744,0.496,1.196,0.496c0.452,0,0.876-0.176,1.196-0.496l1.909-1.909
+        c0.319-0.319,0.496-0.744,0.496-1.196c0-0.365-0.12-0.709-0.332-0.998l0.159-0.345c0.001-0.002,0.002-0.004,0.003-0.006l7.797,8.41
+        c0.304,0.329,0.718,0.514,1.166,0.522c0.01,0,0.021,0,0.032,0c0.435,0,0.843-0.169,1.152-0.478l1.745-1.746
+        c0.316-0.316,0.486-0.737,0.478-1.185C22.591,18.745,22.406,18.331,22.078,18.027z M10.961,4.652l1.908-1.909
+        C12.965,2.648,13.091,2.6,13.217,2.6s0.252,0.048,0.348,0.144l3.708,3.708c0.192,0.192,0.192,0.503,0,0.695l-1.909,1.908
+        c-0.186,0.186-0.51,0.186-0.695,0l-3.708-3.708C10.868,5.254,10.817,5.131,10.817,5C10.817,4.869,10.868,4.745,10.961,4.652z
+         M9.055,15.363l-1.909,1.909c-0.192,0.191-0.504,0.19-0.695,0l-3.708-3.708c-0.191-0.191-0.191-0.503,0-0.695l1.908-1.909
+        C4.745,10.868,4.869,10.817,5,10.817s0.255,0.051,0.348,0.144l3.708,3.708C9.247,14.86,9.247,15.172,9.055,15.363z M9.673,12.233
+        c-0.068,0.07-0.11,0.152-0.137,0.24c-0.12,0.207-0.252,0.404-0.356,0.623l-2.26-2.26c1.74-0.826,3.09-2.177,3.917-3.916l2.259,2.26
+        c-0.22,0.104-0.418,0.237-0.625,0.357c-0.087,0.027-0.167,0.069-0.237,0.135C11.192,10.327,10.328,11.191,9.673,12.233z
+         M21.273,19.529l-1.745,1.745c-0.083,0.084-0.2,0.129-0.313,0.126c-0.118-0.002-0.228-0.051-0.309-0.138l-8.051-8.684
+        c0.469-0.673,1.049-1.253,1.722-1.723l8.685,8.052c0.086,0.081,0.135,0.189,0.138,0.308C21.402,19.333,21.357,19.445,21.273,19.529z
+         M12.309,22c0,0.332-0.269,0.6-0.6,0.6H2.076c-0.332,0-0.6-0.269-0.6-0.6s0.269-0.6,0.6-0.6h9.633
+        C12.041,21.4,12.309,21.668,12.309,22z"/>
+      </svg>
+    </a>
+    <div class="dropdown-menu" aria-labelledby="toolkitDrop">
+      <a class="dropdown-item" href="/" style="background-color: transparent"><strong>The4 Toolkit</strong></a>
+      <div class="dropdown-divider"></div>
+      <a id="ktCatalog" class="dropdown-item" href="#">Catalog Mode</a>
+      <div class="dropdown-divider"></div>
+      {% comment %}<a id="ktElement" class="dropdown-item" href="#">KT Elements</a>{% endcomment %}
+      <a id="ktDemos" class="dropdown-item" href="#">Import demo</a>
+      <a id="ktDemosSt" class="dropdown-item" href="#">Import section</a>
+      <div class="dropdown-divider"></div>
+      <a id="ktTools" class="dropdown-item" href="#">Auto create filter tags</a>
+      <a class="dropdown-item" href="/pages/edit-additional-information">Edit additional information</a>
+      <a id="ktUpdateShipping" class="dropdown-item" href="#">Update Shipping rates</a>
+      <a id="ktCloneCollectionLayout" class="dropdown-item" href="#">Clone Shop layout</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="https://the4.gitbook.io/molla" target="_blank">Document</a>
+    </div>
+  </div>
+</div>
+<script>
+  "undefined" == typeof window.T4 && (window.T4 = {});
+  window.theme = window.theme || {}; 
+  $('#ktCatalog').on('click', function (event) {
+    event.preventDefault();
+    $('#toolkitDrop').addClass('loading');
+    if (!theme.csrfToken) {
+      $.ajax({
+        type: "GET",
+        url: "/admin/themes/"+Shopify.theme.id,
+        success: function (data){
+          theme.csrfToken = data.split('name="csrf-token"')[1].split(" />")[0].split('"')[1];
+          theme.catalogMode();
+        }
+      });
+    } else {
+      theme.catalogMode();
+    }
+    theme.catalogMode = function(){
+      $.getJSON( '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets?asset[key]=config/settings_data.json', function(data) {
+        T4.settings = JSON.parse(data.asset.value);
+        T4.settings.current["ajax_cart"] = false;
+        T4.settings.current["ajax_cart_page"] = false;
+        T4.settings.current["use_gift_wrapping"] = false;
+        T4.settings.current["type_ajax_cart"] = "none";
+        T4.settings.current["shipping_calculator"] = false;
+        T4.settings.current["use_add_to_cart_btn"] = false;
+        T4.settings.current["qs_show_vars_list"] = false;
+        T4.settings.current["use_wishlist"] = '';
+        T4.settings.current["use_compare"] = false;
+        T4.settings.current["use_quickview"] = false;
+        T4.settings.current.sections["header-{{settings.import_header}}"].settings["use_account"] = true;
+        T4.settings.current.sections["header-{{settings.import_header}}"].settings["use_cart"] = false;
+        $.ajax({
+          url:  '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets.json',
+          headers: {
+            "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "x-csrf-token": theme.csrfToken
+          },
+          type: 'PUT',
+          data: {asset: { 'key': 'config/settings_data.json', "value": JSON.stringify(T4.settings)}},
+        })
+        .done(function() {
+          $('#toolkitDrop').removeClass('loading');
+          window.top.location.reload();
+        });
+      })
+    };
+  });
+  $('#ktElement').on('click', function (event) {
+    event.preventDefault();
+    if ($('.els').length) {
+      $('.els').addClass('open-popup');
+    }
+    else {
+      $('#toolkitDrop').addClass('loading');
+      $.ajax({
+        type: "GET",
+        url: '/cart?view=kt-elements',
+        success: function(data) {
+          $('body').append(data);
+          $('.els').addClass('open-popup');
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+    }
+  });
+  $('#ktDemos').on('click', function (event) {
+    event.preventDefault();
+    if ($('.t4-import-demo').length) {
+      $('.t4-import-demo').addClass('open-import-demo');
+    }
+    else {
+      $('#toolkitDrop').addClass('loading');
+      $.ajax({
+        type: "GET",
+        url: '/cart?view=t4-import-demo',
+        success: function(data) {
+          $('body').append(data);
+          $('.t4-import-demo').addClass('open-import-demo');
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+    }
+  });
+  $('#ktDemosSt').on('click', function (event) {
+    event.preventDefault();
+    if ($('.t4-import-demo-st').length) {
+      $('.t4-import-demo-st').addClass('open-import-demo-st');
+    }
+    else {
+      $('#toolkitDrop').addClass('loading');
+      $.ajax({
+        type: "GET",
+        url: '/cart?view=t4-import-demo-st',
+        success: function(data) {
+          $('body').append(data);
+          $('.t4-import-demo-st').addClass('open-import-demo-st');
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+      $.getJSON( '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets?asset[key]=config/settings_data.json', function(data) {
+        T4.demo_crr = JSON.parse(data.asset.value);
+        if (T4.demo_crr.current.content_for_index.length == 20) {
+          $('.t4-import-demo-st-content .alert-warning').removeClass('d-none');
+          $('.t4-import-demo-st-content .item-import').addClass('loading');
+        }
+      })
+    }
+  });
+  $('#ktTools').on('click', function (event) {
+    event.preventDefault();
+    if ($('.t4-import').length) {
+      $('.t4-import').addClass('open-import');
+    }
+    else {
+      $('#toolkitDrop').addClass('loading');
+      $.ajax({
+        type: "GET",
+        url: '/cart?view=t4-import-tags',
+        success: function(data) {
+          $('body').append(data);
+          $('.t4-import').addClass('open-import');
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+    }
+  });
+  $('#ktUpdateShipping').on('click', function (event) {
+    event.preventDefault();
+    $('#toolkitDrop').addClass('loading');
+    if (!theme.csrfToken) {
+      $.ajax({
+        type: "GET",
+        url: "/admin/themes/"+Shopify.theme.id,
+        success: function (data){
+          theme.csrfToken = data.split('name="csrf-token"')[1].split(" />")[0].split('"')[1];
+          theme.updateShipping();
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+    } else {
+      theme.updateShipping();
+    }
+  });  
+  {%raw%}
+  theme.updateShipping = (function() {  
+    $.ajax({
+      type: 'GET',    
+      url: '/admin/api/2021-07/shipping_zones.json',
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "x-csrf-token": theme.csrfToken
+      }
+    })
+    .done(function(data) {
+      // console.log("success");
+      var list_zone = new Array;    
+      $.each(data.shipping_zones, function(index, val) {
+        $.each(val.countries, function(index, item) {
+          var by_money = JSON.stringify((val.price_based_shipping_rates).concat(val.weight_based_shipping_rates)).match(/([0-9]+\.+[0-9]+)/g);
+          var shipping_rates = JSON.stringify((val.price_based_shipping_rates).concat(val.weight_based_shipping_rates));
+          $.each(by_money, function(index, val) {
+            shipping_rates = shipping_rates.replace(val+'"', theme.Currency.formatMoney(val.replace(/(\.)+(\d$)/g, '.'+'$2'+'0'),theme.moneyFormat) + '"')
+          })
+          var item_zone = {
+            name: item.name.toLowerCase(),
+            code: item.code,
+            shipping_rates: shipping_rates
+          };
+          list_zone.push(item_zone)
+        });
+      });
+      var contentPage = '{%-layout none-%}{%-capture listZone-%}';
+      contentPage += JSON.stringify(list_zone);
+      // console.log(list_zone)
+      contentPage += '{%-endcapture-%}';
+      contentPage += '{%- assign option_name = canonical_url | split: \'?q=\' | last | upcase -%}';
+      contentPage += '{%- assign checkZone = \'"code":"\' | append: option_name | append: \'",\' -%}';
+      contentPage += '{%- capture flag -%}"flag":"{%- include \'flags-svg\', code: option_name -%}",{%- endcapture -%}';
+      contentPage += '{%- if listZone contains checkZone -%}';
+      contentPage += '{%- assign zoneOptions = listZone | split: checkZone | last | split: \',{"name"\' | first | prepend: flag | prepend: checkZone | prepend: \'{\' | replace: \'}]"}]\', \'}]"}\' -%}';
+      contentPage += '{%- endif -%}';
+      contentPage += '{{zoneOptions}}';
+      contentPage += '{%- unless zoneOptions -%}';
+      contentPage += '{%- capture flag -%},"flag":"//cdn.shopify.com/s/assets/flags/fallback-f2f97b483f85d709c5e86ef4c82a768b79e1a3e19407c6ca68337a6a1e50e9f7.svg"{%- endcapture -%}';
+      contentPage += '{%- if listZone contains \'"code":"*"\' -%}';
+      contentPage += '{%- assign zoneOptions = listZone | split: \'"code":"*"\' | last | split: \',{"name"\' | first | prepend: flag | prepend: \'"code":"*"\' | prepend: \'{\'| replace: \'}]"}]\', \'}]"}\' -%}';
+      contentPage += '{%- endif -%}';
+      contentPage += '{{zoneOptions}}';
+      contentPage += '{%endunless%}';
+      $.ajax({
+        url:  '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets.json',
+        headers: {
+          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "x-csrf-token": theme.csrfToken
+        },
+        type: 'PUT',
+        data: {asset:  { key: 'templates/cart.listShipping.liquid', 'value': contentPage}},
+      })
+      .done(function() {
+        $('#toolkitDrop').removeClass('loading');
+        alert("PUT listShipping Complete")
+      });
+    })
+    .fail(function() {
+      console.log("error getLocation");
+    })
+    .always(function(data) {
+      // console.log("complete");
+    });
+  });
+  {%endraw%}
+  $('#ktCloneCollectionLayout').on('click', function (event) {
+    event.preventDefault();
+    if ($('.t4-clone').length) {
+      $('.t4-clone').addClass('open-clone');
+    }
+    else {
+      $('#toolkitDrop').addClass('loading');
+      $.ajax({
+        type: "GET",
+        url: '/cart?view=kt-clone-collection',
+        success: function(data) {
+          $('body').append(data);
+          $('.t4-clone').addClass('open-clone');
+          $('#toolkitDrop').removeClass('loading');
+        }
+      });
+    }
+  });
+</script>

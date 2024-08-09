@@ -1,0 +1,3038 @@
+<!-- md_banner_template_3.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+  	{%-for block in section.blocks-%}
+    {%-if block.settings.turnoff-%}{%-continue-%}{%-endif-%}
+    {%-case block.type -%}
+    {%-when '1'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template11{%unless forloop.first%}{%if section.blocks.size > 1%} mt-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-lg-8">
+          <div class="row">
+            <div class="col-12 col-md-6 item__banner item__1">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+                  <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_1 -%}
+                {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 250.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="380x250 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_2 -%}
+                {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 250.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="380x250 px"{% endunless %}></a>
+              </div>
+            </div>              
+            <div class="col-12 item__banner item__3 mt-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content position-absolute wait-for-css">
+                  <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+                  <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn {{block.settings.style_btn_3}} {{block.settings.style_btn_rounded_3}}{%if block.settings.btn_shadow_3%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 780.00 -%}{%-assign height = image_item.height | default: 250.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="780x250 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4 item__banner item__4 mt-gutter mt-lg-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_4 == blank and block.settings.stitle_4 == blank and block.settings.name_btn_4 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_4}}">{{block.settings.stitle_4}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4}}</h3>
+              <a href="{{block.settings.image_link_4|default:'#'}}" class="btn {{block.settings.style_btn_4}} {{block.settings.style_btn_rounded_4}}{%if block.settings.btn_shadow_4%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_4 -%}
+            {%-assign width = image_item.width | default: 380.00 -%}{%-assign height = image_item.height | default: 520.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="380x520 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template11">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template11 a.img__banner{
+            z-index:0;
+            min-height: 200px;
+          }
+          .imgs__banner_template11 .banner-subtitle{
+            color:var(--color);
+            font-weight:300;
+            font-size:1.4rem;
+            line-height:1.2;
+            letter-spacing:-.01em;
+            margin-bottom:.6rem
+          }
+          .imgs__banner_template11 .banner-title{
+            color:var(--color);
+            font-weight:300;
+            font-size:2.2rem;
+            line-height:1.13;
+            margin-bottom:1.4rem;
+            letter-spacing:-.025em
+          }
+          .imgs__banner_template11 .banner-title strong{
+            font-weight:600
+          }
+          .imgs__banner_template11 .text-content{
+            z-index:1;
+            padding-right:10px;
+            padding-left:10px
+          }
+          .imgs__banner_template11 .item__1 .text-content{
+            {{cssAlign_rev}}:3rem;
+            top:50%;
+            -webkit-transform:translateY(-50%);
+            transform:translateY(-50%);
+            -ms-transform:translateY(-50%)
+          }
+          .imgs__banner_template11 .item__2 .text-content,
+          .imgs__banner_template11 .item__3 .text-content{
+            {{cssAlign}}:3rem;
+            top:50%;
+            -webkit-transform:translateY(-50%);
+            transform:translateY(-50%);
+            -ms-transform:translateY(-50%)
+          }
+          .imgs__banner_template11 .item__3 .text-content{
+            {{cssAlign}}:3rem
+          }
+          .imgs__banner_template11 .item__4 .text-content{
+            {{cssAlign}}:3rem;
+            bottom:6rem
+          }
+          .imgs__banner_template11 .btn{
+            font-size:1.4rem;
+            line-height:1;
+            padding:.8rem 1rem;
+            min-width:auto
+          }
+          @media (min-width:576px){
+            .imgs__banner_template11 .banner-subtitle{
+              font-size:1.6rem
+            }
+            .imgs__banner_template11 .banner-title{
+              font-size:2.4rem
+            }
+            .imgs__banner_template11 .btn{
+              min-width:110px
+            }
+          }
+          @media (min-width:768px){              
+            .imgs__banner_template11 .item__3 .text-content{
+              {{cssAlign}}:4rem
+            }
+            .imgs__banner_template11 .item__4 .text-content{
+              {{cssAlign}}:4rem;
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '2'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template4 imgs__banner_template12" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-md-6 item__banner item__1 mb-gutter">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.desc_1 == blank and block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content text-center position-absolute wait-for-css">
+              <h3 style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 505.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="580x505 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="row">
+            <div class="col-12 item__banner item__2 mb-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.desc_2 == blank and block.settings.titlex_2 == blank and block.settings.stitle_2 == blank and block.settings.name_btn_2 == blank -%}  
+                <div class="text-content text-center position-absolute wait-for-css">
+                  <h3 style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_2 -%}
+                {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 242.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="580x242 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 item__banner item__3 mb-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.desc_3 == blank and block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content text-center position-absolute wait-for-css">
+                  <h3 style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn {{block.settings.style_btn_3}} {{block.settings.style_btn_rounded_3}}{%if block.settings.btn_shadow_3%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 242.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="580x242 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template4">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template4 a.img__banner{
+            z-index:0
+          }
+          .imgs__banner_template4 h3{
+            font-weight:600;
+            font-size:1.8rem;
+            line-height:normal;
+            color:var(--color);
+            margin-bottom:1.2rem
+          }
+          .imgs__banner_template4 .stitle{
+            font-weight:300;
+            font-size:1.4rem;
+            letter-spacing:0;
+            margin-bottom:.5rem;
+            margin-top:1rem
+          }
+          .imgs__banner_template4 .btn{
+            font-size:1.4rem;
+            line-height:1;
+            padding:.8rem 1.4rem;
+            min-width:0;
+            text-decoration:none!important;
+            opacity:0;
+            -webkit-transition:all .3s ease;
+            transition:all .3s ease;
+            -webkit-transform:translateY(-20px);
+            transform:translateY(-20px);
+            -ms-transform:translateY(-20px)
+          }
+          .imgs__banner_template4 .item__banner:hover .btn{
+            opacity:1;
+            -webkit-transform:translateY(0);
+            transform:translateY(0);
+            -ms-transform:translateY(0)
+          }
+          .imgs__banner_template4 h3{
+            -webkit-transition:all .3s ease;
+            transition:all .3s ease;
+            -webkit-transform:translateY(20px);
+            transform:translateY(20px);
+            -ms-transform:translateY(20px)
+          }
+          .imgs__banner_template4 .item__banner:hover h3{
+            -webkit-transform:translateY(0);
+            transform:translateY(0);
+            -ms-transform:translateY(0)
+          }
+          .imgs__banner_template4 .text-content{
+            z-index:1;
+            top:50%;
+            left:50%;
+            -webkit-transform:translate(-50%,-50%);
+            transform:translate(-50%,-50%);
+            -ms-transform:translate(-50%,-50%);
+            text-align:center;
+            width:100%;
+            padding-right:10px;
+            padding-left:10px
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '3'-%}
+     {%-if block.settings.titlex != blank or block.settings.stitle != blank -%}
+      <div class="section-title {{block.settings.title_align}} w-100">
+        <h3 class="m-0">{{block.settings.titlex}}</h3>
+        {%- if block.settings.stitle != blank -%}
+          <dfn class="sub-title m-0">{{block.settings.stitle}}</dfn>
+        {%- endif -%}
+        <div class="clearfix" style="margin-bottom:{{block.settings.margin_btitle}}rem"></div>
+      </div>
+      {%-endif%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template4 imgs__banner_template13" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-sm-6 col-lg-4 item__banner item__1 mb-gutter mb-lg-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content text-center position-absolute wait-for-css">
+              {%- assign collection_1 = block.settings.image_link_1|split: '/'|last -%}
+              <h3 style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1|default: collections[collection_1].title}}<br/>
+                {% assign count = collections[collection_1].all_products_count | default: 0 %}
+                <span class="stitle">{{'sections.products_section.products_item'| t: count : count}}</span>
+              </h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="btn {{block.settings.style_btn_1}} {{block.settings.style_btn_rounded_1}}{%if block.settings.btn_shadow_1%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 376.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="376x500 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4 order-md-2 order-lg-1">
+          <div class="row">
+            <div class="col-12 col-md-6 col-lg-12 item__banner item__2 mb-gutter">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_2 == blank and block.settings.name_btn_2 == blank -%}  
+                <div class="text-content text-center position-absolute wait-for-css">
+                {%- assign collection_2 = block.settings.image_link_2|split: '/'|last -%}
+                  <h3 style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2|default: collections[collection_2].title}}<br/>
+                    {% assign count = collections[collection_2].all_products_count | default: 0 %}
+                    <span class="stitle">{{'sections.products_section.products_item'| t: count : count}}</span>
+                  </h3>
+                  <a href="{{block.settings.image_link_2|default:'#'}}" class="btn {{block.settings.style_btn_2}} {{block.settings.style_btn_rounded_2}}{%if block.settings.btn_shadow_2%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_2 -%}
+                {%-assign width = image_item.width | default: 376.00 -%}{%-assign height = image_item.height | default: 240.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="376x340 px"{% endunless %}></a>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-12 item__banner item__3 mb-gutter mb-md-0">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                {%- unless block.settings.titlex_3 == blank and block.settings.name_btn_3 == blank -%}  
+                <div class="text-content text-center position-absolute wait-for-css">
+                  {%- assign collection_3 = block.settings.image_link_3|split: '/'|last -%}
+                  <h3 style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3|default: collections[collection_3].title}}<br/>
+                    {% assign count = collections[collection_3].all_products_count | default: 0 %}
+                    <span class="stitle">{{'sections.products_section.products_item'| t: count : count}}</span>
+                  </h3>
+                  <a href="{{block.settings.image_link_3|default:'#'}}" class="btn {{block.settings.style_btn_3}} {{block.settings.style_btn_rounded_3}}{%if block.settings.btn_shadow_3%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+                </div>
+                {%- assign use_css = true -%}
+                {%- endunless -%}
+                {%- assign image_item = block.settings.image_3 -%}
+                {%-assign width = image_item.width | default: 376.00 -%}{%-assign height = image_item.height | default: 240.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="376x240 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 order-md-1 item__banner item__4 mb-gutter mb-lg-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_4 == blank and block.settings.name_btn_4 == blank -%}  
+            <div class="text-content text-center position-absolute wait-for-css">
+              {%- assign collection_4 = block.settings.image_link_4|split: '/'|last -%}
+              <h3 style="--color: {{block.settings.color_titlex_4}}">{{block.settings.titlex_4|default: collections[collection_4].title}}<br/>
+                {% assign count = collections[collection_4].all_products_count | default: 0 %}
+                <span class="stitle">{{'sections.products_section.products_item'| t: count : count}}</span>
+              </h3>
+              <a href="{{block.settings.image_link_4|default:'#'}}" class="btn {{block.settings.style_btn_4}} {{block.settings.style_btn_rounded_4}}{%if block.settings.btn_shadow_4%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn_4| strip_html}}">{{block.settings.name_btn_4}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_4 -%}
+            {%-assign width = image_item.width | default: 376.00 -%}{%-assign height = image_item.height | default: 500.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_4|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_4 %} title="376x500 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template4">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template4 a.img__banner{
+            z-index:0
+          }
+          .imgs__banner_template4 h3{
+            font-weight:600;
+            font-size:1.8rem;
+            line-height:normal;
+            color:var(--color);
+            margin-bottom:1.2rem
+          }
+          .imgs__banner_template4 .stitle{
+            font-weight:300;
+            font-size:1.4rem;
+            letter-spacing:0;
+            margin-bottom:.5rem;
+            margin-top:1rem
+          }
+          .imgs__banner_template4 .btn{
+            font-size:1.4rem;
+            line-height:1;
+            padding:.8rem 1.4rem;
+            min-width:0;
+            text-decoration:none!important;
+            opacity:0;
+            -webkit-transition:all .3s ease;
+            transition:all .3s ease;
+            -webkit-transform:translateY(-20px);
+            transform:translateY(-20px);
+            -ms-transform:translateY(-20px)
+          }
+          .imgs__banner_template4 .item__banner:hover .btn{
+            opacity:1;
+            -webkit-transform:translateY(0);
+            transform:translateY(0);
+            -ms-transform:translateY(0)
+          }
+          .imgs__banner_template4 h3{
+            -webkit-transition:all .3s ease;
+            transition:all .3s ease;
+            -webkit-transform:translateY(20px);
+            transform:translateY(20px);
+            -ms-transform:translateY(20px)
+          }
+          .imgs__banner_template4 .item__banner:hover h3{
+            -webkit-transform:translateY(0);
+            transform:translateY(0);
+            -ms-transform:translateY(0)
+          }
+          .imgs__banner_template4 .text-content{
+            z-index:1;
+            top:50%;
+            left:50%;
+            -webkit-transform:translate(-50%,-50%);
+            transform:translate(-50%,-50%);
+            -ms-transform:translate(-50%,-50%);
+            text-align:center;
+            width:100%;
+            padding-right:10px;
+            padding-left:10px
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '4'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template14{%unless forloop.first%}{%if section.blocks.size > 1%} mt-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-md-6 col-lg-3 item__banner item__1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 260.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="280x260 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 item__banner item__2 mt-gutter mt-lg-0 order-last order-lg-1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+              <a href="{{block.settings.image_link_2|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 260.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="580x260 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 item__banner item__3 mt-gutter mt-md-0 order-lg-2">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_3 == blank and block.settings.stitle_3 == blank and block.settings.name_btn_3 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_3}}">{{block.settings.stitle_3}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_3}}">{{block.settings.titlex_3}}</h3>
+              <a href="{{block.settings.image_link_3|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_3| strip_html}}">{{block.settings.name_btn_3}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_3 -%}
+            {%-assign width = image_item.width | default: 280.00 -%}{%-assign height = image_item.height | default: 260.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_3|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_3 %} title="280x260 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template14">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template14 a.img__banner{
+            z-index:0;
+            min-height: 210px;
+          }
+          .imgs__banner_template14 .banner-subtitle{
+            color:var(--color);
+            font-weight:300;
+            font-size:1.4rem;
+            line-height:1.2;
+            letter-spacing:-.01em;
+            margin-bottom:.6rem
+          }
+          .imgs__banner_template14 .banner-title{
+            color:var(--color);
+            -webkit-box-flex:1;
+            -ms-flex-positive:1;
+            flex-grow:1;
+            font-weight:600;
+            font-size:2.4rem;
+            line-height:1.25;
+            letter-spacing:-.025em;
+            margin-bottom:.5rem
+          }
+          .imgs__banner_template14 .banner-title span{
+            font-weight:300
+          }
+          .imgs__banner_template14 .text-content{
+            z-index:1;
+            display:-webkit-box;
+            display:-ms-flexbox;
+            display:flex;
+            -webkit-box-orient:vertical;
+            -webkit-box-direction:normal;
+            -ms-flex-direction:column;
+            flex-direction:column;
+            padding-top:0;
+            top:3rem;
+            {{cssAlign}}:3rem;
+            bottom:3.2rem;
+            -webkit-transform:translateY(0);
+            transform:translateY(0)
+          }
+          .imgs__banner_template14 .text-content .banner-link{
+            -ms-flex-item-align:start;
+            align-self:flex-start;
+            width:auto;
+            color:#fff;
+            font-weight:400;
+            font-size:1.4rem;
+            line-height:1.4;
+            letter-spacing:-.01em;
+            border-radius:.3rem;
+            padding:.75rem 1rem;
+            background-color:rgba(255,255,255,.2);
+            -webkit-transition:all .35s ease;
+            transition:all .35s ease
+          }
+          .imgs__banner_template14 .text-content .banner-link:focus,
+          .imgs__banner_template14 .text-content .banner-link:hover{
+            color:#333;
+            text-decoration:none!important;
+            background-color:#fff
+          }
+          @media (min-width:576px){
+            .imgs__banner_template14 .banner-title{
+              font-size:3rem;
+              margin-bottom:2.3rem
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%-when '5'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center imgs__banner_template15{%unless forloop.first%}{%if section.blocks.size > 1%} mt-gutter{%endif%}{%endunless%}" style="--grid-gutter:{{block.settings.grid_gutter}}px">
+        <div class="col-12 col-md-6 item__banner item__1">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_1 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_1 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_1}}">{{block.settings.stitle_1}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_1}}">{{block.settings.titlex_1}}</h3>
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="banner-link banner-link-dark" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 260.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="580x260 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 item__banner item__2 mt-gutter mt-md-0">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex_2 == blank and block.settings.stitle_1 == blank and block.settings.name_btn_2 == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle" style="--color: {{block.settings.color_stitle_2}}">{{block.settings.stitle_2}}</h4>
+              <h3 class="banner-title" style="--color: {{block.settings.color_titlex_2}}">{{block.settings.titlex_2}}</h3>
+              <a href="{{block.settings.image_link_2|default:'#'}}" class="banner-link banner-link-dark" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 260.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="580x260 px"{% endunless %}></a>
+          </div>
+        </div>
+      </div>
+      {%- if use_css -%}
+      <noscript class="banner-css" data-section-type="imgs__banner_template15">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template15 a.img__banner{
+            z-index:0;
+            min-height: 210px;
+          }
+          .imgs__banner_template15 .banner-subtitle{
+            color:var(--color);
+            font-weight:300;
+            font-size:1.4rem;
+            line-height:1.2;
+            letter-spacing:-.01em;
+            margin-bottom:.6rem
+          }
+          .imgs__banner_template15 .banner-title{
+            color:var(--color);
+            -webkit-box-flex:1;
+            -ms-flex-positive:1;
+            flex-grow:1;
+            font-weight:600;
+            font-size:2.4rem;
+            line-height:1.25;
+            letter-spacing:-.025em;
+            margin-bottom:.5rem
+          }
+          .imgs__banner_template15 .banner-title span{
+            font-weight:300
+          }
+          .imgs__banner_template15 .text-content{
+            z-index:1;
+            display:-webkit-box;
+            display:-ms-flexbox;
+            display:flex;
+            -webkit-box-orient:vertical;
+            -webkit-box-direction:normal;
+            -ms-flex-direction:column;
+            flex-direction:column;
+            padding-top:0;
+            top:3rem;
+            {{cssAlign}}:3rem;
+            bottom:3.2rem;
+            -webkit-transform:translateY(0);
+            transform:translateY(0)
+          }
+          .imgs__banner_template15 .text-content .banner-link{
+            -ms-flex-item-align:start;
+            align-self:flex-start;
+            width:auto;
+            color:#fff;
+            font-weight:400;
+            font-size:1.4rem;
+            line-height:1.4;
+            letter-spacing:-.01em;
+            border-radius:.3rem;
+            padding:.75rem 1rem;
+            background-color:rgba(255,255,255,.2);
+            -webkit-transition:all .35s ease;
+            transition:all .35s ease
+          }
+          .imgs__banner_template15 .text-content .banner-link:not(:hover):not(:focus){
+            background-color:rgba(51,51,51,.2)
+          }
+          .imgs__banner_template15 .text-content .banner-link:focus,.imgs__banner_template15 .text-content .banner-link:hover{
+            color:#333;
+            text-decoration:none!important;
+            background-color:#fff
+          }
+          .imgs__banner_template15 .item__1 .banner-subtitle{
+            color:#999
+          }
+          .imgs__banner_template15 .item__1 .banner-title{
+            color:#333
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+      {%- endif -%}
+    {%- endcase -%}
+    {%- endfor -%}
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Template 3",
+    "class": "md_banner_template_3",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Banner template 3",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 px"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview demo](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-banner-template.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Banners type 11",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 11",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Banners type 11 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 250 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "New Arrivals"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"<strong>Sneakers &amp; <br>Athletic Shoes<\/strong>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"DISCOVER NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-outline-white-4",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "default": "btn-round",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 250 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Clearance"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"<strong>Sandals<\/strong><br>up to 70% off"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-outline-gray",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "default": "btn-round",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 780 x 250 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default": "On Sale"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"<strong>Slip-On Loafers<\/strong><br>up to 30% off"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-outline-white-4",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "default": "btn-round",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 520 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_4",
+            "label": "Sub title",
+            "default": "On Sale"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"<strong>Amazing <br>Lace Up Boots<\/strong> <br>from $39.00"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"DISCOVER NOW"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_4",
+            "label": "Button style",
+            "default": "btn-outline-white-4",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_4",
+            "label": "Button style radius",
+            "default": "btn-round",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_4",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "2",
+        "name": "Banners type 12",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 12",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "header",
+            "content": "Banners type 12 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "banner-effect1",
+                "label": "Banner Effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner Effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner Effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner Effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner Effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner Effect 6"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 546 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "3",
+        "name": "Banners type 13",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 13",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "paragraph",
+            "content": "=================== Section title"
+          },
+          {
+            "type": "text",
+            "id": "titlex",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title"
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "unit": "rem",
+            "label": "Margin bottom of title",
+            "default": 6
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Banners type 13 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "banner-effect1",
+                "label": "Banner Effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner Effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner Effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner Effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner Effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner Effect 6"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 546 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_1",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_1",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_2",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_2",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_2",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_3",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_3",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_3",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "header",
+            "content": "Image 4"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner",
+            "info": "Size suggestion: 580 x 263 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link_4",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_4",
+            "label": "Title",
+            "default":"Trending now"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_4",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_4",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_4",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_4",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow_4",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "4",
+        "name": "Banners type 14",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 14",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 14 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 470 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Weekend Sale"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"Lighting <br>&amp; Accessories <br><span>25% off</span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Shop Now <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 470 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Amazing Value"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Clothes Trending <br>Spring Collection 2019 <br><span>from $12,99</span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Discover Now <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "header",
+            "content": "Image 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 470 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_3",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_3",
+            "label": "Sub title",
+            "default": "Smart Offer"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_3",
+            "label": "Title",
+            "default":"Anniversary <br>Special <br><span>15% off</span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_3",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_3",
+            "label": "Name button",
+            "default":"Shop Now <i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "5",
+        "name": "Banners type 15",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "range",
+            "id": "grid_gutter",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "label": "Gutters",
+            "default": 10
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 15",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 15 settings"
+          },
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "",
+                "label": "None effect"
+              },
+              {
+                "value": "banner-effect1",
+                "label": "Banner effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner effect 6"
+              },
+              {
+                "value": "banner-effect7",
+                "label": "Banner effect 7"
+              },
+              {
+                "value": "banner-effect8",
+                "label": "Banner effect 8"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": ""
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 470 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_1",
+            "label": "Sub title",
+            "default": "Spring Sale is Coming"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_1",
+            "label": "Color",
+            "default": "#999"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_1",
+            "label": "Title",
+            "default":"All Smart Watches <br>Discount <br><span class=\"text-primary\">15% off</span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_1",
+            "label": "Color",
+            "default": "#333"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Discover Now <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 380 x 470 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle_2",
+            "label": "Sub title",
+            "default": "Amazing Value"
+          },
+          {
+            "type": "color",
+            "id": "color_stitle_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"textarea",
+            "id":"titlex_2",
+            "label": "Title",
+            "default":"Headphones Trending <br>JBL Harman <br><span>from $59,99</span>"
+          },
+          {
+            "type": "color",
+            "id": "color_titlex_2",
+            "label": "Color",
+            "default": "#fff"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Discover Now <i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Template 3",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

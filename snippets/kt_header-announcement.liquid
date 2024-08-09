@@ -1,0 +1,19 @@
+{%- assign responsive_ = section.settings.announcement_reponsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+{%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+<div class="announcement header-announcement{%if section.settings.announcement_onm%} d-none d-lg-block{%endif%}{%if section.settings.announcement_ont%} d-md-none d-lg-block{%endif%}{%unless section.settings.sticky_header_announcement %} not-sticky{%endunless%}{%if template.name == 'product' and settings.show_sticky_add and settings.use_add_to_cart_btn%} not-sticky{%endif%}{%if section.settings.announcement_image%} bg-image lazyload{%endif%}"{%if section.settings.announcement_image%} data-bgset="{{section.settings.announcement_image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.header-announcement','mt':'{{section.settings.announcement_margin_top}}','mb':'{{section.settings.announcement_margin_bottom}}','p':'{{section.settings.announcement_padding}}'}">
+  <div class="section-width {{section.settings.width_announcement}}">
+  	<div class="position-relative">
+	  	<div class="swiper-container nav-default" data-breakpoints='{{responsive_}}' data-autoplay="true" data-slides-per-view="{{items_}}" data-nav="true" data-delay="10">
+				<div class="swiper-wrapper">
+        {%- assign topAnnouncement = section.blocks | where: 'type', 'announcement' -%}
+		    {%- for block in topAnnouncement -%}
+	      {%- if block.settings.message_richtext == blank -%}{%-continue-%}{%- endif -%}
+	        <div class="swiper-slide announcement-item text-center">{{block.settings.message_richtext}}</div>
+		    {%- endfor -%}
+			  </div>
+			  <div class="swiper-button-prev fkt-angle-left fkt-lg fkt-va"></div><div class="swiper-button-next fkt-angle-right fkt-lg fkt-va"></div>
+			</div>
+			<a href="#" class="close close-header-announcement"></a>
+  	</div>
+	</div>
+</div>

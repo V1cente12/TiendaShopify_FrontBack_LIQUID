@@ -1,0 +1,91 @@
+
+{%- section 'sec_cyberweek40_banner1' -%}
+<div class="kt--filter-js">
+{%- if settings.coll_breadcrumb_enable -%}
+   <div class="{{settings.coll_width_section}}">
+    <div class="section-width{%if settings.coll_width_content and settings.coll_width_section == 'w-100'%} container{%else%} w-100{%endif%}">
+      {%-render 'kt_breadcrumb' -%}
+    </div>
+  </div> 
+  <div class="w-100 border-top mb-3" style="border-color: rgba(235, 235, 235, 0.55) !important"></div>
+  {%- endif -%}
+  <div class="{{settings.coll_width_section}} main-container shop_tyle_{{settings.coll_shop_layout|default:'default'}} pb-4">
+    <div class="section-width{%if settings.coll_width_content and settings.coll_width_section == 'w-100'%} container{%else%} w-100{%endif%} main-content {{settings.coll_sidebar_layout|default: 'no'}}-sidebar filters-{{settings.filter_type|default:'default'}}">
+    {%- if settings.coll_sidebar_layout == '' -%}
+      {%- if collection.description != blank -%}
+      {%- section 'collection-des' -%}
+      {%- endif -%}
+      <!--sectionClone-->
+      {%- section 'md-collection-banners-box' -%}
+      {%- section 'md-collection-brand' -%}
+      {%- section 'md-collection-list_item_cattegories' -%}
+      {%- section 'md-collection-product_section_slide' -%}
+      <!--endsectionClone-->
+      {%- render 'collection-template40' -%}
+    {%- else -%}
+      <div class="row">
+        {%- liquid
+          assign mainColl = ''
+          if settings.coll_width_content
+            if settings.coll_shop_layout == 'market'
+              assign mainColl = 'col-lg-8-10'
+            else
+              assign mainColl = 'col-lg-9'
+            endif
+          else
+            if settings.coll_shop_layout == 'market'
+              assign mainColl = 'col-lg-8-10'
+            else
+              assign mainColl = 'col-lg-10'
+            endif
+          endif
+          assign sidebarColl = 'col-lg-2'
+          if settings.coll_width_content
+            if settings.coll_shop_layout == 'market'
+              assign sidebarColl = 'col-lg-2-10'
+            else
+              assign sidebarColl = 'col-lg-3'
+            endif
+          else
+            if settings.coll_shop_layout == 'market'
+              assign sidebarColl = 'col-lg-2-10'
+            else
+              assign sidebarColl = 'col-lg-2'
+            endif
+          endif
+        -%}
+        <div class="col-12">
+          {%- if settings.coll_sidebar_layout != '' -%}
+          {%- if collection.description != blank -%}
+          {%- section 'collection-des' -%}
+          {%- endif -%}
+          <!--sectionClone-->
+          {%- section 'md-collection-banners-box' -%}
+          {%- section 'md-collection-brand' -%}
+          {%- section 'md-collection-list_item_cattegories' -%}
+          {%- section 'md-collection-product_section_slide' -%}
+          <!--endsectionClone-->
+          {%- endif -%}
+          {%- render 'collection-template40' -%}
+        </div>
+      </div>
+    {%- endif -%}
+    </div>
+  </div>
+  {%- if settings.coll_sidebar_layout == '' -%}
+ <div class="kt--filter kt_canvas">
+    <div class="filter_cavas_wrapper kt_scroll">
+      <div class="filter-clean">
+        <div class="head d-flex justify-content-between align-items-center">
+          <label class="filter-close cls-overlay" data-box="filter-canvas"><i class="fkt-close" aria-hidden="true"></i><span> {{'collections.filters.title'|t}}</span></label>
+          <a data-pjax-filter="" href="{{collections[collection.handle].url}}" class="sidebar-filter-clear{%if items_filter_check.size <= 0 or current_tags.size == null %} d-none{% endif %}">{{'collections.filters.clean'|t}}</a>
+        </div>
+        <div class="kt--filter-wrap-sl {%if items_filter_check.size <= 0 or current_tags.size == null %} d-none{% endif %}">
+          {%- render 'kt_filter_selected' -%}
+        </div>
+      </div>
+      <div class="kt--filter-grs kt--filter-grs-d" data-toggle="show"></div>
+    </div>
+  </div> 
+  {%- endif -%}
+</div>

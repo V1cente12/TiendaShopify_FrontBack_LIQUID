@@ -1,0 +1,35 @@
+{%- unless style_btn -%}
+  {%-assign style_btn = ''-%}
+{%- endunless -%}
+{%- unless position_btn -%}
+  {%-assign position_btn = ''-%}
+{%- endunless -%}
+{%- unless label -%}
+  {%-assign label = 'products.product.add_to_cart' | t -%}
+{%- endunless -%}
+{%-assign has_variants = true-%}
+{%- if settings.qs_show_vars_list -%}
+  {%- if product.options.size == 1 or product.options.size > 1 and settings.qs_show_first_opt == false -%}
+    {%- if product.options_with_values[0].values.size <= 5 -%}
+      {%-assign has_variants = false-%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- capture onclick -%}
+  {%- if has_variants and position_btn == ''-%}
+    kt__quick-shop
+  {%- elsif action == 'quickshop' -%}
+    kt__quick-shop
+  {%- else -%}
+    addItemAjax
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if preOrder -%}
+  <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}}" data-view="{{ product.url }}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap addItemAjax-text">{{'products.product.pre_order'|t}}</span></div>
+{%- elsif sold_out == false -%}
+  <div data-submit class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}}" data-view="{{ product.url }}" data-vrid="{{product.selected_or_first_available_variant.id}}" data-pid="{{product.id}}"><span class="text-nowrap addItemAjax-text">{{label}}</span></div>
+{%- else -%}
+  <div class="{{style_btn}} btn-onclick add_to_cart_button {{onclick}} sold_out disabled"><span class="text-nowrap">{{'products.product.sold_out'|t}}</span></div>
+{%- endif -%}

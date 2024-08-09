@@ -1,0 +1,556 @@
+{%- capture grich -%}
+{%- assign position = 1 %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": "{{'general.breadcrumb.homepage'|t}}",
+      "item": "{{shop.url}}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-if template contains 'product'-%}
+    {%-if product.collections.size > 0-%},{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ collection.title | default: product.collections.first.title |json}},
+      "item": "{{shop.url}}{{ collection.url | default: product.collections.first.url }}"
+      {%- assign position = position | plus: 1 -%}
+    }{%-endif-%},{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ product.title | json }},
+      "item": "{{shop.url}}{{ product.url | within: collection }}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-elsif template contains 'collections'-%},{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": "Collections",
+      "item": "{{shop.url}}/collections"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-elsif template contains 'collection' and collection.handle-%},{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ collection.title | json}},
+      "item": "{{shop.url}}{{ collection.url }}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-if current_tags-%}
+    {%-for tag in current_tags-%},{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ tag | json }},
+      "item": "{{shop.url}}{{ collection.url }}/{{tag|handle}}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-endfor-%}
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": "{{ page_title }}{%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}{%- endif -%}",
+      "item": "{{canonical_url}}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-endif-%}
+    {%-elsif template == 'article'-%}
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ blog.title | json}},
+      "item": "{{shop.url}}{{ blog.url }}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ article.title | json}},
+      "item": "{{shop.url}}{{ article.url }}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-elsif template == 'blog'-%}
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{ blog.title | json}},
+      "item": "{{shop.url}}{{ blog.url }}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-elsif template contains 'addresses' or template contains 'order'-%}
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": "{{'customer.account.title'|t}}",
+      "item": "{{shop.url}}/account"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-else-%}
+    {%-unless template contains 'index'-%}
+    ,{
+      "@type": "ListItem",
+      "position": {{position}},
+      "name": {{page.title | json}},
+      "item": "{{shop.url}}{{page.url}}"
+      {%- assign position = position | plus: 1 -%}
+    }
+    {%-endunless-%}
+    {%-endif-%}
+    ]
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+{%- assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" -%}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {{ potential_action_target | json }},
+      "query-input": "required name=search_term_string"
+    },
+    "url": {{ shop.url | append: page.url | json }}
+  }
+</script>
+{%- endif -%}
+
+{%-if settings.business_use_jsonld -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": {{ settings.business_type_jsonld | json }},
+    "name": {{ shop.name | json }},
+    "url": "https://{{ shop.domain }}",
+    "description": {{ shop.description | json }},{% unless shop.phone == blank %}
+    "telephone": {{ settings.business_phone_jsonld | default: shop.phone | json }},{% endunless %}
+    "logo": "https:{%-if settings.business_logo_jsonld != blank -%}{{ settings.business_logo_jsonld | img_url: 'master' }}{%-elsif settings.logo-%}{{ settings.logo | img_url: 'master' }}{%-elsif settings.body_logo_svg != blank-%}{{ settings.body_logo_svg | file_url }}{%-endif-%}",
+    "image": "https:{%-if settings.business_image_jsonld != blank -%}{{ settings.business_image_jsonld | img_url: 'master' }}{%-elsif settings.business_logo_jsonld != blank-%}{{ settings.business_logo_jsonld | img_url: 'master' }}{%-else-%}{{ settings.logo | img_url: 'master' }}{%-endif-%}",
+    {%- unless settings.business_openinghours_jsonld == blank %}
+    "openingHours": {{ settings.business_openinghours_jsonld | json }},
+    {% endunless -%}
+    {%- unless settings.business_sameas_jsonld == blank %}
+    "sameAs": {{ settings.business_sameas_jsonld | default: '' | split: ',' | json }},
+    {% endunless -%}
+    {%- unless settings.business_hasmap_jsonld == blank %}
+    "hasMap": "{% if settings.business_hasmap_jsonld != blank %}{{ settings.business_hasmap_jsonld }}{% else %}https://www.google.com/maps/@{{ shop.latitude }},{{ shop.longitude }},16z{% endif %}",
+    {% endunless -%}
+    "priceRange": "{{ settings.business_pricerange_jsonld | default: '$$$'}}",
+    {%- unless shop.latitude == blank and shop.longitude == blank %}
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": {{ shop.latitude | json }},
+      "longitude": {{ shop.longitude | json }}
+    },
+    {% endunless -%}
+    {%- if settings.business_brand_jsonld != blank %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ settings.business_brand_jsonld | json }}
+    },
+    {% endif -%}
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": {{ settings.business_saddress_jsonld | default: shop.address.street | json }},
+      "addressLocality": {{ settings.business_caddress_jsonld | default: shop.address.city | json }},
+      "addressRegion": {{ settings.business_paddress_jsonld | default: shop.address.province | json }},
+      "postalCode": {{ settings.business_zaddress_jsonld | default: shop.address.zip | json }},
+      "addressCountry": {{ settings.business_coaddress_jsonld | default: shop.address.country | json }}
+    }
+  }
+</script>
+{%-endif-%}
+
+{%-if request.page_type == 'product' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@id": {{ canonical_url | append: '#product' | json }},
+    "@type": "Product",
+    {%-if product.vendor != blank %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ product.vendor | json }}
+    },
+    {% endif-%}
+    {%-if product.selected_or_first_available_variant.sku != blank %}
+    "sku": {{ product.selected_or_first_available_variant.sku | json }},
+    {% endif-%}
+    {%-if product.selected_or_first_available_variant.barcode != blank or product.selected_or_first_available_variant.sku != blank %}
+    "mpn": {{product.selected_or_first_available_variant.barcode | default: product.selected_or_first_available_variant.sku | json}},
+    {% endif-%}
+    "description": {{ product.description | strip_html | split: '[/short description]' | last | json }},
+    "url": {{ canonical_url | json }},
+    "name": {{ product.title | json }},
+    {%- if product.featured_image %}
+    "image": "https:{{ product.featured_image | product_img_url: 'grande' }}",
+    {% endif -%}
+    "itemCondition": "http://schema.org/NewCondition",
+    "offers": [
+    {% for variant in product.variants %}{
+      "@type": "Offer",
+      "price": "{{ variant.price | times: 1.0 | divided_by: 100.0 | round: 2 }}",
+      "priceCurrency": "{{ shop.currency }}",
+      "priceValidUntil": "{{product.published_at}}",
+      "itemCondition": "http://schema.org/NewCondition",
+      "url": {{ 'https://' | append: shop.domain | append: variant.url | json }},
+      "image": "https:{{ variant.image | default: product.featured_image | product_img_url: 'grande' }}",
+      "sku": {{ variant.sku | json }},
+      "mpn": "{{variant.sku | default: variant.barcode}}",
+      "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}"
+      {%- if variant.barcode.size == 12 %},
+      "gtin12": "{{variant.barcode}}"
+      {% endif -%}{%- if variant.barcode.size == 13 %},
+      "gtin13": "{{variant.barcode}}"
+      {% endif %}    
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}]
+  {%-assign ssw_rv_key = product.id | append: '_rate_data' -%}
+  {%- if product.metafields.yotpo.reviews_average != null -%}
+    {%- assign kt_rv_val = product.metafields.yotpo.reviews_average-%}
+    {%- assign kt_rv_count = product.metafields.yotpo.reviews_count -%}
+  {%- elsif product.metafields.orankl.rating != null -%}
+    {%- assign kt_rv_val = product.metafields.orankl.rating -%}
+    {%- assign kt_rv_count = product.metafields.orankl.review_count -%}
+  {%- elsif product.metafields.loox.avg_rating != null -%}
+    {%- assign kt_rv_val = product.metafields.loox.avg_rating -%}
+    {%- assign kt_rv_count = product.metafields.loox.num_reviews -%}
+  {%- elsif product.metafields.ssw[ssw_rv_key] != null -%}
+    {%- assign kt_ssw_data = product.metafields.ssw[ssw_rv_key] | split: '_' -%}
+    {%- assign kt_rv_val = kt_ssw_data[1] -%}
+    {%- assign kt_rv_count = kt_ssw_data[0] -%}
+  {%- elsif product.metafields.ssw.avg_rate != null -%}
+    {%- assign kt_rv_val = product.metafields.ssw.avg_rate -%}
+    {%- assign kt_rv_count = product.metafields.ssw.count_rate -%}
+  {%- elsif product.metafields.vnreviews.ratingValue != null -%}
+    {%- assign kt_rv_val = product.metafields.vnreviews.ratingValue -%}
+    {%- assign kt_rv_count = product.metafields.vnreviews.reviewCount -%}
+  {%- elsif product.metafields.stamped.reviews_average != null -%}
+    {%- assign kt_rv_val = product.metafields.stamped.reviews_average -%}
+    {%- assign kt_rv_count = product.metafields.stamped.reviews_count -%}
+  {%- elsif product.metafields.reevio.reviews_average != null -%}
+    {%- assign kt_rv_val = product.metafields.reevio.reviews_average -%}
+    {%- assign kt_rv_count = product.metafields.reevio.reviews_count -%}
+  {%- elsif product.metafields.ryviu.reviews != null -%}
+    {%- assign kt_rv_count = product.metafields.ryviu.reviews | split: 'reviewCount" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.ryviu.reviews | split: 'ratingValue" content="' | last | split: '"' |first | plus: 0  -%}
+  {%- elsif product.metafields.spr.reviews != null -%}
+    {%- assign kt_rv_count = product.metafields.spr.reviews | split: 'reviewCount": "' | last | split: '"' |first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.spr.reviews | split: '"ratingValue": "' | last | split: '"' |first | plus: 0.0  -%}
+  {%- elsif product.metafields.reviewapp.reviews != null -%}
+    {%- assign kt_rv_count = product.metafields.reviewapp.reviews | split: '"votes" itemprop="ratingCount">' | last | split: "</span>" | first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.reviewapp.reviews | split: '"average" itemprop="ratingValue">' | last | split: '</span>' |first | plus: 0 -%}
+  {%- elsif rate != null -%}
+    {%- assign kt_rv_val = rate %}
+    {%- assign kt_rv_count = votes %}
+  {%- elsif product.metafields.kudobuzz.review_rating != null -%}
+    {%- assign kt_rv_val = product.metafields.kudobuzz.review_rating -%}
+    {%- assign kt_rv_count = product.metafields.kudobuzz.review_count -%}
+  {%- elsif product.metafields.opinew.reviews_rich_snippet != null -%}
+    {%- assign kt_rv_count = product.metafields.opinew.reviews_rich_snippet | split: 'ratingCount" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.opinew.reviews_rich_snippet | split: 'ratingValue" content="' | last | split: '"' |first | plus: 0  -%}
+  {%- else -%}
+    {%- assign kt_rv_val = "" -%}
+    {%- assign kt_rv_count = "" -%}
+  {%- endif -%}
+  {%- if kt_rv_count != blank and kt_rv_count != "0" and kt_rv_count != 0 and kt_rv_val != blank and kt_rv_val != "0" and kt_rv_val != 0 %}
+  {%- if product.metafields.yotpo.reviews_count and product.metafields.yotpo.reviews_count != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.yotpo.reviews_count }}",
+      "bestRating": "{{ product.metafields.yotpo.reviews_average }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "YOTPO",
+    "ratingValue": {{ product.metafields.yotpo.reviews_average }},
+    "ratingCount": {{ product.metafields.yotpo.reviews_count }}
+  }{%- elsif product.metafields.orankl.review_count and product.metafields.orankl.review_count != "0" and product.metafields.orankl.review_count != 0 -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.orankl.review_count }}",
+      "bestRating": "{{ product.metafields.orankl.rating }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Orankl",
+    "ratingValue": {{ product.metafields.orankl.rating }},
+    "ratingCount": {{ product.metafields.orankl.review_count }}
+  }{%- elsif product.metafields.loox.num_reviews and product.metafields.loox.num_reviews != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.loox.num_reviews }}",
+      "bestRating": "{{ product.metafields.loox.avg_rating }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Loox",
+    "ratingValue": {{ product.metafields.loox.avg_rating }},
+    "ratingCount": {{ product.metafields.loox.num_reviews }}
+  }{%- elsif product.metafields.ssw[jsonld_ssw_key] != blank -%}
+    {%- assign kt_ssw_data = product.metafields.ssw[jsonld_ssw_key] | split: '_' -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ kt_ssw_data[0] }}",
+      "bestRating": "{{ kt_ssw_data[1] }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "SocialShopWave",
+    "ratingValue": {{ kt_ssw_data[1] }},
+    "ratingCount": {{ kt_ssw_data[0] }}
+  }{%- elsif product.metafields.ssw.count_rate and product.metafields.ssw.count_rate != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.ssw.count_rate }}",
+      "bestRating": "{{ product.metafields.ssw.avg_rate }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "SocialShopWave",
+    "ratingValue": {{ product.metafields.ssw.avg_rate }},
+    "ratingCount": {{ product.metafields.ssw.count_rate }}
+  }{%- elsif product.metafields.vnreviews.reviewCount and product.metafields.vnreviews.reviewCount != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.vnreviews.reviewCount }}",
+      "bestRating": "{{ product.metafields.vnreviews.ratingValue }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Trust Reviews",
+    "ratingValue": {{ product.metafields.vnreviews.ratingValue }},
+    "ratingCount": {{ product.metafields.vnreviews.reviewCount }}
+  }{%- elsif product.metafields.stamped.reviews_count and product.metafields.stamped.reviews_count != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.stamped.reviews_count }}",
+      "bestRating": "{{ product.metafields.stamped.reviews_average }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Stamped.io",
+    "ratingValue": {{ product.metafields.stamped.reviews_average }},
+    "ratingCount": {{ product.metafields.stamped.reviews_count }}
+  }{%- elsif product.metafields.reevio.reviews_count and product.metafields.reevio.reviews_count != "0" -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.reevio.reviews_count }}",
+      "bestRating": "{{ product.metafields.reevio.reviews_average }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Rivio",
+    "ratingValue": {{ product.metafields.reevio.reviews_average }},
+    "ratingCount": {{ product.metafields.reevio.reviews_count }}
+  }{%- elsif product.metafields.ryviu.reviews and product.metafields.ryviu.reviews != blank -%}
+    {%- assign kt_rv_count = product.metafields.ryviu.reviews | split: 'reviewCount" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.ryviu.reviews | split: 'ratingValue" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- if kt_rv_count > 0 and kt_rv_val > 0 -%},
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ kt_rv_count }}",
+        "bestRating": "{{ kt_rv_val }}"
+      },
+      "author": {
+        "@type": "Person",
+        "name": ""
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "description": "Ryviu",
+      "ratingValue": {{ kt_rv_val }},
+      "ratingCount": {{ kt_rv_count }}
+    }{%- endif -%}
+  {%- elsif product.metafields.spr.reviews and product.metafields.spr.reviews != blank -%}
+    {%- if kt_rv_count > 0 and kt_rv_val > 0 -%},
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ kt_rv_count }}",
+        "bestRating": "{{ kt_rv_val }}"
+      },
+      "author": {
+        "@type": "Person",
+        "name": ""
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "description": "Shopify Product Reviews",
+      "ratingValue": {{ kt_rv_val }},
+      "ratingCount": {{ kt_rv_count }}
+    }{%- endif -%}
+  {%- elsif product.metafields.reviewapp.reviews and product.metafields.reviewapp.reviews != blank -%}
+    {%- assign kt_rv_count = product.metafields.reviewapp.reviews | split: '"votes" itemprop="ratingCount">' | last | split: "</span>" | first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.reviewapp.reviews | split: '"average" itemprop="ratingValue">' | last | split: '</span>' |first | plus: 0 -%}
+    {%- if kt_rv_count > 0 and kt_rv_val > 0 -%},
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ kt_rv_count }}",
+        "bestRating": "{{ kt_rv_val }}"
+      },
+      "author": {
+        "@type": "Person",
+        "name": ""
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "description": "Super Reviews",
+      "ratingValue": {{ kt_rv_val }},
+      "ratingCount": {{ kt_rv_count }}
+    }{%- endif -%}
+  {%- elsif rate != blank and votes != blank -%},
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ votes }}",
+        "bestRating": "{{ rate }}"
+      },
+      "author": {
+        "@type": "Person",
+        "name": ""
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "description": "Rating Widget",
+      "ratingValue": {{ rate }},
+      "ratingCount": {{ votes }}
+  }{%- elsif product.metafields.kudobuzz.review_count and product.metafields.kudobuzz.review_count != "0" and product.metafields.kudobuzz.review_count != 0 -%},
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "{{ product.metafields.kudobuzz.review_count }}",
+      "bestRating": "{{ product.metafields.kudobuzz.review_rating }}"
+    },
+    "author": {
+      "@type": "Person",
+      "name": ""
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "description": "Kudobuzz",
+    "ratingValue": {{ product.metafields.kudobuzz.review_rating }},
+    "ratingCount": {{ product.metafields.kudobuzz.review_count }}
+  }{%- elsif product.metafields.opinew.reviews_rich_snippet and product.metafields.opinew.reviews_rich_snippet != blank -%}
+    {%- assign kt_rv_count = product.metafields.opinew.reviews_rich_snippet | split: 'ratingCount" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- assign kt_rv_val = product.metafields.opinew.reviews_rich_snippet | split: 'ratingValue" content="' | last | split: '"' |first | plus: 0 -%}
+    {%- if kt_rv_count > 0 and kt_rv_val > 0 -%},
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{ kt_rv_count }}",
+        "bestRating": "{{ kt_rv_val }}"
+      },
+      "author": {
+        "@type": "Person",
+        "name": ""
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "description": "Opinew",
+      "ratingValue": {{ kt_rv_val }},
+      "ratingCount": {{ kt_rv_count }}
+    }{%- endif -%}{%- endif -%}{%- endif -%}
+  }
+</script>
+{%-endif-%}
+
+{%-if request.page_type == 'article' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org", 
+    "@type": "BlogPosting",
+    "headline": "{{article.title}}",
+    "image": "{{article.image.src | img_url: 'master'}}",
+    "editor": "{{article.author}}", 
+    "genre": "search engine optimization", 
+    "keywords": "{{article.tags|join: ' '}}",
+    "url": "{{shop.url}}{{article.url}}",
+    "datePublished": "{{article.published_at | date: "%Y-%m-%d" }}",
+    "dateCreated": "{{ article.created_at | date: "%Y-%m-%d" }}",
+    "dateModified": "{{ article.updated_at | date: "%Y-%m-%d" }}",
+    "description": "{{article.excerpt_or_content | strip_html | truncatewords: 20}}",
+    "articleBody": "{{article.content | strip_html | strip_newlines}}",
+    "author": {
+      "@type": "{%if article.user.account_owner%}Admin{%else%}Staff{%endif%}",
+      "name": "{{article.author}}"
+    }
+  }
+</script>
+{%-endif-%}
+{%- endcapture -%}
+{{- grich | strip_newlines | remove: '  ' -}}

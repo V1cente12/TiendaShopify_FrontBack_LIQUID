@@ -1,0 +1,399 @@
+<!-- md-collection-brand.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section" data-clone-section="md-collection-brand.liquid">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      {% if section.settings.brand_style == 'default' %}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container brands-slide style-{{section.settings.brand_style}}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks-%}
+              {%- if block.settings.image -%}
+                <div class="swiper-slide image__brand">
+                  <a href="{{ block.settings.brand_call_to_action }}" title="{{block.settings.image.alt}}" aria-label="{{block.settings.image.alt|default: shop.name}}">
+                    {%- assign image_item = block.settings.image -%}
+                    {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+                    <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+                    </div>
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+          <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.use_navigation -%}
+        <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+          <div class="content-buttons position-relative">
+            <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+            <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      {% elsif section.settings.brand_style == 'type01' %}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container brands-slide style-{{section.settings.brand_style}}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks-%}
+              {%- if block.settings.image -%}
+                <div class="swiper-slide image__brand">
+                  <a href="{{ block.settings.brand_call_to_action }}" title="{{block.settings.image.alt}}" aria-label="{{block.settings.image.alt|default: shop.name}}">
+                    {%- assign image_item = block.settings.image -%}
+                    {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+                    <div class="img__banner position-relative lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto">
+                    </div>
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+            <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+            {%- endif -%}
+          </div>
+          {%- if section.settings.use_navigation -%}
+          <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+            <div class="content-buttons position-relative">
+              <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+              <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      {% endif %}        
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endunless -%}
+{% schema %}
+  {
+    "name": "Brand logo",
+    "class": "md_brand",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Brand",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "select",
+        "id": "brand_style",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "type01",
+            "label": "Type 1"
+          },
+          {
+            "value": "type02",
+            "label": "Type 2"
+          }
+        ],
+        "label": "== Type display",
+        "default": "default"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "__Auto-rotate slides",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "__Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          },
+          {
+            "value": "nav-top-right",
+            "label": "Top right"
+          },
+          {
+            "value": "nav-top-left",
+            "label": "Top left"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "inside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "== Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 0\n  },\n  \"480\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 0\n  },\n  \"768\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 0\n  },\n  \"992\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 0\n  },\n  \"1200\": {\n    \"slidesPerView\": 7,\n    \"spaceBetween\": 0\n  }\n}"
+      }
+    ],
+  	"blocks": [
+      {
+        "type": "title",
+        "name": "Item title",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title"
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "unit": "rem",
+            "label": "Margin bottom of title",
+            "default": 3
+          },
+          {
+            "type": "checkbox",
+            "id": "use_border",
+            "label": "Use border bottom?",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "id": "brand_call_to_action",
+            "type": "url",
+            "label": "Brand link"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

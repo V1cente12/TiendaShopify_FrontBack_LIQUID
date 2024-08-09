@@ -1,0 +1,637 @@
+{% assign block = section.blocks[position_sub] %}
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+{%- assign types_child = 'linklist,product,collections,banner,html' | split: ',' -%}
+{%-case block.type -%} 
+  {%-when 'standard'-%}
+    {%-assign menu_handle = block.settings.menu_links-%}
+    {%-for link in linklists[menu_handle].links-%}
+    <li class="mn-i{%if link.links.size > 0%} drop_to_right mn-has-child{%endif%}">
+      <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+      {%-if link.links.size > 0-%}
+      <ul class="mn-lv3s list-unstyled sub-mn">
+        {%-for sub_link in link.links-%}
+        <li class="mn-i{%if sub_link.links.size > 0%} drop_to_right mn-has-child{%endif%}">
+          <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+          {%-if sub_link.links.size > 0-%}
+            <ul class="mn-lv4s sub-mn">
+              {%-for sub_sub_link in sub_link.links-%}
+              <li class="mn-i">
+                <a href="{{sub_sub_link.url}}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+              </li>
+              {%- endfor-%}
+            </ul>
+          {%- endif-%}
+        </li>
+        {%- endfor-%}
+      </ul>
+      {%- endif-%}
+    </li>
+    {%- endfor-%}
+  {%-when 'standard_collumn'-%}
+    {%-assign menu_handle = block.settings.menu_links-%}
+    {%- case linklists[menu_handle].links.size -%}
+      {%- when 1 -%}
+        {%-assign colitem = ''-%}
+      {%- when 2 -%}
+        {%-assign colitem = ' col-sm-6'-%}
+      {%- when 3 -%}
+        {%-assign colitem = ' col-sm-4'-%}
+      {%- when 4 -%}
+        {%-assign colitem = ' col-sm-3'-%}
+      {%- when 5 -%}
+        {%-assign colitem = ' col-sm-20'-%}
+      {%- else -%}
+        {%-assign colitem = ' col-sm-3'-%}
+    {%- endcase -%}
+    {%-for link in linklists[menu_handle].links-%}
+    {%- if link.handle == 'breakcol'-%}{%- continue -%}{%- endif -%}
+    <li class="mn-i{{colitem}}{%if child_links.size > 0%} mn-has-child{%endif%} title_lv1">
+      <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+      <ul class="mega-linklist mn-lv3s list-unstyled">
+        {%-if link.links.size > 0-%}
+        {%- for sub_link in link.links -%}
+        <li class="mn-i site-nav__child-link">
+          <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+        </li>
+        {%-if sub_link.links.size > 0-%}
+        {%- for sub_sub_link in sub_link.links -%}
+        <li class="mn-i site-nav__child-link">
+          <a href="{{sub_sub_link.url}}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+        </li>
+        {%-endfor-%}
+        {%-endif-%}
+        {%-endfor-%}
+        {%-endif-%}
+      </ul>
+    </li>
+    {%-endfor-%}
+  {%-when 'multi_collumn'-%}
+    {%- assign menu_handle = block.settings.menu_links-%}
+    {%- assign link_handle = linklists[menu_handle].links | map: 'handle' | join: ' '-%}
+    {%-if link_handle contains 'breakcol'-%}
+    {%- assign count = 0-%}
+    {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+    {%- for link in linklists[menu_handle].links-%}
+    {%- if count == 0-%}
+    <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per >= 4%} col-lg-3{%endif%}">
+      <ul class="mega-linklist list-unstyled">
+        {%- endif -%}
+        {%- unless link.handle == 'breakcol'-%}
+        <li class="mn-i{% if link.title contains '[title]' or link.handle == 'breakline' %} title_lv1{% endif %}"{%if link.handle == 'breakline'%} style="opacity: 0; pointer-events: none;"{%endif%}>
+          <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+        </li>
+        {%- if link.links.size > 0-%}
+          {%-for sub_link in link.links-%}
+            <li class="mn-i{% if sub_link.title contains '[title]' or sub_link.handle == 'breakline' %} title_lv1{% endif %}"{%if sub_link.handle == 'breakline'%} style="opacity: 0; pointer-events: none;"{%endif%}>
+              <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+            </li>
+          {%-endfor-%}
+        {%- endif-%}
+        {%-endunless-%}
+        {%-if forloop.last or link.handle == 'breakcol'-%}
+      </ul>
+    </div>
+    {%- assign count = 0-%}
+    {%- else-%}
+    {%- assign count = count | plus: 1-%}
+    {%- endif-%}
+    {%- endfor-%}
+    {%-else-%}
+    
+    {%- assign count = 0-%}
+    {%- if block.settings.menu_links_per_col != '1'-%}
+    {%- assign size = linklists[menu_handle].links.size  | plus: 0-%}
+    {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+    {%- assign size_per = size | divided_by: per | ceil-%}
+    {%- assign breakline = size_per | minus: 1-%}
+    {%- endif-%}
+    {%- for link in linklists[menu_handle].links-%}
+    
+    {%-if count == 0 -%}
+    <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per >= 4%} col-lg-3{%endif%}">
+      <ul class="mega-linklist list-unstyled">
+        {%- endif-%}
+        <li class="mn-i{% if link.title contains '[title]' %} title_lv1{% endif %}">
+          <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+        </li>
+        {%- if link.links > 0-%}
+        {%-for sub_link in link.links-%}
+        <li class="mn-i">
+          <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+        </li>
+        {%-endfor-%}
+        {%- endif-%}
+        {%-if forloop.last or count == breakline-%}
+      </ul>
+    </div>
+    {%-assign count = 0-%}
+    {%-else-%}
+    {%-assign count = count | plus: 1-%}
+    {%-endif-%}
+    {%- endfor-%}
+    {%- endif-%}
+  {%-when 'per_column'-%}
+    {%- assign menu_handle = block.settings.menu_links-%}
+    {%- assign count = 0-%}
+    {%- if block.settings.menu_links_per_col != '1'-%}
+    {%- assign size = linklists[menu_handle].links.size  | plus: 0.0-%}
+    {%- assign per = block.settings.menu_links_per_col | plus: 0.0-%}
+    {%- assign size_per = size | divided_by: per | ceil-%}
+    {%- assign breakline = size_per | minus: 1-%}
+    {%- endif-%}
+    {%- for link in linklists[menu_handle].links-%}
+    {%-if count == 0 -%}
+    <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per >= 4%} col-lg-3{%endif%}">
+      <ul class="mn-lv2s list-unstyled">
+        {%- endif-%}
+        <li class="mn-i{% if link.title contains '[title]' %} title_lv1{% endif %}">
+          <a href="{{link.url}}">{%-render 'kt_menu-title', link: link -%}</a>
+        </li>
+        {%-if forloop.last or count == breakline-%}
+      </ul>
+    </div>
+    {%-assign count = 0-%}
+    {%-else-%}
+    {%-assign count = count | plus: 1-%}
+    {%-endif-%}
+    {%-endfor-%}
+  {%-when 'promo'-%}
+    {%- assign menu_handle = block.settings.menu_links-%}
+    {%- assign promo_width = block.settings.promo_width-%}
+    {%- assign linklists_width = block.settings.sub_width-%}
+    {%-if linklists[menu_handle].links.size > 0-%}
+    <div class="col-lg-{{linklists_width}}">
+      <div class="row no-gutters">
+        {%- assign link_handle = linklists[menu_handle].links | map: 'handle' | join: ' '-%}
+        {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+        {%-if link_handle contains 'breakcol'-%}
+          {%- assign count = 0-%}
+          {%- for link in linklists[menu_handle].links-%}
+          {%-if count == 0-%}
+          <div class="{%if per != 1%}col-lg-{%if per == 2%}6{%elsif per == 3%}4{%elsif per >= 4%}3{%endif%}{%endif%}">
+            <ul class="mega-linklist list-unstyled">
+              {%-endif-%}
+              {%- unless link.handle == 'breakcol'-%}
+              <li class="mn-i{%if link.title contains '[title]'%} title_lv1{%endif%}">
+                <a href="{{link.url}}">{%-render 'kt_menu-title', link: link -%}</a>
+              </li>
+              {%- if link.links.size > 0 -%}
+                {%- for sub_link in link.links -%}
+                <li class="mn-i">
+                  <a href="{{ sub_link.url }}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+                </li>
+                  {%if sub_link.links.size > 0%}
+                    {% for sub_sub_link in sub_link.links %}
+                    <li class="mn-i">
+                      <a href="{{ sub_sub_link.url }}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+                    </li>
+                    {%- endfor -%}
+                  {%endif%}
+                {%- endfor -%}
+              {%- endif -%}
+              {%- endunless -%}
+              {%- if forloop.last or link.handle == 'breakcol'-%}
+            </ul>
+          </div>
+          {%- assign count = 0-%}
+          {%- else-%}
+          {%- assign count = count | plus: 1-%}
+          {%- endif-%}
+          {%- endfor-%}
+        {%-elsif per >= 1 -%}
+          {%- assign count = 0-%}
+          {%- for link in linklists[menu_handle].links-%}
+          {%- if block.settings.menu_links_per_col != '1'-%}
+          {%- assign size = linklists[menu_handle].links.size  | plus: 0.0-%}
+          {%- assign per = block.settings.menu_links_per_col | plus: 0.0-%}
+          {%- assign size_per = size | divided_by: per | ceil-%}
+          {%- assign breakline = size_per-%}
+          {%- endif-%}
+          {%-if count == 0 -%}
+          <div class="{%if per != 1%}col-lg-{%if per == 2%}6{%elsif per == 3%}4{%elsif per >= 4%}3{%endif%}{%endif%}">
+            <ul class="mega-linklist list-unstyled">
+              {%- endif-%}
+              <li class="mn-i{%if link.title contains '[title]'%} title_lv1{%endif%}">
+                <a href="{{link.url}}">{%-render 'kt_menu-title', link: link -%}</a>
+              </li>
+                {%- if link.links.size > 0 -%}
+                  {%- for sub_link in link.links -%}
+                  <li class="mn-i">
+                    <a href="{{ sub_link.url }}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+                  </li>
+                    {%if sub_link.links.size > 0%}
+                      {% for sub_sub_link in sub_link.links %}
+                      <li class="mn-i">
+                        <a href="{{ sub_sub_link.url }}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+                      </li>                    
+                      {%- endfor -%}
+                    {%endif%}
+                  {%- endfor -%}
+                {%- endif -%}
+              {%-if forloop.last or count == breakline-%}
+            </ul>
+          </div>
+          {%-assign count = 0-%}
+          {%-else-%}
+          {%-assign count = count | plus: 1-%}
+          {%-endif-%}
+          {%-endfor-%}
+        {%-endif-%}
+      </div>
+    </div>
+    {%- endif-%}
+    <div class="col-lg-{{promo_width}} --banner"{%if block.settings.padding_0%} style="--grid-gutter:0"{%endif%}>
+      {%-if block.settings.use_promo_html == false-%}
+        {%- if block.settings.promo_link != blank-%}
+          <a class="d-block" href="{{block.settings.promo_link}}">
+            <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.promo_image| img_url: 'master'}}" alt="{{block.settings.promo_image.alt | default: block.settings.promo_image}}">
+          </a>
+        {%- endif-%}
+      {%- else-%}
+        {%- if block.settings.page_promo_html != blank and pages[block.settings.page_promo_html].title != empty-%}
+          {{ pages[block.settings.page_promo_html].content | html }}
+        {%-else-%}
+          {{ block.settings.textarea_promo_html | html }}
+        {%- endif-%}
+      {%-endif-%}
+    </div>
+  {%-when 'coll_image'-%}
+    {%- assign menu_handle = block.settings.menu_links-%}
+    {%- assign link_handle = linklists[menu_handle].links | map: 'handle' | join: ' '-%}
+    {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+    {%-if link_handle contains 'breakcol'-%}
+      {%- assign count = 0-%}
+      {%- for link in linklists[menu_handle].links-%}
+      {%-if count == 0-%}
+      {%- case per -%}
+        {%- when 1 -%}
+          {%- assign per_coll = '' -%}
+        {%- when 2 -%}
+          {%- assign per_coll = ' col-lg-6' -%}
+        {%- when 3 -%}
+          {%- assign per_coll = ' col-lg-4' -%}
+        {%- when 4 -%}
+          {%- assign per_coll = ' col-lg-3' -%}
+        {%- when 5 -%}
+          {%- assign per_coll = ' col-lg-2-10' -%}
+        {%- when 6 -%}
+          {%- assign per_coll = ' col-lg-2' -%}
+      {%- endcase -%}
+      <div class="col-12{{per_coll}}">
+        <ul class="mega-linklist list-unstyled">
+          {%- endif -%}
+          {%- unless link.handle == 'breakcol'-%}
+          <li class="mn-i{%if link.title contains '[title]'%} title_lv1{%endif%}">
+            {%- if link.type == 'collection_link' and link.title contains '[title]' -%}
+            {%- if link.object.image -%}
+            {%- assign image_item = link.object.image -%}
+            {%- elsif link.object.products.first and link.object.products.first.images != empty -%}
+            {%- assign image_item = link.object.products.first.featured_image -%}
+            {%- endif -%}
+            {%- assign width = image_item.width | default: 550.00 -%}{%-assign height = image_item.height | default: 550.00 | plus: 0.00-%}
+            <a href="{{ collection.url }}" class="img__banner mb-1i lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}% !important;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name}}"{% if image_item == blank %} title="550x550 px"{% endif %}></a>                            
+            {%- endif -%}
+            <a href="{{link.url}}">{%-render 'kt_menu-title', link: link -%}</a>
+          </li>
+          {%- if link.links.size > 0 -%}
+          {%- for sub_link in link.links -%}
+          <li class="mn-i{%if link.active%}active{%endif%}">
+            <a href="{{ sub_link.url }}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+          </li>
+          {%if sub_link.links.size > 0%}
+          {% for sub_sub_link in sub_link.links %}
+          <li class="mn-i">
+            <a href="{{ sub_sub_link.url }}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+          </li>                    
+          {%- endfor -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {%- endif -%}
+          {%- endunless -%}
+          {%- if forloop.last or link.handle == 'breakcol'-%}
+        </ul>
+      </div>
+      {%- assign count = 0-%}
+      {%- else-%}
+      {%- assign count = count | plus: 1-%}
+      {%- endif-%}
+      {%- endfor-%}
+    {%-elsif per >= 1 -%}
+      {%- assign count = 0-%}
+      {%- for link in linklists[menu_handle].links-%}
+      {%- if block.settings.menu_links_per_col != '1'-%}
+      {%- assign size = linklists[menu_handle].links.size  | plus: 0-%}
+      {%- assign size_per = size | divided_by: per | ceil-%}
+      {%- assign breakline = size_per-%}
+      {%- endif-%}
+      {%- case per -%}
+        {%- when 1 -%}
+          {%- assign per_coll = '' -%}
+        {%- when 2 -%}
+          {%- assign per_coll = ' col-lg-6' -%}
+        {%- when 3 -%}
+          {%- assign per_coll = ' col-lg-4' -%}
+        {%- when 4 -%}
+          {%- assign per_coll = ' col-lg-3' -%}
+        {%- when 5 -%}
+          {%- assign per_coll = ' col-lg-2-10' -%}
+        {%- when 6 -%}
+          {%- assign per_coll = ' col-lg-2' -%}
+      {%- endcase -%}
+      {%-if count == 0 -%}
+      <div class="col-12{{per_coll}}">
+        <ul class="mega-linklist list-unstyled">
+          {%- endif-%}
+          <li class="mn-i{%if link.title contains '[title]'%} title_lv1{%endif%}">
+            {%- if link.type == 'collection_link' and link.title contains '[title]' -%}
+            {%- if link.object.image -%}
+            {%- assign image_item = link.object.image -%}
+            {%- elsif link.object.products.first and link.object.products.first.images != empty -%}
+            {%- assign image_item = link.object.products.first.featured_image -%}
+            {%- endif -%}
+            {%- assign width = image_item.width | default: 550.00 -%}{%-assign height = image_item.height | default: 550.00 | plus: 0.00-%}
+            <a href="{{ collection.url }}" class="img__banner mb-1i lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name}}"{% if image_item == blank %} title="550x550 px"{% endif %}></a>                            
+            {%- endif -%}
+            <a href="{{link.url}}">{%-render 'kt_menu-title', link: link -%}</a>
+          </li>
+          {%- if link.links.size > 0 -%}
+          {%- for sub_link in link.links -%}
+          <li class="mn-i{%if link.active%}active{%endif%}">
+            <a href="{{ sub_link.url }}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+          </li>
+          {%if sub_link.links.size > 0%}
+          {% for sub_sub_link in sub_link.links %}
+          <li class="mn-i">
+            <a href="{{ sub_sub_link.url }}">{%-render 'kt_menu-title', link: sub_sub_link -%}</a>
+          </li>                    
+          {%- endfor -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {%- endif -%}
+          {%-if forloop.last or count == breakline-%}
+        </ul>
+      </div>
+      {%- assign count = 0 -%}
+      {%- else -%}
+      {%- assign count = count | plus: 1 -%}
+      {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%-when 'parent'-%}
+    {%- assign offset = position_sub | plus: 1 -%}
+    {%- for block in section.blocks offset: offset -%}
+    {%-unless types_child contains block.type -%}{%-break-%}{%-endunless-%}
+    {%-case block.type-%}
+      {%-when 'linklist'-%}
+        {%- assign special_list =  block.settings.special_items | split: ','-%}
+        <div class="col-lg-{{block.settings.sub_width}}{%if block.settings.sub_width == 12 and forloop.index != 1%} mt-3{%endif%}" data-type="{{block.type}}" {{ block.shopify_attributes }}>
+          {%- if block.settings.title_i != blank -%}
+            <div class="mn-i title_lv1 m-1 mb-0i"><a href="#">{{block.settings.title_i}}</a></div>
+          {%- endif -%}
+          <div class="row">
+            {%-assign menu_handle = block.settings.menu_links-%}
+            {%- assign link_handle = linklists[menu_handle].links | map: 'handle' | join: ' '-%}
+            {%-if link_handle contains 'breakcol'-%}
+            {%- assign count = 0-%}
+            {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+            {%- for link in linklists[menu_handle].links-%}
+            {%- if count == 0-%}
+            <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per >= 4%} col-lg-3{%endif%}">
+              <ul class="mega-linklist list-unstyled">
+                {%- endif -%}
+                {%- unless link.handle == 'breakcol'-%}
+                <li class="mn-i{% if link.title contains '[title]' or link.handle == 'breakline'%} title_lv1{% endif %}{%if special_list contains forloop.index %} dropdown-item-lead{%endif%}"{%if link.handle == 'breakline'%} style="opacity: 0; pointer-events: none;"{%endif%}>
+                  <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+                </li>
+                {%- if link.links.size > 0-%}
+                  {%-for sub_link in link.links-%}
+                    {%-if sub_link.handle == 'breakline'-%}
+                      <li style="height: 41px;display:block;width: 100%;"></li>
+                    {%-else-%}
+                      <li class="mn-i">
+                        <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+                      </li>
+                    {%-endif-%}
+                  {%-endfor-%}
+                {%- endif-%}
+                {%-endunless-%}
+                {%-if forloop.last or link.handle == 'breakcol'-%}
+              </ul>
+            </div>
+            {%- assign count = 0-%}
+            {%- else-%}
+            {%- assign count = count | plus: 1-%}
+            {%- endif-%}
+            {%- endfor-%}
+            {%-else-%}
+            
+            {%- assign count = 0-%}
+            {%- assign per = 0-%}
+            {%- if block.settings.menu_links_per_col != '1'-%}
+            {%- assign size = linklists[menu_handle].links.size  | plus: 0-%}
+            {%- assign per = block.settings.menu_links_per_col | plus: 0-%}
+            {%- assign size_per = size | divided_by: per | ceil-%}
+            {%- assign breakline = size_per | minus: 1-%}
+            {%- endif-%}
+            {%- for link in linklists[menu_handle].links-%}
+            
+            {%-if count == 0 -%}
+            <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per >= 4%} col-lg-3{%endif%}">
+              <ul class="mega-linklist list-unstyled">
+                {%- endif-%}
+                <li class="mn-i{% if link.title contains '[title]' %} title_lv1{% endif %}">
+                  <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+                </li>
+                {%- if link.links > 0-%}
+                {%-for sub_link in link.links-%}
+                <li class="mn-i">
+                  <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+                </li>
+                {%-endfor-%}
+                {%- endif-%}
+                {%-if forloop.last or count == breakline-%}
+              </ul>
+            </div>
+            {%-assign count = 0-%}
+            {%-else-%}
+            {%-assign count = count | plus: 1-%}
+            {%-endif-%}
+            {%- endfor-%}
+            {%- endif-%}
+          </div>
+        </div>
+      {%-when 'product'-%}
+        <div class="col-lg-{{block.settings.sub_width}}{%if block.settings.sub_width == 12 and forloop.index != 1%} mt-3{%endif%}" data-section-id="{{ block.id }}" id="Swiper-{{ block.id }}" data-section-type="swiper-section" data-type="{{block.type}}" {{ block.shopify_attributes }}>
+          {%- if block.settings.title_i != blank -%}
+            <div class="mn-i title_lv1 mb-1"><a href="{{collections[block.settings.products].url | default :'#'}}">{{block.settings.title_i}}<i class="fkt-angle-right pl-1 pr-1"></i></a></div>
+          {%- endif -%}
+          {%- if block.settings.products != blank -%}
+          {% assign grid_ly = block.settings.product_grid_layout | default: st_card[3]  %}
+          {%- assign responsive_ = block.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+          {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 | floor -%}
+          <div class="swiper-container-fuild position-relative {{block.settings.nav_position}} nav-style{{block.settings.nav_style}} nav-mode-{{block.settings.nav_mode}}">
+            <div class="products-card-grid p-style-{{grid_ly}} swiper-container swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{block.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{block.settings.use_dots}}" data-nav="{{block.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}" data-pagination=".swiper-pagination-{{block.id}}">
+              <div class="swiper-wrapper">
+                {%-for product in collections[block.settings.products].products limit: block.settings.limit-%}
+                <div class="swiper-slide grid-item">
+                  {%- render "product-grid-item", product: product, grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+                {%-endfor %}
+              </div>
+              {%- if block.settings.use_dots -%}
+              <div class="swiper-pagination swiper-pagination-{{block.settings.dots_mode}} swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}"></div>
+              {%- endif -%}
+              {%- if block.settings.use_navigation -%}
+              <div class="swiper-buttons position-absolute"{% if block.settings.nav_position == 'nav-top-right' or block.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+                <div class="content-buttons position-relative">
+                  <div class="swiper-button-prev sw-btn-prev-{{block.id}} fkt-2x fkt-va"></div>
+                  <div class="swiper-button-next sw-btn-next-{{block.id}} fkt-2x fkt-va"></div>
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+      {%-when 'collections'-%}
+        {%-assign menu_handle = block.settings.menu_links-%}
+        {%- assign linklist_size = linklists[menu_handle].links | where: 'handle', 'breakcol' | size -%}
+        {%- assign linklist_size = linklists[menu_handle].links.size | minus: linklist_size  -%}
+        {%- case linklist_size -%}
+          {%- when 1 -%}
+            {%-assign colitem = ''-%}
+          {%- when 2 -%}
+            {%-assign colitem = ' col-lg-6'-%}
+          {%- when 3 -%}
+            {%-assign colitem = ' col-lg-4'-%}
+          {%- when 4 -%}
+            {%-assign colitem = ' col-lg-3'-%}
+          {%- when 5 -%}
+            {%-assign colitem = ' col-lg-2-10'-%}
+          {%- else -%}
+            {%-assign colitem = ' col-lg-3'-%}
+        {%- endcase -%}
+        <div class="col-lg-{{block.settings.sub_width}}{%if block.settings.sub_width == 12 and forloop.index != 1%} mt-3{%endif%}" data-type="{{block.type}}" {{ block.shopify_attributes }}>
+          <ul class="row list-unstyled">
+            {%- for link in linklists[menu_handle].links -%}
+            {%- if link.handle == 'breakcol'-%}{%- continue -%}{%- endif -%}
+            <li class="mn-i{{colitem}}{%if child_links.size > 0%} mn-has-child{%endif%} title_lv1 mt-0i">
+              <a href="{{ link.url }}">{%-render 'kt_menu-title', link: link -%}</a>
+              <ul class="mn-lv3s list-unstyled">
+                {%-if link.links.size > 0-%}
+                {%- for sub_link in link.links -%}
+                <li class="mn-i">
+                  <a href="{{sub_link.url}}">
+                    {%- assign image_item = sub_link.object.image -%}
+                    <span class="img_ft lazyload" data-bgset="{%- render 'bgset', image: image_item -%}
+                    ">{{sub_link.title | slice: 0}}</span>
+                    {%-render 'kt_menu-title', link: sub_link -%}
+                  </a>
+                </li>
+                {%-if sub_link.links.size > 0-%}
+                {%- for sub_sub_link in sub_link.links -%}
+                <li class="mn-i">
+                  <a href="{{sub_sub_link.url}}">
+                    {%- assign image_item = sub_sub_link.object.image -%}
+                    <span class="img_ft lazyload" data-bgset="{%- render 'bgset', image: image_item -%}
+                    ">{{sub_sub_link.title | slice: 0}}</span>
+                    {%-render 'kt_menu-title', link: sub_sub_link -%}
+                  </a>
+                </li>
+                {%-endfor-%}
+                {%-endif-%}
+                {%-endfor-%}
+                {%-endif-%}
+              </ul>
+            </li>
+            {%-endfor-%}
+          </ul>
+        </div>
+      {%-when 'banner'-%}
+        <div class="col-lg-{{block.settings.sub_width}}" data-type="{{block.type}}" {{ block.shopify_attributes }}>
+        {%- if block.settings.title_i != blank -%}
+        <div class="mn-i title_lv1 mb-1"><a href="#">{{block.settings.title_i}}</a></div>
+        {%- endif -%}
+        {%- if block.settings.menu_links == blank -%}
+          <div class="imgs__banner_template1 position-relative {{block.settings.banner-effect}}">
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 575.00 -%}{%-assign height = image_item.height | default: 630.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="575x630 px"{% endunless %}></a>
+          </div>
+        {%- else -%}
+          {%-assign menu_handle = block.settings.menu_links-%}
+          {%- assign linklist_size = linklists[menu_handle].links | where: 'handle', 'breakcol' | size -%}
+          {%- assign linklist_size = linklists[menu_handle].links.size | minus: linklist_size  -%}
+          {%- assign count = 0-%}
+          {%- if block.settings.per_col != '1'-%}
+          {%- assign size = linklists[menu_handle].links.size | plus: 0.0-%}
+          {%- assign per = block.settings.per_col | plus: 0.0-%}
+          {%- assign size_per = size | divided_by: per | ceil-%}
+          {%- assign breakline = size_per | minus: 1-%}
+          {%- endif-%}
+          <div class="row justify-content-center">
+          {%- for link in linklists[menu_handle].links-%}
+            <div class="col-12{%if per == 2%} col-lg-6{%elsif per == 3%} col-lg-4{%elsif per == 4%} col-lg-3{%elsif per == 5%} col-lg-2-10{%elsif per == 6%} col-lg-2{%endif%}">
+              <div class="mn-i {{block.settings.banner-effect}}">
+                <a class="p-0i mb-2" href="{{link.url}}">
+                  {%- assign featured_image = images[link.title] -%}
+                  {%- assign img_url = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                  <img width="{{featured_image.width}}" height="{{featured_image.height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[240, 360, 540]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ featured_image.alt | escape }}" style="padding-bottom:{{featured_image.height | times: 1.00 | divided_by: featured_image.width | times: 100.00000000}}%">
+                </a>
+              </div>
+              {%-if link.links.size > 0-%}
+              <ul class="list-unstyled">
+                {%- for sub_link in link.links -%}
+                <li class="mn-i">
+                  <a href="{{sub_link.url}}">{%-render 'kt_menu-title', link: sub_link -%}</a>
+                </li>
+                {%-endfor-%}
+              </ul>
+              {%-endif-%}
+            </div>
+          {%-endfor-%}
+          </div>
+        {%- endif -%}
+      </div>
+      {%-when 'html'-%}
+        <div class="col-lg-{{block.settings.sub_width}}" data-type="{{block.type}}" {{ block.shopify_attributes }}>
+          {%- if block.settings.page_promo_html != blank and pages[block.settings.page_promo_html].title != empty-%}
+            {{ pages[block.settings.page_promo_html].content | html }}
+          {%-else-%}
+            {{ block.settings.textarea_promo_html | html }}
+          {%- endif-%}
+        </div>
+    {%-endcase-%}
+    {%- endfor -%}
+{%- endcase-%}

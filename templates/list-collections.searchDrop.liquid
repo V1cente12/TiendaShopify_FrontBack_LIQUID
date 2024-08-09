@@ -1,0 +1,32 @@
+{% layout none %}  
+{%- assign isColleFilter = false -%}
+{%- if collections.size > 0 -%}
+{%- if linklists['list-collections-search'].links.size > 0 -%}
+	{%- for link in linklists['list-collections-search'].links -%}
+		{%- if link.type == "collection_link" -%}
+		{%- assign coll_search_lv1 = link.object -%}
+		<option value="{{coll_search_lv1.id}}+"{%if search.terms contains coll_search_lv1.id %}{%-assign isCollection = coll_search_lv1.id | append:'+' -%} checked="checked"{% assign isColleFilter = true %}{% endif %}>{{coll_search_lv1.title}}</option>
+		{%- if link.links.size > 0 -%}
+			{%- for sub_link in link.links -%}
+				{%- if sub_link.type == "collection_link" -%}
+				{%- assign coll_search_lv2 = sub_link.object -%}
+				<option value="{{coll_search_lv2.id}}+"{%if search.terms contains coll_search_lv2.id %}{%-assign isCollection = coll_search_lv2.id | append:'+' -%} checked="checked"{% assign isColleFilter = true %}{% endif %}>- {{coll_search_lv2.title}}</option>				
+				{%- if sub_link.links.size > 0 -%}
+					{%- for sub_sub_link in sub_link.links -%}
+						{%- if sub_sub_link.type == "collection_link" -%}
+						{%- assign coll_search_lv3 = sub_sub_link.object -%}
+						<option value="{{coll_search_lv3.id}}+"{%if search.terms contains coll_search_lv3.id %}{%-assign isCollection = coll_search_lv3.id | append:'+' -%} checked="checked"{% assign isColleFilter = true %}{% endif %}>-- {{coll_search_lv3.title}}</option>
+						{%- endif -%}
+					{%- endfor -%}
+				{%- endif -%}
+				{%- endif -%}
+			{%- endfor -%}
+		{%- endif -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- else -%}
+	{%- for collection in collections -%}
+	<option {%if search.terms contains collection.id %}{%-assign isCollection = collection.id | append:'+' -%} checked="checked"{% assign isColleFilter = true %}{% endif %} value="{{collection.id}}+">{{collection.title}}</option>
+	{%- endfor -%}
+{%- endif -%}
+{%- endif -%}

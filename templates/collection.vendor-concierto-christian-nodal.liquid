@@ -1,0 +1,51 @@
+<style>
+    h1{
+        color:#ffffff !important;
+    }
+    .galeria{
+        padding-top: 50px;
+        padding-bottom: 80px;
+        background-color:rgb(27, 27, 27);
+        display:block;
+    }
+    .galeria h1{
+        text-align: center;
+        font-size: 40px;
+        color: #ffffff;
+    }
+
+    .imgGaleria{
+        padding-top: 30px;
+        margin: auto;
+    }
+
+
+
+    .divDiagonal{
+        transform: skewY(-5deg);
+    }
+
+    .divQuitarDiagonal{
+        transform: skewY(5deg);
+    }
+</style>
+
+<div class="galeria">
+    <div>
+        <h1>Concierto Christian Nodal</h1>
+    </div>
+
+    <div class="row imgGaleria">
+        <div class="col-md-12">
+            {%- section 'sec_evento_banner1' -%}
+        </div>
+    </div>
+    
+</div>
+
+{%- section 'sec_evento_bannerPrincipal' -%}
+{%-render 'evento-tarifas-fase1'-%}
+{%-render 'evento-album'-%}
+{%-render 'evento-youtube'-%}
+
+

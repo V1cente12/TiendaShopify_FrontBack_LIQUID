@@ -1,0 +1,97 @@
+{%style%}
+.ageVerModal {
+  overflow: hidden;
+}
+.ageVerModal .bg-ageVerModal,
+.ageVerModal .modal-backdrop{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  z-index: 1040;
+  opacity: 1;
+  pointer-events: none;
+  background-position: center;
+}
+{%endstyle%}
+<div id="ageVerModal" class="modal show" aria-hidden="false" aria-labelledby="ageVerModalLabel" role="dialog" tabindex="-1" data-section-id="{{ section.id }}" data-section-type="kt-ageVer">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-body pt-2 pb-2">
+        <div class="text-center mb-2">
+          {% if section.settings.logo_ageVer %}
+          {%- capture image_size2x -%}{{ settings.logo_max_width }}x@2x{%- endcapture -%}
+          <a class="logo d-inline-block" href="#" style="max-width: {{ settings.logo_max_width | times: 1.0 | divided_by: 10}}rem;">
+            <img src="{{section.settings.logo_ageVer | img_url: image_size2x}}" alt="{{ settings.logo.alt | default: shop.name | escape }}">
+          </a>
+          {% endif -%}
+        </div>
+        <div class="text-center pb-2">
+          {{section.settings.age_popup_welcome}}
+        </div>
+        <div class="d-flex flex-wrap justify-content-center pl-2 pr-2">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" style="min-width: 130px;">{{section.settings.btn_name_1}}</button>
+          <button type="button" class="btn btn-primary verification-failed-btn" style="min-width: 130px; margin-left: 1.5rem">{{section.settings.btn_name_2}}</button>
+          <div class="w-100 text-center">
+            <div class="alert alert-warning verification-failed" style="display: none;">
+              {{section.settings.age_popup_failed}}
+            </div>
+          </div>
+          {%- if section.settings.age_popup_hideforever != blank -%}
+          <div class="clearfix mt-3 w-100"></div>
+          <div class="custom-control custom-checkbox text-center">
+            <input type="checkbox" class="custom-control-input" id="hideforever_ageVer" required="">
+            <label class="custom-control-label" for="hideforever_ageVer">{{section.settings.age_popup_hideforever}}</label>
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-ageVerModal"></div>
+{%schema%}
+  {
+    "name": "Age Verification Modal",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo_ageVer",
+        "label": "Logo image",
+        "info": "Dimension: 300x**"
+      },
+      {
+        "type": "html",
+        "id": "age_popup_welcome",
+        "label": "Welcome text",
+        "default": "<h3 class=\"mb-1\">Welcome<\/h3><p style=\"font-size: 1.6rem;\">Are you over 18 years old?<\/p>"
+      },
+      {
+        "type": "text",
+        "id": "btn_name_1",
+        "label": "Name button 1",
+        "default": "Yes"
+      },
+      {
+        "type": "text",
+        "id": "btn_name_2",
+        "label": "Name button 2",
+        "default": "No"
+      },
+      {
+        "type": "textarea",
+        "id": "age_popup_failed",
+        "label": "Verification failed text",
+        "default": "You are too young to view this website."
+      },
+      {
+        "type": "textarea",
+        "id": "age_popup_hideforever",
+        "label": "Hide forever text",
+        "default": "Click here, if you don’t want to see this Age Verification again. You are then responsible for ensuring that everyone using your device to enter our website is over 18 years of age."
+      }
+    ]
+  }
+{%endschema%}

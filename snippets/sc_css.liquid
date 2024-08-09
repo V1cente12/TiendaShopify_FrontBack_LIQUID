@@ -1,0 +1,31 @@
+{%- style -%}{%-unless sc-%}{%- assign sc = section -%}{%-endunless-%}
+.content_{{id | default: sc.id}}{ {{--}}
+margin-top: {{sc.settings.section_margin_top | default: '0' | split: '|' | first }};{{--}}
+margin-bottom: {{sc.settings.section_margin_bottom | default: '0' | split: '|' | first }};{{--}}
+padding: {{sc.settings.section_padding | default: '0'| split: '|' | first }};{{--}}
+{%- if sc.settings.section_bg and sc.settings.section_bg != '' and sc.settings.width_section != 'container-fluid wide' -%}
+{%-if sc.settings.section_bg_op == 1 -%}
+background-color:{{sc.settings.section_bg}};{{--}}
+{%-else-%}
+background-color:{{sc.settings.section_bg | color_modify: 'alpha', sc.settings.section_bg_op}};{{--}}
+{%-endif-%}
+{%- endif -%}
+{%- if bgcl -%}
+background-color:{{bgcl}};{{--}}
+{%- endif -%}
+}
+{%- if sc.settings.width_section == 'container-fluid wide' -%}
+#shopify-section-{{id | default: sc.id}}{ {{--}}
+{%- if sc.settings.section_bg and sc.settings.section_bg != '' -%}
+{%-if sc.settings.section_bg_op == 1 -%}
+background-color:{{sc.settings.section_bg}};{{--}}
+{%-else-%}
+background-color:{{sc.settings.section_bg | color_modify: 'alpha', sc.settings.section_bg_op}};{{--}}
+{%-endif-%}
+{%- endif -%}
+{%- if bgcl -%}
+background-color:{{bgcl}};{{--}}
+{%- endif -%}
+}
+{%- endif -%}
+{%- endstyle -%}

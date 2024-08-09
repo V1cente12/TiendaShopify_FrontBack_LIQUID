@@ -1,0 +1,273 @@
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+{%-style-%}
+  
+  .seccionStep{
+  
+  	font-size: 21px; 
+    font-family: sans-serif; 
+    margin: 5px 5px;
+
+  }
+  /* Steps */
+  .step {
+    position: relative;
+    min-height: 1em;
+    color: gray;
+  }
+  .step + .step {
+    margin-top: 1.5em
+  }
+  .step > div:first-child {
+    position: static;
+    height: 0;
+  }
+  .step > div:not(:first-child) {
+    margin-left: 1.5em;
+    padding-left: 1em;
+  }
+
+  .step.step-active-warning .circle {
+    background-color: #ec9121;
+  }
+
+  .step.step-active-success .circle {
+    background-color: #61BC7B;
+  }
+
+   .step.step-active-danger .circle {
+    background-color: #dc3545;
+  }
+
+  .step.step-active {
+    color: #4285f4
+  }
+  .step.step-active .circle {
+    background-color: #4285f4;
+  }
+
+  /* Circle */
+  .circle {
+    background: gray;
+    position: relative;
+    width: 1.5em;
+    height: 1.5em;
+    line-height: 1.5em;
+    border-radius: 100%;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 0 0 3px #fff;
+    font-size: large;
+
+  }
+
+  /* Vertical Line */
+  .circle:after {
+    content: ' ';
+    position: absolute;
+    display: block;
+    top: 1px;
+    right: 50%;
+    bottom: 1px;
+    left: 50%;
+    height: 100%;
+    width: 1px;
+    transform: scale(1, 2);
+    transform-origin: 50% -100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: -1;
+  }
+  .step:last-child .circle:after {
+    display: none
+  }
+
+  /* Stepper Titles */
+  .title_step {
+    line-height: 1.5em;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  .caption {
+    font-size: 0.8em;
+    font-size: 13px;
+  }
+  
+  .fa {
+  	font-size: 13px;
+  }
+{%-endstyle-%}
+
+
+{%- liquid
+ assign colorPago = '' 
+ assign estadoPago = '' 
+ assign iconoPago = 'fa fa-check' 
+
+ case order.financial_status 
+   when 'paid' 
+       assign estadoPago = 'Realizado' 
+       assign colorPago = 'step-active-success' 
+	   
+   when 'voided' 
+       assign estadoPago = 'Cancelado' 
+       assign colorPago = 'step-active-danger' 
+	   assign iconoPago = 'fa fa-times' 
+
+  when 'refunded' 
+       assign estadoPago = 'Cancelado' 
+       assign colorPago = 'step-active-danger' 
+	   assign iconoPago = 'fa fa-times' 
+
+   else 
+       assign estadoPago = 'pendiente' 
+       assign colorPago = 'step-active-warning' 
+	   assign iconoPago = 'fa fa-exclamation' 
+ endcase 
+
+
+ assign iconoOk = '<div class="circle"><i class="fa fa-check"></i></div>' 
+ assign colorPreparacion = '' 
+ assign estadoPreparacion = '' 
+ assign iconoPreparacion = '<div class="circle"><p style="font-size: 14px;padding-top: 6px;">2</p></div>' 
+
+     if order.fulfillment_status == 'fulfilled' 
+		 assign colorPreparacion = 'step-active-success' 
+		 assign estadoPreparacion = 'Completado' 
+		 assign iconoPreparacion =  iconoOk
+     else		
+		 if order.fulfillment_status == 'partial' 
+			 assign colorPreparacion = 'step-active-warning' 
+			 assign estadoPreparacion = 'Parcialmente preparado' 
+		 else
+			 assign colorPreparacion = 'step-active-warning' 
+			 assign estadoPreparacion = 'Pendiente' 
+		 endif 
+	 endif 
+ 
+-%}
+
+
+
+
+<section class=" seccionStep" style="padding:0;margin:0;">
+	<div class="rt-container" style="justify-content: center;display: flex;">     
+        <div class="Scriptcontent">
+          
+ 
+          <div class="step {{ colorPago }}">
+            <div>
+              <div class="circle"><i class="{{iconoPago}}"></i></div>
+            </div>
+            <div>
+              <div class="title_step">Pago</div>
+              <div style="margin-top: -10px;" class="caption">{{ estadoPago }}</div>
+            </div>
+          </div>
+          
+          
+          <div id="preparacion" class="step {{ colorPreparacion }}">
+            <div id="iconoPreparacion"> {{ iconoPreparacion }} </div>
+            <div>
+              <div class="title_step">Preparacion</div>           
+              <div style="margin-top: -10px;"  class="caption">{{ estadoPreparacion }}</div>
+              <div id="type_Preparacion"></div>
+            </div>
+          </div>
+          
+          
+          <div id="envio" class="step {{ colorEnvio }}">
+            <div id="iconoenvio"><div class="circle"><p style="font-size: 14px;padding-top: 6px;">3</p></div> </div>
+            <div>
+            	<div class="title_step">Envio</div>
+            	<div id="type_envio"></div>
+            </div>
+          </div>
+
+         
+          <div id="entregado" class="step">
+              <div id="iconoEntregado">
+                <div class="circle">4</div>
+              </div>
+              <div>
+                  <div class="title_step">Entregado</div>
+                  <div id="type_Entregado"></div>
+              </div>
+          </div>
+          
+          
+      </div>
+    </div>
+</section>
+
+
+<script>
+  const iconoFinalizado = {{ iconoOk | json }}
+  const data = {{  order.attributes.timeline | json  }}  
+  const dataRep1 = data.replace(/&quot;/g,'')
+  const dataRep2 = dataRep1.replace(/&#39;/g,'"') 
+  const objJson = JSON.parse(dataRep2);
+
+  if(objJson.length > 0)
+  {
+    let htmlPreparacion = ''; 
+    let htmlEnvio = '';
+    let htmlCompletado = '';
+    for (var i = 0; i < objJson.length; i++) 
+    {
+      if(objJson[i].estado.includes('recolectando')||objJson[i].estado.includes('RECOLECTADO'))
+         htmlPreparacion += `<p  class="caption">&nbsp;&nbsp; ${obtFecha()} | ${objJson[i].estado} </p>`;
+      else if(objJson[i].estado.includes('entregado') || objJson[i].estado.includes('ENTREGADO'))
+         htmlCompletado += `<p class="caption">&nbsp;&nbsp; ${obtFecha()} | ${objJson[i].estado} </p>`;
+      else
+        htmlEnvio += `<p class="caption">&nbsp;&nbsp; ${obtFecha()} | ${objJson[i].estado} </p>`;
+    }
+    
+    if(htmlPreparacion.length > 0){
+      document.getElementById("type_Preparacion").innerHTML = htmlPreparacion;
+      document.getElementById("iconoPreparacion").innerHTML = iconoFinalizado;
+      document.getElementById("preparacion").classList.add("step-active-success");
+    }
+
+    if(htmlEnvio.length > 0){
+      document.getElementById("type_envio").innerHTML = htmlEnvio;
+      document.getElementById("iconoenvio").innerHTML = iconoFinalizado;
+      document.getElementById("envio").classList.add("step-active-success");
+    }
+    
+    if(htmlCompletado.length > 0){
+      document.getElementById("type_Entregado").innerHTML = htmlCompletado;
+      document.getElementById("iconoEntregado").innerHTML = iconoFinalizado;
+      document.getElementById("entregado").classList.add("step-active-success");
+    }
+  }
+  
+  
+  function obtFecha(){
+    //moment(objJson[i].fecha).format("D MMM h:mm a")
+    const meses = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
+      
+    const f = new Date(objJson[i].fecha);
+    const dia = moment(objJson[i].fecha).format("D");
+	  const mes = meses[f.getMonth()]
+    const hora = moment(objJson[i].fecha).format("h:mm a");
+    return `${dia} ${mes} ${hora}`;
+  }
+  
+
+</script>
+
+

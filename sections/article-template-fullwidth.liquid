@@ -1,0 +1,406 @@
+<!-- article-template-fullwidth.liquid -->
+<div class="{{section.settings.width_section}}">
+  <div class="content_{{section.id}}"> 
+    <div class="border-top" style="opacity: .3;"></div>
+    <div class="section-width{%if section.settings.width_content and section.settings.width_section == 'w-100'%} container{%else%} w-100{%endif%}">
+      {%-render 'kt_breadcrumb'-%}
+    </div> 
+    {%-if article.image-%}
+    <figure class="entry-media">
+      {%- assign image_item = article.image -%}
+      {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+      <div class="img__banner lazyload mx-auto none-bg" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;width: {{image_item.width}}px;max-width: 100%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"></div>
+    </figure>
+    {%-endif-%}
+    <div class="section-width{%if section.settings.width_content and section.settings.width_section == 'w-100'%} container{%else%} w-100{%endif%}">
+      <div class="row">
+        {% if section.settings.show_share_buttons %}
+        <div class="col-lg-1">
+          <div class="sticky-content" style="">
+            <div class="socials_ style-03 social-icons-colored social-icons-vertical">
+              <span class="social-label" style="display: block; padding:0">{{'blogs.article.small_title_social_share'|t}}:</span>
+              {%-render 'kt_social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image-%}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="blog-content{% if section.settings.show_share_buttons %} col-lg-11{%else%} col-12{% endif %}">
+          {%- assign new_comment = false -%}
+          {%-if comment and comment.created_at-%}
+            {%- assign new_comment = true -%}
+            {%- assign new_comment_id = comment.id -%}
+          {%-endif-%}
+          {%-if new_comment-%}
+            {%- assign duplicate_comment = false-%}
+            {%-for comment in article.comments-%}
+              {%-if comment.id == new_comment_id-%}
+                {%- assign duplicate_comment = true-%}
+                {%-break-%}
+              {%-endif-%}
+            {%-endfor-%}
+            {%-if duplicate_comment-%}
+              {%- assign number_of_comments = article.comments_count -%}
+            {%-else-%}
+              {%- assign number_of_comments = article.comments_count | plus: 1 -%}
+            {%-endif-%}
+          {%-else-%}
+            {%- assign number_of_comments = article.comments_count -%}
+          {%-endif-%}
+          <article class="entry single-entry">
+            <div class="entry-body">
+              <div class="entry-meta">
+                {%- if section.settings.blog_show_author -%}
+                <span class="entry-author">{{ 'blogs.general.by_author' | t }} <a href="#">{{ article.author }}</a></span>
+                {%- endif -%}
+                {%- if section.settings.blog_show_date -%}
+                <span class="meta-separator">|</span>
+                <a href="javascript:void(0)">{{ article.published_at | date: format: "article_published_at" }}</a>
+                {%- endif -%}
+                {%- if blog.comments_enabled? -%}
+                <span class="meta-separator">|</span>
+                <a href="javascript:void(0)">{{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</a>
+                {%- endif -%}
+              </div>
+              <h2 class="entry-title">{{ article.title }}</h2>
+              <div class="entry-cats">{{ 'blogs.general.in_categories' | t }} <a href="javascript:void(0)">{{blog.title}}</a></div>
+              <div class="entry-content editor-content">
+                {{article.content}}
+              </div>
+              <div class="entry-footer row no-gutters">
+                <div class="col">
+                  <div class="entry-tags">
+                    <span>{{ 'blogs.article.title_tags' | t }}:</span>{%- for tag in article.tags -%}{{ tag.title | link_to: 'javascript:void(0)', tag.title }}{%- endfor -%}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>      
+      <nav class="pager-nav" aria-label="Page navigation">
+        {%- if blog.previous_article -%}
+        <a class="pager-link pager-link-prev" href="{{blog.previous_article.url}}" aria-label="Previous" tabindex="-1">
+          {{'blogs.article.previous_post_button'|t}}
+          <span class="pager-link-title">{{blog.previous_article.title}}</span>
+        </a>
+        {%- endif -%}
+        {%- if blog.next_article -%}
+        <a class="pager-link pager-link-next" href="{{blog.next_article.url}}" aria-label="Next" tabindex="-1">
+          {{'blogs.article.next_post_button'|t}}
+          <span class="pager-link-title">{{blog.next_article.title}}</span>
+        </a>
+        {%- endif -%}
+      </nav>
+      {%- if section.settings.recent_posts and blog.articles_count > 1 -%}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <div class="related-posts" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section">
+        <h3 class="title">{{ 'blogs.sidebar.title_popular_post' | t }}</h3>
+        <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+          <div class="swiper-container swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{%- if section.settings.use_navigation -%}true{%-else-%}false{%-endif-%}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+            <div class="swiper-wrapper">
+              {%- for article_ in blog.articles limit: 6 -%}
+              {%- unless article_.id == article.id -%}
+              <article class="swiper-slide entry entry-grid">
+                <figure class="entry-media">
+                  <a href="{{ article_.url }}">
+                    <img src="{{ article_.image | img_url: '500x500', crop: 'center' }}" alt="image desc">
+                  </a>
+                </figure>
+
+                <div class="entry-body">
+                  <div class="entry-meta">
+                    {%- if section.settings.blog_show_date -%}
+                    <span class="meta-separator">|</span>
+                    <a href="javascript:void(0)">{{ article_.published_at | date: "%b %d, %Y" }}</a>
+                    {%- endif -%}
+                    {%- if blog.comments_enabled? -%}
+                    <span class="meta-separator">|</span>
+                    <a href="javascript:void(0)">{{ 'blogs.comments.comments_with_count' | t: count: article_.comments_count }}</a>
+                    {%- endif -%}
+                  </div>
+
+                  <h2 class="entry-title">
+                    <a href="{{ article_.url }}">{{ article_.title }}</a>
+                  </h2>
+
+                  <div class="entry-cats">{{ 'blogs.general.in_categories' | t }} <a href="javascript:void(0)">{{blog.title}}</a></div>
+                </div>
+              </article>
+              {%- endunless -%}
+              {%- endfor -%}
+            </div>
+            {%- if section.settings.use_dots -%}
+            <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+            {%- endif -%}
+          </div>
+          {%- if section.settings.use_navigation -%}
+          <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -{{section.settings.margin_btitle|plus: 1.6}}rem" {%endif%}>
+            <div class="content-buttons position-relative">
+              <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+              <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%-endif-%}
+      {%-if blog.comments_enabled?-%}
+        {%-paginate article.comments by 5-%}
+        <div class="comments">
+          {%-if blog.comments_enabled?-%}
+          <h3 class="title">{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h3>
+          {%-endif-%}
+          {%-if comment and comment.created_at-%}
+          <div class="alert alert-success" role="alert">
+            {%-if blog.moderated?-%}
+            {{ 'blogs.comments.success_moderated' | t }}
+            {%-else-%}
+            {{ 'blogs.comments.success' | t }}
+            {%-endif-%}
+          </div>
+          {%-endif-%}              
+          {%-if number_of_comments > 0-%}
+          <ul class="list-unstyled">
+            {%-for comment in article.comments-%}
+            <li>
+              <div class="comment">
+                <figure class="comment-media">
+                  <img src="https://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=130&d=mm&r=g" srcset="https://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=130&d=mm&r=g 2x" alt="{{ comment.author }}">
+                </figure>
+                <div class="comment-body">
+                  <div class="comment-user">
+                    <h4>{{ comment.author }}</h4>
+                    <span class="comment-date">{{ comment.created_at | date: "%B %d, %Y at %I:%M %p" }}</span>
+                  </div>
+                  <div class="comment-content">
+                    {{ comment.content }}
+                  </div>
+                </div>
+              </div>
+            </li>
+            {%-endfor-%}
+          </ul>
+          {%-endif-%}
+        </div>
+        <div class="reply">
+          <div class="heading">
+            <h3 class="title">{{ 'blogs.comments.title' | t }}</h3>
+            <p class="title-desc">{{ 'blogs.comments.note' | t }}</p>
+          </div>
+          {%-form 'new_comment', article-%}
+            {%- if form.errors -%}
+              <div class="alert alert-warning" role="alert">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+            <label for="reply-message" class="sr-only">{{ 'blogs.comments.message' | t }}</label>
+            <textarea name="comment[body]" cols="30" rows="4" class="form-control{%if form.errors contains 'body'%} error{%endif%}" required="" placeholder="{{ 'blogs.comments.message' | t }}"></textarea>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="reply-name" class="sr-only">{{ 'blogs.comments.name' | t }}</label>
+                <input type="text" class="form-control{%if form.errors contains 'author'%} error{%endif%}" name="comment[author]" required="" placeholder="{{ 'blogs.comments.name' | t }}">
+              </div>
+              <div class="col-md-6">
+                <label for="reply-email" class="sr-only">{{ 'blogs.comments.email' | t }}</label>
+                <input type="email" class="form-control{%if form.errors contains 'email'%} error{%endif%}" name="comment[email]" required="" placeholder="{{ 'blogs.comments.email' | t }}">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-outline-primary-2">
+              <span>{{ 'blogs.comments.post' | t }}</span><i class="fkt-long-arrow-right"></i>
+              <input class="button" type="hidden" name="comment_parent" value="0">
+            </button>
+          {%-endform-%}
+        </div>
+        {%-endpaginate-%}
+      {%-endif-%}
+    </div>
+  </div>
+</div>
+<div class="mb-6"></div>
+{% schema %}
+  {
+    "name": "Blog page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "__Show author?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "__Show date?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "__Show social sharing buttons?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "recent_posts",
+        "label": "__Show recent posts?",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "__Auto-rotate slides",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "__Use navigation?"
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          },
+          {
+            "value": "nav-top-right",
+            "label": "Top right"
+          },
+          {
+            "value": "nav-top-left",
+            "label": "Top left"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "inside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "__Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 0\n  },\n  \"375\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 20\n  },\n  \"1500\": {\n    \"slidesPerView\": 6,\n    \"spaceBetween\": 20\n  }\n}"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,71 @@
+{%- liquid
+  unless section_id
+    assign section_id = section.id
+  endunless
+-%}
+{%- case settings.price_visible -%}
+  {%- when "show" -%}{%- assign show = true -%}
+  {%- when "show_login" -%}
+    {%- if shop.customer_accounts_enabled and customer -%}
+      {%- assign show = true -%}
+    {%- else -%}
+      {%- assign show = false -%}
+    {%- endif -%}
+{%- endcase -%}
+{%- if show -%}
+<div class="entry-price price">
+  <ins class="ProductPrice-{{section_id}}">
+    {{- current_variant.price | money -}}
+  </ins>
+  <del class="ComparePrice-{{section_id}}{%if current_variant.compare_at_price <= current_variant.price or current_variant.compare_at_price == null%} d-none{%endif%}">
+    {{- current_variant.compare_at_price | default: 0 | money -}}
+  </del>
+  {%- capture unit_price_base_unit -%}
+    <span class="base_unit">
+      {%- if current_variant.unit_price_measurement -%}
+        {%- if current_variant.unit_price_measurement.reference_value != 1 -%}
+          {{- current_variant.unit_price_measurement.reference_value -}}
+        {%- endif -%}
+        {{- current_variant.unit_price_measurement.reference_unit -}}
+      {%- endif -%}
+    </span>
+  {%- endcapture -%}
+  <span class="UnitPrice-{{section_id}} text-nowrap{%unless current_variant.unit_price %} d-none{%endunless%}">
+    {{- current_variant.unit_price_measurement.quantity_value | append: current_variant.unit_price_measurement.quantity_unit -}}
+    (<span class="unit_price">{{- current_variant.unit_price | money -}}</span> / {{ unit_price_base_unit -}})
+  </span>
+  {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+  <div class="product__policies">
+    {%- if cart.taxes_included -%}
+      {{ 'products.product.include_taxes' | t }}
+    {%- endif -%}
+    {%- if shop.shipping_policy.body != blank -%}
+      {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+</div>
+{%if current_variant.compare_at_price <= current_variant.price or current_variant.compare_at_price != null%}
+{% assign _discount_price = product.variants.first.compare_at_price | minus: product.variants.first.price %}
+{% assign _percent = _discount_price | times: 100 | divided_by: product.variants.first.compare_at_price %}
+{% assign _total_discount = _discount_price %}
+<div class="psgl-vendor d-inline-block-discount" style="margin-bottom:3rem"><label1 class="product-discount-label">Ahorras&nbsp;{{ _total_discount | money}}&nbsp;({{ _percent }}%)</label1></a></div>
+{%- endif -%}
+{%- elsif show == false -%}
+<a href="{{routes.account_login_url}}" class="entry-price price">{{'products.product.see-price'|t}}</a>
+<style type="text/css" media="screen">.entry-buttons .js-item-quantity,.single_add_to_cart_button {display: none !important;}</style>
+{%- endif -%}
+<style>
+ .product-discount-label {
+  background: var(--btn_outline_border);
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 1.3rem;
+    padding-right: 1.3rem;
+    border-radius: 7px;
+    color: #fff;
+    font-weight: 400;
+    font-size: 1rem;
+    margin: 2rem 0 1.2rem;
+}
+ </style>

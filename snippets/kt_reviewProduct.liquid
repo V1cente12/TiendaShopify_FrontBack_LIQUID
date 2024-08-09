@@ -1,0 +1,40 @@
+{% unless reviews_width %}
+  {%- assign reviews_width = '' -%}
+{% endunless %}
+{%- if settings.review_app == 'shopifyreview' %}
+<div class="{{reviews_width}}" style="text-align: initial">
+  <div class="box-list-reviews">
+    <div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+  </div>
+</div>
+{%- elsif settings.review_app == 'ryviu' %}
+<div class="{{reviews_width}}" style="text-align: initial">
+<!-- RYVIU APP :: WIDGET -->
+<div class="lt-block-reviews"> 
+	<ryviu-widget handle="{{product.handle}}" product_id="{{product.id}}" title_product="{{product.title}}" total_meta="{{ product.metafields.ryviu.r_count }}" image_product="{{ product.featured_image.src | img_url: '100x' }}"></ryviu-widget>
+</div>
+<!-- RYVIU APP -->
+</div>
+{%- elsif settings.review_app == 'yotpo' %}
+<div class="{{reviews_width}}" style="text-align: initial">
+<div class="yotpo yotpo-main-widget" data-product-id="{{ product.id }}" data-name="{{ product.title | escape }}" data-url="{{ shop.url }}{{ product.url }}" data-image-url="{{ product.featured_image | product_img_url: 'large' |replace: '?', '%3F' | replace: '&amp;','%26'}}" data-description="{{ product.description | escape }}"></div>
+</div>
+{%- elsif settings.review_app == 'alireviews' %}
+<div class="{{reviews_width}}" style="text-align: initial">
+	<div id="shopify-ali-review" product-id="{{ product.id }}"> {{ shop.metafields.review_collector.review_code }} </div>
+</div>
+{%- elsif settings.review_app == 'areviews' %}
+<div class="{{reviews_width}}" style="text-align: initial">
+ <div id='Areviewsapp' class='page-full'>{% render 'aliexpress_reviews', product: product %}</div>
+</div>
+{%- elsif settings.review_app == 'loox' %}
+<div class="{{reviews_width}} text-left">
+<div id="looxReviews" data-product-id="{{product.id}}" >{{ product.metafields.loox.reviews }}</div>
+</div>
+{%- elsif settings.review_app == 'judgeme' %}
+<div class="{{reviews_width}} text-left">
+{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+</div>
+{%- else -%}
+<!-- reviews-badge -->
+{%- endif -%}

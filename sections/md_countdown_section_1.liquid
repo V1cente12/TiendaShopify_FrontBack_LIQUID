@@ -1,0 +1,393 @@
+<!-- md_countdown_section_1.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide'
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide'
+      echo 'container-fluid wide'
+    elsif width_section == 'container'
+      echo 'w-100'
+    else
+      echo 'container-fluid'
+    endif   
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-section-id="{{ section.id }}" id="Countdown-{{ section.id }}" data-section-type="countdown-section">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+    	<div class="row align-items-center">
+    		{%- for block in section.blocks -%}
+    			{% if block.type == 'product' %}
+	      		<div class="col-12 col-md-7 col-lg-5">
+							<div class="deal-content wait-for-css">
+								<h4>{{block.settings.stitle}}</h4>
+								<h2>{{block.settings.titlex}}</h2>
+								{%- if block.settings.product -%}
+								{%- assign product = all_products[block.settings.product] -%}
+								<h3 class="product-title">
+									<a href="{{product.url| within: collection}}" tabindex="0">{{product.title}}</a>
+								</h3>
+                <div class="desc-product">{{block.settings.desc|html}}</div>
+			          <div class="mb-6">
+                  {%- render "product-grid-item", product: product, grid_layout: '24', st_card: st_card -%}
+                </div>
+
+                <div class="product-parent-countdown d-flex flex-nowrap align-items-center">
+									<div class="kt_countdown style03{% unless product.metafields.event.countdown != blank or settings.time_countdown != blank%} kt_loop_bar{% endunless %} kt_countdown_page clearfix" data-time="{% if product.metafields.event.countdown != blank%}{{product.metafields.event.countdown}}{%elsif settings.time_countdown != blank%}{{settings.time_countdown}}{% endif %}"></div>
+                </div>
+								{%- endif -%}
+							</div>
+	      		</div>
+            <div class="col-12 col-md-5 col-lg-3 mb-5 mb-md-0 order-first order-md-last">
+              {%- assign image_item = block.settings.image | default: product.featured_image -%}
+              <a href="{{product.url|default:'#'}}" class="img__banner lazyload" style="padding-bottom: 100.00000000%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{product.title}}"{% unless product.featured_image %} title="500x500 px"{% endunless %}></a>
+            </div>
+    			{% endif %}
+    		{%- endfor -%}
+    	</div>
+    </div>
+    {%-capture banner-css-%}
+    <noscript class="banner-css" data-section-type="md_countdown_section_1">
+      {%style%}
+        .md_countdown_section_1 .wait-for-css {
+          display: block;
+        }
+        .md_countdown_section_1 .deal-content{
+          font-weight: 300;
+          font-size: 1.6rem;
+          line-height: 1.625;
+        }
+        .md_countdown_section_1 p {
+          margin-bottom: 0;
+        }
+        .md_countdown_section_1 h4 {
+          font-size: 1.6rem;
+          color: #999;
+          font-weight: 300;
+          margin-bottom: 1rem;
+        }
+        .md_countdown_section_1 h2 {
+          font-size: 3rem;
+          font-weight: 600;
+          margin-bottom: 3.6rem;
+        }
+        .md_countdown_section_1 h3 {
+          font-size: 2rem;
+          font-weight: 400;
+        }
+        .md_countdown_section_1 h3 a:not(:hover) {
+          color: inherit;
+        }
+        .md_countdown_section_1 .product-price {
+          font-size: 2rem;
+          margin-bottom: 3.5rem;
+        }
+        .md_countdown_section_1 .desc-product{          
+          color: #999;
+          font-size: 1.4rem;
+        }
+        .md_countdown_section_1 .kt_countdown.style03 .block{          
+          background-color: #fff;
+          border: none;
+          border-radius: 0;
+        }
+        .md_countdown_section_1 .img__banner{
+          border-radius: 500px;
+          position: relative;
+        }
+        .md_countdown_section_1 .img__banner picture{
+          z-index: 2;
+        }
+        .md_countdown_section_1 .img__banner:before{
+          content: '';
+          border-radius: 500px;
+          position: absolute;
+          border: 1px solid rgba(255, 255, 255, .6);
+          right: 0;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          -webkit-transition: all 0.3s ease 0s;
+          -o-transition: all 0.3s ease 0s;
+          transition: all 0.3s ease 0s;
+        }
+        .md_countdown_section_1 .img__banner:after{
+          content: '';
+          border-radius: 500px;
+          position: absolute;
+          border: 1px solid rgba(255, 255, 255, .6);
+          right: -1rem;
+          left: -1rem;
+          top: -1rem;
+          bottom: -1rem;
+          -webkit-transition: all 0.3s ease 0s;
+          -o-transition: all 0.3s ease 0s;
+          transition: all 0.3s ease 0s;
+        }
+        .md_countdown_section_1 .img__banner:hover:before{
+          border-width: 1rem;
+          right: -1rem;
+          left: -1rem;
+          top: -1rem;
+          bottom: -1rem;
+        }
+        .md_countdown_section_1 .img__banner:hover:after{
+          -webkit-transform: scale(0);
+          -ms-transform: scale(0);
+          -o-transform: scale(0);
+          transform: scale(0);
+        }
+        @media (min-width: 768px){        
+          .md_countdown_section_1 h4 {
+            font-size: 2rem;
+          }
+          .md_countdown_section_1 h2 {
+            font-size: 3.6rem;
+          }
+          .md_countdown_section_1 h3 {
+            font-size: 2.3rem;
+          }
+          .md_countdown_section_1 .img__banner:hover:before{
+            border-width: 3rem;
+          }
+          .md_countdown_section_1 .img__banner:hover:before,
+          .md_countdown_section_1 .img__banner:after{
+            right: -3rem;
+            left: -3rem;
+            top: -3rem;
+            bottom: -3rem;
+          }
+        }
+        @media (min-width: 992px){
+          .md_countdown_section_1 h2 {
+            font-size: 4rem;
+          }
+          .md_countdown_section_1 .product-price {
+            font-size: 2.4rem;
+            margin-bottom: 4.5rem;
+          }
+        }
+        @media (min-width: 1200px){
+          .md_countdown_section_1 h2 {
+            font-size: 5rem;
+          }
+        }
+      {%endstyle%}
+    </noscript>
+    {%-endcapture-%}
+    {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+  </div>
+</div>
+{%- endunless-%}
+{%-endif-%}
+{% schema %}
+  {
+    "name": "Countdown section 1",
+    "class": "md_countdown_section_1",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Countdown section 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "range",
+        "id": "parallax_speed",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Parallax speed",
+        "default": 0.2
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Item product",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Product countdown",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Countdown"
+          },
+          {
+            "type":"richtext",
+            "id":"stitle",
+            "label": "Sub title"
+          },
+          {
+            "type":"richtext",
+            "id":"titlex",
+            "label": "Title"
+          },
+          {
+            "type":"html",
+            "id":"desc",
+            "label": "Description"
+          },
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          },
+          {
+            "type": "header",
+            "content": "Image follow countdown"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Size suggestion: 500 x 500 px"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Countdown section 1",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

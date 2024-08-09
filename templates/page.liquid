@@ -1,0 +1,29 @@
+{%-assign url_check = canonical_url | split: '?q=' | last-%}
+{%- if url_check == 'ly_none' -%}
+{%-layout none-%}
+{{page.content}}
+{%- elsif page.handle == 'vertical-menu' -%}
+<div class="container menu-vertical-prev" style="margin-top: 500px;">
+{%- section 'kt_vertical-menu-0' -%}
+{%- section 'kt_vertical-menu-1' -%}
+{%- section 'kt_vertical-menu-2' -%}
+{%- section 'kt_vertical-menu-3' -%}
+{%- section 'kt_vertical-menu-4' -%}
+{%- section 'kt_vertical-menu-5' -%}
+{%- section 'kt_vertical-menu-6' -%}
+{%- section 'kt_vertical-menu-7' -%}
+{%- section 'kt_vertical-menu-8' -%}
+{%- section 'kt_vertical-menu-9' -%}
+</div>
+{%- else -%}
+<div class="container page-content">
+  <div class="border-bottom mb-4">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+	<div class="row mt-5 mb-7">
+		<div class="col-12">
+  		{{ page.content }}
+		</div>
+	</div>
+</div>
+{%- endif -%}

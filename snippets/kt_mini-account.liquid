@@ -1,0 +1,58 @@
+<style>
+    .myAcccount .opciones{
+        padding-top: 1rem;
+        width: 18rem;
+    }
+    .myAcccount ul li a{
+        color: var(--text);
+    }
+    .myAcccount ul li a:hover{
+        color: var(--primary);
+    }
+</style>
+{%- assign drop_class = 'kt--drop-i' -%}
+{%- assign load_class = 'load' -%}
+<div class="myAcccount style-01 {{load_class}} {{drop_class}}">
+  <a href="{{routes.account_url}}" class="icon-link text-nowrap">
+    <div class="icon-count kt-button">
+      <div class="icon-count">
+        <svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-user"></use></svg></div>
+    </div>
+    {% if customer %}
+      <span>{{ customer.first_name }}</span>
+    {% else %}
+      <span>Mi Cuenta</span>
+    {%- endif -%}
+  </a>
+  {% if customer %}
+    <div class="opciones kt--drop-in">
+      <ul style="list-style:none;margin-left: -20px;">
+          <li><a href="{{routes.account_url}}?view=profile">Mi Perfil</a></li>
+          <li><a href="{{routes.account_url}}?view=orders">{{ 'customer.orders.title_orders' | t }}</a></li>
+          <li><a href="{{routes.account_url}}/addresses?view=address">Mis Direcciones</a></li>
+          <li><a href="{{routes.account_url}}?view=cards">Tarjetas EGX</a></li>
+      </ul>
+    </div>
+  {% else %}
+    {%- assign isLoginRegister = 'menuLoginRegisterHomePage' -%}
+    {%- if request.path == '/account/login' or request.path == '/account/register'-%}
+        {%- assign isLoginRegister = 'menuLoginRegisterInLogin kt--drop-in' -%}
+    {%- endif -%}
+    <div class="{{isLoginRegister}}">
+      <div>
+        <button class="btn btn-primary button-search" onclick="location.href = '{{routes.account_login_url }}'">
+          <span class="blanco">Entra en el GenioX</span>
+        </button>
+      </div>
+      <div>
+        <p>¿Eres nuevo? <a href="{{routes.account_register_url }}">Regístrate.</a>.</p>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+setTimeout(function(){ 
+  document.getElementsByClassName('menuLoginRegisterHomePage')[0].className = 'menuLoginRegisterHomePage kt--drop-in';
+}, 10000);
+</script>

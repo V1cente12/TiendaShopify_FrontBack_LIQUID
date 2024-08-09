@@ -1,0 +1,325 @@
+<!-- list-collections-template.liquid -->
+{%- assign collection = collections['all'] -%}
+<div class="{{section.settings.list_coll_width_section}}">
+  <div class="section-width{%if settings.list_coll_width_content and settings.list_coll_width_section == 'w-100'%} container{%else%} w-100{%endif%}" data-section-id="{{ section_id }}" data-section-type="collection-template">
+    <div class="d-flex align-items-center">
+      {%- if settings.use_flts -%}
+      <div class="filter-by filterMobile d-lg-none{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div>
+      <div class="filter-by filterCanvas d-none d-lg-block{%unless items_filter_check.size <= 0 or current_tags.size == null %} hasFilter{% endunless %}"><span class="ico"><i class="fkt-bars" aria-hidden="true"></i></span><span class="layered_subtitle">{{'collections.filters.title'|t}}</span></div>
+      {%- endif -%}
+      <span class="result-count d-none">
+        {%- assign current_offset = paginate.current_offset | plus:1 -%}
+        {%- assign current_product_size = collection.products.size | plus:paginate.current_offset -%}
+        {%- if current_tags == blank -%}
+          {%- if limit > paginate.items -%}
+            {{ 'collections.general.results_limit_html' | t: count: paginate.items }}
+          {%- else -%}
+            {{ 'collections.general.results_with_count_html' | t:count:current_offset,curent_count:current_product_size,pr_count:collection.all_products_count }}
+          {%- endif -%}
+        {%- elsif limit > paginate.items -%}
+          {{ 'collections.general.results_limit_html' | t: count: paginate.items }}
+        {%- else -%}
+          {%- assign current_offset = paginate.current_offset | plus:1 -%}
+          {%- assign current_product_size = collection.products.size | plus:paginate.current_offset -%}
+          {{ 'collections.general.results_with_count_html' | t:count:current_offset,curent_count:current_product_size,pr_count:paginate.items }}
+        {%- endif -%}
+      </span>
+      {%-render 'kt_breadcrumb' -%}
+    </div>
+  </div>
+  <div class="w-100 border-bottom mb-3" style="opacity: .3"></div>
+  <div class="main-container shop_tyle_{{settings.coll_shop_layout|default:'default'}} mb-4 w-100">
+    <div class="no-sidebar filters-{{settings.filter_type}} w-100">
+      <div class="row">
+        <div class="main-content col-12" data-section-id="{{section.id}}" id="Masonry-{{section.id}}" data-section-type="masonry-prds-section">
+          {%- case section.settings.grid -%}
+            {%- when '3' -%}
+              {%- assign grid_item_width = 'col-12 col-md-6 col-lg-4' -%}
+            {%- when '4' -%}
+              {%- assign grid_item_width = 'col-12 col-md-6 col-lg-3' -%}
+          {%- endcase -%}
+          <div class="sub-category-content row mb-7 ly__ms_items">
+            {%- if section.settings.display_type == 'all' -%}
+              {%- case section.settings.sort -%}
+                {%- when 'products_high' or 'products_low' -%}
+                  {%- assign collections = collections | sort: 'all_products_count' -%}
+                {%- when 'date' or 'date_reversed' -%}
+                  {%- assign collections = collections | sort: 'published_at' -%}
+              {%- endcase -%}
+              {%- if section.settings.sort == 'products_low' or section.settings.sort == 'date' or section.settings.sort == 'alphabetical' -%}
+                {%- for collection in collections -%}
+                  <div class="ly__ms grid-item {{grid_item_width}}">
+                    {%- render 'collection-grid-item', collection: collection, collection_image_size: collection_image_size%}
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                {%- for collection in collections reversed -%}
+                  <div class="ly__ms grid-item {{grid_item_width}}">
+                    {%- render 'collection-grid-item', collection: collection, collection_image_size: collection_image_size%}
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+            {%- else -%}
+              {%- for block in section.blocks -%}
+                {%- case block.settings.block_width -%}
+                {%- when '2' -%}
+                  {%- assign grid_item_width = 'col-12 col-md-4 col-lg-2' -%}
+                {%- when '3' -%}
+                  {%- assign grid_item_width = 'col-12 col-md-6 col-lg-3' -%}
+                {%- when '4' -%}
+                  {%- assign grid_item_width = 'col-12 col-md-8 col-lg-4' -%}
+                {%- when '6' -%}
+                  {%- assign grid_item_width = 'col-12 col-md-6' -%}
+                {%- endcase -%}
+                <div class="ly__ms grid-item {{grid_item_width}}">
+                  {%- render 'collection-grid-item', block: block, collection: collections[block.settings.collection], collection_image_size: collection_image_size%}
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kt--filter kt_canvas">
+    <div class="filter_cavas_wrapper kt_scroll">
+      <div class="filter-clean">
+        <div class="head d-flex justify-content-between align-items-center">
+          <label class="filter-close cls-overlay" data-box="filter-canvas"><i class="fkt-close" aria-hidden="true"></i><span>{{'collections.filters.title'|t}}</span></label>
+          <a data-pjax-filter="" href="{{collections[collection.handle].url}}" class="sidebar-filter-clear{%if items_filter_check.size <= 0 or current_tags.size == null%} d-none{%endif%}">{{'collections.filters.clean'|t}}</a>
+        </div>
+        <div class="kt--filter-wrap-sl {%if items_filter_check.size <= 0 or current_tags.size == null%} d-none{%endif%}">
+          {%- render 'kt_filter_selected' -%}
+        </div>
+      </div>
+      <div class="kt--filter-grs kt--filter-grs-d" data-toggle="show"></div>
+    </div>
+  </div>
+
+{%style%}
+  .banner.banner-cat .text-content {
+    position: absolute;
+    font-size: 1.6rem;
+    font-weight: 400;
+    display: inline-block;
+    background-color: #fff;
+    padding: 1.2rem 2rem;
+    text-align: center;
+    min-width: 170px;
+    border-radius: .2rem;
+    top: auto;
+    bottom: 3.2rem;
+    right: auto;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0);
+    -ms-transform: translateX(-50%) translateY(0);
+    overflow: hidden;
+  }
+  .banner.banner-cat .banner-title {
+    color: #333333;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: .1rem;
+    letter-spacing: -.03em;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .banner.banner-cat .banner-subtitle {
+    color: #999999;
+    font-weight: 300;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    letter-spacing: 0;
+    margin-bottom: 0rem;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .banner.banner-cat .banner-link-text {
+    opacity: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #fff;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    transform: translateY(100%);
+    -webkit-transform: translateY(100%);
+  }
+  .banner.banner-cat .img__banner:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .banner.banner-cat:hover .img__banner:before{
+    opacity: 1;
+  }
+  .banner.banner-cat:hover .banner-link-text,
+  .banner.banner-cat:focus .banner-link-text {
+    opacity: 1;
+    background-color: var(--primary);
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+  }
+{%endstyle%}
+
+{%schema%}
+  {
+    "name": "Collections list",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "radio",
+        "id": "list_coll_width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "list_coll_width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "paragraph",
+        "content": "All of your collections are listed by default. To customize your list, choose 'Selected' and add collections."
+      },
+      {
+        "type": "radio",
+        "id": "display_type",
+        "label": "Select collections to show",
+        "default": "all",
+        "options": [
+          {
+            "value": "all",
+            "label": "All"
+          },
+          {
+            "value": "selected",
+            "label": "Selected"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "sort",
+        "label": "Sort collections by:",
+        "info": "Sorting only applies when 'All' is selected",
+        "default": "alphabetical",
+        "options": [
+          {
+            "value": "products_high",
+            "label": "Product count, high to low"
+          },
+          {
+            "value": "products_low",
+            "label": "Product count, low to high"
+          },
+          {
+            "value": "alphabetical",
+            "label": "Alphabetically, A-Z"
+          },
+          {
+            "value": "alphabetical_reversed",
+            "label": "Alphabetically, Z-A"
+          },
+          {
+            "value": "date",
+            "label": "Date, old to new"
+          },
+          {
+            "value": "date_reversed",
+            "label": "Date, new to old"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "grid",
+        "label": "Collections per row",
+        "default": "3",
+        "options": [
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection"
+          },
+          {
+            "label": "Image banner",
+            "id": "img",
+            "type": "image_picker"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": "4/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              }
+            ],
+            "label": "== Select column width",
+            "default": "6"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

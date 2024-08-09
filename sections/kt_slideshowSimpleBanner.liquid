@@ -1,0 +1,666 @@
+<!-- kt_slideshowSimpleBanner.liquid --> 
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%- if typeBlocks contains 'banner' or  typeBlocks contains 'banner-4' -%}
+  {%- case section.settings.content_type -%}
+    {%- when 'type-1' or 'type-2' or 'type-4' -%}
+      {%- assign slide_width = 'col-xl-8' -%}
+      {%- assign banner_width = 'col-xl-4' -%}
+    {%- when 'type-3' -%}
+      {%- assign slide_width = 'col-xl-9 col-xxl-8 offset-lg-3 offset-xxl-2' -%}
+      {%- assign banner_width = 'col-xxl-2 d-none d-xxl-block' -%}
+  {%- endcase -%} 
+{%- endif -%}
+
+{%-capture slideshow-css-%}
+{%- style -%}
+.content_{{section.id}}{
+  padding:{{ section.settings.section_padding | default: '0' | split: '|' | first | replace : '-',' '}};
+  margin-top: {{section.settings.section_margin_top | default: '0' | split: '|' | first }};
+  margin-bottom: {{section.settings.section_margin_bottom | default: '0' | split: '|' | first }};
+  {%-if section.settings.section_bg != blank -%}
+    background-color:{{section.settings.section_bg | color_modify: 'alpha', section.settings.section_bg_op}};
+  {%-endif-%}
+}
+{%- assign fullscreen = section.settings.fullscreen -%}
+{%- for block in section.blocks-%}
+  {%- if block.type != 'image' and block.type != 'video' -%}{%-continue-%}{%- endif -%}
+  {%- if block.settings.turnoff -%}{%-continue-%}{%- endif -%}
+  {%- assign image_item = block.settings.image -%}
+  {%- assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+  {%- if block.settings.image and block.settings.image_mb-%}
+    {%- assign image_item_mobile = block.settings.image_mb -%}
+    {%- assign preload = '' -%}
+    {%- if block.settings.lazypreload -%}
+      {%- if section.settings.h_reponsive != blank -%}
+        {%- assign size = 'x' | append: section.settings.h_reponsive -%}
+      {%- else -%}
+        {%- assign size = 'x414' -%}
+      {%- endif -%}
+      {%- assign preload = block.settings.image_mb | img_url: size -%}
+      .slide_i--{{ block.id }} .imgRatio-img {
+        background-image: url('{{preload}}');
+      }
+      @media (min-width: 768px){
+        .slide_i--{{ block.id }} .imgRatio-img {
+          background-image: url('{{image_item | img_url: 'master'}}');
+        }
+      }
+    {%- endif -%}
+    .slide_i--{{ block.id }} .imgRatio:before {
+      {%-assign width = image_item_mobile.width -%}{%-assign height = image_item_mobile.height | plus: 0.00-%}
+      padding-bottom: {%-if fullscreen-%}100vh;{%-else-%}{{ height | divided_by: width | times: 100.00000000}}%;{%endif%}
+    }
+    @media (min-width: 768px){
+      .slide_i--{{ block.id }} .imgRatio:before {
+        {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+        padding-bottom: {%if fullscreen%}100vh;{%else%}{{height|divided_by: width | times: 100.00000000}}%;{%endif%}
+      }
+    }
+    {%- assign first_ratio = height | divided_by: width | times: 100.00000000 | append: '%' -%}
+  {%- elsif block.settings.image -%}
+    {%- assign preload = '' -%}
+    {%- if block.settings.lazypreload -%}
+      {%- if section.settings.h_reponsive != blank -%}
+        {%- assign size = 'x' | append: section.settings.h_reponsive -%}
+      {%- else -%}
+        {%- assign size = 'x414' -%}
+      {%- endif -%}
+      {%- assign preload = image_item | img_url: size -%}
+      .slide_i--{{ block.id }} .imgRatio-img {
+        background-image: url('{{preload}}');
+      }
+      @media (min-width: 768px){
+        .slide_i--{{ block.id }} .imgRatio-img {
+          background-image: url('{{image_item | img_url: 'master'}}');
+        }
+      }
+    {%- endif -%}
+    .slide_i--{{ block.id }} .imgRatio:before {
+      {%-assign width = image_item.width -%}{%-assign height = image_item.height | plus: 0.00-%}
+      padding-bottom: {%if fullscreen%}100vh;{%else%}{{height|divided_by: width | times: 100.00000000}}%;{%endif%}
+    }
+    {%- assign first_ratio = height | divided_by: width | times: 100.00000000 | append: '%' -%}
+  {%- else -%}
+    {%-case bannerType-%}
+      {%-when 'type-1'-%}
+        {%-assign padding = '55.128205128%' -%}
+      {%-when 'type-3' or 'type-2' or 'type-4'-%}
+        {%-assign padding = '51.282051282%' -%}
+    {%-endcase-%}
+    .slide_i--{{ block.id }} .imgRatio:before{
+      padding-bottom: {{padding | default: '55.128205128%'}}
+    }
+    {%- assign first_ratio = padding -%}
+  {%- endif -%}
+  {%- if block.settings.heading == blank and block.settings.subheading == blank and block.settings.description == blank and block.settings.textBtn_1 == blank and block.settings.textBtn_2 == blank -%}{%-continue-%}{%- endif -%}
+{%-endfor -%}
+
+{%- unless section.settings.fullscreen -%}
+  {%- if section.settings.h_reponsive != blank -%}
+  .slide_i--{{ section.id }} .imgRatio:before{
+    padding-bottom: {{section.settings.h_reponsive | append : 'px' | replace: 'autopx', first_ratio}};
+  }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_320 != blank -%}
+  @media (min-width: 320px){
+    .slide_i--{{ section.id }} .imgRatio:before{
+      padding-bottom: {{section.settings.h_reponsive_320 | append : 'px' | replace: 'autopx', first_ratio}};
+    }
+  }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_576 != blank -%}
+  @media (min-width: 576px){
+    .slide_i--{{ section.id }} .imgRatio:before{
+      padding-bottom: {{section.settings.h_reponsive_576 | append : 'px' | replace: 'autopx', first_ratio}};
+    }
+  }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_768 != blank -%}
+    @media (min-width: 768px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_768 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_992 != blank -%}
+    @media (min-width: 992px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_992 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+  {%- if section.settings.h_reponsive_1200 != blank-%}
+    @media (min-width: 1200px){
+      .slide_i--{{ section.id }} .imgRatio:before{
+        padding-bottom: {{section.settings.h_reponsive_1200 | append : 'px' | replace: 'autopx', first_ratio}};
+      }
+    }
+  {%- endif -%}
+{%- endunless -%}
+
+{%- endstyle -%}
+{%-endcapture-%}
+{{ slideshow-css | strip_newlines | remove: '  ' | remove: '  ' }}
+
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}" style="padding:{{section.settings.section_padding|default:'0' |split:'|' |first | replace : '-',' '}};margin-top: {{section.settings.section_margin_top|default:'0'|split:'|'|first}};margin-bottom: {{section.settings.section_margin_bottom|default:'0'|split:'|'|first}};{%-if section.settings.section_bg != blank -%}background-color:{{section.settings.section_bg | color_modify: 'alpha', section.settings.section_bg_op}};{%-endif-%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">  
+    <div class="section-width {{width_content_}}">
+      <div class="row{%if section.settings.width_content == false and section.settings.width_section == 'w-100'%} no-gutters{%endif%}">
+        <div class="col-12 {{slide_width}}">
+          {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+          {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+          <div data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section" class="kt_home_slide">
+            <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+              <div class="swiper-container{%if section.settings.no_overflow%} swiper-no-overflow{%endif%}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-scrollbar="{{section.settings.use_scrollbar}}" data-delay="{{section.settings.autoplay_speed}}"{%if section.settings.no_overflow%} data-loop="true" data-loop-additional-slides="2" data-loop-fill-group-with-blank="true" data-no-overflow="true"{% endif %} data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+                <div class="swiper-wrapper">
+                  {%- assign css = '' -%} 
+                  {%- assign css_noscript = '' -%}
+                  {%- assign fullscreen = section.settings.fullscreen -%}
+                  {%- for block in section.blocks-%}
+                  {%- if block.type != 'image' and block.type != 'video' -%}{%-continue-%}{%- endif -%}
+                  {%- if block.settings.turnoff -%}{%-continue-%}{%- endif -%}
+                  {%- assign image_item = block.settings.image -%}
+                  {%- assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                  <div class="swiper-slide slide_i slide_i--{{ section.id }} slide_i--{{ block.id }}" data-slide-blockid="{{ block.id }}" {{ block.shopify_attributes }}{% if block.type == 'video' %} data-swiper-autoplay="{{block.settings.delay_speed|times: 1000}}"{% endif %}>
+                    <a class="imgRatio" href="{{ block.settings.link_1 | default: '#'}}">
+                    {%- if block.settings.image and block.settings.image_mb-%}
+                      {%- if block.settings.lazypreload -%}
+                        <div class="item-slide imgRatio-img{%if fullscreen%} f-height{%endif%}"></div>
+                      {%- else -%}
+                        <div class="item-slide d-none d-md-block imgRatio-img{%if fullscreen%} f-height{%endif%} lazyload" data-bgset="{%- render 'bgset', image: image_item, prioritize: 'height' -%}" data-sizes="auto"></div>
+                        {%- assign image_item_mobile = block.settings.image_mb -%}
+                        {%- assign img_url = image_item_mobile | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                        <div class="item-slide d-md-none imgRatio-img{%if fullscreen%} f-height{%endif%} lazyload" data-bgset="{%- render 'bgset', image: image_item_mobile, prioritize: 'height' -%}" data-sizes="auto"></div>
+                      {%- endif -%}
+                    {%- elsif block.settings.image -%}
+                      {%- if block.settings.lazypreload -%}
+                        <div class="item-slide imgRatio-img{%if fullscreen%} f-height{%endif%}"></div>
+                      {%- else -%}
+                      <div class="item-slide imgRatio-img{%if fullscreen%} f-height{%endif%} lazyload" data-bgset="{%- render 'bgset', image: image_item, prioritize: 'height' -%}" data-sizes="auto"></div>
+                      {%- endif -%}
+                    {%- else -%}
+                      <div class="item-slide imgRatio-img{%if fullscreen%} f-height{%endif%}"></div>
+                    {%- endif -%}
+                    </a>
+                  </div>
+                  {%-endfor -%}
+                </div>
+                {%- if section.settings.use_dots -%}
+                <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+                {%- endif -%}
+                {%- if section.settings.use_scrollbar -%}
+                <div class="swiper-scrollbar scrollbar-primary"></div>
+                {%- endif -%}
+              </div>
+              {%- if section.settings.use_navigation -%}
+              <div class="swiper-buttons position-absolute">
+                <div class="content-buttons position-relative">
+                  <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+                  <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+        {%- if typeBlocks contains 'banner' -%}
+        <div class="col-12 {{banner_width}} bn_{{section.id}} {{section.settings.content_type}}">
+          <div class="row justify-content-center">
+          {%- assign idx0 = 0 -%}
+          {%-assign bannerType = section.settings.content_type-%}
+          {%- for block in section.blocks-%}
+          {%-if block.type == 'banner' and bannerType == 'type-1'-%}
+            <div class="item-banner col-12 col-md-6 col-xl-12 mt-2{% if idx0 == 0 %} mt-xl-0{% endif %}">
+              <div class="banner banner-effect1">
+                {%- assign image_item = block.settings.image -%}
+                {%-assign width = image_item.width | default: 380.00 | plus: 0.00 -%}{%-assign height = image_item.height | default: 210.00 | plus: 0.00-%}
+                <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="380x210 px"{% endunless %}></a>
+              </div>
+            </div>
+            {%- assign idx0 = 1 -%}
+          {%-endif-%}
+          {%-if block.type == 'banner' and bannerType == 'type-2'-%}
+            <div class="item-banner col-12 col-sm-6 col-lg-4 col-xl-12 mt-2{% if idx0 == 0 %} mt-xl-0{% endif %}">
+              <div class="banner">
+                {%- assign image_item = block.settings.image -%}
+                {%-assign width = image_item.width | default: 380.00 | plus: 0.00 -%}{%-assign height = image_item.height | default: 120.00 | plus: 0.00-%}
+                <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="380x120 px"{% endunless %}></a>
+              </div>
+            </div>
+            {%- assign idx0 = 1 -%}
+          {%-endif-%}
+          {%-if block.type == 'banner' and bannerType == 'type-3'-%}
+            <div class="item-banner col-12 mt-2{% if idx0 == 0 %} mt-xl-0{% endif %}">
+              <div class="banner banner-effect1">
+                {%- assign image_item = block.settings.image -%}
+                {%-assign width = image_item.width | default: 380.00 | plus: 0.00 -%}{%-assign height = image_item.height | default: 120.00 | plus: 0.00-%}
+                <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="380x120 px"{% endunless %}></a>
+              </div>
+            </div>
+            {%- assign idx0 = 1 -%}
+          {%-endif-%}
+          {%-if block.type == 'banner-4' and bannerType == 'type-4'-%}
+            <div class="item-banner col-12 col-sm-6 col-lg-4 col-xl-12 mt-2{% if idx0 == 0 %} mt-xl-0{% endif %}">
+              <div class="banner">
+                {%- assign image_item = block.settings.image -%}
+                {%-assign width = image_item.width | default: 380.00 | plus: 0.00 -%}{%-assign height = image_item.height | default: 120.00 | plus: 0.00-%}
+                <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="380x120 px"{% endunless %}></a>
+              </div>
+            </div>
+            {%- assign idx0 = 1 -%}
+          {%-endif-%}
+          {%-endfor -%}
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{%-endif-%}
+
+{% schema %}
+  {
+    "name": "Simple + banner",
+    "class": "kt_slideshowSimpleBanner",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Slideshow simple + banner",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slider settings"
+      },
+      {
+        "type": "range",
+        "id": "slide_width",
+        "min": 0,
+        "max": 12,
+        "step": 1,
+        "unit": "col",
+        "label": "Slide width",
+        "default": 12
+      },
+      {
+        "type": "checkbox",
+        "id": "no_overflow",
+        "label": "___Display external content?"
+      },
+      {
+        "type": "checkbox",
+        "id": "fullscreen",
+        "label": "___Use slideshow full screen?"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "___Use Autoplay?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "___Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "___Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_scrollbar",
+        "label": "___Use Scrollbar?"
+      },
+      {
+        "type": "header",
+        "content": "Height slider settings"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive",
+        "label": "Mobile",
+        "placeholder": "250"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_320",
+        "label": "On screen up 320px",
+        "placeholder": "350"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_576",
+        "label": "On screen up 576px",
+        "placeholder": "350"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_768",
+        "label": "On screen up 768px",
+        "placeholder": "400"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_992",
+        "label": "On screen up 992px",
+        "placeholder": "400"
+      },
+      {
+        "type": "text",
+        "id": "h_reponsive_1200",
+        "label": "On screen up 1200px",
+        "placeholder": "600"
+      },
+      {
+        "type": "range",
+        "id": "autoplay_speed",
+        "min": 5,
+        "max": 60,
+        "step": 1,
+        "unit": "s",
+        "label": "Change slides every",
+        "default": 7
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "== Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"320\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"992\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  },\n  \"1200\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 10\n  }\n}"
+      },
+      {
+        "type": "header",
+        "content": "Banner settings"
+      },
+      {
+        "type": "select",
+        "id": "content_type",
+        "label": "Banner Content type",
+        "options": [
+          { "value": "type-1", "label": "Type 1" },
+          { "value": "type-2", "label": "Type 2" },
+          { "value": "type-3", "label": "Type 3" },
+          { "value": "type-4", "label": "Type 4" }
+        ],
+        "default": "type-1",
+        "info": "Note *: You must select this item before adding the Item banner blocks."
+      },
+      {
+        "type": "paragraph",
+        "content": "Banner type 3 only appears on screens with resolutions greater than 1600px."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Item image",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mb",
+            "label": "Image mobile"
+          },
+          {
+            "type": "url",
+            "id": "link_1",
+            "label": "Link"
+          },
+          {
+            "type": "header",
+            "content": "Custom"
+          },
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "TURN OFF BLOCK"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "NAME BLOCK",
+            "default": "Item image",
+            "info": "Name block (in editor bar)"
+          }
+        ]
+      },
+      {
+        "type": "banner",
+        "name": "Item banner",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image Banner"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      },
+      {
+        "type": "banner-4",
+        "name": "Item banner type 4",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image Banner"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Simple banner",
+        "category": "01. Hero banner",
+        "blocks": [
+          {
+            "type": "image"
+          },
+          {
+            "type": "banner"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

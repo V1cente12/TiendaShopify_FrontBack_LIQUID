@@ -1,0 +1,17 @@
+{%- if psfgRootTemplate == '404' -%}
+  <script>
+    window.PSEO_LICENSED_TO = window.PSEO_LICENSED_TO || '{{- psfgLicensedTo-}}';
+    window.PSEO_APP_PROXY_PATH = window.PSEO_APP_PROXY_PATH || '{{- psfgAppProxyPath -}}';
+    (function() {
+      var loadScript = function(url) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+
+        script.src = url;
+        document.getElementsByTagName("head")[0].appendChild(script);
+      }
+
+      loadScript('{{- psfgAppProxyPath | append: '/pluginseo_404.js' -}}');
+    })()
+  </script>
+{%- endif -%}

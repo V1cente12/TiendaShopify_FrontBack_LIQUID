@@ -1,0 +1,14 @@
+{%-section 'kt_top_banner'-%}
+{%- render 'egx-lista-secciones-por-coleccion' -%}
+<div class="container page-content">
+  <div class="{{settings.coll_width_section}}">
+    <div class="section-width{%if settings.coll_width_content and settings.coll_width_section == 'w-100'%} container{%else%} w-100{%endif%}">
+      {%-render 'kt_breadcrumb' -%}
+    </div>
+  </div>
+	<div class="row mt-5 mb-7">
+		<div class="col-12">
+			{%- render 'searchanise-navigation' -%}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,101 @@
+<div class="position-absolute" style="top: 0;right: 0;bottom: 0;">
+  <div class="sticky-top bg-white p-1 shadow-sm">
+    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+      <div class="btn-group" role="group">
+        <button id="t4ip_ct_gr_dr1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Import content
+        </button>
+        <div class="dropdown-menu" aria-labelledby="t4ip_ct_gr_dr1" style="min-width: 100%;">
+          <a class="t4ip_ct dropdown-item" href="#">Dropdown link</a>
+          <a class="t4ip_ct dropdown-item" href="#">Dropdown link</a>
+        </div>
+      </div>
+      <div class="ml-1"></div>
+      <div class="btn-group" role="group">
+        <button id="t4ip_ct_gr_dr2" type="button" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Load content
+        </button>
+        <div class="dropdown-menu" aria-labelledby="t4ip_ct_gr_dr2" style="min-width: 100%;">
+          <a class="t4lo_ct dropdown-item" href="#">Dropdown link</a>
+          <a class="t4lo_ct dropdown-item" href="#">Dropdown link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%style%}
+.template-index {
+  position: relative;
+}
+{%endstyle%}
+<noscript id="dynamic_data">
+  onmessage = function(e) {
+    var url = '{{shop.url}}/admin/api/2020-07/themes/'+e.data.themeId+'/assets.json';
+    var request = new XMLHttpRequest();
+    var list_sc = new Array;
+    var list_sc_dynamic_data = new Array;
+    var content_sc_dynamic_data = new Array;
+
+    request.onreadystatechange = function() {
+      if(request.readyState === 4) {
+        if(request.status === 200) {
+          var data = JSON.parse(request.responseText);
+          data.assets.forEach(function(val) {
+            if (val.key.indexOf('sections/') >= 0) {
+              list_sc.push(val.key)
+            }
+          });
+          checkIndexSc(list_sc, 0);
+        } else {
+          console.log('An error occurred during your request: ' +  request.status + ' ' + request.statusText);
+        } 
+      }
+    }
+
+    request.open('Get', url);
+    request.send();
+    function checkIndexSc(list_sc, idx) {
+      var url_it = '{{shop.url}}/admin/api/2020-07/themes/'+e.data.themeId+'/assets.json?asset[key]='+list_sc[idx];
+      var rq = new XMLHttpRequest();
+      rq.onreadystatechange = function() {
+        if(rq.readyState === 4) {
+          if(rq.status === 200) { 
+            var data = JSON.parse(rq.responseText);       
+            if (data.asset.value.indexOf('"presets": [') >= 0 ){
+              if( data.asset.value.indexOf('"type": "collection"') >= 0 || data.asset.value.indexOf('"type": "product"') >= 0 || data.asset.value.indexOf('"type": "article"') >= 0) {
+                list_sc_dynamic_data.push(data.asset.key);
+                var regex = /(?<=\sschema\s\%\}).*(?=\{\%\s*endschema)/s;
+                var matches = data.asset.value.match(regex)
+                if(matches){
+                  var schema = JSON.parse(matches[0]);
+                  delete schema.presets
+                  var new_str = data.asset.value.replace(regex,JSON.stringify(schema));
+                }
+                if (new_str == null) {
+                  console.log(data.asset.value);
+                }
+                content_sc_dynamic_data.push(new_str);
+              }
+            }
+            idx++;
+            if (idx < list_sc.length) {
+              checkIndexSc(list_sc, idx)
+            }
+            else {
+              var postWorkerData = {
+                themeId: e.data.themeId,
+                scs: list_sc,
+                sc_dynamic : list_sc_dynamic_data,
+                content_sc_dynamic: content_sc_dynamic_data
+              }
+              postMessage(postWorkerData);
+            }
+          }
+        }
+      }
+      rq.open('Get', url_it);
+      rq.send();
+    }
+  }
+</noscript>
+<script src="{{ 't4_content_builder.js' | asset_url }}" type="text/javascript" charset="utf-8" async defer></script>

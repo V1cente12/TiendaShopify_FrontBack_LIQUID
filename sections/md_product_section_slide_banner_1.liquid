@@ -1,0 +1,751 @@
+<!-- md_product_section_slide_banner_1.liquid -->
+{%- if template.name != 'collection' -%}
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%- assign typeBlocks = section.blocks | map: 'type' -%}
+{%-render 'sc_css' -%}
+<div data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%} swiper-fixed-fshadow"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+    {%-for block in section.blocks-%}      
+      <div class="row" {{ block.shopify_attributes }}>
+        {%- assign responsive_ = block.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+        {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+        {%- if block.settings.title_section != blank -%}
+        <div class="col-12">
+          <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%}" style="margin-bottom:{{block.settings.margin_btitle}}rem">
+            <div class="col-{%if block.settings.name_link != blank%}12 col-lg-auto text-center text-lg-left mb-1 mb-lg-0{%else%}12 {{block.settings.title_align}}{%endif%}">
+              <div class="section-title w-100">
+                {%- if block.settings.reverse -%}
+                <p class="sub-title">{{block.settings.stitle_section}}</p>
+                {%- endif -%}
+                <h3 class="title">{{block.settings.title_section}}</h3>
+                {%- unless block.settings.reverse -%}
+                <p class="sub-title">{{block.settings.stitle_section}}</p>
+                {%- endunless -%}
+              </div>
+            </div>
+            {%- if block.settings.name_link != blank -%}
+            <div class="col-12 col-lg-auto text-center text-lg-left">
+              {%- if block.settings.link_to != blank -%}
+                <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+              {%- else -%}
+                <p class="sub-title">{{block.settings.name_link}}</p>
+              {%- endif -%}
+            </div>
+            {%- endif -%}
+          </div>
+        </div>
+        {%- endif -%}
+        <div class="col-12 col-xl-8 order-xl-last">
+        {%- if collections[block.settings.products].title != blank -%}
+          <div class="swiper-container-fuild position-relative {{block.settings.nav_position}} nav-style{{block.settings.nav_style}} nav-mode-{{block.settings.nav_mode}}">
+            {% if section.settings.use_lazyload == false %}
+              <div class="products-card-grid p-style-{{grid_ly}} swiper-container swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{block.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{block.settings.use_dots}}" data-nav="{{block.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}" data-pagination=".swiper-pagination-{{block.id}}">
+                <div class="swiper-wrapper">
+                  {%-for product in collections[block.settings.products].products limit: block.settings.limit-%}
+                  <div class="swiper-slide grid-item">
+                    {%- render "product-grid-item", product: product, grid_layout: grid_ly, st_card: st_card -%}
+                  </div>
+                  {%-endfor %}
+                </div>
+                {%- if block.settings.use_dots -%}
+                <div class="swiper-pagination swiper-pagination-{{block.settings.dots_mode}} swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}"></div>
+                {%- endif -%}
+                {%- if collections[block.settings.products].all_products_count > block.settings.limit and block.settings.load_btn -%}
+                <div class="mt-5 w-100 {{block.settings.title_align}}">
+                  <a class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%} button-more" href="{{collections[block.settings.products].url}}">{{'sections.products_section.loadmore_html'|t}}</a>
+                </div>
+                {%- endif -%}
+              </div>
+            {% else %}
+              <div class="products-card-grid p-style-{{grid_ly}} swiper-container loadvariant swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{block.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{block.settings.use_dots}}" data-nav="{{block.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}" data-pagination=".swiper-pagination-{{block.id}}" data-observer="true">
+                <div class="swiper-wrapper lazyload loadvariant" data-include="{{collections[block.settings.products].url}}/?section_id={{section.id}}&q={{forloop.index0}}">
+                  {%-for i in (1..6)-%}
+                  <div class="swiper-slide grid-item"><div class="animated-background aspectRatio mb-2"></div><div class="animated-background box-line-sm"></div><div class="animated-background box-line-xs mb-3i"></div></div>
+                  {%-endfor-%}
+                </div>
+                {%- if block.settings.use_dots -%}
+                <div class="swiper-pagination swiper-pagination-{{block.settings.dots_mode}} swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}"></div>
+                {%- endif -%}
+                {%- if collections[block.settings.products].all_products_count > block.settings.limit and block.settings.load_btn -%}
+                <div class="mt-5 w-100 {{block.settings.title_align}}">
+                  <a class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%} button-more" href="{{collections[block.settings.products].url}}">{{'sections.products_section.loadmore_html'|t}}</a>
+                </div>
+                {%- endif -%}
+              </div>
+            {% endif %}
+            {%- if block.settings.use_navigation -%}
+            <div class="swiper-buttons position-absolute"{% if block.settings.nav_position == 'nav-top-right' or block.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+              <div class="content-buttons position-relative">
+                <div class="swiper-button-prev sw-btn-prev-{{block.id}} fkt-2x fkt-va"></div>
+                <div class="swiper-button-next sw-btn-next-{{block.id}} fkt-2x fkt-va"></div>
+              </div>
+            </div>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="swiper-container-fuild position-relative {{block.settings.nav_position}} nav-style{{block.settings.nav_style}} nav-mode-{{block.settings.nav_mode}}">
+            <div class="products-card-grid p-style-{{grid_ly}} swiper-container swiper-container-fshadow" data-breakpoints='{{responsive_}}' data-autoplay="{{block.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{block.settings.use_dots}}" data-nav="{{block.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{block.id}}" data-next-el=".sw-btn-next-{{block.id}}" data-pagination=".swiper-pagination-{{block.id}}">
+              <div class="swiper-wrapper">
+                {%-for i in (1..block.settings.limit) -%}
+                <div class="swiper-slide grid-item">
+                  {%- render "product-grid-item", product: product, grid_layout: grid_ly, st_card: st_card -%}
+                </div>
+                {%-endfor %}
+              </div>
+              {%- if block.settings.use_dots -%}
+              <div class="swiper-pagination swiper-pagination-{{block.settings.dots_mode}} swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}"></div>
+              {%- endif -%}
+              {%- if block.settings.load_btn -%}
+              <div class="mt-5 w-100 {{block.settings.title_align}}">
+                <a class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%} button-more" href="{{collections[block.settings.products].url}}">{{'sections.products_section.loadmore_html'|t}}</a>
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+        </div>
+        <div class="col-12 col-xl-4 banner_items">
+          <div class="swiper-container" data-slides-per-view="1" data-dots="true" data-nav="false" data-pagination=".swiper-pagination-{{block.id}}">
+            <div class="swiper-wrapper">
+              {%- if collections[block.settings.products].title != blank -%}
+              {%-for i in (1..4)-%}
+                {%-assign image = 'image_' | append: i -%}
+                {%-assign image_link = 'image_link_' | append: i -%}
+                {%- if block.settings[image] == blank and block.settings[image_link] == blank -%}{%-continue-%}{%- endif -%}
+                <div class="swiper-slide">
+                  {%- assign image_item = block.settings[image] -%}
+                  {%-assign width = image_item.width | default: 452.00 -%}{%-assign height = image_item.height | default: 390.00 | plus: 0.00-%}
+                  <div class="img__banner lazyload" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings[image] %} title="452x390 px"{% endunless %}>
+                  {%- if block.settings[image_link] != blank -%}
+                    {%- assign product = all_products[block.settings[image_link]] | default: null -%}
+                    {%- render "product-grid-item", product: product, grid_layout: '23', st_card: st_card -%}
+                  {%- endif -%}
+                  </div>
+                </div>
+              {%-endfor %}
+              {%- else -%}
+              {%-for i in (1..4)-%}
+                {%-assign image = 'image_' | append: i -%}
+                {%-assign image_link = 'image_link_' | append: i -%}
+                <div class="swiper-slide">
+                  {%- assign image_item = block.settings[image] -%}
+                  {%-assign width = image_item.width | default: 452.00 -%}{%-assign height = image_item.height | default: 390.00 | plus: 0.00-%}
+                  <div href="{{block.settings[image_link]|default:'#'}}" class="img__banner lazyload" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings[image] %} title="452x390 px"{% endunless %}>
+                    {%- assign product = all_products[block.settings[image_link]] | default: null -%}
+                    {%- render "product-grid-item", product: product, grid_layout: '23', st_card: st_card -%}
+                  </div>
+                </div>
+              {%-endfor %}
+              {%- endif -%}
+            </div>
+            <div class="swiper-pagination swiper-pagination-outside swiper-pagination-{{block.settings.dots_position}} swiper-pagination-{{block.id}}-{{block.id}}"></div>
+          </div>
+        </div>
+      </div>
+    {%- endfor-%}
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+{%- endif -%}
+{%- else -%}
+<!--lz_sc-->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+-%}
+
+{% assign i = canonical_url | split: 'q=' | last | plus: 0 %}
+{%-assign block = section.blocks[i] -%} 
+{%-for product in collections[block.settings.products].products limit: block.settings.limit-%}
+<div class="swiper-slide grid-item">
+  {%- render "product-grid-item", product: product, grid_layout: grid_ly, st_card: st_card -%}
+</div>
+{%-endfor %}
+<!--lz_sc-->
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Slide(grid) + Banner 1",
+    "class": "md_products_section md_products_section_slide_banner_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Slide(grid) + Banner 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type":"checkbox",
+        "id": "use_lazyload",
+        "label": "Use lazyload?",
+        "info": "Help speed up page loading."
+      },
+      {
+        "type": "select",
+        "id": "product_grid_layout",
+        "label": "Product card grid layout",
+        "options": [
+          {
+            "label": "Default",
+            "value": ""
+          },
+          {
+            "label": "Layout 1",
+            "value": "01"
+          },
+          {
+            "label": "Layout 2",
+            "value": "02"
+          },
+          {
+            "label": "Layout 3",
+            "value": "03"
+          },
+          {
+            "label": "Layout 4",
+            "value": "04"
+          },
+          {
+            "label": "Layout 5",
+            "value": "05"
+          },
+          {
+            "value": "06",
+            "label": "Layout 6"
+          },
+          {
+            "value": "07",
+            "label": "Layout 7"
+          },
+          {
+            "value": "08",
+            "label": "Layout 8"
+          },
+          {
+            "value": "09",
+            "label": "Layout 9"
+          },
+          {
+            "value": "10",
+            "label": "Layout 10"
+          },
+          {
+            "value": "11",
+            "label": "Layout 11"
+          },
+          {
+            "value": "12",
+            "label": "Layout 12"
+          },
+          {
+            "value": "13",
+            "label": "Layout 13"
+          },
+          {
+            "value": "14",
+            "label": "Layout 14"
+          },
+          {
+            "value": "15",
+            "label": "Layout 15"
+          },
+          {
+            "value": "16",
+            "label": "Layout 16"
+          },
+          {
+            "value": "04 p-style-17",
+            "label": "Layout 17"
+          },
+          {
+            "value": "04 p-style-18",
+            "label": "Layout 18"
+          },
+          {
+            "value": "04 p-style-19",
+            "label": "Layout 19"
+          },
+          {
+            "value": "02 p-style-20",
+            "label": "Layout 20"
+          },
+          {
+            "value": "21",
+            "label": "Layout 21"
+          },
+          {
+            "value": "26",
+            "label": "Layout 22"
+          },
+          {
+            "value": "02 p-style-27",
+            "label": "Layout 23"
+          },
+          {
+            "value": "28",
+            "label": "Layout 24"
+          }
+        ],
+        "default": "",
+        "info": "[Preview](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-Product-grid.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Section title"
+          },
+          {
+            "type": "text",
+            "id": "title_section",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "stitle_section",
+            "label": "Subtitle"
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link"
+          },
+          {
+            "type": "select",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "label": "Margin bottom of title",
+            "default": 3
+          },
+          {
+            "type": "header",
+            "content": "Products settings"
+          },
+          {
+            "type": "collection",
+            "id": "products",
+            "label": "Choose collection"
+          },
+          {
+            "type": "range",
+            "id": "limit",
+            "min": 1,
+            "max": 50,
+            "step": 1,
+            "label": "Limit display product",
+            "default": 8
+          },
+          {
+            "type": "header",
+            "content": "Slide settings"
+          },
+          {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "__Auto-rotate slides",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "use_navigation",
+            "label": "__Use navigation?",
+            "default": true
+          },
+          {
+            "type": "select",
+            "id": "nav_style",
+            "options": [
+              {
+                "value": "-default",
+                "label": "Default"
+              },
+              {
+                "value": "1",
+                "label": "Style 1"
+              },
+              {
+                "value": "2",
+                "label": "Style 2"
+              },
+              {
+                "value": "3",
+                "label": "Style 3"
+              }
+            ],
+            "label": "Navigation style",
+            "default": "-default"
+          },
+          {
+            "type": "select",
+            "id": "nav_mode",
+            "options": [
+              {
+                "value": "default",
+                "label": "Default"
+              },
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "primary",
+                "label": "Primary color"
+              }
+            ],
+            "label": "Navigation mode",
+            "default": "default"
+          },
+          {
+            "type": "select",
+            "id": "nav_position",
+            "options": [
+              {
+                "value": "nav-default",
+                "label": "Default"
+              },
+              {
+                "value": "nav-center-center",
+                "label": "Center center"
+              },
+              {
+                "value": "nav-center-outside",
+                "label": "Center outside"
+              },
+              {
+                "value": "nav-top-right",
+                "label": "Top right"
+              },
+              {
+                "value": "nav-top-left",
+                "label": "Top left"
+              }
+            ],
+            "label": "Navigation position",
+            "default": "nav-default"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_dots",
+            "label": "__Use dots?"
+          },
+          {
+            "type": "select",
+            "id": "dots_mode",
+            "options": [
+              {
+                "value": "default",
+                "label": "Default"
+              },
+              {
+                "value": "white",
+                "label": "White"
+              },
+              {
+                "value": "primary",
+                "label": "Primary color"
+              }
+            ],
+            "label": "Dots mode",
+            "default": "default"
+          },
+          {
+            "type": "select",
+            "id": "dots_position",
+            "options": [
+              {
+                "value": "inside",
+                "label": "Inside"
+              },
+              {
+                "value": "outside",
+                "label": "Outside"
+              }
+            ],
+            "label": "Dots position",
+            "default": "inside"
+          },
+          {
+            "type": "textarea",
+            "id": "responsive",
+            "label": "__Responsive",
+            "default": "{\n  \"0\": {\n    \"slidesPerView\": 1,\n    \"spaceBetween\": 0\n  },\n  \"375\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 10\n  },\n  \"768\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 20\n  },\n  \"992\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 20\n  },\n  \"1200\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 20\n  },\n  \"1500\": {\n    \"slidesPerView\": 6,\n    \"spaceBetween\": 20\n  }\n}"
+          },
+          {
+            "type": "header",
+            "content": "Banners settings"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner 1",
+            "info": "Size suggestion: 452 x 390 px"
+          },
+          {
+            "type": "product",
+            "id": "image_link_1",
+            "label": "Link to 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner 2",
+            "info": "Size suggestion: 452 x 390 px"
+          },
+          {
+            "type": "product",
+            "id": "image_link_2",
+            "label": "Link to 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image banner 3",
+            "info": "Size suggestion: 452 x 390 px"
+          },
+          {
+            "type": "product",
+            "id": "image_link_3",
+            "label": "Link to 3"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Image banner 4",
+            "info": "Size suggestion: 452 x 390 px"
+          },
+          {
+            "type": "product",
+            "id": "image_link_4",
+            "label": "Link to 4"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Slide(grid) + Banner 1",
+        "category": "03. Section products",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

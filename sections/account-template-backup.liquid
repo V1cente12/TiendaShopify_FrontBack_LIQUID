@@ -1,0 +1,955 @@
+<!-- account-template.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%-render 'sc_css' -%}
+<style>
+  .map {
+    height: 100%;
+    width: 100%;
+  }
+
+  .map_parent {
+    height: 500px;
+    width: 100%;
+    position: relative;
+  }
+  #pin {
+            position: absolute;
+            top: 68px;
+            left: 50%;
+        }
+	.direccion-por-defecto {
+		background: green;
+		border-radius: 10px;
+		text-align: center;
+		color: white;
+  	}
+  .contenedor-enlace{
+  	display: flex;    
+    justify-content: space-around;
+  }
+</style>
+<div class="{{width_section_}}">
+  <div class="section-width container-fluid wide">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+</div>
+<div class="border-top" style="opacity: 0.3"></div>
+<div class="page-content {{width_section_}}">
+  <div class="dashboard content_{{section.id}}{%if section.settings.image %} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width container-fluid wide">
+      <div class="row">
+        <aside class="col-12 col-md-4 col-lg-3">
+          <ul class="nav nav-dashboard flex-column list-unstyled" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link{%if template.name != 'addresses'%} active{%endif%}" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="false">{{ 'customer.account.dashboard' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">{{ 'customer.orders.title_orders' | t }}</a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link{%if template.name == 'addresses'%} active{%endif%}" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="true">{{ 'customer.addresses.title' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>
+            </li>
+          </ul>
+        </aside>
+        <div class="col-12 col-md-8 col-lg-9">
+          <div class="tab-content">
+            <div class="tab-pane fade{%if template.name != 'addresses'%} active show{%endif%}" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+              <p>{{ 'customer.account.hello' | t }} <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.addresses[0].first_name| default: customer.email}}{%-endif-%}</span> (no eres <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.addresses[0].first_name| default: customer.email}}{%-endif-%}</span>? <a href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>) 
+              <br>
+              {{ 'customer.account.dashboard_info_html' | t }}.</p>
+                              <a style="background-color:#005FA0;border-color:#005FA0;" class="btn btn-primary .btn-rounded" href="/cart">Ir al carrito<i class="fkt-shopping-cart"></i></a>
+				
+     
+            </div>
+            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+              {%- if customer.orders.size == 0 -%}
+              <p>{{ 'customer.orders.none' | t }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-outline-primary-2">
+                <span>{{ 'customer.orders.button_back_to_shop' | t }}</span>
+                <i class="fkt-long-arrow-right"></i>
+              </a>
+              {%- else -%}
+                {%- paginate customer.orders by 20 -%}
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>{{ 'customer.orders.order_number' | t }}</th>
+                          <th>{{ 'customer.orders.date' | t }}</th>
+                          <th>{{ 'customer.orders.products' | t }}</th>
+                          {% comment %}<th>{{ 'customer.orders.payment_status' | t }}</th>{% endcomment %}
+                          <th>{{ 'customer.orders.total' | t }}</th>
+                         <th>{{ 'customer.orders.payment_status' | t }}</th>
+                          <th>Estado del Pedido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {%- for order in customer.orders -%}
+                      <tr>
+                        <td data-label="{{ 'customer.orders.order_number' | t }}">
+                          <a href="{{ order.customer_url }}">{{ order.name }}</a>
+                        </td>
+                        <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                        <td data-label="{{ 'customer.orders.products' | t }}">
+                          {{ order.line_items[0].product.title | truncatewords: 5}}
+                          {%- assign count = order.line_items.size | minus: 1 -%}
+                          {%if order.line_items.size > 1%}{{ 'customer.orders.items_with_count' | t : count: count }}{%endif%}
+                        </td>
+                        {% comment %}<td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>{% endcomment %}
+                        <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                           {% render "pedido_estadoPago", estadoPago: order.financial_status %}
+                        </td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                         {% render "pedido_estadoCumplimiento-Preparacion", obj: order %}
+                        </td>
+                      </tr>
+                      {%- endfor -%}
+                      </tbody>
+                    </table>
+                  </div>
+                {%-if paginate.pages > 1-%}
+                  <div class="pagination_ text-center clearfix">
+                    {%- render 'pagination', cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+                  </div>
+                {%-endif-%}
+                {%- endpaginate -%}
+              {%- endif -%}
+            </div>
+            <div class="tab-pane fade{%if template.name == 'addresses'%} active show{%endif%}" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+              <p>{{ 'customer.addresses.infor' | t }}</p>              
+              <div class="mt-2 mb-3">
+                <button type="button" onclick="initMap()" class="btn btn-primary address-new-toggle">{{ 'customer.addresses.add_new' | t }}</button>
+              	<a style="background-color:#005FA0;border-color:#005FA0;margin-left: 2rem ;" class="btn btn-primary" href="/cart">Regresar al carrito<i class="fkt-cart-arrow-down"></i></a>
+              </div>
+              <div class="clear"></div>
+              <div id="AddressNewForm" class="form-vertical d-none">
+                {%- form 'customer_address', customer.new_address -%}
+                {{ form.errors | default_errors }}
+                <div class="fields-address__myAccount">
+                  <div class="row">
+                    <div class="col-sm-5" id="billing_first_name_field">
+                      <label for="AddressFirstNameNew">{{ 'customer.addresses.first_name' | t }} *</label>
+                      <input type="text" class="form-control" required="" id="AddressFirstNameNew" name="address[first_name]" value="{{ form.first_name }}">
+                    </div>
+                    <div class="col-sm-4" id="billing_last_name_field">
+                      <label for="AddressLastNameNew">{{ 'customer.addresses.last_name' | t }} *</label>
+                      <input type="text" class="form-control" required="" id="AddressLastNameNew" name="address[last_name]" value="{{ form.last_name }}">
+                    </div>
+                    <div class="col-sm-3" id="billing_phone_field">
+                      <label for="AddressPhoneNew">{{ 'customer.addresses.phone' | t }}</label>
+                      <input type="tel" class="form-control" required="" id="AddressPhoneNew" name="address[phone]" value="{{ form.phone }}">
+                    </div>
+                  </div>
+                  <label for="AddressCompanyNew" style="display:none">{{ 'customer.addresses.company' | t }}</label>
+                  <input type="text" class="form-control" id="AddressCompanyNew" name="address[company]" value="{{ form.company }}" style="display:none">
+
+                  <div class="row">
+                    <div class="col-sm-6" id="billing_address_1_field">
+                      <label for="AddressAddress1New">{{ 'customer.addresses.address1' | t }}</label>
+                      <input type="text" class="form-control" id="AddressAddress1New" name="address[address1]" value="{{ form.address1 }}">
+                    </div>
+                    <div class="col-sm-6" id="billing_address_2_field">
+                      <label for="AddressAddress2New">{{ 'customer.addresses.address2' | t }}</label>
+                      <input type="text" class="form-control" id="AddressAddress2New" name="address[address2]" value="{{ form.address2 }}">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4" id="billing_city_field">
+                      <label for="AddressCityNew">{{ 'customer.addresses.city' | t }}</label>
+                      <input type="text" class="form-control" id="AddressCityNew" name="address[city]" value="{{ form.city }}" style="display:none">
+{% comment %}                    </div> {% endcomment %}
+                    {% assign citys = settings.citys | split: ',' %}
+{% comment %}       <div class="col-md-4"> {% endcomment %}
+                      <select name="address-new[city]" class="form-control" id="address-new[selectcity]" onchange="cambiarCiudad()">
+                        {% for city in citys %}                 
+                          {%- if city == form.city -%}
+                             <option selected value="{{city}}">{{city}}</option>
+                          {%- else -%}               
+                              <option value="{{city}}">{{city}}</option>
+                          {%- endif -%}              
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-3" id="billing_state_field"  style="display:none">
+                      <label for="AddressCountryNew">{{ 'customer.addresses.country' | t }}</label>
+                      <select class="form-control" id="AddressCountryNew" name="address[country]" data-default="{{ form.country }}">{{ country_option_tags }}</select>
+                    </div>
+                    <div class="col-md-3" id="AddressProvinceContainerNew" style="display:none">
+                      <label for="AddressProvinceNew">{{ 'customer.addresses.province' | t }}</label>
+                      <select class="form-control" id="AddressProvinceNew" name="address[province]" data-default="{{ form.province }}"></select> 
+                    </div>
+                    <div class="col-md-2" id="billing_postcode_field" style="display:none">
+                      <label for="AddressZipNew">{{ 'customer.addresses.zip' | t }}</label>
+                      <input type="text" class="form-control" id="AddressZipNew" name="address[zip]" value="{{ form.zip }}" autocapitalize="characters">
+                    </div>
+                  </div>
+                  <div class='row'>
+                    	<div class="col-sm-12">
+                          <button type="button" class="btn btn_cancel btn-outline-primary-2" onclick="geolocation()">Usar ubicacion</button>
+                        </div>
+                      </div>
+                  <div class='row'>
+                    <div class="col-sm-12">
+                      <div class="map_parent">                  
+            			<div id="map" class="map" >
+	            		</div>
+    	      		  </div>
+                    </div>
+                  </div>                  
+                  <div class="form-group">
+                    <div class="agree_checkbox">
+                      <label for="address_default_address_new" style="display: inline-block;margin: 0">
+                      {{ form.set_as_default_checkbox }} {{ 'customer.addresses.set_default' | t }}</label>
+                      <span class="clear"></span>
+                    </div>
+                    <div>
+                      <button type="submit" class="btn btn-primary mr-3" value="{{ 'customer.addresses.add' | t }}">{{ 'customer.addresses.add' | t }}</button>
+                      <button type="button" class="btn address-new-toggle btn_cancel btn-outline-primary-2">{{ 'customer.addresses.cancel' | t }}</button>
+                    </div>
+                  </div>
+                </div>
+                {%- endform -%}
+              </div>
+              <div class="row">          
+                {%- paginate customer.addresses by 5 -%}
+                {%- for address in customer.addresses -%}
+                <div class="col-lg-6 col-toggle w-100">
+                  <div class="card card-dashboard">
+                    <div class="card-body">
+                      {%- if address == customer.default_address -%}
+                      <h3 class="title-addresses__myAccount">{{ 'customer.addresses.default' | t }}</h3>
+                      {%- endif -%}
+                      {{ address | format_address }}
+                      <a href="javascript:void(0)" class="address-edit-toggle" onclick="testEdit({{ address.id }})"  data-form-id="{{ address.id }}">{{ 'customer.addresses.edit' | t }} <i class="fkt-edit"></i></a> &nbsp; | &nbsp;
+                      <a href="javascript:void(0)" class="address-delete" data-form-id="{{ address.id }}" data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}">{{ 'customer.addresses.delete' | t }} <i class="fkt-times"></i></a>
+                      {%- if address != customer.default_address -%}
+                      &nbsp; | &nbsp;<a href="javascript:void(0)" class="address-setdefault" onclick="direccionPorDefecto({{ address.id }})"  data-form-id="{{ address.id }}">Elegir dirección</a>
+                      {%- endif -%}
+                    </div>
+                  </div>          
+<!--              EDITTTTTTTTTTTTTTTTTTTTTTTTTTT      -->
+                  <div id="EditAddress_{{ address.id }}" class="form-vertical d-none">
+                    {%- form 'customer_address', address, class:'edit_customer_address' -%}
+                    <h3 class="title-addresses__myAccount mt-4">{{ 'customer.addresses.edit_address' | t }}</h3>
+                    <div class="fields-address__myAccount">
+                      <div class="row">
+                        <div class="col-md-5" id="billing_first_name_field">
+                          <label for="AddressFirstName_{{ form.id }}">{{ 'customer.addresses.first_name' | t }}</label>
+                          <input type="text" id="AddressFirstName_{{ form.id }}" class="form-control" name="address[first_name]" value="{{ form.first_name }}" required="">
+                        </div>
+                        <div class="col-md-4" id="billing_last_name_field">
+                          <label for="AddressLastName_{{ form.id }}">{{ 'customer.addresses.last_name' | t }}</label>
+                          <input type="text" id="AddressLastName_{{ form.id }}" class="form-control" name="address[last_name]" value="{{ form.last_name }}" required="">
+                        </div>
+                        <div class="col-md-3" id="billing_phone_field">
+                          <label for="AddressPhone_{{ form.id }}">{{ 'customer.addresses.phone' | t }}</label>
+                          <input type="tel" id="AddressPhone_{{ form.id }}" class="form-control" name="address[phone]" value="{{ form.phone }}">
+                        </div>
+                      </div>
+                      <label for="AddressCompany_{{ form.id }}"  style="display:none">{{ 'customer.addresses.company' | t }}</label>
+                      <input type="text" id="AddressCompany_{{ form.id }}" class="form-control" name="address[company]" value="{{ form.company }}" style="display:none">
+
+                      <div class="row">
+                        <div class="col-sm-6" id="billing_address_1_field">
+                          <label for="AddressAddress1_{{ form.id }}">{{ 'customer.addresses.address1' | t }}</label>
+                          <input type="text" class="form-control" id="AddressAddress1_{{ form.id }}" name="address[address1]" value="{{ form.address1 }}">
+                        </div>
+                        <div class="col-sm-6" id="billing_address_2_field">
+                          <label for="AddressAddress2_{{ form.id }}">{{ 'customer.addresses.address2' | t }}</label>
+                          <input type="text" class="form-control" id="AddressAddress2_{{ form.id }}" name="address[address2]" value="{{ form.address2 }}">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4" id="billing_city_field">
+                          <label for="AddressCity_{{ form.id }}">{{ 'customer.addresses.city' | t }}</label>
+                          <input type="text" class="form-control" id="AddressCity_{{ form.id }}" name="address[city]" value="{{ form.city }}" style="display:none">
+{% comment %}                    </div> {% endcomment %}
+                    {% assign citys = settings.citys | split: ',' %}
+{% comment %}       <div class="col-md-4"> {% endcomment %}
+                            <select name="address-{{ form.id }}[city]" class="form-control" id="address-{{ form.id }}[selectcity]" onchange="cambiarCiudadUpdate({{ form.id }})">
+                              {% for city in citys %}                 
+                                {%- if city == form.city -%}
+                                   <option selected value="{{city}}">{{city}}</option>
+                                {%- else -%}               
+                                    <option value="{{city}}">{{city}}</option>
+                                {%- endif -%}              
+                              {% endfor %}
+                            </select>
+                          </div>
+                        <div class="col-md-3" id="billing_state_field" style="display:none">
+                          <label for="AddressCountry_{{ form.id }}">{{ 'customer.addresses.country' | t }}</label>
+                          <select class="form-control address-country-option" data-form-id="{{ form.id }}" id="AddressCountry_{{ form.id }}" name="address[country]" data-default="{{ form.country }}">{{ country_option_tags }}</select>
+                        </div>
+                        <div class="col-md-3" id="AddressProvinceContainer_{{ form.id }}" style="display:none">
+                          <label for="AddressProvince_{{ form.id }}">{{ 'customer.addresses.province' | t }}</label>
+                          <select class="form-control" id="AddressProvince_{{ form.id }}" name="address[province]" data-default="{{ form.province }}"></select> 
+                        </div>
+                        <div class="col-md-2" id="billing_postcode_field" style="display:none">
+                          <label for="AddressZip_{{ form.id }}">{{ 'customer.addresses.zip' | t }}</label>
+                          <input type="text" class="form-control" id="AddressZip_{{ form.id }}" name="address[zip]" value="{{ form.zip }}" autocapitalize="characters">
+                        </div>
+                      </div>
+                      <div class='row'>
+                    	<div class="col-sm-12">
+                          <button type="button" class="btn btn_cancel btn-outline-primary-2" onclick="geolocationEdit({{ form.id }})">Usar ubicacion</button>
+                        </div>
+                      </div>
+                      <div class='row'>
+                    	<div class="col-sm-12">
+                        	<div class="map_parent">                  
+                          		<div id="map_{{ form.id }}" class="map" >
+                          		</div>
+                        	</div>
+                      	</div>
+                      </div>
+                      <div class="form-group">
+                        <div class="agree_checkbox">
+                          <label for="address_default_address_{{ form.id }}" style="display: inline-block;margin: 0">
+                          {{ form.set_as_default_checkbox }} {{ 'customer.addresses.set_default' | t }}</label>
+                          <span class="clear"></span>
+                        </div>
+                        <div>
+                          <button id="submit_{{ form.id }}" type="submit" class="btn btn-primary mr-3" value="{{ 'customer.addresses.add' | t }}">{{ 'customer.addresses.add' | t }}</button>
+                          <button type="button" class="btn address-edit-toggle btn_cancel btn-outline-primary-2" data-form-id="{{ form.id }}">{{ 'customer.addresses.cancel' | t }}</button>
+                        </div>
+                      </div>
+                    </div>
+                    {%- endform -%}
+                  </div>
+                </div>
+                {%- endfor -%}
+                {%- if paginate.pages > 1 -%}
+                  <div class="pagination_ text-center clearfix">
+                    {%- render 'pagination', cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+                  </div>                  
+                {%- endif -%}
+                {%- endpaginate -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{settings.keyGoogleMap}}&libraries=places&v=weekly&channel=2"></script>
+<script>
+  	if (window.jQuery) {
+        jquery = window.jQuery;
+   	} else if (window.Checkout && window.Checkout.$) {
+        jquery = window.Checkout.$;
+   	}	
+    
+	var map;
+    var infoWindow;
+	var longitude;
+    var latitude;
+	var geocoder;
+    console.log('test')
+	var bolivia = {"latitud":"-16.71474081542849","longitud":"-65.12559375","zoom":"5"};
+ 	var coordenadas = {"latitud":"-17.783318","longitud":"-63.182126","zoom":"14"};//Santa Cruz  	
+    var markers = [];
+	console.log(coordenadas)
+	function initMap() {
+      	document.getElementById('AddressCityNew').value ='Santa Cruz'
+        console.log(coordenadas.latitud)
+    	map = new google.maps.Map(document.getElementById('map'), {
+    		center: { lat:  parseFloat(coordenadas.latitud), lng:  parseFloat(coordenadas.longitud) },
+    		zoom: parseFloat(coordenadas.zoom)
+     	}); 
+	    longitude = map.getCenter().lng();
+		latitude = map.getCenter().lat();
+		infoWindow = new google.maps.InfoWindow;
+		geocoder = new google.maps.Geocoder;
+     	// GET coordinates and adress
+      	
+        var marker = new google.maps.Marker({
+          position: { lat : parseFloat(coordenadas.latitud) , lng : parseFloat(coordenadas.longitud) } ,
+          map,
+          title : 'Direccion',
+          draggable: true
+        });
+        markers.push(marker);
+        document.getElementById("AddressCompanyNew").value = latitude +',' +longitude;
+      	google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();
+          	obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+         }); 
+      	
+      	let input = document.getElementById('AddressAddress1New')
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          componentRestrictions: { country: "bo"}
+        });
+      	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    //infowindow.close();
+           let place = autocomplete.getPlace();
+           console.log(place)
+           if(place.geometry){
+             let placeLocation = place.geometry.location
+             document.getElementById("AddressCompanyNew").value = placeLocation.lat() +',' + placeLocation.lng();     		
+             obtenerCiudadCoordenadas(placeLocation.lat() , placeLocation.lng() , 0 )
+             deleteMarkers()
+             let marker = new google.maps.Marker({
+                  position: { lat : placeLocation.lat() , lng : placeLocation.lng() } ,
+                  map,
+                  title : 'Direccion',
+                  draggable: true
+              });
+            google.maps.event.addListener(marker, 'dragend', function(marker){
+              let latLng = marker.latLng; 
+              document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();
+              obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+            }); 
+             map.setCenter({ lat : placeLocation.lat() , lng : placeLocation.lng() })
+             markers.push(marker);
+           };
+        })
+   	}
+  
+  //
+// 	function editMap(id, coordenadas){
+// 		console.log(id);
+// 		console.log(coordenadas)
+// 		map = new google.maps.Map(document.getElementById('map'), {
+//     		center: { lat:  parseFloat(coordenadas.new.latitud), lng:  parseFloat(coordenadas.new.longitud) },
+//     		zoom: parseFloat(coordenadas.new.zoom)
+//      	});
+          
+//     }
+  // GEOLOCATION
+   function geolocation() {
+
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(function(position) {
+         var pos = {
+           lat: position.coords.latitude,
+           lng: position.coords.longitude
+         };
+		 document.getElementById("AddressCompanyNew").value = pos.lat +',' + pos.lng;  
+         obtenerCiudadCoordenadas(pos.lat , pos.lng , 0 )
+         map.setCenter(pos);
+		 deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: pos ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();  
+            obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+         }); 
+       }, function() {
+         handleLocationError(true, infoWindow, map.getCenter());
+       });
+     } else {
+       // Browser doesn't support Geolocation
+       handleLocationError(false, infoWindow, map.getCenter());
+     }
+   }
+	function geolocationEdit(addressId) {
+
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(function(position) {
+         var pos = {
+           lat: position.coords.latitude,
+           lng: position.coords.longitude
+         };
+		 document.getElementById('AddressCompany_'+ addressId).value = pos.lat +',' + pos.lng;     		
+         obtenerCiudadCoordenadas(pos.lat , pos.lng , addressId )
+         map.setCenter(pos);
+		 deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: pos ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			document.getElementById('AddressCompany_'+ addressId).value = latLng.lat() +',' +latLng.lng();
+           	obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , addressId )
+         }); 
+       }, function() {
+         handleLocationError(true, infoWindow, map.getCenter());
+       });
+     } else {
+       // Browser doesn't support Geolocation
+       handleLocationError(false, infoWindow, map.getCenter());
+     }
+   }
+   // GEOLOCATION Error
+   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+     infoWindow.setPosition(pos);
+     infoWindow.setContent(browserHasGeolocation ?
+                           'Error: The Geolocation service failed.' :
+                           'Error: Your browser doesn\'t support geolocation.');
+     infoWindow.open(map);
+   }
+
+   function geocodeLatLng(latitude, longitude, geocoder, map) {
+     var latlng = {lat: latitude, lng: longitude};
+     var address = document.getElementById('AddressLastNameNew');
+
+     geocoder.geocode({'location': latlng}, function(results, status) {
+       if (status === 'OK') {
+         if (results[0]) {
+           address.innerText = results[0].formatted_address;
+         } else {
+           address.innerText = 'No results found';
+         }
+       } else {
+         window.alert('Geocoder failed due to: ' + status);
+       }
+     });
+   }
+  function setMapOnAll(map) {
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+  function hideMarkers() {
+  	setMapOnAll(null);
+  }
+  function deleteMarkers() {
+    hideMarkers();
+    markers = [];
+  }
+
+  function testEdit(addressId){
+  	console.log(addressId)
+    let coordenadas= document.getElementById('AddressCompany_'+addressId).value
+		console.log(coordenadas)
+        let nuevasCoordenadas  = coordenadas.split(",")
+        console.log(nuevasCoordenadas)
+        map = new google.maps.Map(document.getElementById('map_'+addressId), {
+          center: { lat:  parseFloat(nuevasCoordenadas[0]), lng:  parseFloat(nuevasCoordenadas[1]) },
+    		zoom: parseFloat(12)
+     	});
+    	// GET coordinates and adress
+    	deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: { lat:  parseFloat(nuevasCoordenadas[0]), lng:  parseFloat(nuevasCoordenadas[1]) },
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById('AddressCompany_'+addressId).value = latiLong.lat() +',' +latiLong.lng() ;   
+           	coordenadas.new = {"latitud":latiLong.lat().toString(),"longitud":latiLong.lng().toString(),"zoom":map.getZoom()};
+           obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , addressId )
+         });
+    	let input = document.getElementById('AddressAddress1_'+ addressId)
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          componentRestrictions: { country: "bo"}
+        });
+      	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    //infowindow.close();
+           let place = autocomplete.getPlace();
+           console.log(place)
+           if(place.geometry){
+             let placeLocation = place.geometry.location
+             document.getElementById("AddressCompany_" + addressId).value = placeLocation.lat() +',' + placeLocation.lng();  
+             obtenerCiudadCoordenadas(placeLocation.lat() , placeLocation.lng() , addressId )
+             deleteMarkers()
+             let marker = new google.maps.Marker({
+                  position: { lat : placeLocation.lat() , lng : placeLocation.lng() } ,
+                  map,
+                  title : 'Direccion',
+                  draggable: true
+              });
+            google.maps.event.addListener(marker, 'dragend', function(marker){
+              let latLng = marker.latLng; 
+              document.getElementById("AddressCompany_"+ addressId ).value = latLng.lat() +',' +latLng.lng();
+              obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+            }); 
+             map.setCenter({ lat : placeLocation.lat() , lng : placeLocation.lng() })
+             markers.push(marker);
+           };
+        })
+  }
+  
+	function cambiarCiudad(){  	
+    let ciudad = document.getElementById('address-new[selectcity]').value
+    document.getElementById('AddressCityNew').value = ciudad
+    {{settings.citysConfig}} 
+    var cityConfig = citys.find( c => c.city === ciudad );
+      if(cityConfig){
+         
+        let latLng = {lat:parseFloat(cityConfig.latitud),
+                      lng: parseFloat(cityConfig.longitud),
+                      zoom:14} 
+        
+		document.getElementById("AddressCompanyNew").value = latLng.lat +',' + latLng.lng;
+        map.setCenter(latLng);
+        deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: latLng ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById("AddressCompanyNew").value = latiLong.lat() +',' +latiLong.lng() ;     		            
+            obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , 0 )
+         }); 
+        
+      }    
+  }
+  function obtenerCiudadCoordenadas(lat, long , addressId){
+	let ciudades = ['Santa Cruz','Cochabamba','La Paz','Beni','Pando','Oruro','Potosí','Chuquisaca','Tarija']    
+    let ciudad = ''
+  	 new google.maps.Geocoder()
+     .geocode({ location: { lat : lat , lng : long } })
+    .then((response) => {
+		let contador = 0 
+        
+        while(ciudades.length > contador){        
+            let contadorDireccion = 0
+            while(response.results.length > contadorDireccion){                             
+              if(response.results[contadorDireccion].formatted_address.includes(ciudades[contador])){ 
+                if (addressId == 0) {
+               		document.getElementById('address-new[selectcity]').value = ciudades[contador]
+                    document.getElementById('AddressCityNew').value = ciudades[contador]
+                }else{
+                	document.getElementById('address-'+addressId+'[selectcity]').value = ciudades[contador]
+                    document.getElementById('AddressCity_'+addressId).value = ciudades[contador]
+                }                                
+              }
+              contadorDireccion++
+            }                            
+           contador++
+        }                        
+    })
+    .catch((e) => window.alert("Geocoder failed due to: " + e));     
+    
+    return ciudad
+  }
+  function cambiarCiudadUpdate(addressId){
+    console.log(addressId)
+    if (addressId === undefined) addressId = "";
+    let ciudad = document.getElementById('address-'+addressId+'[selectcity]').value ;
+    document.getElementById('AddressCity_'+addressId).value = ciudad ; 
+    {{settings.citysConfig}}
+    var cityConfig = citys.find( c => c.city === ciudad );
+      if(cityConfig){
+         
+        var latLng = {lat:parseFloat(cityConfig.latitud),
+                      lng: parseFloat(cityConfig.longitud),
+                      zoom:14}        
+		document.getElementById("AddressCompany_"+addressId).value = latLng.lat +',' + latLng.lng;
+        map.setCenter(latLng);
+        deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: latLng ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById("AddressCompany_"+addressId).value = latiLong.lat() +',' +latiLong.lng() ;     		
+           	obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , addressId )
+         });
+      }
+  }
+  function direccionPorDefecto(addressId){
+	document.getElementById('address_default_address_'+addressId).checked = true
+  	document.getElementById('submit_'+ addressId).click()
+  }
+</script>
+{% schema %}
+  {
+    "name": "Account page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem",
+        "default": "3rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ]
+  }
+{% endschema %}
+{%-style-%}
+/* Dashboard */
+@media (min-width: 992px) {
+  .dashboard .col-lg-3 {
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+  .dashboard .col-lg-9 {
+    -ms-flex: 0 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
+  }
+}
+.dashboard label {
+  margin-bottom: 0.2rem;
+}
+.dashboard .form-control {
+  margin-bottom: 1.3rem;
+}
+.dashboard .form-control + .form-control {
+  margin-top: 2rem;
+}
+.dashboard .form-control:not(:focus) {
+  background-color: #f9f9f9;
+}
+.dashboard .tab-pane {
+  padding: 0;
+  border: none;
+  line-height: 2.15;
+  padding-bottom: 2rem;
+}
+.dashboard .tab-pane p {
+  margin-bottom: 1rem;
+}
+.dashboard .btn {
+  min-width: 123px;
+}
+.dashboard h3 {
+  font-size: 2rem;
+}
+
+.nav-dashboard {
+  margin-top: -1rem;
+}
+.nav-dashboard .nav-link {
+  overflow: hidden;
+  position: relative;
+  font-weight: 300;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  padding: 1.4rem 0;
+  border-bottom: thin solid #ebebeb;
+}
+.nav-dashboard .nav-link:before {
+  font-family: "molla";
+  content: '\f112';
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: -15px;
+  margin-top: -7.5px;
+  transition: all 0.3s;
+  opacity: 0;
+}
+[dir="rtl"] .nav-dashboard .nav-link:before {
+  content: '\f111';
+  left: auto;
+  right: -15px;
+}
+.nav-dashboard .nav-link:hover, .nav-dashboard .nav-link:focus, .nav-dashboard .nav-link.active {
+  color: var(--primary);
+}
+[dir="ltr"] .nav-dashboard .nav-link.active {
+  padding-left: 2rem;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active {
+  padding-right: 2rem;
+}
+.nav-dashboard .nav-link.active:before {
+  left: 0;
+  opacity: 1;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active:before {
+  left: auto;
+  right: 0;
+}
+.card-dashboard {
+  margin-bottom: 3rem;
+  background-color: #f9f9f9;
+  border: thin solid #ebebeb;
+}
+.card-dashboard .card-title {
+  letter-spacing: 0;
+  margin-bottom: 0.5rem;
+}
+.card-dashboard .card-body {
+  padding: 4rem 2.8rem 2rem;
+}
+
+.dashboard .table {
+  margin-bottom: 3rem;
+  line-height: normal;
+}
+.dashboard .table th {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #333;
+}
+.dashboard .table thead th {
+  padding-top: 0.8rem !important;
+}
+.dashboard .table th,
+.dashboard .table thead th,
+.dashboard .table td {
+  border-top: none;
+  border-bottom: thin solid #ebebeb;
+}
+.dashboard .table th,
+.dashboard .table td {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.dashboard .table td {
+  vertical-align: middle;
+}
+.dashboard .table tfoot th, .dashboard .table tfoot td {
+  border-bottom: none;
+  text-align: right;
+}
+[dir="rtl"] .dashboard .table tfoot th, .dashboard .table tfoot td {
+  text-align: left;
+}
+[dir="ltr"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-left: 1rem;
+}
+[dir="rtl"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-right: 1rem;
+}
+.dashboard .table .product-col {
+  min-width: 280px;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .info-discount {
+  top: 100%;
+  margin-top: 20px;
+  right: 0;
+  width: 250px;
+  padding: 2px 10px;
+  border-radius: 2px;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+  background-color: #d1ecf1;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .question_mark:hover .info-discount {
+  margin-top: 10px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.order-customer-info p {
+  line-height: normal;
+}
+.order-customer-info strong {
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+{%-endstyle-%}

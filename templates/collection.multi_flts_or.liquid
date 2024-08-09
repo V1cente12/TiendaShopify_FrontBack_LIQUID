@@ -1,0 +1,30 @@
+ktjs<!-- collection.multi-filter.liquid -->
+{%- layout none -%}
+{%- liquid
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- liquid
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-liquid
+  assign view = cart.attributes.theme_coll_layout | split: '_'
+  assign limit = settings.coll_limit
+  if view.size == 2
+    assign limit = view[1] | replace: 'pds','' | plus: 0
+  endif
+-%}
+{%-render 'multi-filters', limit: limit, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}

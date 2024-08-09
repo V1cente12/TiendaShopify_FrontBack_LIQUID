@@ -1,0 +1,330 @@
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%style%}
+.form_tags_list .form-group {
+  margin-bottom: 1rem;
+}
+.form_tags_list.form-inline .form-group {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-bottom: 0 !important;
+}
+.form_tags_list.form-inline .form-check-input {
+  position: relative;
+  margin-top: 0;
+  margin-right: .25rem;
+  margin-left: 0;
+}
+.form_tags_list.form-inline label {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-bottom: 0 !important;
+}
+@media(max-width: 576px){
+  .form_tags_list .form-control {
+    padding: .85rem 2rem .85rem .5rem;
+  }
+  .form_tags_list .form-group label {
+    margin-bottom: .5rem;
+  }
+}
+{%endstyle%}
+{%- unless collection -%}    
+  {% assign collection = collections['all'] %}
+{%- endunless -%}
+{% assign all_tags = collection.all_tags | join: "_-_kt_" | prepend: 'kt_' | split: "_-_" %}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image_mb | default: section.settings.image | img_url: 'master'}} [(max-width: 767px)] | {{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      <form class="filter_tags" action="/" method="POST">
+      <div class="border p-2 mb-2">
+      <div class="form-row form_tags_list"> 
+        {%- for block in section.blocks -%}
+        {%- if block.settings.block_style != 'dropdown' -%}{%-continue-%}{%- endif -%}
+        {%- assign filter = block.settings.key -%}
+        {%- assign key = 'kt_' | append: filter -%}
+        {%- assign variants = all_tags | where: key -%}
+        {%- if block.settings.tags != blank -%}
+          {%- assign key_append = 'kt_' | append: filter | append: ' ' | prepend: '_--_' -%}
+          {%- assign filter_sp = 'kt_' | append: filter | append: ' ' -%}
+          {%- assign variants = block.settings.tags | split: ', ' | join: key_append | prepend: filter_sp | split: "_--_" -%}
+        {%- endif -%}
+        {%- if variants.size > 0 -%}
+          <div class="form-group col-4 col-lg-3 col-xl-2">
+            <label for="input_{{key| handleize}}_{{forloop.index}}">{{block.settings.title}}:</label>
+            <select id="input_{{key| handleize}}_{{forloop.index}}" class="form-control" name="tags[]">
+              <option class="choose" value=""{% unless current_tags contains tag or forloop.first %} selected{% endunless %}>Select...</option>
+              {%- for variant in variants -%}
+              {%-assign tag_show = variant | remove: key -%}
+              {%-assign tag = variant | remove: 'kt_' -%}
+              <option value="{{tag| handleize}}"{% if current_tags contains tag %} selected="selected"{% endif %}>{{tag_show}}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="my-1">
+        <div class="form-inline form_tags_list justify-content-between justify-content-sm-end"> 
+          {%- for block in section.blocks -%}
+          {%- if block.settings.block_style != 'checkbox' -%}{%-continue-%}{%-endif-%}
+          {%- assign filter = block.settings.key -%}
+          {%- assign key = 'kt_' | append: filter -%}
+          {%- assign variants = all_tags | where: key -%}
+          {%- if variants.size > 0 -%}
+            <div class="form-group mb-0i">
+              {%-assign tag = filter | handleize | append: '_true' -%}
+              <input type="hidden" class="form-check-mirror" name="tags[]" value="{% if current_tags contains tag %}{{tag}}{% endif %}">
+              <input type="checkbox" class="form-check-input" id="check_{{key| handleize}}_{{forloop.index}}" data-key="{{filter| handleize}}" {% if current_tags contains tag %} checked="checked"{% endif %}>
+              <label class="form-check-label" for="check_{{key| handleize}}_{{forloop.index}}">{{block.settings.title}}</label>
+            </div>
+          {%- endif -%}
+          {%- endfor -%}
+          {%- unless template contains 'collection' -%}
+          <button type="submit" class="btn btn-primary btn-minwidth-auto ml-5">Submit</button>
+          {%- endunless -%}
+        </div>
+      </div>
+      </div>
+      <a class="d-none f_submit" data-pjax-filter href="{{collection.url}}/" title=""></a>
+      </form>
+      <script>
+        $(document).on('click', 'form.filter_tags .form-check-input', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if ($(this).is(':checked')) {
+          $(this).parent().find('.form-check-mirror').val($(this).attr('data-key')+'_true').trigger('change');
+        } else {
+          $(this).parent().find('.form-check-mirror').val('').trigger('change');
+        }
+        })
+        $(document).on('{%if template contains "collection" %}change{%else%}submit{%endif%}', 'form.filter_tags', function (event) {
+        event.preventDefault();
+        var arr = jQuery.map( $(this).serializeArray(), function( a ) {
+          console.log(a)
+          if (a.value !== '') {
+            return a.value;
+          }
+        });
+        console.log(arr)
+        arr = arr.join('+');
+        var curr_href = $('.f_submit').attr('href');
+        {%unless template contains "collection" %}
+        window.location.href = curr_href + arr;
+        {%else%}
+        $('.f_submit').attr('href', curr_href + arr).trigger('click').attr('href', curr_href);
+        {%endunless%}
+        })
+        // $(document).on('change', 'form.filter_tags', function (event) {
+        //   event.preventDefault();
+        //   var arr = jQuery.map( $(this).serializeArray(), function( a ) {
+        //     if (a.value !== '') {
+        //       return a.value;
+        //     }
+        //   });
+        //   arr = arr.join('+');
+        //   var curr_href = $('.f_submit').attr('href');
+        //   console.log(curr_href + arr)
+        //   $('.filter_tags option:not(:first-child)').attr('disabled','disabled');
+        //   $.ajax({
+        //     type: "GET",
+        //     url: curr_href + arr + '?view=filter_head',
+        //     success: function(data) {
+        //       $.each(JSON.parse(data), function(index, val) {
+        //         $.each(val, function(index, v) {
+        //           console.log(v)
+        //           $('.filter_tags option[value="'+v+'"]').removeAttr('disabled');
+        //         });
+        //       });
+        //     }
+        //   });
+        // })
+      </script>
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Filter head",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Show(grid)",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_mb",
+        "label": "Background image mobile",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Filter By...",
+        "settings": [
+          { 
+            "type":"text",
+            "id":"title",
+            "label":"Filter by group title",
+            "default":"Filter By"
+          },
+          {
+            "type": "textarea",
+            "id": "tags",
+            "label": "Tags list",
+            "info": "Separate by a comma, i.e \"Tag1, Tag2, Tag3\""
+          },
+          { 
+            "type":"text",
+            "id":"key",
+            "label":"Filter keyword",
+            "default":"Width",
+            "info": "Tags containing keyword will be display"
+          },
+          {
+            "type": "paragraph",
+            "content": "Create tag filter groups in Shopify. This snippet is designed to group and separate out collection tags. Use admin extensions"
+          },
+          {
+            "type": "header",
+            "content": "Select block style"
+          },
+          {
+            "type": "select",
+            "id": "block_style",
+            "options": [
+              {
+                "value": "dropdown",
+                "label": "Dropdown"
+              },
+              {
+                "value": "checkbox",
+                "label": "Checkbox"
+              }
+            ],
+            "label": "Width",
+            "default": "dropdown"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

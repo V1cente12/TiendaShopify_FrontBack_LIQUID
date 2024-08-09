@@ -1,0 +1,28 @@
+{%-assign settings_collection_layout = settings.coll_layout-%}
+<ul class="list--inline pagination d-flex flex-nowrap justify-content-center align-items-center">  
+  <li>
+    <a href="{{ paginate.previous.url }}" class="btn-prev btn--narrow{% unless paginate.previous %} disabled{%endunless%}">
+      <i class="fkt-long-arrow-{{cssAlign}}" aria-hidden="true"></i>
+      <span>{{'general.pagination.previous'|t}}</span>
+    </a>
+  </li> 
+  {%- for part in paginate.parts -%}
+  {%- if part.is_link -%}
+  <li class="list-inline-item">
+    <a href="{{ part.url }}" class="page-numbers btn--narrow">{{ part.title }}</a>
+  </li>
+  {%- else -%}
+  {%- if part.title == paginate.current_page -%}
+  <li class="list-inline-item"><span class="page-numbers current">{{ part.title }}</span></li>
+  {%- else -%}
+  <li class="list-inline-item"><span class="page-numbers dots">{{ part.title }}</span></li>
+  {%- endif -%}
+  {%- endif -%}
+  {%- endfor -%} 
+  <li>
+    <a href="{{ paginate.next.url }}" class="btn-next btn--narrow{% unless paginate.next %} disabled{%endunless%}">
+      <span>{{'general.pagination.next'|t}}</span>
+      <i class="fkt-long-arrow-{{cssAlign_rev}}" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>

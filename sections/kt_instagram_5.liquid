@@ -1,0 +1,265 @@
+<!-- kt_instagram_5.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Instagram-{{ section.id }}" data-section-type="instagram-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      <div id="instagramWrapper-{{ section.id }}" class="instagramWrapper row justify-content-center list-unstyled mb-0" data-access-token="{{settings.accessToken_instagram}}" data-limit="{{section.settings.images_limit}}" data-tag="{{settings.byTag_instagram}}">
+        <div class="item item-title position-relative order-3">
+          <div class="instagram-feed-title">
+            <i class="fkt-instagram"></i>{{--}}
+            <h3>{{section.settings.titlex|html}}</h3>{{--}}
+            <p>{{section.settings.stitle|html}}</p>{{--}}
+            <a class="ins_link" href="{{section.settings.link | default: '#'}}">{{section.settings.name_btn|html}}</a>{{--}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<noscript class="banner-css" data-section-type="kt_instagram_5">
+  {%-capture banner-css-%}
+  {%style%}
+    .kt_instagram_5 .instagramWrapper {
+      display: grid;
+      display: -ms-grid;
+      grid-auto-flow: dense;
+      grid-row-gap: 0;
+      grid-column-gap: 0;
+      grid-template-columns: repeat(2, 1fr);
+      -ms-grid-columns: repeat(2, 1fr);
+    }
+    .kt_instagram_5 .item {
+      -ms-flex: 0 0 100%;
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding: 0;
+      margin-bottom: 0;
+    }
+    .kt_instagram_5 .item-title {
+      grid-column: auto/span 2;
+      grid-row: auto/span 2;
+      -ms-grid-column-span: 2;
+      -ms-grid-row-span: 2;
+    }
+    .kt_instagram_5 .instagram-feed-title {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      max-width: 355px;
+      width: 100%;
+      margin: auto;
+      padding: 1rem 1.5rem;
+    }
+    .kt_instagram_5 .instagram-feed-title>i {
+      display: inline-block;
+      font-size: 2.4rem;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .kt_instagram_5 .instagram-feed-title h3 {
+      font-size: 2.4rem;
+      font-weight: 400;
+      letter-spacing: -1px;
+      font-family: var(--f_family_second,var(--f_family));
+    }
+    .kt_instagram_5 .instagram-feed-title a.ins_link {
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1.4px;
+      padding: 0 0 8px 0;
+      color: #222;
+      border-color: #222;
+      border-width: 0 0 2px 0;
+      border-style: solid;
+      transition: all .3s;
+      font-family: var(--f_family_second,var(--f_family));
+    }
+    .kt_instagram_5 .instagram-feed-title a.ins_link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    @media (min-width: 768px) {
+      .kt_instagram_5 .instagramWrapper {
+        grid-template-columns: repeat(6, 1fr);
+        -ms-grid-columns: repeat(6, 1fr);
+      }
+    }
+    @media (min-width: 992px) {
+      .kt_instagram_5 .instagram-feed-title {
+        padding: 3rem 1.5rem;
+      }
+      .kt_instagram_5 .instagram-feed-title>i {
+        font-size: 4rem;
+      }
+      .kt_instagram_5 .instagram-feed-title h3 {
+        font-size: 4rem;
+      }
+    }
+  {%endstyle%}
+  {%-endcapture-%}
+  {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+</noscript>
+{%- endunless-%}
+
+{% schema %}
+  {
+    "name": "Instagram 5",
+    "class": "kt_instagram_5",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Instagram 5",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type":"textarea",
+        "id":"titlex",
+        "label": "Title",
+        "default":"Shop Instagram"
+      },
+      {
+        "type":"textarea",
+        "id":"stitle",
+        "label": "Sub title",
+        "default": "Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit."
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": "Link instagram"
+      },
+      {
+        "type":"text",
+        "id":"name_btn",
+        "label": "Name button",
+        "default":"<span>FOLLOW US<\/span><i class=\"fkt-angle-right\"><\/i>"
+      },
+      {
+        "type": "range",
+        "id": "images_limit",
+        "min": 4,
+        "max": 20,
+        "step": 1,
+        "label": "Limit images",
+        "default": 12
+      }
+    ],
+    "presets": [
+      {
+        "name": "Instagram 5",
+        "category": "09. Socials"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,284 @@
+<!-- kt_HTML.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">   
+    <div class="section-width {{width_content_}}">
+      {%- if section.settings.border_top -%}<div class="w-100 border-top" style="border-top-color: {{section.settings.border_color}} !important"></div>{%- endif -%}
+      {%- if section.settings.title_section != blank -%}
+      <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%} mb-0" style="margin-bottom:{{section.settings.margin_btitle}}rem">
+        <div class="col-{%if section.settings.name_link != blank%}12 col-lg-auto text-center text-lg-left mb-1 mb-lg-0{%else%}12 {{section.settings.title_align}}{%endif%}">
+          <div class="section-title{%unless section.settings.name_link != blank%} {{section.settings.title_align}}{%endunless%} w-100">
+            {%- if section.settings.reverse -%}
+            <p class="sub-title">{{section.settings.stitle_section}}</p>
+            {%- endif -%}
+            <h3 class="title">{{section.settings.title_section}}</h3>
+            {%- unless section.settings.reverse -%}
+            <p class="sub-title">{{section.settings.stitle_section}}</p>
+            {%- endunless -%}
+          </div>
+        </div>
+        {%- if section.settings.name_link != blank -%}
+        <div class="col-12 col-lg-auto text-center text-lg-left">
+          {%- if section.settings.link_to != blank -%}              
+            <a href="{{section.settings.link_to}}" class="title-link {{section.settings.style_link}}" >{{section.settings.name_link}}</a>
+          {%- else -%}
+            <p class="sub-title">{{section.settings.name_link}}</p>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      <div class="row{% if width_section_ == 'w-100' and width_content_ == 'w-100' %} no-gutters{% endif %}">
+        {%-if section.settings.text != blank-%}
+        <div class="col-12">
+          {{section.settings.text}}
+        </div>
+        {%-endif-%}
+        {%-if section.settings.image_banner != blank-%}
+          {% assign img_url = section.settings.image_banner | img_url: 'master' %}
+          {%- unless img_url contains 'no-image' -%}
+          <div class="col-12">
+            <a href="{{section.settings.link | default: '#'}}">
+              <img src="{{section.settings.image_banner|img_url:'master'}}" alt="{{section.settings.image_banner.alt}}">
+            </a>
+          </div>
+          {%-endunless-%}
+        {%-endif-%}
+        {%-if section.settings.page != blank-%}
+        <div class="col-12">{{pages[section.settings.page].content|html}}</div>
+        {%-endif-%}
+      </div>
+      {%- if section.settings.border_bottom -%}<div class="w-100 border-bottom" style="border-bottom-color: {{section.settings.border_color}} !important"></div>{%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+
+{% schema %}
+  {
+    "name": "Section Customize",
+    "class": "kt_HTML",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Section Customize",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Section title"
+      },
+      {
+        "type": "text",
+        "id": "title_section",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "stitle_section",
+        "label": "Subtitle"
+      },
+      {
+        "type":"checkbox",
+        "id": "reverse",
+        "label": "Reverse title and subtitle?"
+      },
+      {
+        "type": "select",
+        "id": "title_align",
+        "options": [
+          {
+            "value": "",
+            "label": "Auto"
+          },
+          {
+            "value": "text-center",
+            "label": "Center"
+          }
+        ],
+        "label": "Align title",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "link_to",
+        "label": "Link to"
+      },
+      {
+        "type": "text",
+        "id": "name_link",
+        "label": "Name link"
+      },
+      {
+        "type": "select",
+        "id": "style_link",
+        "label": "Style link",
+        "options": [
+          { "value": "", "label": "Default" },
+          { "value": "link-underline", "label": "Underline" }
+        ],
+        "default": ""
+      },
+      {
+        "type": "range",
+        "id": "margin_btitle",
+        "min": 1,
+        "max": 9,
+        "step": 0.2,
+        "label": "Margin bottom of title",
+        "default": 3
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "border_top",
+        "label": "Use border top",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "border_bottom",
+        "label": "Use border bottom"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border color",
+        "default": "#ebebeb"
+      },
+      {
+        "type": "html",
+        "id": "text",
+        "label": "Text content"
+      },    
+      {
+        "type": "image_picker",
+        "id": "image_banner",
+        "label": "Image banner"
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": "Link"
+      },
+      {
+        "type": "page",
+        "id": "page",
+        "label": "Choose page"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Section Customize",
+        "category": "07. Customize"
+      }
+    ]
+  }
+{% endschema %}

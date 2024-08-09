@@ -1,0 +1,57 @@
+<style>
+    h1{
+        color:#000000 !important;
+    }
+    .galeria{
+        padding-top: 50px;
+        padding-bottom: 80px;
+       background-color: #ebebeb;       /* rgb(27, 27, 27); */
+        display:block;
+    }
+    .galeria h1{
+        text-align: center;
+        font-size: 40px;
+        color: #ffffff;
+    }
+
+    .imgGaleria{
+        padding-top: 30px;
+        margin: auto;
+    }
+
+
+
+    .divDiagonal{
+        transform: skewY(-5deg);
+    }
+
+    .divQuitarDiagonal{
+        transform: skewY(5deg);
+    }
+</style>
+ <div class="galeria">
+    <div>
+        <h1>Concierto Os Barões da Pisadinha</h1>
+    </div>
+
+    <div class="row imgGaleria">
+        <div class="col-md-12">
+            {%- section 'sec-os-baroes-banner1' -%}
+        </div>
+    </div>
+    
+</div>
+
+<div class="container page-content">
+ 
+  <div class="{{settings.coll_width_section}}">
+    <div class="section-width{%if settings.coll_width_content and settings.coll_width_section == 'w-100'%} container{%else%} w-100{%endif%}">
+      {%-render 'kt_breadcrumb' -%}
+    </div>
+  </div>
+	<div class="row mt-5 mb-7">
+		<div class="col-12">
+			{%- render 'searchanise-navigation' -%}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,23 @@
+{%- layout none -%}
+{%- assign all_tags = collection.tags | join: "_-_kt_" | split: "_-_" -%}
+{%- assign filters = "Width, Height, Diameter, Index, Code, Brand" | split: ', ' -%}
+{%- capture JSON -%}
+{
+{%- for filter in filters -%}
+{%- assign key = 'kt_' | append: filter -%}
+{%- assign variants = all_tags | where: key -%}
+{%- if variants.size == 0 -%}{%-continue-%}{%- endif -%}
+{{filter | json}}: [
+  {%- for variant in variants -%}
+  {%-assign tag_show = variant | remove: key -%}
+  {%-assign tag = variant | remove: 'kt_' -%}
+  "{{tag| handleize}}"{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+]
+{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+}
+{%- endcapture -%}
+{%- assign ii = ',}' -%}
+{%- assign i = '}' -%}
+{{- JSON | replace: ii, i -}}

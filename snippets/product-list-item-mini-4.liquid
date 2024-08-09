@@ -1,0 +1,76 @@
+<!-- product-list-item-mini.liquid -->
+{%- liquid
+assign compare_at_price = product.compare_at_price 
+assign price = product.price 
+assign price_varies = product.price_varies 
+assign available = product.available 
+if st_card[0] == "true"
+  unless product.tags contains 'notnew'
+    assign on_new = false
+    assign now_date_int = "now" | date: "%j" | plus: 0
+    assign now_year_int = "now" | date: '%Y' | plus: 0
+    assign pub_date_int = product.created_at | date: "%j" | plus: 0
+    assign pub_year_int = product.created_at | date: '%Y' | plus: 0
+    if now_year_int == pub_year_int
+      assign new_day_int = st_card[2] | default: 30 | plus: 0
+      assign check_new = now_date_int | minus: pub_date_int
+      if check_new >= 0 and check_new <= new_day_int
+        assign on_new = true
+      endif
+    else
+      assign new_day_int = st_card[2] | default: 30 | pub_date_int
+      assign check_new = now_date_int | plus: 366
+      if check_new <= new_day_int
+        assign on_new = true
+      endif
+    endif
+  endunless
+endif
+assign on_sale = false
+if compare_at_price > price 
+  assign on_sale = true
+endif
+assign sold_out = true
+assign preOrder = false
+unless available == false
+  assign sold_out = false
+endunless
+if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy != 'deny'
+  assign preOrder = true 
+endif
+unless masonry
+  assign masonry = false
+  if st_card[7] == 'normal'
+    assign masonry = 'none'
+  endif
+endunless
+unless block_id
+  assign block_id = block.id
+endunless
+unless section_id
+  assign section_id = section.id
+endunless
+-%}
+<div class="product-inner d-flex align-items-center">
+	<div class="product-thumb images">
+    {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out -%}
+    {%- render 'image-grid-item', product: product, st_card: st_card, masonry: 'false', second_thumb: 'false' -%}
+  </div>
+  <div class="product-info">
+    {%- if st_card[10] == 'true' -%}
+    <div class="product-vendor">
+    {%- assign map_tags = product.tags | where: 'Type '| first -%}
+    {%- if map_tags -%}
+      {%- assign vendor_ = product.type | handleize -%}
+      {%- assign url_vendor = collection.url | default: routes.all_products_collection_url | append: '/type-' | append: vendor_ -%}
+      {{ product.type | link_to: url_vendor }}
+    {%- else -%}
+      {{ product.type | link_to_vendor }}
+    {%- endif -%}
+    </div>
+    {%- endif -%}
+    <h2 class="product-name"><a href="{{product.url| within: collection}}" tabindex="0">{{product.title}}</a></h2>
+    {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+    {%-if st_card[13] == 'true'-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+  </div>
+</div>

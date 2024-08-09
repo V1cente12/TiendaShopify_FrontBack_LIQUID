@@ -1,0 +1,47 @@
+{% if settings.logo %}
+{%- capture image_width -%}{{ settings.logo_max_width}}{%- endcapture -%}
+{%- capture image_size -%}{{ settings.logo_max_width }}x{%- endcapture -%}
+{%- capture image_size2x -%}{{ settings.logo_max_width }}x@2x{%- endcapture -%}
+<a class="logo d-inline-block" href="{{ routes.root_url }}" style="max-width: {{ image_width| times: 1.0 | divided_by: 10}}rem;">
+  <img width="{{settings.logo.width}}" height="{{settings.logo.height}}"{%if settings.logo_mobile%} class="d-none d-sm-block"{%endif%} src="{{settings.logo | img_url: image_size2x}}" alt="{{ settings.logo.alt | default: shop.name | escape }}">
+  {%- if settings.logo_mobile -%}
+    <img width="{{settings.logo_mobile.width}}" height="{{settings.logo_mobile.height}}" class="d-sm-none" src="{{settings.logo_mobile | img_url: image_size2x}}" alt="{{ settings.logo_mobile.alt | default: shop.name | escape }}">
+  {%- endif -%}
+  {%- if template.name == 'index' %}
+    <h1 class="d-none">{{ shop.name | split: '-' | first }}</h1>
+  {%- else -%}
+    <span class="d-none">{{ shop.name | split: '-' | first }}</span>
+  {% endif -%}
+</a>
+{%- elsif settings.body_logo_svg_code != blank %}
+<a class="logo d-inline-block" href="{{ routes.root_url }}" style="max-width: {{ settings.logo_max_width| times: 1.0 | divided_by: 10}}rem;">
+  {{ settings.body_logo_svg_code | html }}
+  {%- if template.name == 'index' %}
+    <h1 class="d-none">{{ shop.name | split: '-' | first }}</h1>
+  {%- else -%}
+    <span class="d-none">{{ shop.name | split: '-' | first }}</span>
+  {% endif -%}
+</a>
+{%- elsif settings.body_logo_svg != blank %}
+{%- capture image_size -%}{{ settings.logo_max_width }}px{%- endcapture -%}
+{%- assign logo_svg_url = settings.body_logo_svg | file_url -%}
+<a class="logo d-inline-block" href="{{ routes.root_url }}" style="max-width: {{ settings.logo_max_width| times: 1.0 | divided_by: 10}}rem;">
+  <img width="{{ settings.logo_max_width }}"{%if settings.body_logo_mobile_svg != blank%} class="d-none d-sm-block"{%endif%} src="{{logo_svg_url}}" alt="{{ shop.name | escape }}">
+  {%- if settings.body_logo_mobile_svg != blank -%}
+    <img width="{{settings.logo_max_width}}" class="d-sm-none" src="{{settings.body_logo_mobile_svg | file_url}}" alt="{{ shop.name | escape }}">
+  {%- endif -%}
+  {%- if template.name == 'index' %}
+    <h1 class="d-none">{{ shop.name | split: '-' | first }}</h1>
+  {%- else -%}
+    <span class="d-none">{{ shop.name | split: '-' | first }}</span>
+  {% endif -%}
+</a>
+{%- else -%}
+<a class="logo d-inline-block" class="logo-link" href="{{ routes.root_url }}" itemprop="url">  
+  {%- if template.name == 'index' %}
+    <h1 class="h2">{{ shop.name | split: '-' | first }}</h1>
+  {%- else -%}
+    <span class="h2">{{ shop.name | split: '-' | first }}</span>
+  {% endif -%}
+</a>
+{% endif -%}

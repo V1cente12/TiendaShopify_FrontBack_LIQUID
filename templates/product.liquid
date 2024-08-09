@@ -1,0 +1,19 @@
+{%- liquid
+	if settings.use_ask
+	echo '<div class="lazyload lazypreload" data-include="'
+	echo product.url
+	echo '?view=ask"></div>'
+	endif
+	if settings.use_wide
+	  render 'photoswipe'
+	endif
+	section 'product-template'
+	section 'kt_recentlyViewedProducts'
+	
+-%}					
+<!-- RYVIU APP :: WIDGET -->
+<div class="lt-block-reviews"> 
+	<ryviu-widget handle="{{product.handle}}" product_id="{{product.id}}" title_product="{{product.title}}" image_product="{{ product.featured_image.src | img_url: '180x' }}"></ryviu-widget>
+</div>
+<!-- / RYVIU APP -->
+<!-- section 'kt_related-products' -->

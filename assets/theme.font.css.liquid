@@ -1,0 +1,15 @@
+{%- capture font -%}
+  {%-for variant in settings.font_base_family_shopify.variants-%}
+    {{ variant | font_face: font_display: 'swap'}}
+  {%-endfor-%}
+  {%-if settings.font_base_family_shopify.family != settings.font_main_header_family.family-%}
+    {%-for variant in settings.font_main_header_family.variants-%}
+      {{ variant | font_face: font_display: 'swap'}}
+    {%-endfor-%}
+  {%-endif-%}
+  {%-if settings.ffmaily_section_stitle != settings.font_main_header_family.family-%}
+    {%-for variant in settings.ffmaily_section_stitle.variants-%}
+      {{ variant | font_face: font_display: 'swap'}}
+    {%-endfor-%}
+  {%-endif-%}
+{%- endcapture -%}{{- font | strip_newlines | remove: '  ' | remove: '  ' -}}

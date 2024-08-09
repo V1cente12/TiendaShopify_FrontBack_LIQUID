@@ -1,0 +1,607 @@
+<!-- sec_ofertas_mbbrand.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+{%- style -%}
+.mycarrusel .swiper-container{
+  height: 380px;
+}
+.mycarrusel .swiper-slide{
+  text-align: center;
+  padding: 20px 0 18px 0;
+}
+.mycarrusel .swiper-slide img{
+  border-radius: 50%;
+  width: 85px;
+  height: 85px;
+  margin-bottom:15px;
+}
+.mycarrusel .swiper-slide h5{
+  line-height: initial;
+}
+
+.mycarrusel .swiper-slide:hover{
+  transition: all 0.4s ease-out;
+  box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+  /*
+  border: 1px solid #cccccc;
+  background-color: white;
+  */
+}
+
+
+.nav-style1 .swiper-button-next, .nav-style1 .swiper-button-prev, .nav-style2 .swiper-button-next, .nav-style2 .swiper-button-prev {
+    margin-left: -38px; 
+    margin-right: -38px;
+}
+
+@media screen and (max-width: 1200px) {
+  .nav-style1 .swiper-button-next, .nav-style1 .swiper-button-prev, .nav-style2 .swiper-button-next, .nav-style2 .swiper-button-prev {
+    margin-left: 0px; 
+    margin-right: 0px;
+  }
+}
+
+{%- endstyle -%}
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="mySeccion {{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%} swiper-fixed-fshadow" data-section-id="{{ section.id }}" id="Swiper-{{ section.id }}" data-section-type="swiper-section" data-clone-section="md-collection-brand.liquid">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      {%- assign blockTitle = section.blocks | where: 'type', 'title' | first -%}
+      {%- if blockTitle -%}
+        {%-if blockTitle.settings.title != blank or blockTitle.settings.stitle != blank -%}
+        <div class="section-title {{blockTitle.settings.title_align}}">
+          <h3>{{blockTitle.settings.title}}</h3>
+          {%- if blockTitle.settings.stitle != blank -%}
+            <p class="sub-title">{{blockTitle.settings.stitle}}</p>
+          {%- endif -%}
+        </div>
+        <div class="clearfix{% if blockTitle.settings.use_border%} border-bottom pb-1{%endif%}" style="opacity:.5;margin-bottom:{{blockTitle.settings.margin_btitle}}rem"></div>
+        {%-endif-%}
+      {%- endif -%}
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' ' | replace: '"{"','{"' | replace: '}}"','}}' -%}
+      {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      {%- assign blockBrand = section.blocks | where: 'type', 'item' -%}
+      {% if section.settings.brand_style == 'default' %}
+      <div class="mycarrusel swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container brands-slide style-{{section.settings.brand_style}}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+          {%- for block in blockBrand-%}
+          {%- if block.settings.image -%}
+            {%- liquid
+              assign image_item = block.settings.image
+              assign width = image_item.width
+              assign height = image_item.height
+              assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+              assign egx_url = block.settings.egx_url
+              assign egx_estiloCursor = "gx_cursorMano"
+              if egx_url == ""
+                assign egx_url = "#"
+                assign egx_estiloCursor = "gx_quitarPunteroMouse"
+              endif
+            -%} 
+            <a href="{{egx_url}}" class="{{egx_estiloCursor}} swiper-slide image__brand">
+                <img width="{{width}}" height="{{height}}" class="lazyload mll-lz" 
+                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" 
+                data-widths="[150, 240]" data-aspectratio="{{ image_item.aspect_ratio }}" 
+                data-sizes="auto" alt="{{ image_item.alt | escape }}">
+              <h5>{{block.settings.egx_titulo_id}}</h5>
+            </a>
+      
+          {%- endif -%}
+          {%- endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+          <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.use_navigation -%}
+        <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+          <div class="content-buttons position-relative">
+            <div id="button-prev-{{section.id}}" onclick='egxbuttonPrev("{{section.id}}")' class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+            <div id="button-next-{{section.id}}" onclick='egxbuttonNext("{{section.id}}")' class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      {% elsif section.settings.brand_style == 'type01' %}
+      <div class="swiper-container-fuild position-relative {{section.settings.nav_position}} nav-style{{section.settings.nav_style}} nav-mode-{{section.settings.nav_mode}}">
+        <div class="swiper-container brands-slide style-{{section.settings.brand_style}}" data-breakpoints='{{responsive_}}' data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}" data-dots="{{section.settings.use_dots}}" data-nav="{{section.settings.use_navigation}}" data-prev-el=".sw-btn-prev-{{section.id}}" data-next-el=".sw-btn-next-{{section.id}}" data-pagination=".swiper-pagination-{{section.id}}">
+          <div class="swiper-wrapper">
+          {%- for block in blockBrand-%}
+          {%- if block.settings.image -%}
+            <div class="swiper-slide image__brand">
+              <a class="icon__brand" href="{{ block.settings.brand_call_to_action }}" aria-label="{{block.settings.image.alt|default: shop.name}}">
+                {%- liquid
+                  assign image_item = block.settings.image
+                  assign width = image_item.width
+                  assign height = image_item.height
+                  assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+                -%}
+                <img width="{{width}}" height="{{height}}" class="lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[150, 240]" data-aspectratio="{{ image_item.aspect_ratio }}" data-sizes="auto" alt="{{ image_item.alt | escape }}" style="padding-bottom:{{height | times: 1.00 | divided_by: width | times: 100.00000000}}%">
+              </a>
+            </div>
+          {%- endif -%}
+          {%- endfor -%}
+          </div>
+          {%- if section.settings.use_dots -%}
+            <div class="swiper-pagination swiper-pagination-{{section.settings.dots_mode}} swiper-pagination-{{section.settings.dots_position}} swiper-pagination-{{section.id}}"></div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.use_navigation -%}
+        <div class="swiper-buttons position-absolute"{% if section.settings.nav_position == 'nav-top-right' or section.settings.nav_position == 'nav-top-left' %} style="margin-top: -4.6rem" {%endif%}>
+          <div class="content-buttons position-relative">
+            <div class="swiper-button-prev sw-btn-prev-{{section.id}} fkt-2x fkt-va"></div>
+            <div class="swiper-button-next sw-btn-next-{{section.id}} fkt-2x fkt-va"></div>
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+      	 {% elsif section.settings.brand_style == 'type02' %}
+      <div class="swiper-container-fuild position-relative">
+        <button aria-label="Anterior" class="carousel_anterior">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+          <div class="data-autoplay="{{section.settings.autoplay}}" data-slides-per-view="{{items_}}"">
+                <div class="carousel_lista">
+                  {%- for block in blockBrand-%}
+                  {%- if block.settings.image -%}
+                  <div class="test3 swiper-slide image__brand">
+                      <a class="icon__brand" href="{{ block.settings.brand_call_to_action }}"
+                          aria-label="{{ block.settings.image.alt | default: shop.name | escape }}">
+                          {%- liquid
+                        assign image_item = block.settings.image
+                        assign width = image_item.width
+                        assign height = image_item.height
+                        assign img_url = image_item | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+                      -%}
+                          <img width="{{width}}" height="{{height}}" class="lazyload mll-lz"
+                              src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                              data-src="{{ img_url }}" data-widths="[150, 240]"
+                              data-aspectratio="{{ image_item.aspect_ratio }}" data-sizes="auto"
+                              alt="{{ image_item.alt | escape }}"
+                              style="padding-bottom:{{height | times: 1.00 | divided_by: width | times: 100.00000000}}%">
+                      </a>
+                  </div>
+                  {%- endif -%}
+                  {%- endfor -%}
+              
+            </div>
+          </div>
+          <button aria-label="Siguiente" class="carousel_siguiente">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+      {% endif %}        
+    </div>
+  </div>
+</div>
+
+{%-endunless-%}
+{%- endunless -%}
+
+{% style %}
+.carousel_contenedor {
+	position: relative;
+  
+}
+.carousel_lista {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  transition-property: transform;
+  box-sizing: content-box;
+}
+
+.carousel_anterior,
+.carousel_siguiente {
+	position: absolute;
+	display: block;
+	width: 30px;
+	height: 30px;
+	border: none;
+	top: calc(50% - 20px);
+	cursor: pointer;
+	line-height: 30px;
+	text-align: center;
+	background: none;
+	color: var(--color, --btn_color);
+	opacity: 100%;
+}
+.carousel_anterior:hover,
+.carousel_siguiente:hover {
+	opacity: 20%;
+}
+
+.carousel_anterior {
+	left: -20px;
+}
+
+.carousel_siguiente {
+	right: -15px;
+}
+
+.carousel_indicadores .glider-dot {
+	display: block;
+	width: 30px;
+	height: 4px;
+	background: #ccc;
+	opacity: .2;
+	border-radius: 0;
+}
+
+.carousel_indicadores .glider-dot:hover {
+	opacity: .5;
+}
+
+.carousel_indicadores .glider-dot.active {
+	opacity: 1;
+}
+{% endstyle %}
+{% schema %}
+  {
+    "name": "Ofertas Promociones",
+    "class": "md_brand",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Brands",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Slide settings"
+      },
+      {
+        "type": "select",
+        "id": "brand_style",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          }
+        ],
+        "label": "== Type display",
+        "default": "default"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "__Auto-rotate slides",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "use_navigation",
+        "label": "__Use navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "nav_style",
+        "options": [
+          {
+            "value": "-default",
+            "label": "Default"
+          },
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ],
+        "label": "Navigation style",
+        "default": "-default"
+      },
+      {
+        "type": "select",
+        "id": "nav_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Navigation mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "nav_position",
+        "options": [
+          {
+            "value": "nav-default",
+            "label": "Default"
+          },
+          {
+            "value": "nav-center-center",
+            "label": "Center center"
+          },
+          {
+            "value": "nav-center-outside",
+            "label": "Center outside"
+          },
+          {
+            "value": "nav-top-right",
+            "label": "Top right"
+          },
+          {
+            "value": "nav-top-left",
+            "label": "Top left"
+          }
+        ],
+        "label": "Navigation position",
+        "default": "nav-default"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_dots",
+        "label": "__Use dots?"
+      },
+      {
+        "type": "select",
+        "id": "dots_mode",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "white",
+            "label": "White"
+          },
+          {
+            "value": "primary",
+            "label": "Primary color"
+          }
+        ],
+        "label": "Dots mode",
+        "default": "default"
+      },
+      {
+        "type": "select",
+        "id": "dots_position",
+        "options": [
+          {
+            "value": "inside",
+            "label": "Inside"
+          },
+          {
+            "value": "outside",
+            "label": "Outside"
+          }
+        ],
+        "label": "Dots position",
+        "default": "inside"
+      },
+      {
+        "type": "textarea",
+        "id": "responsive",
+        "label": "== Responsive",
+        "default": "{\n  \"0\": {\n    \"slidesPerView\": 2,\n    \"spaceBetween\": 0\n  },\n  \"480\": {\n    \"slidesPerView\": 3,\n    \"spaceBetween\": 0\n  },\n  \"768\": {\n    \"slidesPerView\": 4,\n    \"spaceBetween\": 0\n  },\n  \"992\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 0\n  },\n  \"1200\": {\n    \"slidesPerView\": 7,\n    \"spaceBetween\": 0\n  }\n}"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "title",
+        "name": "Item title",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": "text-center"
+          },
+          {
+            "type": "range",
+            "id": "margin_btitle",
+            "min": 1,
+            "max": 9,
+            "step": 0.2,
+            "unit": "rem",
+            "label": "Margin bottom of title",
+            "default": 3
+          },
+          {
+            "type": "checkbox",
+            "id": "use_border",
+            "label": "Use border bottom?",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item brand",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Brand image",
+            "info": "Size suggestion: 150 x 130 pixels"
+          },
+          {
+            "id": "egx_titulo_id",
+            "type": "text",
+            "label": "Egx - Titulo"
+          },
+          {
+            "id": "egx_url",
+            "type": "text",
+            "label": "Egx - Url"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Brands Logo",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

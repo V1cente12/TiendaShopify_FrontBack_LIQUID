@@ -1,0 +1,322 @@
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+{%- liquid 
+  assign metafields = customer.metafields.nitro_wishlist.products | strip | default: '' | split: '|'
+  assign wishlist_hanlde = metafields | last | split: ' '
+  assign wishlist_count = metafields | first | split: ' ' | size
+  assign wishlist = metafields | first
+-%}
+<div class="container">
+  <div class="border-top" style="border-color: rgba(235, 235, 235, 0.55) !important"></div>
+  {%-render 'kt_breadcrumb'-%}
+  <div class="wishlist-page row no-gutters pb-7">
+    <div class="col-12" role="main" itemscope="itemscope" itemtype="http://schema.org/CreativeWork">
+      {%- if customer -%}
+      <div class="card" style="opacity:0">
+        <div class="bar-loading bounce"></div>
+      </div>
+      {% if wishlist_count != 0 %}
+      <table class="table table-wishlist">
+        <thead>
+          <tr>
+            <th>{{'products.wishlist.tablet_label_product'|t}}</th>
+            <th>{{'products.wishlist.tablet_label_price'|t}}</th>
+            <th>{{'products.wishlist.tablet_label_status'|t}}</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="wishlist-page-items">
+          {%- for wishlist in wishlist_hanlde -%}
+          {%- assign product = all_products[wishlist]-%}
+          {%- if product == blank -%}{%- continue -%}{%- endif-%}
+
+          {%- liquid
+            assign compare_at_price = product.compare_at_price 
+            assign price = product.price 
+            assign price_varies = product.price_varies 
+            assign available = product.available
+            assign on_sale = false
+            if compare_at_price > price 
+              assign on_sale = true
+            endif
+            assign sold_out = true
+            assign preOrder = false
+            unless available == false
+              assign sold_out = false
+            endunless
+            if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+              assign preOrder = true 
+            endif
+          -%}
+
+          {%- assign current_variant = product.selected_or_first_available_variant -%}
+          {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+          <tr class="wishlist-page-item" data-row-id="{{ product.id }}" id="WishItem-{{product.id}}">
+            <td class="product-col">
+              <div class="product d-flex align-content-stretch">
+                <figure class="product-media">
+                  <a href="{{ product.url | within: product.collections.last }}">
+                    {%- capture image -%}
+                    {%- assign as_r = settings.aspect_ratio | default: settings.aspect_ratio_default -%}
+                    {%- assign aspect_ratioW = as_r | split: '/' | first | strip | plus: 0.00 -%}
+                    {%- assign aspect_ratioH = as_r | split: '/' | last | strip | plus: 0.00 -%}
+                    {%- capture image_size -%}230x{{aspect_ratioH | times:230.00 | divided_by:aspect_ratioW| round}}{%- endcapture -%} 
+                    {%- if featured_image -%}
+                    <img width="230" class="attachment-shop_thumbnail mx-auto" alt="{{ featured_image.title | escape |strip_html }}" src="{{ featured_image| img_url: image_size, crop:'top'}}">
+                    {%- else-%}
+                    {{ 'noimage.gif'| asset_img_url: image_size, crop:'top' | img_tag }}
+                    {%- endif -%}
+                    {%- endcapture -%}
+                    {{image}}
+                  </a>
+                </figure>
+                <div class="w-100">
+                  <h3 class="product-title">
+                    <a href="{{ product.url | within: product.collections.last }}" title="{{ product.title | strip_html }}">{{ product.title |html }}</a>
+                  </h3>
+                  <div class="d-md-none">
+                    {%- render "product-grid-item", product: product, grid_layout: '24', st_card: st_card -%}
+                    {%- if product.available -%}
+                    <span class="wishlist-item-in-stock in-stock">{{ 'products.product.in_stock' | t }}</span> 
+                    {%- else -%}
+                    <span class="wishlist-item-out-of-stock out-of-stock">{{ 'products.product.out_of_stock' | t }}</span> 
+                    {%- endif -%}
+                    <div class="clearfix mt-1"></div>                    
+                    {%- if settings.use_add_to_cart_btn -%}
+                      <div class="product product-inner --card{% if show_variant %} ktlz{%endif%}"{%unless product.has_only_default_variant%} data-href="{{product.handle}}"{{ktlz}}{%endunless%}>
+                        <form method="post" action="{{ routes.cart_add_url }}"{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-wishlist-mb" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-wishlist-mb" data-options="{{product.options.size}}" data-pr-vrs{%endunless%} style="width: 100%;">
+                          {%- if product.has_only_default_variant -%}
+                            {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+                          {%- else -%}
+                            {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase kt-button' -%}
+                          {%- endif -%}
+                        </form>
+                      </div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="price-col">
+              {%- render "product-grid-item", product: product, grid_layout: '24', st_card: st_card -%}
+            </td>
+            <td class="stock-col">
+              {%- if product.available -%}
+              <span class="in-stock">{{ 'products.product.in_stock' | t }}</span> 
+              {%- else -%}
+              <span class="out-of-stock">{{ 'products.product.out_of_stock' | t }}</span> 
+              {%- endif -%}
+            </td>
+            <td class="action-col">
+            {%- if settings.use_add_to_cart_btn -%}
+              <div class="product product-inner --card{% if show_variant %} ktlz{%endif%}"{%unless product.has_only_default_variant%} data-href="{{product.handle}}"{{ktlz}}{%endunless%}>
+                <form method="post" action="{{ routes.cart_add_url }}"{%unless product.has_only_default_variant%} id="ProductSection-{{product.id}}-wishlist" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-wishlist" data-options="{{product.options.size}}" data-pr-vrs{%endunless%}>
+                  {%- if product.has_only_default_variant -%}
+                    {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase btn-cart kt-button' -%}
+                  {%- else -%}
+                    {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 btn-block fkt-cart-plus text-uppercase kt-button' -%}
+                  {%- endif -%}
+                </form>
+              </div>
+            {%- endif -%}
+            </td>
+            <td class="remove-col">
+              <button class="nitro_wishlist_remove wishlist-remove btn btn-remove" data-action="remove" data-id="{{product.id}}" data-email="{{customer.email}}" data-customer_id="{{customer.id}}" data-handle="{{product.handle}}"><i class="fkt-close"></i></button>
+            </td>
+          </tr>
+          {%- endfor-%}
+        </tbody>
+      </table>
+      {% endif %}
+      <div class="wishlist-empty"{% if wishlist_count != 0 %} style="display:none"{% endif %}>
+        <div class="icon_place"><i class="fkt-heart-o"></i></div>
+        <div class="text-center h2 mb-5">{{ 'products.wishlist.no_products_wishlist' | t }}</div>
+      </div>
+      {%- else -%}
+      <h3 class="mt-5 h2 text-center">{{ 'products.wishlist.info_wishlist_html' | t }}</h3>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%style%}
+
+.table-wishlist th, .table-wishlist thead th, .table-wishlist td {
+  border-top: none;
+  border-bottom: thin solid #ebebeb;
+}
+.table-wishlist th, .table-wishlist td {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1.4rem;
+  padding-bottom: 1.4rem;
+}
+.table-wishlist th {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #999999;
+  text-align: left;
+}
+[dir="rtl"] .table-wishlist th {
+  text-align: right;
+}
+.table-wishlist td {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  vertical-align: middle;
+}
+.table-wishlist .btn.add_to_cart_button:before {
+  font-size: 1.8rem;
+  margin: 0 .5rem;
+}
+.table-wishlist .product-col {
+  min-width: 250px;
+}
+.table-wishlist .price-col {
+  width: 180px;
+  font-weight: 400;
+  font-size: 1.6rem;
+}
+.table-wishlist .product-price {
+  margin-bottom: 0;
+  line-height: 1.86;
+}
+.table-wishlist .stock-col {
+  width: 160px;
+  font-weight: 400;
+  font-size: 1.6rem;
+}
+.table-wishlist .action-col {
+  width: 202px;
+}
+.table-wishlist .remove-col {
+  padding-right: 0;
+  padding-left: 0;
+  width: 55px;
+  text-align: right;
+}
+[dir="rtl"] .table-wishlist .remove-col {
+  text-align: left;
+}
+.table-wishlist .remove-col .btn-remove {
+  border: none;
+  background-color: transparent;
+  min-width: auto;
+}
+.table-wishlist .remove-col .btn-remove i{
+  margin: 0;
+}
+.table-wishlist .product-col .product {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  box-shadow: none;
+}
+[dir="ltr"] .table-wishlist .product-col .product-media {
+  display: inline-block;
+  margin: 0;
+  margin-right: 2.8rem;
+  flex-shrink: 0;
+  max-width: 60px;
+}
+[dir="rtl"] .table-wishlist .product-col .product-media {
+  display: inline-block;
+  margin: 0;
+  margin-left: 2.8rem;
+  flex-shrink: 0;
+  max-width: 60px;
+}
+.table-wishlist .product-col .product-title {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  margin: 0;
+  padding-right: 4rem;
+}
+.table-wishlist .product-col .product-title a {
+  color: inherit;
+}
+.table-wishlist .in-stock {
+  color: #a6c76c;
+}
+.table-wishlist .out-of-stock {
+  color: #ef837b;
+}
+.wishlist-empty .icon_place {
+  font-size: 40rem;
+  color: #ebebeb;
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+}
+@media (max-width: 767px) {
+  .wishlist-empty .icon_place {
+    font-size: 24rem;
+  }
+  .table-wishlist thead {
+    display: none;
+  }
+  .table-wishlist tr {
+    display: block;
+    border-bottom: thin solid #ebebeb;
+    position: relative;
+  }
+  .table-wishlist td {
+    display: inline-block;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  .table-wishlist .product-col {
+    width: 100%;
+    border: none;
+    min-width: auto;
+  }
+  .table-wishlist .price-col, .table-wishlist .stock-col, .table-wishlist .action-col {
+    display: none;
+  }
+  .table-wishlist .remove-col {
+    width: auto;
+    border: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    position: absolute;
+    right: 0;    
+    top: 1rem;
+    z-index: 1;
+  }
+  [dir="rtl"] .table-wishlist .remove-col {
+    right: auto;
+    left: 0;
+  }
+}
+{%endstyle%}

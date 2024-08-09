@@ -1,0 +1,218 @@
+<!-- md_banner_with_text_3.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {% for block in section.blocks %}
+      <div class="row{%unless forloop.first%} mt-2{%endunless%}">
+        <div class="col-12{%if block.settings.banner_align == 'above'%} mb-3 mb-lg-5{%else%} mt-3 mt-lg-5 order-last{%endif%}">   
+          <div class="position-relative">
+            {%- assign image_item = block.settings.image_banner -%}
+            {%-assign width = image_item.width | default: 1170.00 -%}{%-assign height = image_item.height | default: 450.00 | plus: 0.00-%}
+            <div class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto"{% unless block.settings.image_banner %} title="1170x450 px"{% endunless %}></div>
+          </div>
+        </div>
+        {%- if block.settings.html_content != blank -%}
+          <div class="col-12 text-center">
+            <h2 class="title">{{block.settings.title}}</h2>
+            <p>{{block.settings.html_content}}</p>
+            {%if block.settings.image_signature %}
+            {%- assign image_item = block.settings.image_signature -%}
+            <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{% render 'kt_image_format',cache:false,src: image_item,size: 'master' %}" alt="{{ image_item.alt | default: shop.name | escape }}" style="margin: 0 auto;">
+            {% endif %}
+          </div>
+        {%- endif -%}
+      </div>
+      {% endfor %}
+		</div>
+	</div>
+</div>
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "With text 3 (text bottom)",
+    "class": "md_banner_with_text_3",    
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Banner with text 3",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "html",
+        "id": "css",
+        "label": "Css for section",
+        "info": "Key start: .section_id"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "With text",
+        "settings": [
+          {
+            "type": "select",
+            "id": "banner_align",
+            "options": [
+              {
+                "value": "above",
+                "label": "Above"
+              },
+              {
+                "value": "below",
+                "label": "Below"
+              }
+            ],
+            "label": "Align banner",
+            "default": "above"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Banner"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_banner",
+            "label": "Image banner",
+            "info": "Size suggestion: 1170 x 450 px"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Content Text"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Who We Are"
+          },
+          {
+            "type": "html",
+            "id": "html_content",
+            "label": "Text content",
+            "default": "Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Suspendisse potenti. Sed egestas, ante et vulputate volutpat, uctus metus libero eu augue. Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est. Sed lectus. Praesent elementum hendrerit tortor. Sed semper lorem at felis."
+          },
+          {
+            "type": "image_picker",
+            "id": "image_signature",
+            "label": "Signature image",
+            "info": "Size suggestion: 140 x 46 pixels"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Banner with text 3 (text bottom)",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

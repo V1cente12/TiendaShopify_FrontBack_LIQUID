@@ -1,0 +1,537 @@
+<!-- md_banner_products_set_4.liquid -->
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = section.settings.product_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="w-100{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width container">
+      {%- for block in section.blocks -%} 
+      <div class="banner-set">
+        <div class="row align-items-center">
+          <div class="col-12 col-lg-7 order-last{%unless block.settings.banner_left%} order-lg-first{%endunless%} mt-3 mt-lg-0">
+            <div class="banner-set-content">
+              <div class="set-content-wrapper">
+                <div class="heading wait-for-css wait-inline">
+                  <h2 class="title">{{block.settings.title}}</h2>
+                  <p class="title-desc">{{block.settings.desc}}</p>
+                </div>
+                <div class="banner-set-products">
+                  <div class="row justify-content-center">
+                    {%- for i in (1..3) -%}
+                      {%- assign product_ = 'product_' | append: i -%}
+                      {%- if block.settings[product_] != blank -%}
+                      <div class="col-12 col-xs-6 col-sm-4">
+                        <div class="grid-item p-style-{{grid_ly}}">
+                          {%- render "product-grid-item", product: all_products[block.settings[product_]], grid_layout: grid_ly, st_card: st_card -%}
+                        </div>
+                      </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5{%if block.settings.banner_left%} order-lg-first{%endif%}">
+            <div class="banner-set-image">
+              <div class="position-relative {{block.settings.banner-effect}}">
+                <div class="text-content position-absolute wait-for-css{%if block.settings.dark_mode%} light_mode{%endif%}">
+                  <h2 class="banner-title">{{block.settings.title_banner}}</h2>
+                  <h3 class="banner-subtitle">{{block.settings.stitle_banner}}</h3>
+                  <ul class="list-unstyled">
+                    {%- assign price_ = 0 -%}
+                    {%- assign price_c = 0 -%}
+                    {%- for i in (1..3) -%}
+                      {%- assign product_ = 'product_' | append: i -%}
+                      {%- if block.settings[product_] != blank -%}                      
+                      <li>{{all_products[block.settings[product_]].title}}</li>
+                      {%- assign price_ = price_ | plus: all_products[block.settings[product_]].price_min -%}
+                      {%- assign price_c = price_c | plus: all_products[block.settings[product_]].price_max -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                  <div class="banner-text">{{ price_ | money }}{%if price_ < price_c%} - {{ price_c | money }}{%endif%}</div>
+                  <a href="{{block.settings.image_link|default:'#'}}" class="btn {%if section.settings.dark_mode%}btn-outline-primary-2{%else%}btn-outline-white-4{%endif%}" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+                </div>
+                {%- assign image_item = block.settings.image_banner -%}
+                {%-assign width = image_item.width | default: 585.00 -%}{%-assign height = image_item.height | default: 493.00 | plus: 0.00-%}
+                <a href="{{block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_banner %} title="585x493 px"{% endunless %}></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+		</div>
+	</div>
+</div>
+{%-capture banner-css-%}
+<noscript class="banner-css" data-section-type="md_banner_products_set_4">
+  {%style%}
+    .md_banner_products_set_4 .banner-set-content .heading {
+      margin-bottom: 2.5rem;
+    }
+    .md_banner_products_set_4 .banner-set-content .heading h2 {
+      font-weight: 700;
+      font-size: 3.4rem;
+      letter-spacing: -.025em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    .md_banner_products_set_4 .banner-set-content .heading p {
+      color: #555555;
+      font-weight: 300;
+      font-size: 1.6rem;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+    .md_banner_products_set_4 .text-content {
+      z-index: 1;
+      top: 50%;
+      {{cssAlign}}: 2rem;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+    }
+    .md_banner_products_set_4 .text-content h2 {
+      color: #fff;
+      font-weight: 700;
+      font-size: 2.4rem;
+      letter-spacing: 0em;
+      margin-bottom: .5rem;
+      text-transform: none;
+      line-height: 1.2em;
+    }
+    .md_banner_products_set_4 .text-content h3 {
+      color: #999999;
+      font-weight: 400;
+      font-size: 1.4rem;
+      line-height: 1.45;
+      letter-spacing: 0;
+      margin-bottom: .9rem;
+    }
+    .md_banner_products_set_4 .banner-set-image .img__banner{
+      min-height: 450px;
+    }
+    .md_banner_products_set_4 .text-content ul {
+      color: #333;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+    .md_banner_products_set_4 .text-content ul li {
+      padding-{{cssAlign}}: 1rem;
+      position: relative;
+    }
+    .md_banner_products_set_4 .text-content ul li:before {
+      position: absolute;
+      top: 50%;
+      margin-top: -.2rem;
+      {{cssAlign}}: 0;
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      width: .4rem;
+      height: .4rem;
+      border-radius: 50%;
+      background-color: #333;
+      margin-top: -.1rem;
+    }
+    .md_banner_products_set_4 .text-content .banner-text{
+      color: #999999;
+      margin-bottom: 2rem;
+    }
+    .md_banner_products_set_4 .text-content .btn{
+      min-width: 130px;
+    }
+    .md_banner_products_set_4 .text-content .btn.btn-outline-primary-2,
+    .md_banner_products_set_4 .text-content .btn.btn-outline-primary-2 i{
+      color: #333;
+    }
+    .md_banner_products_set_4 .banner-set-content{
+      margin-top: 4rem;
+    }
+    .md_banner_products_set_4 .p-style-06 .product-body{
+      padding: 1.6rem 0rem 2rem;
+    }
+    .md_banner_products_set_4 .p-style-06 .product-name{
+      font-size: 1.4rem;
+    }
+    .md_banner_products_set_4 .p-style-06 .product-price{
+      font-size: 1.4rem;
+    }
+    @media (min-width: 768px) {
+      .md_banner_products_set_4 .text-content {
+        {{cssAlign}}: 5rem;
+      }
+      .md_banner_products_set_4 .banner-set-content{
+        margin-bottom: 10rem;
+      }
+    }
+    @media (min-width: 1200px) {
+      .md_banner_products_set_4 .text-content {
+        {{cssAlign}}: 0;
+      }
+      .md_banner_products_set_4 .banner-set-image {
+        margin-{{cssAlign}}: 5rem;
+      }
+      .md_banner_products_set_4 .order-lg-first .banner-set-image {
+        margin-{{cssAlign}}: 0;
+        margin-{{cssAlign_rev}}: 5rem;
+      }
+      .content_{{section.id}} .banner-set-image .img__banner{
+        background-image: none !important;
+        background-color: transparent;
+      }
+    }
+    .md_banner_products_set_4 .light_mode.text-content h2,
+    .md_banner_products_set_4 .light_mode.text-content h3,
+    .md_banner_products_set_4 .light_mode.text-content ul,
+    .md_banner_products_set_4 .light_mode.text-content .banner-text{
+      color: #fff;
+    }
+    .md_banner_products_set_4 .light_mode.text-content .btn{
+      border-color: #fff;
+    }
+    .md_banner_products_set_4 .light_mode.text-content ul li:before{
+      background-color: #fff;
+    }
+    .content_{{section.id}}{
+      background-repeat: no-repeat;
+    }
+    @media (max-width: 1200px) {
+      .content_{{section.id}}{
+        background-image: none !important;
+      }
+    }
+  {%endstyle%}
+</noscript>
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%- endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Product set 4",
+    "class": "md_banner_products_set md_banner_products_set_4",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Product set 4",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels (Show on device min-width: 1200px)"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "select",
+        "id": "product_grid_layout",
+        "label": "Product card grid layout",
+        "options": [
+          {
+            "label": "Default",
+            "value": ""
+          },
+          {
+            "label": "Layout 1",
+            "value": "01"
+          },
+          {
+            "label": "Layout 2",
+            "value": "02"
+          },
+          {
+            "label": "Layout 3",
+            "value": "03"
+          },
+          {
+            "label": "Layout 4",
+            "value": "04"
+          },
+          {
+            "label": "Layout 5",
+            "value": "05"
+          },
+          {
+            "value": "06",
+            "label": "Layout 6"
+          },
+          {
+            "value": "07",
+            "label": "Layout 7"
+          },
+          {
+            "value": "08",
+            "label": "Layout 8"
+          },
+          {
+            "value": "09",
+            "label": "Layout 9"
+          },
+          {
+            "value": "10",
+            "label": "Layout 10"
+          },
+          {
+            "value": "11",
+            "label": "Layout 11"
+          },
+          {
+            "value": "12",
+            "label": "Layout 12"
+          },
+          {
+            "value": "13",
+            "label": "Layout 13"
+          },
+          {
+            "value": "14",
+            "label": "Layout 14"
+          },
+          {
+            "value": "15",
+            "label": "Layout 15"
+          },
+          {
+            "value": "16",
+            "label": "Layout 16"
+          },
+          {
+            "value": "04 p-style-17",
+            "label": "Layout 17"
+          },
+          {
+            "value": "04 p-style-18",
+            "label": "Layout 18"
+          },
+          {
+            "value": "04 p-style-19",
+            "label": "Layout 19"
+          },
+          {
+            "value": "02 p-style-20",
+            "label": "Layout 20"
+          }
+        ],
+        "default": "",
+        "info": "[Preview](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-Product-grid.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Products",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "dark_mode",
+            "label": "Dark mode?",
+            "default": true
+          },
+          {
+            "type": "paragraph",
+            "content": "=Title"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "About This Look"
+          },
+          {
+            "type": "textarea",
+            "id": "desc",
+            "label": "Description",
+            "default": "Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis."
+          },
+          {
+            "type": "paragraph",
+            "content": "=Product"
+          },
+          {
+            "type": "product",
+            "id": "product_1",
+            "label": "Product 1"
+          },
+          {
+            "type": "product",
+            "id": "product_2",
+            "label": "Product 2"
+          },
+          {
+            "type": "product",
+            "id": "product_3",
+            "label": "Product 3"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Banner"
+          },
+          {
+            "type":"checkbox",
+            "id": "banner_left",
+            "label": "Banner left?"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_banner",
+            "label": "Image banner",
+            "info": "Size suggestion: 585 x 493 px(Show on max-width: 1199px)"
+          },
+          {
+            "type": "url",
+            "id": "image_link",
+            "label": "Link to"
+          },
+          {
+            "type": "paragraph",
+            "content": "=Banner content"
+          },
+          {
+            "type": "html",
+            "id": "title_banner",
+            "label": "Title",
+            "default": "01. Get your <br>inspiration <br>in the street."
+          },
+          {
+            "type": "text",
+            "id": "stitle_banner",
+            "label": "Subtitle",
+            "default": "IN THIS LOOK"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"<span>BUY ALL</span><i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Set 4",
+        "category": "03. Section products"
+      }
+    ]
+  }
+{% endschema %}

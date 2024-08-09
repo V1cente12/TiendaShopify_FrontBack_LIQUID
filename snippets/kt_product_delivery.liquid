@@ -1,0 +1,16 @@
+<div class="product_delivery prd_delivery-{{section.id}}" style="display: none">
+  {%- capture delivery_text -%}
+    {%- if settings.delivery_to_date > settings.delivery_from_date -%}
+      {{'products.delivery.between_html'| t: fromDate: 'fromDate', toDate: 'toDate'}}
+    {%- else -%}
+      {{'products.delivery.on_html'| t: fromDate: 'fromDate'}}
+    {%- endif -%}
+  {%- endcapture -%}  
+  <p class="mb-2">
+    {{ delivery_text | split: 'fromDate' | first }}
+    <i class="fromDate"></i>
+    {%- if settings.delivery_to_date > settings.delivery_from_date -%}
+    <span class="toDate d-none"> {{ delivery_text | split:'fromDate'| last | split: 'toDate' | first }} <i></i></span>
+    {%- endif -%}
+  </p>
+</div>

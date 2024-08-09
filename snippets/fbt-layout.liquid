@@ -1,0 +1,32 @@
+{%- capture url -%}
+  {%- if settings.fbt_prds_type == 'recommen' -%}
+    {{--}}{{ routes.product_recommendations_url }}?section_id=fbt-recommen&product_id={{product.id}}&limit={{settings.fbt_prds}}&handle={{product.handle}}{{--}}
+    {%- if product.selected_or_first_available_variant -%}
+      {{--}}&q={{product.selected_or_first_available_variant.id}}{{--}}
+    {%- endif -%}
+  {%- else -%}
+    {{--}}{{product.url}}?view=fbt{{--}}
+    {%- if product.selected_or_first_available_variant -%}
+      {{--}}&variant={{product.selected_or_first_available_variant.id}}{{--}}
+    {%- endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+{%- if product.selected_or_first_available_variant.available -%}
+{%- if box -%}
+<div class="fbt-box">
+  <form method="post" action="{{ routes.cart_url }}" class="fbt-prds {{layout}} lazyload loadvariant row addItemsAjaxFrom" data-include="{{url}}">
+    <div class="col-12 col-md-8 mt-2"><div class="lz-place fbt-prd"></div></div>
+    <div class="col-12 mb-1 mb-3"><div class="lz-place fbt-place-info"></div></div>
+  </form>
+</div>
+{%- else -%}
+<div class="{{col | default: 'container'}} mt-2 mt-md-4">
+<!--   <div class="fbt-box-st">
+  <form method="post" action="{{ routes.cart_url }}" class="fbt-prds {{layout}} lazyload loadvariant row addItemsAjaxFrom" data-include="{{url}}">
+    <div class="col-12 col-md-8"><div class="lz-place fbt-prd"></div></div>
+    <div class="col-12 mb-1"><div class="lz-place fbt-place-info"></div></div>
+  </form>
+  </div> -->
+</div>
+{%- endif -%}  
+{%- endif -%}

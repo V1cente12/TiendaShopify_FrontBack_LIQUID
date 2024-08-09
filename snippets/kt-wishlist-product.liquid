@@ -1,0 +1,4 @@
+{%- unless style_btn -%}
+  {%-assign style_btn = ''-%}
+{%- endunless -%}
+<div class="{{style_btn}} wishlist kt-wishlist" data-customer_id="{{customer.id}}" data-email="{{customer.email}}" data-action="add" data-handle="{{product.handle}}" data-id="{{product.id}}"><i class="fkt-heart-o"></i><span class="text-nowrap btn-name">{{'products.wishlist.add_to_wishlist'|t}}</span></div>

@@ -1,0 +1,405 @@
+<!-- blog-template-6.liquid -->
+{%- liquid
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+<div class="{{section.settings.width_section}}">
+  <div class="content_{{section.id}}">   
+    <div class="section-width{%if section.settings.width_content and section.settings.width_section == 'w-100'%} container{%else%} w-100{%endif%}" data-template="blog-template6">
+      {%-render 'kt_breadcrumb'-%}
+      <div class="border-top mb-3" style="opacity: .3;"></div>
+      <div class="row">
+        {%- if section.settings.catt and section.blocks.size > 0 -%}
+        <nav class="blog-nav col-12">
+          <ul class="menu-cat justify-content-center list-unstyled">
+            {%- for block in section.blocks -%}
+            {%- if block.type == 'blog' -%}
+            <li class="{%if block.settings.blog == blog.handle%}active{%endif%}">
+              <a href="{{blogs[block.settings.blog].url}}" title="{{blogs[block.settings.blog].title}}">{{blogs[block.settings.blog].title}}<span>{{blogs[block.settings.blog].articles_count}}</span></a>        
+            </li>
+            {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </nav>
+        {%- endif -%}
+        <div class="blog-content col-12 col-lg-9">
+        {%- if template.name == 'blog' -%}
+          <h2 class="page-title d-none">{{ blog.title }}</h2>
+          {%- if blog.articles_count > 0 -%}
+            {% paginate blog.articles by settings.blog_pagination %}
+            <div class="blog-grid-list style02">
+              {%- for article in blog.articles -%}
+              <article class="entry entry-list">
+                <div class="row align-items-center">
+                  <div class="col-md-5">
+                    {%- assign video = false-%}
+                    {%- if article.content contains '//www.youtube.com/embed/' -%}
+                      {%- assign video = true -%}
+                    {%- elsif article.content contains '//player.vimeo.com/video/' -%}
+                      {%- assign video = true -%}
+                    {%- endif -%}
+                    {%- assign audio = false-%}
+                    {%- if article.content contains '//w.soundcloud.com/player/' -%}
+                      {% assign audio = true %}
+                    {%- endif -%}
+                    {%- if article.image -%}
+                    <a href="{{ article.url }}" class="lazyload_blur banner-opacity">
+                      <figure class="entry-media{%if video%} entry-video{%endif%}{%if audio%} entry-audio{%endif%}">
+                        {{article.image | img_url: 'master' | img_tag}}
+                      </figure>
+                    </a>
+                    {%- endif -%}
+                  </div>
+                  <div class="col-md-7">
+                    <div class="entry-body">
+                      <div class="entry-meta">
+                        {%- if section.settings.blog_show_author and section.settings.items_per_row != '4' -%}
+                        <span class="entry-author">{{ 'blogs.general.by_author' | t }} <a href="#">{{ article.author }}</a></span>
+                        {%- endif -%}
+                        {%- if section.settings.blog_show_date -%}
+                        <span class="meta-separator">|</span>
+                        <a href="javascript:void(0)">{{ article.published_at | date: format: "article_published_at" }}</a>
+                        {%- endif -%}
+                        {%- if blog.comments_enabled? -%}
+                        <span class="meta-separator">|</span>
+                        <a href="javascript:void(0)">{{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</a>
+                        {%- endif -%}
+                      </div>
+                      <h2 class="entry-title">
+                        <a href="{{ article.url }}">{{ article.title }}</a>
+                      </h2>
+                      <div class="entry-cats">{{ 'blogs.general.in_categories' | t }} <a href="javascript:void(0)">{{blog.title}}</a></div>
+                      <div class="entry-content">
+                        <p>
+                          {%- if article.excerpt.size > 0 -%}
+                          {{ article.excerpt }}
+                          {%- else -%}
+                          {{ article.content | strip_html | truncate: 200 }}
+                          {%- endif -%}
+                        </p>
+                        <a href="{{ article.url }}" class="read-more">{{ 'blogs.article.read_more_button' | t }}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              {%- endfor -%}
+            </div>
+            {%-if paginate.pages > 1-%}  
+            <div class="pagination_ container text-center clearfix mt-4">
+              {%- render 'pagination', paginate: paginate, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+            </div>
+            {%-endif-%}
+            {% endpaginate %}
+            <div class="clearfix mb-5"></div>
+          {% else %}
+          <p class="text-left">{{'blogs.general.no_article' | t}}</p>
+          {%- endif -%}
+        {%- else -%}
+          {%- assign new_comment = false -%}
+          {%-if comment and comment.created_at-%}
+            {%- assign new_comment = true -%}
+            {%- assign new_comment_id = comment.id -%}
+          {%-endif-%}
+          {%-if new_comment-%}
+            {%- assign duplicate_comment = false-%}
+            {%-for comment in article.comments-%}
+              {%-if comment.id == new_comment_id-%}
+                {%- assign duplicate_comment = true-%}
+                {%-break-%}
+              {%-endif-%}
+            {%-endfor-%}
+            {%-if duplicate_comment-%}
+              {%- assign number_of_comments = article.comments_count -%}
+            {%-else-%}
+              {%- assign number_of_comments = article.comments_count | plus: 1 -%}
+            {%-endif-%}
+          {%-else-%}
+            {%- assign number_of_comments = article.comments_count -%}
+          {%-endif-%}
+          <article class="entry single-entry">
+            {%-if article.image-%}
+            <figure class="entry-media">
+              {{article.image | img_url: 'master' | img_tag}}
+            </figure>
+            {%-endif-%}
+            <div class="entry-body">
+              <div class="entry-meta">
+                {%- if section.settings.blog_show_author -%}
+                <span class="entry-author">{{ 'blogs.general.by_author' | t }} <a href="#">{{ article.author }}</a></span>
+                {%- endif -%}
+                {%- if section.settings.blog_show_date -%}
+                <span class="meta-separator">|</span>
+                <a href="javascript:void(0)">{{ article.published_at | date: format: "article_published_at" }}</a>
+                {%- endif -%}
+                {%- if blog.comments_enabled? -%}
+                <span class="meta-separator">|</span>
+                <a href="javascript:void(0)">{{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</a>
+                {%- endif -%}
+              </div>
+              <h2 class="entry-title">{{ article.title }}</h2>
+              <div class="entry-cats">{{ 'blogs.general.in_categories' | t }} <a href="javascript:void(0)">{{blog.title}}</a></div>
+              <div class="entry-content editor-content">
+                {{ article.content |html}}
+              </div>
+              <div class="entry-footer row no-gutters">
+                <div class="col-12 col-sm">
+                  <div class="entry-tags">
+                    <span>{{ 'blogs.article.title_tags' | t }}:</span>{%- for tag in article.tags -%}{{ tag.title | link_to: 'javascript:void(0)', tag.title }}{%- endfor -%}
+                  </div>
+                </div>
+                {% if section.settings.show_share_buttons %}
+                <div class="col-12 col-sm-auto mt-2 mt-sm-0">
+                  <div class="social-icons social-icons-color">
+                    <div class="socials_ style-01 socials_color social_label">
+                      <span class="social-label">{{'blogs.article.title_social_share'|t}}:</span>
+                      {%-render 'kt_social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image-%}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </article>          
+          <nav class="pager-nav" aria-label="Page navigation">
+            {%- if blog.previous_article -%}
+            <a class="pager-link pager-link-prev" href="{{blog.previous_article.url}}" aria-label="Previous" tabindex="-1">
+              {{'blogs.article.previous_post_button'|t}}
+              <span class="pager-link-title">{{blog.previous_article.title}}</span>
+            </a>
+            {%- endif -%}
+            {%- if blog.next_article -%}
+            <a class="pager-link pager-link-next" href="{{blog.next_article.url}}" aria-label="Next" tabindex="-1">
+              {{'blogs.article.next_post_button'|t}}
+              <span class="pager-link-title">{{blog.next_article.title}}</span>
+            </a>
+            {%- endif -%}
+          </nav>
+          {%-if blog.comments_enabled?-%}
+            {%-paginate article.comments by 5-%}
+            <div class="comments">
+              {%-if blog.comments_enabled?-%}
+              <h3 class="title">{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h3>
+              {%-endif-%}
+              {%-if comment and comment.created_at-%}
+              <div class="alert alert-success" role="alert">
+                {%-if blog.moderated?-%}
+                {{ 'blogs.comments.success_moderated' | t }}
+                {%-else-%}
+                {{ 'blogs.comments.success' | t }}
+                {%-endif-%}
+              </div>
+              {%-endif-%}              
+              {%-if number_of_comments > 0-%}
+              <ul class="list-unstyled">
+                {%-for comment in article.comments-%}
+                <li>
+                  <div class="comment">
+                    <figure class="comment-media">
+                      <img src="https://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=130&d=mm&r=g" srcset="https://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}?s=130&d=mm&r=g 2x" alt="{{ comment.author }}">
+                    </figure>
+                    <div class="comment-body">
+                      <div class="comment-user">
+                        <h4>{{ comment.author }}</h4>
+                        <span class="comment-date">{{ comment.created_at | date: "%B %d, %Y at %I:%M %p" }}</span>
+                      </div>
+                      <div class="comment-content">
+                        {{ comment.content }}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                {%-endfor-%}
+              </ul>
+              {%-endif-%}
+            </div>
+            <div class="reply">
+              <div class="heading">
+                <h3 class="title">{{ 'blogs.comments.title' | t }}</h3>
+                <p class="title-desc">{{ 'blogs.comments.note' | t }}</p>
+              </div>
+              {%-form 'new_comment', article-%}
+                {%- if form.errors -%}
+                  <div class="alert alert-warning" role="alert">
+                    {{ form.errors | default_errors }}
+                  </div>
+                {%- endif -%}
+                <label for="reply-message" class="sr-only">{{ 'blogs.comments.message' | t }}</label>
+                <textarea name="comment[body]" cols="30" rows="4" class="form-control{%if form.errors contains 'body'%} error{%endif%}" required="" placeholder="{{ 'blogs.comments.message' | t }}"></textarea>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="reply-name" class="sr-only">{{ 'blogs.comments.name' | t }}</label>
+                    <input type="text" class="form-control{%if form.errors contains 'author'%} error{%endif%}" name="comment[author]" required="" placeholder="{{ 'blogs.comments.name' | t }}">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="reply-email" class="sr-only">{{ 'blogs.comments.email' | t }}</label>
+                    <input type="email" class="form-control{%if form.errors contains 'email'%} error{%endif%}" name="comment[email]" required="" placeholder="{{ 'blogs.comments.email' | t }}">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-outline-primary-2">
+                  <span>{{ 'blogs.comments.post' | t }}</span><i class="fkt-long-arrow-right"></i>
+                  <input class="button" type="hidden" name="comment_parent" value="0">
+                </button>
+              {%-endform-%}
+            </div>
+            {% if paginate.pages > 1 %}
+              <div class="pagination_ w-100">
+                {%- render 'pagination', paginate: paginate, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+              </div>
+            {% endif %}
+            {%-endpaginate-%}
+          {%-endif-%}
+        {%- endif -%}
+        </div>
+        <div class="sidebar col-12 col-lg-3">
+          {%- render 'kt_blog_sidebar', section: section -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mb-3"></div>
+{% schema %}
+  {
+    "name": "Blog page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_author",
+        "label": "Show author",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "blog_show_date",
+        "label": "Show date",
+        "default": true
+      },
+      {
+        "type": "radio",
+        "id": "items_per_row",
+        "label": "Items per row",
+        "options": [
+          { "value": "1", "label": "1 item" },
+          { "value": "2", "label": "2 items" }
+        ],
+        "default": "1"
+      },
+      {
+        "type": "header",
+        "content": "Sidebar"
+      },
+      {
+        "type": "checkbox",
+        "id": "search",
+        "label": "Show search input",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "catt",
+        "label": "Show blogs categories",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "recent_posts",
+        "label": "Show recent posts",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "tags",
+        "label": "Show blog tags",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "blog_tags_",
+        "label": "Tags",
+        "default": "Beauty,\n Cotton,\n Fashion,\n Style, \nWomen",
+        "placeholder": "tag1, tag2, ..."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "Show social sharing buttons",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Items"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "blog",
+        "name": "Blog item",
+        "settings": [
+          {
+            "label": "Blog",
+            "id": "blog",
+            "type": "blog"
+          }
+        ]
+      },
+      {
+        "type": "sb_banner",
+        "name": "Sidebar Banner",
+        "settings": [
+          { 
+            "type":"image_picker",
+            "id":"img",
+            "label":"Banner image"
+          },
+          { 
+            "type":"url",
+            "id":"url",
+            "label":"Link to"
+          }
+        ]
+      },
+      {
+        "type": "sb_about",
+        "name": "Sidebar About",
+        "settings": [
+          { 
+            "type":"html",
+            "id":"html",
+            "label":"Content"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

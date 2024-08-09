@@ -1,0 +1,24 @@
+{%- if i == 1 and block and y == block.settings.position_in_slide -%}
+  <div class="swiper-slide banner-item position-relative">
+    {%-assign image_item = block.settings.image -%}
+    {%-assign width = image_item.width | default: 232.00 -%}{%-assign height = image_item.height | default: 480.00 | plus: 0.00-%}
+    <a href="{{block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="height: 100%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="232x480 px"{% endunless %}></a>
+    {%- if block.settings.use_content_banner -%}
+    <div class="text-content position-absolute">
+      <div class="position-relative h-100">
+        <div class="row no-gutters align-content-between h-100 p-2">
+          <div class="banner-top col-12">
+            <div class="flashs style-2"><span class="onsale"><span class="text">{{block.settings.flash_label}}</span></span></div>
+          </div>
+          <div class="banner-bottom col-12 pb-1">
+            <div class="banner-title mb-2">
+              {{block.settings.titlex | html}}
+            </div>
+            <a href="{{block.settings.image_link_banner|default:'#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%} btn-block" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

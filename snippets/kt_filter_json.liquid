@@ -1,0 +1,17 @@
+<script>{{--}}
+canonical_url = "{{canonical_url}}";{{--}}
+{%- unless collection -%}{% assign collection = collections['all'] %}{%- endunless -%}
+collection.url = "{{collection.url}}";{{--}}
+collection.Crr = "{{collection.handle|default:'all'}}";{{--}}
+currTags = {{current_tags | json}};{{--}}
+currTags_handleize = [{% for tag in current_tags %}{{tag|handleize|json}}{%-unless forloop.last-%},{%-endunless-%}{% endfor %}];
+{%-comment-%}collectionTags = {{collection.all_tags|json}};{%-endcomment-%}
+{%-if current_tags-%}
+iscollectionTags = {{collection.tags|json}};
+{%- else -%}
+iscollectionTags = new Array;
+{%- endif -%}
+currPage = {{paginate.current_page}};{{--}}
+</script>
+{%-assign remove = '}' -%}
+<script type="application/json" id="groupsFilters">{"settings": {{section.settings | json}},"blocks": [{%- for block in section.blocks -%}{%-assign key_ = block.settings.key | handleize -%}{%-assign key_ = ',"key_": "' | append: key_ | append: '"}' -%}{{block.settings | json | replace: remove, key_}}{%-unless forloop.last-%},{%-endunless-%}{%- endfor -%}]}</script>

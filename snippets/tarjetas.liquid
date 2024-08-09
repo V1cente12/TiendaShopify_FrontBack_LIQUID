@@ -1,0 +1,254 @@
+{%-style-%}
+.table_tarifas {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+
+  .table_tarifas tr:hover {background-color: #ddd;}
+
+  .table_tarifas tr:nth-child(even) {background-color: #f2f2f2;}
+
+  .table_tarifas thead th {
+     
+  }
+
+
+.conversion-rate-list {
+        display: none;
+    }
+
+     @media (min-width: 0px) and (max-width: 600px) {
+    .conversion-rate-list {
+        display: block;
+    }
+
+    .conversion-rate-table {
+        display: none;
+    }
+}
+
+
+ 
+
+:root {
+    font-size: 62.5%;
+    --header-font: 'Open Sans';
+    --data-font: 'Lato';
+    --light-black: rgb(0 0 0 /.8);
+}
+
+.conversion-rate-list {
+    width: 90%;
+    margin: 50px auto;
+    list-style: none;
+    padding: 0;
+}
+
+.item {
+    border: 1px solid var(--light-black);
+    padding-bottom: 1.5em;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.item + .item {
+    margin-top: 5px;
+}
+
+.platform,
+.name {
+    text-align: center;
+    line-height: 1.75;
+}
+
+.platform {
+    border-bottom: 1px solid var(--light-black);
+    background-color: #1d3153;
+    border-radius: 16px 16px 0 0;
+}
+
+.name {
+    font-size: 1.4rem;
+    font-weight:500 !important;
+}
+
+
+.value {
+    font-family: var(--data-font), sans-serif;
+    font-size: 1.4rem;
+    text-align: center;
+    line-height: 1.25;
+
+    color: var(--light-black);
+}
+
+
+.center{
+    text-align:center;
+}
+
+.ocultar{
+    display: none;
+}
+
+.divSinRegistro{
+    background-color: whitesmoke;
+    border-radius: 17px;
+    padding: 50px 0 50px 0;
+}
+{%-endstyle-%}
+<div class="conversion-rate-table table-responsive">
+    
+
+    <div id="divTarifas">
+    </div>
+
+</div>
+
+<ul class="conversion-rate-list"></ul>       
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script>
+    function obtFecha_tarjeta(fecha){
+        const meses = [
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr",
+        "May",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dic",
+        ];
+        
+        const f = new Date(fecha);
+        const dia = moment(fecha).format("D");
+        const mes = meses[f.getMonth()]
+        const year = moment(fecha).format("Y");
+        return `${dia} ${mes} ${year}`;
+    }
+    function className_cambiarTitulo(clase="", titulo="") {
+        try{
+            document.getElementsByClassName(clase)[0].innerHTML = titulo;
+        }
+        catch {
+        }  
+    }
+    function obtBalance(balance, montoEgxPrepago){
+        return `<span style="color:green; font-weight: 500;">${balance}</span> / ${montoEgxPrepago}`;
+    }
+    function getTarjetas_fetch() {
+        try{
+            let data= {{ customer.metafields.Giftcard.Giftcard-json | default: "nulo"}};
+            return data;
+        }
+        catch(err) {
+           return [];
+        }
+    }
+    function getTarjetas_data_htmlWeb(codigo, fechaEmision, fechaVencimiento, balance){
+        return `
+                <tr>
+                <td class="colorNaranja">
+                    <a href="#">•••• •••• •••• ${codigo}</a>
+                </td>
+                <td>${fechaEmision}</td>
+                <td>${fechaVencimiento}</td>
+                <td>${balance}</td>
+                </tr>
+            `;
+    }
+    function getTarjetas_data_htmlMovil(codigo, fechaEmision, fechaVencimiento, balance){
+        return  `
+            <li class="item" >
+              <h2 class="platform"> 
+                <a href="#" style="color: white;">•••• •••• •••• ${codigo}</a> 
+              </h2>
+              <dl class="ad">
+                <dt class="name">Emisión</dt>
+                <dd class="value">${fechaEmision}</dd>
+
+                <dt class="name">Vencimiento</dt>
+                <dd class="value">${fechaVencimiento}</dd>
+
+                <dt class="name">Balance</dt>
+                <dd class="value">${balance}</dd>
+              </dl>
+            </li>
+            `;
+    }
+    function getTarjetas_data(obj) {       
+        let htmlWeb = '';
+        let htmlMovil = '';
+        let codigo, fechaEmision, fechaVencimiento, balance;
+
+        for (let v = 0; v < obj.length; v++) {
+            codigo = obj[v].codigo;
+            fechaEmision = obtFecha_tarjeta(obj[v].emision);
+            fechaVencimiento = obtFecha_tarjeta(obj[v].vencimiento);
+            balance = obtBalance(obj[v].balance, obj[v].initial_value);
+
+            htmlWeb += getTarjetas_data_htmlWeb(codigo, fechaEmision, fechaVencimiento, balance);
+            htmlMovil += getTarjetas_data_htmlMovil(codigo, fechaEmision, fechaVencimiento, balance);
+        }
+        return {
+            htmlWeb,
+            htmlMovil
+        };
+    }
+    function htmlTablaTarifa(body){
+        return `
+            <table class="table table_tarifas">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Emisión</th>
+                        <th>Vencimiento</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                ${body}
+                </tbody>
+            </table>
+            `;
+    }
+    function divSinRegistro(){
+        return `
+        <div class="text-center divSinRegistro" >
+            <div >
+                <img  src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/Empty_Cart.png?v=1650572250" alt="" style="max-width: 200px">
+            </div>
+            <p class="cart-empty">No posees ninguna Tarjeta EGX Prepago.</p>
+
+            <button class="btn btn-outline-primary-2" onclick="location.href = '/collections/egx-prepago'">
+                <span>Comprar una Tarjeta EGX Prepago</span>
+            </button>
+        </div>
+        `;
+    }
+    async function getTarjetas() {
+        const fetchGet = await getTarjetas_fetch();
+        if(fetchGet.length > 0){
+            const {htmlWeb, htmlMovil}  = getTarjetas_data(fetchGet);
+            document.getElementById('divTarifas').innerHTML =  htmlTablaTarifa(htmlWeb);
+            document.getElementsByClassName('conversion-rate-list')[0].innerHTML = htmlMovil;
+            className_cambiarTitulo('page-title', 'Tarjetas EGX Prepago');
+        }else{
+            const sinRegistro = divSinRegistro();
+            document.getElementById('divTarifas').innerHTML = sinRegistro;
+            document.getElementsByClassName('conversion-rate-list')[0].innerHTML = sinRegistro;
+        }        
+        
+    }
+</script>

@@ -1,0 +1,520 @@
+<!-- collection-template40.liquid --> 
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'  
+  
+  assign grid_ly = settings.coll_grid_layout | default: st_card[3]
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- liquid
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-liquid
+  assign view = cart.attributes.theme_coll_layout | split: '_'
+  assign limit = settings.coll_limit
+  case settings.coll_grid
+    when '1'
+      assign gl = '1'
+      assign layout_gl = '1grid'
+    when '2'
+      assign gl = '2'
+      assign layout_gl = '2grid'
+    when '3'
+      assign gl = '3'
+      assign layout_gl = '3grid'
+    when '4'
+      assign gl = '4'
+      assign layout_gl = '4grid'
+    when '5'
+      assign gl = '5'
+      assign layout_gl = '5grid'
+    when '6'
+      assign gl = '6'
+      assign layout_gl = '6grid'
+  endcase
+  if settings.coll_list_enable
+    assign ly = settings.coll_sidebar_layout | append: 'lis'
+    assign gl = 'list'
+    assign layout_gl = 'list'
+  else
+    if settings.coll_masonry == true
+      assign ly = 'ms'
+    else
+      assign ly = 'gr'
+    endif    
+  endif
+  if view.size == 2
+    assign split_check = view[0] | split: 'gr'
+    assign split_check_ = view[0] | split: 'li'
+    assign limit = view[1] | replace: 'pds','' | plus: 0
+    if split_check contains 'id'
+      assign gl = view[0] | replace: 'grid',''
+      assign layout_gl = view[0]
+      if settings.coll_masonry == true
+        assign ly = 'ms'
+      else
+        assign ly = 'gr'
+      endif
+    elsif split_check_ contains 'st'
+    assign ly = settings.coll_sidebar_layout | append: 'lis'
+      assign gl = 'list'
+      assign layout_gl = view[0]
+    endif
+  elsif view != blank
+    assign split_check = view[0] | split: 'gr'
+    assign split_check_ = view[0] | split: 'li'
+    if split_check contains 'id'
+      assign gl = view[0] | replace: 'grid',''
+      assign layout_gl = view[0]
+      if settings.coll_masonry == true
+        assign ly = 'ms'
+      else
+        assign ly = 'gr'
+      endif
+    elsif split_check_ contains 'st'
+      assign ly = settings.coll_sidebar_layout | append: 'lis'
+      assign gl = 'list'
+      assign layout_gl = view[0]
+    endif
+  endif
+  assign section_id = 'collection-template'
+  case limit
+    when 16
+      assign limit_pds = '_16pds'
+    when 20
+      assign limit_pds = '_20pds'
+    when 30
+      assign limit_pds = '_30pds'
+    when 50
+      assign limit_pds = '_50pds'
+    else
+      assign limit_pds = ''
+  endcase
+  case gl
+    when '2'
+      assign grid_item_width = ' col-xs-6'
+    when '3'
+      assign grid_item_width = ' col-xs-6 col-sm-4'
+    when '4'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-3'
+    when '5'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-2-10'
+    when '6'
+      assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-2-10 col-xl-2'
+    when 'list'
+      assign grid_item_width = ' col-12'
+  endcase
+  assign settings_collection_layout = settings.coll_layout
+-%}
+
+{%- assign big_prds_bls = section.blocks | where: 'type', 'product' -%}
+{%- assign big_prds = '' -%}
+{%- if big_prds_bls.size > 0 -%}
+  {%- for big_prd in big_prds_bls -%}
+    {%- assign big_prds = big_prds | append: big_prd.settings.prd | append: ',' -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign big_prds = big_prds | split: ',' -%}
+{%- assign big_block_content = '' -%}
+
+{%- assign big_banners_bls = section.blocks | where: 'type', 'image' -%}
+{%- assign big_banners = '' -%}
+{%- if big_banners_bls.size > 0 -%}
+  {%- for big_banner in big_banners_bls -%}
+  {%- if big_banner.settings.coll == collection.handle or big_banner.settings.coll == blank and collection.handle == 'all' -%}
+    {%- assign big_banners = big_banners | append: big_banner.settings.pos | append: ',' -%}
+  {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign big_banners = big_banners | split: ',' -%}
+
+{%- if settings.multi_flts_or and settings.use_flts -%}
+  {%- assign pagi = limit -%}
+  {%- assign idx_pagi = 0 -%}
+  {%- assign filters = canonical_url | replace: '%3a',':' | replace: '%2c',',' | split: 'q=' -%}
+  {%- if filters.size == 2 -%}
+    {%- assign filters = canonical_url | replace: '%3a',':' | replace: '%2c',',' | split: 'q=' | last -%}
+    {%- assign flts_ = filters -%}
+    {%- if canonical_url contains 'page_' -%}
+      {%- assign page = canonical_url | split: 'page_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_page = 'page_' | append: page -%}{%- assign filters = filters | remove: less_page -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'offp_' -%}
+      {%- assign offset = canonical_url | split: 'offp_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_offset = 'offp_' | append: offset -%}{%- assign filters = filters | remove: less_offset -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'mipr_' -%}
+      {%- assign pmin = canonical_url | split: 'mipr_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_pmin = 'mipr_' | append: pmin -%}{%- assign filters = filters | remove: less_pmin -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'mapr_' -%}
+      {%- assign pmax = canonical_url | split: 'mapr_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_pmax = 'mapr_' | append: pmax -%}{%- assign filters = filters | remove: less_pmax -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'miw_' -%}
+      {%- assign wmin = canonical_url | split: 'miw_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_wmin = 'miw_' | append: wmin -%}{%- assign filters = filters | remove: less_wmin -%}
+    {%- endif -%}
+    {%- if canonical_url contains 'maw_' -%}
+      {%- assign wmax = canonical_url | split: 'maw_' | last | split: '+' | first | plus: 0 -%}
+      {%- assign less_wmax = 'maw_' | append: wmax -%}{%- assign filters = filters | remove: less_wmax -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- assign filters = '' -%}
+  {%- endif -%}
+
+  {%- assign filters = filters | split: '+' | uniq | join: '   ' | strip | split: '   ' -%}
+  {%-paginate collection.products by limit offset: offset %}
+  <div class="collection-products" data-section-id="{{ section_id }}"{% if settings.coll_masonry == true and st_card[7] != 'normal' and gl != 'list' %} id="Masonry-{{ section_id }}" data-section-type="masonry-prds-section"{% endif %}>
+    <ul class="products-grid product-listing product-list-grid ly__{{ly}}_items row flex-flow list-unstyled{% if gl != 'list' %} p-style-{{grid_ly}}{% endif %}" data-grid="{{grid_item_width}}" data-layout="{{ly}}">
+      {%- assign grid_ly = settings.product_grid_layout -%}
+      {%- if settings.coll_grid_layout != '' -%}
+        {%- assign grid_ly = settings.coll_grid_layout -%}
+      {%- endif -%}
+      
+      {%- for product in collection.products offset: offset -%}
+        {%- assign current_variant = product.selected_or_first_available_variant -%}
+        {%- if pmin or pmax -%}
+          {%- if pmin and product.price_min < pmin -%}{%-continue-%}{%- endif -%}
+          {%- if pmax and product.price_min > pmax -%}{%-continue-%}{%- endif -%}
+        {%- endif -%}
+        {%- if wmin or wmax -%}
+          {%- assign weight = product.variants | sort: 'weight' | map: 'weight' | first | plus: 0.00 -%}
+          {%- assign flt_wmin = wmin | plus: 0.00 -%}
+          {%- assign flt_wmax = wmax | plus: 0.00 -%}
+          {%- if wmin and weight < flt_wmin -%}{%-continue-%}{%- endif -%}
+          {%- if wmax and weight > flt_wmax -%}{%-continue-%}{%- endif -%}
+        {%- endif -%}
+        {%- unless filters.size == 0 or filters.size == 1 and filters[0] == '' -%}
+          {%- capture attrs -%}
+            vendor-{{product.vendor | handle }}{{-', '-}}avai-{{product.available}}{{-', '-}}type-{{-product.type | handle -}}{{-', '-}}
+            {%- comment -%}check available{%- endcomment -%}
+            avai-{{-product.available-}}{{-', '-}}
+            {%- comment -%}check preorder{%- endcomment -%}
+            {%- if current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue' and current_variant.incoming -%}
+              preorder-true{{-', '-}}
+            {%- else -%}
+              preorder-false{{-', '-}}
+            {%- endif -%}
+            {%- unless product.has_only_default_variant -%}
+            {%- for product_option in product.options_with_values -%}
+              {%- for value in product_option.values -%}
+                {{--}}{{- product_option.name | handle -}}{{-'-'-}}{{- value | handle -}}{%- unless forloop.last -%}{{-', '-}}{%- endunless -%}
+              {%- endfor -%}{%- unless forloop.last %}{{-', '-}}{%- endunless -%}
+            {%- endfor -%}
+            {%- endunless -%}{{-', '-}}{{-product.tags | join: '-_-' | handle | split: '-_-' | join: ', '-}}{{--}}
+          {%- endcapture -%}
+          {%- assign attrs = attrs | replace: ', , ', ', ' | split: ', ' | uniq -%}
+          {%- assign continue = true -%}
+
+          {%- assign count_filters = 0 -%}
+          {%- for attr in filters -%}
+            {%- assign attr_ = attr | split: ':' -%}
+            {%- assign attr_its = attr_[1] | split: ',' -%}
+            {%- for attr_it in attr_its -%}
+              {%- if attr_[0] == 'nkey' -%}
+                {%- assign attr_check = attr_it -%}
+              {%- else -%}
+                {%- assign attr_check = attr_[0] | append: '-' | append: attr_it -%}
+              {%- endif -%}
+              {%- if attrs contains attr_check -%}{%- assign count_filters = count_filters | plus: 1 -%}{%- endif -%}
+            {%-endfor-%}
+            {%- if count_filters >= filters.size -%}{%- assign continue = false -%}{%-break-%}{%- endif -%}
+          {%- endfor -%}
+
+          {%- if continue -%}{%-continue-%}{%- endif -%}
+        {%- endunless -%}
+        {%- assign idx_pagi = idx_pagi | plus: 1 -%}
+        {%- if idx_pagi <= pagi -%}
+          {%- if ly contains 'lis' -%}
+           <li class="grid-item list{{grid_item_width}} ly__{{ly}}">
+              {%- render 'product-list-item', product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card -%}
+            </li> 
+          {%- else -%}
+            {%- if big_prds contains product.handle -%}
+              {%- for big_prd in big_prds -%}
+                {%- if big_prd == product.handle -%}
+                  {%- assign big_block = big_prds_bls[forloop.index0] -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+            {%- if big_block != null -%}
+              {%- liquid                
+                capture big_block_width
+                echo ' col-12'
+                case gl
+                  when '3'
+                    echo ' col-sm-4 col-xl-8'
+                  when '4'
+                    echo ' col-sm-4 col-lg-3 col-xl-6'
+                  when '5'
+                    echo ' col-sm-4 col-lg-2-10 col-xl-4-10'
+                  when '6'
+                    echo ' col-sm-4 col-lg-2-10 col-xl-6'
+                endcase
+                endcapture
+              -%}
+              <li class="grid-item{{big_block_width}} ly__{{ly}}">
+                {%- render "product-grid-item40", product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card -%}
+              </li>
+              {%- assign big_block = null -%}
+              {%- assign big_block_width = null -%}
+              {%- continue -%}
+            {%- endif -%}
+
+            {% assign idx = forloop.index | append: '' %}
+            {%- if big_banners contains idx -%}
+              {%- for big_banner in big_banners_bls -%}
+                {%- assign pos = big_banner.settings.pos | append: '' -%}
+                {%- if big_banner.settings.coll == collection.handle or big_banner.settings.coll == blank and collection.handle == 'all' -%}
+                {%- if pos == idx -%}
+                  {%- assign big_block = big_banner -%}
+                  {%- break -%}
+                {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if big_block != null -%}
+                {%- liquid
+                  capture big_block_width
+                  echo ' col-12'
+                  case gl
+                    when '3'
+                      echo ' col-sm-4 col-xl-8'
+                    when '4'
+                      echo ' col-sm-4 col-lg-3 col-xl-6'
+                    when '5'
+                      echo ' col-sm-4 col-lg-2-10 col-xl-4-10'
+                    when '6'
+                      echo ' col-sm-4 col-lg-2-10 col-xl-6'
+                  endcase
+                  endcapture
+                -%}
+     
+                <li class="grid-item{{big_block_width}} ly__{{ly}} imgs__banner_template1">
+                  <div class="position-relative {{big_block.settings.banner-effect}}">
+                    {%- unless big_block.settings.desc == blank and big_block.settings.titlex == blank and big_block.settings.stitle == blank and big_block.settings.name_btn == blank -%}
+                    <div class="text-content position-absolute {{big_block.settings.alg_x}}-{{big_block.settings.alg_y}}">
+                      <p>{{big_block.settings.desc}}</p>
+                      <h3>{{big_block.settings.titlex}}<br/><span class="stitle">{{big_block.settings.stitle}}</span></h3>
+                      <a href="{{big_block.settings.image_link|default:'#'}}" class="btn {{big_block.settings.style_btn}} {{big_block.settings.style_btn_rounded}}{%if big_block.settings.btn_shadow%} btn-shadow{%endif%}" aria-label="{{big_block.settings.name_btn| strip_html}}">{{big_block.settings.name_btn}}</a>
+                    </div>
+                    {%- assign use_css = true -%}
+                    {%- endunless -%}
+                    {%- assign image_item = big_block.settings.image -%}
+                    {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 794.00 | plus: 0.00-%}
+                    <a href="{{big_block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless big_block.settings.image %} title="580x794 px"{% endunless %}></a>
+                  </div>
+                </li>
+                {%- assign big_block = null -%}
+                {%- assign big_block_width = null -%}
+              {%- endif -%}
+            {%- endif -%}
+      
+            <li class="grid-item{{grid_item_width}} ly__{{ly}}">
+              {%- render "product-grid-item40", product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card -%}
+            </li>
+      
+          {%- endif -%}
+        {%- else -%}
+        {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%-if settings_collection_layout != 'default' -%}{%-if idx_pagi > pagi-%}<div class="product-listing-loadmore"></div>{%-endif-%}{%-endif-%}
+    </ul>
+  </div>
+  <div class="pagination_ text-center"></div>
+  {%-endpaginate-%}
+{%- else -%} 
+  {%-paginate collection.products by limit %}
+  <div class="collection-products" data-section-id="{{ section_id }}"{% if settings.coll_masonry == true and st_card[7] != 'normal' and gl != 'list' %} id="Masonry-{{ section_id }}" data-section-type="masonry-prds-section"{% endif %}>
+    <ul class="products-grid product-listing product-list-grid ly__{{ly}}_items row flex-flow list-unstyled{% if gl != 'list' %} p-style-{{grid_ly}}{% endif %}" data-grid="{{grid_item_width}}" data-layout="{{ly}}">
+      {%- assign grid_ly = settings.product_grid_layout -%}
+      {%- if settings.coll_grid_layout != '' -%}
+        {%- assign grid_ly = settings.coll_grid_layout -%}
+      {%- endif -%}
+      {%- for product in collection.products limit: limit -%}
+        {%- if ly contains 'lis' -%}
+          <li class="grid-item list{{grid_item_width}} ly__{{ly}}">
+            {% render 'product-list-item', product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card  %}
+          </li>
+        {%- else -%}
+          {%- if big_prds contains product.handle -%}
+            {%- for big_prd in big_prds -%}
+              {%- if big_prd == product.handle -%}
+                {%- assign big_block = big_prds_bls[forloop.index0] -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+          {%- if big_block != null -%}
+            {%- liquid
+              capture big_block_width
+              echo ' col-12'
+              case gl
+                when '3'
+                  echo ' col-sm-4 col-xl-8'
+                when '4'
+                  echo ' col-sm-4 col-lg-3 col-xl-6'
+                when '5'
+                  echo ' col-sm-4 col-lg-2-10 col-xl-4-10'
+                when '6'
+                  echo ' col-sm-4 col-lg-2-10 col-xl-6'
+              endcase
+              endcapture
+            -%}
+            <li class="grid-item{{big_block_width}} ly__{{ly}}">
+              {%- render "product-grid-item", product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card -%}
+            </li>
+            {%- assign big_block = null -%}
+            {%- assign big_block_width = null -%}
+            {%- continue -%}
+          {%- endif -%}
+         
+      		{%if product.variants.first.compare_at_price <= product.variants.first.price or product.variants.first.compare_at_price != null%}
+      		{%- assign current_variant = product.selected_or_first_available_variant -%}
+            {%- assign money_save = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price| round -%}	
+            {%- endif -%}
+<!--              //////////////////////////////40% descuento//////////////////////////////////// -->
+           {%- if money_save >= 40 and money_save < 50 -%}
+          	  <li class="grid-item{{grid_item_width}} ly__{{ly}}">
+            	  {%- render "product-grid-item", product: product, grid_layout: grid_ly, masonry: settings.coll_masonry, st_card: st_card -%}
+          	  </li>
+           {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+  <div class="pagination_ text-center">
+    {%- if settings_collection_layout == 'default' -%}
+      {%- if paginate.pages > 1 -%}
+        {%- render 'pagination', paginate: paginate, cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+      {%- endif -%}
+    {%- else -%}
+      <div class="loadMore"{% unless paginate.next.is_link or paginate.page_size == paginate.current_page %} style="display:none"{% endunless %}><a data-pjax-filter href="{{ paginate.next.url }}" class="btn btn-primary btn-loadmore btn-onclick" data-page="page_{{paginate.current_page|plus:1}}" data-action="{{settings_collection_layout}}" data-text-button="{{'collections.general.load_more'|t}}" data-text-loading="{{'collections.general.loading'|t}}">{{'collections.general.load_more'|t}}</a></div>
+    {%- endif -%}
+  </div>
+  {% endpaginate -%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Collection40 Page",
+    "settings": [
+
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Big banner",
+        "settings": [
+          {
+            "type": "range",
+            "id": "pos",
+            "min": 1,
+            "max": 50,
+            "step": 1,
+            "label": "Position",
+            "default": 5
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          }
+        ]
+      },
+      {
+        "type": "product",
+        "name": "Big product",
+        "settings": [
+          {
+            "type": "select",
+            "id": "width",
+            "options": [
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": "4/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              }
+            ],
+            "label": "Width",
+            "default": "6"
+          },
+          {
+            "type": "product",
+            "id": "prd",
+            "label": "Product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

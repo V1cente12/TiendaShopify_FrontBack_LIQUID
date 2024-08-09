@@ -1,0 +1,32 @@
+<!-- cookies_popup.liquid -->
+<div class="kt-cookies-popup" id="kt-cookies-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="kt-cookies">
+  <div class="kt-cookies-inner">
+    <div class="cookies-info-text mb-2">{{ section.settings.cookies_popup_text }}</div>
+    <div class="cookies-buttons">
+      {%- if section.settings.cookies_information -%}<a href="{{ section.settings.cookies_information | default: '#' }}" class="cookies-more-btn">{{ 'general.cookiespopup.more' | t }}</a>{%- endif -%}
+      <a href="#" class="cookies-accept-btn btn btn-sm">{{ 'general.cookiespopup.accept' | t }}</a>
+    </div>
+  </div>
+</div>
+{%style%}
+.kt-cookies-popup{position:fixed;text-align:center;bottom:0;left:0;z-index:1100;width:100%;padding:15px 30px;background-color:rgba(0,0,0,.8);border-top:2px solid rgba(255,255,255,.1);color:#fff;opacity:0;visibility:hidden;transform:translate3d(0,100%,0);-webkit-transform:translate3d(0,100%,0);-ms-transform:translate3d(0,100%,0);-sand-transform:translate3d(0,100%,0);-o-transform:translate3d(0,100%,0);-moz-transform:translate3d(0,100%,0);-webkit-transition:all .4s cubic-bezier(.784,.134,.14,.85);-moz-transition:all .4s cubic-bezier(.784,.134,.14,.85);-o-transition:all .4s cubic-bezier(.784,.134,.14,.85);transition:all .4s cubic-bezier(.784,.134,.14,.85)}.kt-cookies-popup.popup-display{opacity:1;visibility:visible;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);-ms-transform:translate3d(0,0,0);-sand-transform:translate3d(0,0,0);-o-transform:translate3d(0,0,0);-moz-transform:translate3d(0,0,0)}.kt-cookies-inner{display:inline-table;width:100%}.kt-cookies-inner .cookies-info-text{padding:0 3rem;line-height:1.4;display:table-cell;vertical-align:middle;text-align:left;font-size:1.3rem}.kt-cookies-inner .cookies-buttons{display:table-cell;vertical-align:middle;text-align:right}.kt-cookies-inner .cookies-buttons .cookies-accept-btn{background:#fff;color:#000}.kt-cookies-inner .cookies-buttons .cookies-more-btn{margin:0 1.5rem;border-bottom:1px solid;color:#fff}.kt-cookies-inner .cookies-buttons .cookies-more-btn:not(:hover){opacity:.6}@media screen and (max-width:800px){.kt-cookies-inner .cookies-buttons,.kt-cookies-inner .cookies-info-text{display:inline-block;width:100%;text-align:center;padding:0}}.kt-cookies-popup.popup-hide{opacity:0;visibility:hidden;display:none}
+{%endstyle%}
+{%schema%}
+  {
+    "name": "GDPR Modal",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "cookies_popup_text",
+        "label": "Popup text",
+        "info": "Place here some information about cookies usage that will be shown in the popup.",
+        "default": "We use cookies to improve your experience on our website. By browsing this website, you agree to our use of cookies."
+      },
+      {
+        "type": "url",
+        "id": "cookies_information",
+        "label": "Link to information"
+      }
+    ]
+  }
+{%endschema%}

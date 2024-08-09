@@ -1,0 +1,84 @@
+{%- layout none -%}
+{%- assign limit = settings.fbt_prds -%}
+{%- assign variant = product.selected_or_first_available_variant.id -%}
+{%- case settings.fbt_prds_type -%}
+	{%- when 'tags' -%}
+		{%- assign score = 1 -%}
+		{%- assign prds = product.handle -%}
+		{%- assign related = false -%}
+		{%- assign collection = collection | default: product.collections.first | default: collections['all'] -%}
+		{%- if collection and collection.products_count > 1 -%}
+			{%- assign cr_prd = product -%}
+			{%- assign cr_prd_tags = cr_prd.tags -%}
+		  {%- assign i = 0 -%}
+		  {%- for prd in collection.products -%}
+			  {%- assign s = 0 -%}
+		    {%- for tag in prd.tags -%}
+			    {%- if cr_prd_tags contains tag -%}
+				    {%- assign s = s | plus: 1 -%}
+			    {%- endif -%}
+			    {%- if s >= score -%}
+				    {%-break-%}
+			    {%- endif -%}
+		    {%- endfor -%}
+		    {%- if s < score or cr_prd.handle == prd.handle or prd.available == false -%}{%-continue-%}{%- endif -%}
+		    {%- assign i = i | plus: 1 -%}
+		    {%- if i == 1 -%}{%- assign related = true -%}{%- endif -%}
+		    {%- assign prds = prds | join: '+' | append: '+' | append: prd.handle | split: '+' -%}
+		    {%- if i == limit -%}{%-break-%}{%- endif -%}
+		  {%- endfor -%}
+		{%- endif -%}
+	{%- when 'custom_mn' -%}
+		{%- assign grByTag = product.tags | where: 'fbt-' | first | remove: 'fbt-' -%}
+		{%- assign grByColl = product.collections | map: 'handle' -%}
+		{%- for link in linklists['fbt-products'].links -%}
+		  {%- if link.links.size > 0 -%}
+				{%- if link.type == 'collection_link' and grByColl contains link.object.handle -%}
+		      {%- assign prds = link.links | map: 'object' | map: 'handle' -%}
+					{%- assign related = true -%}
+		      {%- break -%}
+				{%- endif -%}
+		    {%- if grByTag != blank and link.title != grByTag -%}{%- continue -%}{%- endif -%}
+		    {%- if grByTag != blank and link.title == grByTag -%}{%- assign prds_group = link.links -%}{%- break -%}{%- endif -%}
+		    {%- assign handle_check = link.links | map: 'object' | map: 'handle' -%}
+		    {%- assign product_handle_check = product.handle -%}
+		    {%- if handle_check contains product_handle_check -%}
+		      {%- assign prds = link.links | map: 'object' | map: 'handle' -%}
+		      {%- break -%}
+		    {%- else -%}
+		      {%- continue -%}
+		    {%- endif -%}
+		  {%- else -%}
+		  {%- continue -%}
+		  {%- endif -%}
+		{%- endfor -%}
+		{%- unless prds == blank or prds contains product.handle -%}
+			{%- assign related = true -%}
+			{%- assign prds = prds | join: ',' | prepend: ',' | prepend: product.handle | split: ',' -%}
+		{%- endunless -%}
+	{%- when 'custom_mn_cll' -%}
+		{%- assign grByColl = product.collections | map: 'handle' -%}
+		{%- for link in linklists['fbt-products'].links -%}
+		  {%- if link.links.size == 0 or link.type != 'collection_link' -%}{%- continue -%}{%- endif -%}
+			{%- unless grByColl contains link.object.handle -%}{%- continue -%}{%- endunless -%}
+			{%- assign prd = '' -%}
+			{%- for child_link in link.links -%}
+				{%- if prd == '' -%}
+					{%- assign prd = prd | join: ',' | append: child_link.object.products[0].handle | split: ',' -%}
+				{%- else -%}
+					{%- assign prd = prd | join: ',' | append: ',' | append: child_link.object.products[0].handle | split: ',' -%}
+				{%- endif -%}
+			{%- endfor -%}
+			{%- if prd != blank -%}
+				{%- assign prds = prd -%}
+	      {%- break -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- unless prds == blank or prds contains product.handle -%}
+			{%- assign related = true -%}
+			{%- assign prds = prds | join: ',' | prepend: ',' | prepend: product.handle | split: ',' -%}
+		{%- endunless -%}
+{%- endcase -%}
+{%- if related -%}
+	{%- render 'fbt-content', prds: prds, variant: variant, st_card: '1,1,1,1,1,1/1,1,nonstretch' | split: ',' -%}
+{%- endif -%}

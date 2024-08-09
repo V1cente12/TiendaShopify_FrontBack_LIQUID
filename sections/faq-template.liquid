@@ -1,0 +1,186 @@
+<!-- faq-template.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-render 'sc_css' -%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}" data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+    {%- if section.blocks.size != 0 -%}
+      {%- assign idx = 0 -%}
+      {% assign accordion_id = '' %}
+      {%- for block in section.blocks -%}
+        {%-if block.type == 'item_1' -%}
+          {%-if idx != 0 -%}
+            </div>
+          {%- endif -%}
+          <h2 class="title text-center mb-3">{{block.settings.title}}</h2>
+          {%- assign idx = 0 -%}
+        {%-endif-%}
+
+        {%-if block.type == 'item' -%}
+          {%- if idx == 0 -%}
+          {% assign accordion_id = block.id %}
+          <div class="accordion accordion-rounded" id="accordion-{{accordion_id}}">
+          {%- endif -%}
+        {%- endif -%}
+
+        {%-if block.type == 'item' -%}
+          <div class="card card-box card-sm bg-light">
+            <div class="card-header" id="heading-{{forloop.index}}">
+              <h2 class="card-title">
+                <a class="{%if idx != 0 %}collapsed{%endif%}" role="button" data-toggle="collapse" href="#collapse-{{forloop.index}}" aria-expanded="{%if idx == 0 %}true{%else%}false{%endif%}" aria-controls="collapse-{{forloop.index}}">
+                  {{block.settings.title}}
+                </a>
+              </h2>
+            </div>
+            <div id="collapse-{{forloop.index}}" class="collapse{%if idx == 0 %} show{%endif%}" aria-labelledby="heading-{{forloop.index}}" data-parent="#accordion-{{accordion_id}}">
+              <div class="card-body">
+                {%- if block.settings.content_page != blank -%}
+                {{pages[block.settings.content_page].content|html}}
+                {%-else-%}
+                {{block.settings.content}}
+                {%-endif-%}
+              </div>
+            </div>
+          </div>
+        {%- assign idx = idx | plus: 1 -%}
+        {%-endif-%}
+        {%-if block.type == 'item' and forloop.last -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+    </div>
+  </div>
+</div>
+{%schema%}
+  {
+    "name": "FAQ's page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "radio",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_1",
+        "name": "Item Title",
+        "settings": [
+          {
+             "type": "textarea",
+             "id": "title",
+             "label": "Title",
+             "default": "Title 1"
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item FAQ",
+        "settings": [
+          {
+             "type": "text",
+             "id": "title",
+             "label": "Title",
+             "default": "Title 1"
+          },
+          {
+             "type": "textarea",
+             "id": "content",
+             "label": "Content",
+             "default": "Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+          },
+          {
+             "type": "page",
+             "id": "content_page",
+             "label": "Content page"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

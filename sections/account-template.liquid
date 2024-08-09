@@ -1,0 +1,1375 @@
+<!-- account-template.liquid -->
+{%- liquid
+  assign email = customer.email  | split: "@"
+  assign dominio = email[1]
+  assign isUserGeniox = false
+
+  if dominio == 'externoegx.com.bo' or dominio == 'datec.com.bo'
+    assign isUserGeniox = true
+  endif
+
+
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+  
+  
+  
+-%}
+{%-render 'sc_css' -%}
+<style>
+  .map {
+    height: 100%;
+    width: 100%;
+    border-radius:30px;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .map_parent {
+    height: 500px;
+    width: 100%;
+    position: relative;
+  }
+  #pin {
+            position: absolute;
+            top: 68px;
+            left: 50%;
+        }
+	.direccion-por-defecto {
+		background: green;
+		border-radius: 10px;
+		text-align: center;
+		color: white;
+  	}
+  .contenedor-enlace{
+  	display: flex;    
+    justify-content: space-around;
+  }
+  
+  
+
+  .textoRef{
+    margin-bottom: -1px !important;
+  }
+
+  .colorRojo{
+    color: red;
+    font-size: 12px;
+  }
+
+  .spanTitle{
+    font-size: 12px;
+  }
+
+  .btnUsarUbicacion{
+    margin: 15px 0;
+    display: none;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .btnUsarUbicacion{
+      display: block;
+    }
+    .btnUsarUbicacion button{
+      width:100%;
+      display:block;
+    }
+
+    .btnAcciones button{
+      width:100%;
+      display:block;
+    }
+    .btnAcciones a{
+      width:100%;
+      display:block;
+      margin-top: 4px;
+      margin-left: 0rem !important;  
+    }
+  }
+
+  .btnSubmit{
+    width: 200px;
+  }
+
+
+  .pac-logo:after{
+    /*height: 80px;*/
+    height: 0px;
+    background-position: center;
+    background-size: cover;
+    background-image: url(https://cdn.shopify.com/s/files/1/0573/4478/6617/files/blank.jpg?v=1656450359) !important;
+  }
+
+
+
+
+  :root {
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+}
+
+  .form-field.error input {
+    border-color: var(--error-color);
+    margin-bottom: -1px !important;
+}
+.form-field.error select {
+  border-color: var(--error-color);
+  margin-bottom: -1px !important;
+}
+
+.form-field.success input {
+    border-color: var(--success-color);
+}
+
+.form-field.success select {
+  border-color: var(--success-color);
+}
+.form-field small {
+    color: var(--error-color);
+}
+
+
+.alert-warning{
+  border-radius: 18px;
+}
+#cargando{
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#cargando div{
+  width: 32px;
+    height: 32px;
+    border: 4px solid #000;
+    border-right-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    -webkit-animation: spin .8s linear infinite;
+    animation: spin .8s linear infinite;
+}
+</style>
+<div class="{{width_section_}}">
+  <div class="section-width container-fluid wide">
+    {%-render 'kt_breadcrumb'-%}
+  </div>
+</div>
+<div class="border-top" style="opacity: 0.3"></div>
+<div class="page-content {{width_section_}}">
+  <div class="dashboard content_{{section.id}}{%if section.settings.image %} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width container-fluid wide">
+      <div class="row">
+        <aside class="col-12 col-md-4 col-lg-3">
+          <ul class="nav nav-dashboard flex-column list-unstyled" role="tablist">
+            <!--
+            <li class="nav-item">
+              <a class="nav-link{%if template.name != 'addresses'%} active{%endif%}" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="false">{{ 'customer.account.dashboard' | t }}</a>
+            </li>
+            -->
+            <li class="nav-item">
+              <a class="nav-link{%if template.name == 'addresses'%} active{%endif%}" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="true">{{ 'customer.addresses.title' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">{{ 'customer.orders.title_orders' | t }}</a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link{%if template.name == 'tarjetas'%} active{%endif%}" id="tab-gif"
+                  data-toggle="tab" href="#tab-tarjetas" role="tab" aria-controls="tab-tarjetas"
+                  aria-selected="true" onclick="getTarjetas()">Tarjetas EGX Prepago</a>
+            </li>
+            <!-- OPCION EDITAR PERFIL -->
+            <li class="nav-item">
+            	<a class="nav-link{%if template.name == 'edit'%} active{%endif%}" id="tab-edit-link" data-toggle="tab" href="#tab-edit" role="tab" aria-controls="tab-address" aria-selected="true">{{ 'customer.addresses.edit_profile' | t }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>
+            </li>
+          </ul>
+        </aside>
+        <div class="col-12 col-md-8 col-lg-9">
+          <div class="tab-content">
+            <!--
+            <div class="tab-pane fade{%if template.name != 'addresses'%} active show{%endif%}" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+              <p>{{ 'customer.account.hello' | t }} <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.addresses[0].first_name| default: customer.email}}{%-endif-%}</span> (no eres <span class="font-weight-normal text-dark">{%- if customer.name != blank -%}{{customer.name}}{%-else-%}{{customer.addresses[0].first_name| default: customer.email}}{%-endif-%}</span>? <a href="{{routes.account_logout_url}}">{{ 'customer.account.sign_out' | t }}</a>) 
+              <br>
+              {{ 'customer.account.dashboard_info_html' | t }}.</p>
+                              <a style="background-color:#005FA0;border-color:#005FA0;" class="btn btn-primary .btn-rounded" href="/cart">Ir al carrito<i class="fkt-shopping-cart"></i></a>
+				
+     
+            </div>
+            -->
+            <div class="tab-pane fade{%if template.name == 'addresses'%} active show{%endif%}" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+              <p>{{ 'customer.addresses.infor' | t }}</p>              
+              <div class="mt-2 mb-3 btnAcciones">
+                <button type="button" onclick="mostrarAddress()" class="btn btn-primary address-new-toggle">{{ 'customer.addresses.add_new' | t }}</button>
+              	<a style="background-color:#005FA0;border-color:#005FA0;margin-left: 2rem ;" class=" btn btn-primary" href="/checkout/?step=contact_information">Regresar al pedido<i class="fkt-cart-arrow-down"></i></a>
+              </div>
+              <div class="clear"></div>
+               {%- render 'egx-account-addresses' -%}
+              <div class="row" id="direcciones-for">          
+                {%- paginate customer.addresses by 5 -%}
+                {%- for address in customer.addresses -%}
+                <div class="col-lg-6 col-toggle w-100">
+                  <div class="card card-dashboard">
+                    <div class="card-body">
+                      {%- if address == customer.default_address -%}
+                      <h3 class="title-addresses__myAccount">{{ 'customer.addresses.default' | t }}</h3>
+                      {%- endif -%}
+                      <p>
+                        {{ address.name }} <br>
+                        {{ address.address1 }} <br>
+                        {{ address.address2 }}<br>
+                        {{ address.city }} <br>
+                        {{ address.country }}
+                      </p>
+                
+                      <a href="javascript:void(0)" class="address-edit-toggle" onclick="testEdit({{ address.id }})"  data-form-id="{{ address.id }}">{{ 'customer.addresses.edit' | t }} <i class="fkt-edit"></i></a> &nbsp; | &nbsp;
+                      <a href="javascript:void(0)" class="address-delete" data-form-id="{{ address.id }}" data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}">{{ 'customer.addresses.delete' | t }} <i class="fkt-times"></i></a>
+                      {%- if address != customer.default_address -%}
+                      &nbsp; | &nbsp;<a href="javascript:void(0)" class="address-setdefault" onclick="direccionPorDefecto({{ address.id }})"  data-form-id="{{ address.id }}">Elegir dirección</a>
+                      {%- endif -%}
+                    </div>
+                  </div>          
+                  <!--EDITTTTTTTTTTTTTTTTTTTTTTTTTTT      -->
+                  {%- render 'egx-account-addresses-edit', address: address -%}
+                  
+                </div>
+                {%- endfor -%}
+                {%- if paginate.pages > 1 -%}
+                  <div class="pagination_ text-center clearfix">
+                    {%- render 'pagination', cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+                  </div>                  
+                {%- endif -%}
+                {%- endpaginate -%}
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+              {%- if customer.orders.size == 0 -%}
+              <p>{{ 'customer.orders.none' | t }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-outline-primary-2">
+                <span>{{ 'customer.orders.button_back_to_shop' | t }}</span>
+                <i class="fkt-long-arrow-right"></i>
+              </a>
+              {%- else -%}
+                {%- paginate customer.orders by 20 -%}
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>{{ 'customer.orders.order_number' | t }}</th>
+                          <th>{{ 'customer.orders.date' | t }}</th>
+                          <th>{{ 'customer.orders.products' | t }}</th>
+                          {% comment %}<th>{{ 'customer.orders.payment_status' | t }}</th>{% endcomment %}
+                          <th>{{ 'customer.orders.total' | t }}</th>
+                          <th>{{ 'customer.orders.payment_status' | t }}</th>
+                          <th>Estado del Pedido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {%- for order in customer.orders -%}
+                      <tr>
+                        <td data-label="{{ 'customer.orders.order_number' | t }}">
+                          <a href="{{ order.customer_url }}">{{ order.name }}</a>
+                        </td>
+                        <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                        <td data-label="{{ 'customer.orders.products' | t }}">
+                          {{ order.line_items[0].product.title | truncatewords: 5}}
+                          {%- assign count = order.line_items.size | minus: 1 -%}
+                          {%if order.line_items.size > 1%}{{ 'customer.orders.items_with_count' | t : count: count }}{%endif%}
+                        </td>
+                        {% comment %}<td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>{% endcomment %}
+                        <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                           {% render "pedido_estadoPago", estadoPago: order.financial_status %}
+                        </td>
+                        <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                          {% render "pedido_estadoCumplimiento-Preparacion", obj: order %}
+                        </td>
+                        
+                      </tr>
+                      {%- endfor -%}
+                      </tbody>
+                    </table>
+                    
+                  </div>
+                {%-if paginate.pages > 1-%}
+                  <div class="pagination_ text-center clearfix">
+                    {%- render 'pagination', cssAlign: cssAlign, cssAlign_rev: cssAlign_rev -%}
+                  </div>
+                {%-endif-%}
+                {%- endpaginate -%}
+              {%- endif -%}
+            </div>
+            
+
+             <!-- RENDER PARA LA PLANTILLA DE TARJETAS -->
+             <div class="tab-pane fade{%if template.name == 'account.edit'%} active show{%endif%}"
+              id="tab-tarjetas" role="tabpanel" aria-labelledby="tab-tarjetas-link">
+              {%-render 'tarjetas'-%}
+            </div>
+            <!-- RENDER PARA LA PLANTILLA DE EDITAR PERFIL -->
+             <div class="tab-pane fade{%if template.name == 'account.edit'%} active show{%endif%}" id="tab-edit" role="tabpanel" aria-labelledby="tab-edit-link">
+              {% render "customer-fields", form_id: "zyt3Kz" %} 
+            </div>
+            
+          </div> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{settings.keyGoogleMap}}&libraries=places&v=weekly&channel=2" async defer></script>
+
+<script async src="{{ 'egx-validacion.js' | asset_url }}" defer="defer"></script>
+<script async src="{{ 'egx-address-validacion.js' | asset_url }}" defer="defer"></script>
+
+<script>
+const DOMElements = {
+    input: {
+        referencia: 'AddressAddress2New_Complemento',
+        direccion: 'AddressAddress1New',
+        direccionAuxiliar: 'AddressAddress1New_complemento',
+    }
+}
+
+const inputField = () =>{
+    return {
+      idReferenciaInput : document.getElementById(DOMElements.input.referencia),
+      idDireccion : document.getElementById(DOMElements.input.direccion),
+      idDireccionAuxiliar : document.getElementById(DOMElements.input.direccionAuxiliar),
+    }
+}
+
+	var map;
+  var infoWindow;
+	var longitude;
+  var latitude;
+	var geocoder;
+	var bolivia = {"latitud":"-16.71474081542849","longitud":"-65.12559375","zoom":"5"};
+ 	var coordenadas = {"latitud":"-17.783318","longitud":"-63.182126","zoom":14,"zoomDireccion": 16};//Santa Cruz  	
+  var markers = [];
+
+  document.getElementById("address_default_address_new").checked = true;
+  
+
+
+  function  getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  }
+  
+  function redirect_pedido_direccion(){    
+  	var valor = getParameterByName('op');
+    if(valor == 'pedido'){
+      document.getElementById("tab-dashboard-link").className = "nav-link";
+      document.getElementById("tab-orders-link").className += " active show";
+
+      document.getElementById("tab-dashboard").className = "tab-pane fade";
+      document.getElementById("tab-orders").className += " active show";
+    }
+    if(valor == "direcciones"){
+      document.getElementById("tab-dashboard-link").className = "nav-link";
+      document.getElementById("tab-address-link").className += " active show";
+
+      document.getElementById("tab-dashboard").className = "tab-pane fade";
+      document.getElementById("tab-address").className += " active show";
+    }
+  }
+  redirect_pedido_direccion();
+  function unirDireccionReferencia(){
+  	let direccion = document.getElementById("AddressAddress1New_complemento").value;
+    let referencia = document.getElementById("AddressAddress2New_Complemento").value;
+   
+    document.getElementById("AddressAddress1New").value = `${direccion}|${referencia}`;
+  }
+  
+  function EditUnirDireccionReferencia(id){
+  	let direccion = document.getElementById("AddressAddress1_New_Complemento"+id).value;
+    let referencia = document.getElementById("AddressAddress2_New_Complemento"+id).value;
+   
+    document.getElementById("AddressAddress1_"+id).value = `${direccion}|${referencia}`;
+  }
+
+   function SepararCadena(id){
+    let cadena = document.getElementById(id).value;  
+    return cadena.split('|');
+  }
+
+  function cargarEditSepararDireccion(id){
+    let arrDir = SepararCadena("AddressAddress1_"+id);
+
+    document.getElementById("AddressAddress1_New_Complemento"+id).value = (arrDir[0] != undefined) ? arrDir[0] : '';
+    document.getElementById("AddressAddress2_New_Complemento"+id).value = (arrDir[1] != undefined) ? arrDir[1] : '';
+  }
+  
+  /*
+  function returnZona(ciudad) {
+    let listCiudad = [
+        { cuidad: 'Santa Cruz', 
+         	zona: [
+            'Centro',
+            'Hasta 2do anillo',
+            'Hasta 3er anillo',
+            'Hasta 4to anillo',
+            'Hasta 5to anillo',
+            'Hasta 6to anillo',
+            'Hasta 7mo anillo',
+            'Hasta 8vo anillo',
+            'Urubó',
+                  ], 
+         	codP: [
+            'SCZ01',
+            'SCZ02',
+            'SCZ03',
+            'SCZ04',
+            'SCZ05',
+            'SCZ06',
+            'SCZ07',
+            'SCZ08',
+            'SCZ09',
+            		] 
+        },
+        //{ cuidad: 'Pando', zona: [''], codP: [''] },
+        { cuidad: 'Cochabamba', 
+            zona: [
+              'Zona Centro',
+              'Zona Norte',
+              'Zona Sur',
+              'Zona Tiquipaya',
+              'Zona Quillacollo',
+              'Zona Sacaba',
+            ], 
+            codP: [
+              'CBBA01',
+              'CBBA02',
+              'CBBA03',
+              'CBBA04',
+              'CBBA05',
+              'CBBA06',
+            ] },
+    	{ 
+        cuidad: 'Oruro', 
+        zona: ['Zona Norte','Zona Sur','Zona Este','Zona Oeste'], 
+        codP: ['ORU01','ORU02','ORU03','ORU04'] 
+      },
+    //	{ cuidad: 'Potosí', zona: [''], codP: [''] },
+    	{ 
+        cuidad: 'Beni',
+        zona: ['Zona Norte','Zona Sur','Zona Este','Zona Oeste'],
+        codP: ['BEN01','BEN02','BEN03','BEN04'] 
+      },
+    	{ 
+        cuidad: 'Tarija', 
+        zona: ['Zona Norte','Zona Sur','Zona Este','Zona Oeste'], 
+        codP: ['TRJ01','TRJ02','TRJ03','TRJ04'] 
+      },
+    	{ 
+        cuidad: 'Chuquisaca', 
+        zona: ['Zona Norte','Zona Sur','Zona Este','Zona Oeste'], 
+        codP: ['SCR01','SCR02','SCR03','SCR04'] 
+      },
+    	{ cuidad: 'La Paz', 
+          zona: [
+            'Zona Sur',
+            'Zona Centro',
+            'Zona Sopocachi',
+            'Zona San Pedro',
+            'Zona Miraflores',
+            'Zonas Villas',
+            'Zona Periferias',
+            'Zona El Alto',
+            'Zona Viacha',
+          ], codP: [
+            'LPZ01',
+            'LPZ02',
+            'LPZ03',
+            'LPZ04',
+            'LPZ05',
+            'LPZ06',
+            'LPZ07',
+            'LPZ08',
+            'LPZ09',
+          ] },
+
+	];
+    return listCiudad.find( obj => obj.cuidad == ciudad );   
+  }
+  */
+  function returnZona(ciudad) {
+    let listCiudad = [
+      { 
+        cuidad: 'Santa Cruz', 
+        zona: ['Scz'], 
+        codP: ['SCZ00'] 
+      },
+        //{ cuidad: 'Pando', zona: [''], codP: [''] },
+      { 
+        cuidad: 'Cochabamba', 
+        zona: ['Cbba'], 
+        codP: ['CBBA00'] 
+      },
+    	{ 
+        cuidad: 'Oruro', 
+        zona: ['Oru'], 
+        codP: ['ORU00'] 
+      },
+    //	{ cuidad: 'Potosí', zona: [''], codP: [''] },
+    	{ 
+        cuidad: 'Beni',
+        zona: ['Ben'],
+        codP: ['BEN00'] 
+      },
+    	{ 
+        cuidad: 'Tarija', 
+        zona: ['Trj'], 
+        codP: ['TRJ00'] 
+      },
+    	{ 
+        cuidad: 'Chuquisaca', 
+        zona: ['Zona Norte'], 
+        codP: ['SCR00'] 
+      },
+    	{ 
+        cuidad: 'La Paz', 
+        zona: ['Lpz'], 
+        codP: ['LPZ00'] 
+      },
+
+	];
+    return listCiudad.find( obj => obj.cuidad == ciudad );   
+  }
+
+  
+  
+  function htmlOptionZona(ciudad) {
+    let zonas='';
+    if(ciudad!=''){
+      const resultado = returnZona(ciudad);
+      zonas=`<option selected="selected" value="${resultado.codP[0]}">${resultado.zona[0]}</option>`;
+      /*
+      zonas='<option value="" selected="selected"> -- SELECCIONA TU ZONA --</option>';
+      const resultado = returnZona(ciudad);
+      
+      for (var i = 0; i < resultado.zona.length; i++) {
+        zonas += `<option value="${resultado.codP[i]}">${resultado.zona[i]}</option>`;
+      }
+      */
+    }else{
+      zonas='<option value="" selected="selected"> -- SELECCIONA TU CIUDAD PRIMERO --</option>';
+    }
+    return zonas;
+  }
+
+  function obtZona(ciudad) {
+    document.getElementById("AddressProvinceNew").innerHTML =  htmlOptionZona(ciudad);
+  }
+
+  function cargarIdZona(addressId,getId_updateSelect){
+
+  	const cuidad= document.getElementById('AddressFirstName1_'+addressId).value;
+    const zona = document.getElementById("AddressProvince_"+addressId).getAttribute("data-default");
+
+    document.getElementById("AddressProvince_"+addressId).innerHTML = htmlOptionZona(cuidad)
+
+    /*
+    if(getId_updateSelect){ //true: cuando se cargan los valores por el id    //false: cuando se realiza un change en la cuidad, recarga zona y codP
+      if(cuidad!='')
+      	document.getElementById("AddressProvince_"+addressId).value = zona;
+    }
+    else
+      document.getElementById("AddressProvince_"+addressId).value = "";
+      */
+  }
+  
+  	if (window.jQuery) {
+        jquery = window.jQuery;
+   	} else if (window.Checkout && window.Checkout.$) {
+        jquery = window.Checkout.$;
+   	}	
+    
+
+
+
+
+  function excluirCiudades(PCiudad){
+    return (PCiudad == 'Potosí' || PCiudad == 'Pando' || PCiudad == 'Beni') ? false : true;
+  }
+  function validarDireccionAutocompletado(data){
+    let obj = [
+      { ciudad: 'Santa Cruz', coincidencia: 0 },
+      { ciudad: 'Cochabamba', coincidencia: 0 },
+      { ciudad: 'La Paz', coincidencia: 0 },
+      { ciudad: 'Beni', coincidencia: 0 },
+      { ciudad: 'Pando', coincidencia: 0 },
+      { ciudad: 'Oruro', coincidencia: 0 },
+      { ciudad: 'Potosí', coincidencia: 0 },
+      { ciudad: 'Chuquisaca', coincidencia: 0 },
+      { ciudad: 'Tarija', coincidencia: 0 }
+    ];
+
+    for(let v=0;v<data.length; v++){
+      for(let i=0;i<obj.length;i++){
+        if(data[v].long_name.includes(obj[i].ciudad)){
+          obj[i].coincidencia += 1;
+        }
+      }
+    }
+
+    xMax = Math.max(...Array.from(obj, o => o.coincidencia));
+    return obj.find(o => o.coincidencia === xMax);
+  
+  }
+  const cargarMapa = (idMapa,pzoom, platitud, plongitud) => {
+    return new google.maps.Map(document.getElementById(idMapa), {
+        zoom: parseFloat(pzoom),
+        center: { lat:  parseFloat(platitud), lng:  parseFloat(plongitud) },
+        scrollwheel: false,
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false
+    });
+  }
+	function initMap() {
+      	document.getElementById('AddressCityNew').value ='Santa Cruz'
+        obtZona('Santa Cruz');
+ 
+    	map = cargarMapa('map',coordenadas.zoom,coordenadas.latitud,coordenadas.longitud);
+
+	    longitude = map.getCenter().lng();
+		latitude = map.getCenter().lat();
+		infoWindow = new google.maps.InfoWindow;
+		geocoder = new google.maps.Geocoder;
+        
+     	// GET coordinates and adress
+      	
+        var marker = new google.maps.Marker({
+          position: { lat : parseFloat(coordenadas.latitud) , lng : parseFloat(coordenadas.longitud) } ,
+          map,
+          title : 'Direccion',
+          draggable: true,
+        });
+        markers.push(marker);
+        document.getElementById("AddressCompanyNew").value = latitude +',' +longitude;
+      	google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			  document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();
+          	obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+         }); 
+      
+
+        //if({{isUserGeniox}}){
+          let input = document.getElementById('AddressAddress1New_complemento')
+          const autocomplete = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: "bo"}
+          });
+          google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                      //infowindow.close();
+            let place = autocomplete.getPlace();
+            const obtciudad =  validarDireccionAutocompletado(place.address_components);
+            const isOk = excluirCiudades(obtciudad.ciudad);
+
+            if(isOk){
+            
+            if(place.geometry){
+              //map = cargarMapa(coordenadas.zoom,coordenadas.latitud,coordenadas.longitud);
+              let arrayDirecion = SepararCadena(DOMElements.input.direccion);
+              inputField().idDireccionAuxiliar.value = arrayDirecion[0];
+              document.getElementById('AddressAddress1New').value=inputField().idDireccionAuxiliar.value+'|'+inputField().idReferenciaInput.value;
+              let placeLocation = place.geometry.location
+              document.getElementById("AddressCompanyNew").value = placeLocation.lat() +',' + placeLocation.lng();     		
+              obtenerCiudadCoordenadas(placeLocation.lat() , placeLocation.lng() , 0 )
+              deleteMarkers();
+              map.setZoom(coordenadas.zoomDireccion);
+              let marker = new google.maps.Marker({
+                    position: { lat : placeLocation.lat() , lng : placeLocation.lng() } ,
+                    map,
+                    title : 'Direccion',
+                    draggable: true,
+                });
+              google.maps.event.addListener(marker, 'dragend', function(marker){
+                let latLng = marker.latLng; 
+                document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();
+                obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+              }); 
+              map.setCenter({ lat : placeLocation.lat() , lng : placeLocation.lng() })
+              markers.push(marker);
+            };
+            }else{
+              alert('Estimado Usuario, por el momento no tenemos cobertura en '+ obtciudad.ciudad);
+              document.getElementById('AddressAddress1New_complemento').value='';
+              document.getElementById('AddressAddress1New_complemento').focus();
+              document.getElementById('AddressAddress1New').value='';
+            }
+          })
+        //}
+   	}
+  
+  // GEOLOCATION
+   function geolocation() {
+
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(function(position) {
+         var pos = {
+           lat: position.coords.latitude,
+           lng: position.coords.longitude
+         };
+		 document.getElementById("AddressCompanyNew").value = pos.lat +',' + pos.lng;  
+         obtenerCiudadCoordenadas(pos.lat , pos.lng , 0 )
+         map.setCenter(pos);
+		 deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: pos ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			document.getElementById("AddressCompanyNew").value = latLng.lat() +',' +latLng.lng();  
+            obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+         }); 
+       }, function() {
+         handleLocationError(true, infoWindow, map.getCenter());
+       });
+     } else {
+       // Browser doesn't support Geolocation
+       handleLocationError(false, infoWindow, map.getCenter());
+     }
+   }
+	function geolocationEdit(addressId) {
+
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(function(position) {
+         var pos = {
+           lat: position.coords.latitude,
+           lng: position.coords.longitude
+         };
+		 document.getElementById('AddressCompany_'+ addressId).value = pos.lat +',' + pos.lng;     		
+         obtenerCiudadCoordenadas(pos.lat , pos.lng , addressId )
+         map.setCenter(pos);
+		 deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: pos ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latLng = marker.latLng; 
+			document.getElementById('AddressCompany_'+ addressId).value = latLng.lat() +',' +latLng.lng();
+           	obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , addressId )
+         }); 
+       }, function() {
+         handleLocationError(true, infoWindow, map.getCenter());
+       });
+     } else {
+       // Browser doesn't support Geolocation
+       handleLocationError(false, infoWindow, map.getCenter());
+     }
+   }
+   // GEOLOCATION Error
+   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+     infoWindow.setPosition(pos);
+     infoWindow.setContent(browserHasGeolocation ?
+                           'Error: The Geolocation service failed.' :
+                           'Error: Your browser doesn\'t support geolocation.');
+     infoWindow.open(map);
+   }
+
+   function geocodeLatLng(latitude, longitude, geocoder, map) {
+     var latlng = {lat: latitude, lng: longitude};
+     var address = document.getElementById('AddressLastNameNew');
+
+     geocoder.geocode({'location': latlng}, function(results, status) {
+       if (status === 'OK') {
+         if (results[0]) {
+           address.innerText = results[0].formatted_address;
+         } else {
+           address.innerText = 'No results found';
+         }
+       } else {
+         window.alert('Geocoder failed due to: ' + status);
+       }
+     });
+   }
+  function setMapOnAll(map) {
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+  function hideMarkers() {
+  	setMapOnAll(null);
+  }
+  function deleteMarkers() {
+    hideMarkers();
+    markers = [];
+  }
+  
+  
+
+  let idEditForm = 0;
+  function testEdit(addressId){
+    idEditForm = addressId;
+    initValoresEdit();
+    cargarIdZona(addressId, true);
+    cargarEditSepararDireccion(addressId);
+
+    let coordenada= document.getElementById('AddressCompany_'+addressId).value
+        let nuevasCoordenadas  = coordenada.split(",");
+        /*
+        map = new google.maps.Map(document.getElementById('map_'+addressId), {
+          center: { lat:  parseFloat(nuevasCoordenadas[0]), lng:  parseFloat(nuevasCoordenadas[1]) },
+    		  zoom: coordenadas.zoomDireccion
+     	  });
+        */
+        map = cargarMapa('map_'+addressId,coordenadas.zoomDireccion,nuevasCoordenadas[0],nuevasCoordenadas[1]);
+    	// GET coordinates and adress
+    	deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: { lat:  parseFloat(nuevasCoordenadas[0]), lng:  parseFloat(nuevasCoordenadas[1]) },
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById('AddressCompany_'+addressId).value = latiLong.lat() +',' +latiLong.lng() ;   
+           	coordenada.new = {"latitud":latiLong.lat().toString(),"longitud":latiLong.lng().toString(),"zoom":map.getZoom()};
+           obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , addressId )
+         });
+
+      //if({{isUserGeniox}}){
+    	let input = document.getElementById('AddressAddress1_New_Complemento'+ addressId)
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          componentRestrictions: { country: "bo"}
+        });
+      	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    //infowindow.close();
+           let place = autocomplete.getPlace();
+           const obtciudad =  validarDireccionAutocompletado(place.address_components);
+           const isOk = excluirCiudades(obtciudad.ciudad);
+
+           if(isOk){
+           if(place.geometry){
+            let arrayDirecion = SepararCadena('AddressAddress1_'+ addressId);
+            document.getElementById('AddressAddress1_New_Complemento'+ addressId).value = arrayDirecion[0];
+
+            const valueRef = document.getElementById('AddressAddress2_New_Complemento'+ addressId).value;
+            document.getElementById('AddressAddress1_'+ addressId).value = document.getElementById('AddressAddress1_New_Complemento'+ addressId).value+'|'+valueRef;
+             let placeLocation = place.geometry.location
+             document.getElementById("AddressCompany_" + addressId).value = placeLocation.lat() +',' + placeLocation.lng();  
+             obtenerCiudadCoordenadas(placeLocation.lat() , placeLocation.lng() , addressId )
+             deleteMarkers()
+             let marker = new google.maps.Marker({
+                  position: { lat : placeLocation.lat() , lng : placeLocation.lng() } ,
+                  map,
+                  title : 'Direccion',
+                  draggable: true
+              });
+            google.maps.event.addListener(marker, 'dragend', function(marker){
+              let latLng = marker.latLng; 
+              document.getElementById("AddressCompany_"+ addressId ).value = latLng.lat() +',' +latLng.lng();
+              obtenerCiudadCoordenadas(latLng.lat() , latLng.lng() , 0 )
+            }); 
+             map.setZoom(coordenadas.zoomDireccion);
+             map.setCenter({ lat : placeLocation.lat() , lng : placeLocation.lng() })
+             markers.push(marker);
+           };
+          }else{
+            alert('Estimado Usuario, por el momento no tenemos cobertura en '+ obtciudad.ciudad);
+            document.getElementById('AddressAddress1_New_Complemento'+ addressId).value='';
+            document.getElementById('AddressAddress1_New_Complemento'+ addressId).focus();
+            document.getElementById('AddressAddress1_'+ addressId).value = '';
+          }
+        })
+       //}
+        
+  }
+  
+	function cambiarCiudad(cuidad){  	
+ 
+    obtZona(cuidad);
+
+    let ciudad = document.getElementById('address-new[selectcity]').value
+    document.getElementById('AddressCityNew').value = ciudad
+    {{settings.citysConfig}} 
+    var cityConfig = citys.find( c => c.city === ciudad );
+      if(cityConfig){
+         
+        let latLng = {lat:parseFloat(cityConfig.latitud),
+                      lng: parseFloat(cityConfig.longitud),
+                      zoom:14} 
+    map.setZoom(coordenadas.zoom);
+		document.getElementById("AddressCompanyNew").value = latLng.lat +',' + latLng.lng;
+        map.setCenter(latLng);
+        deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: latLng ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById("AddressCompanyNew").value = latiLong.lat() +',' +latiLong.lng() ;     		            
+            obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , 0 )
+         }); 
+        
+      }    
+  }
+  function obtenerCiudadCoordenadas(lat, long , addressId){
+  
+    let obj = [
+      { ciudad: 'Santa Cruz', coincidencia: 0 },
+      { ciudad: 'Cochabamba', coincidencia: 0 },
+      { ciudad: 'La Paz', coincidencia: 0 },
+      { ciudad: 'Beni', coincidencia: 0 },
+      { ciudad: 'Pando', coincidencia: 0 },
+      { ciudad: 'Oruro', coincidencia: 0 },
+      { ciudad: 'Potosí', coincidencia: 0 },
+      { ciudad: 'Chuquisaca', coincidencia: 0 },
+      { ciudad: 'Tarija', coincidencia: 0 }
+    ]   
+    let ciudad = ''
+  	 new google.maps.Geocoder()
+     .geocode({ location: { lat : lat , lng : long } })
+    .then((response) => {
+      for(let v=0;v<response.results.length; v++){
+        for(let i=0;i<obj.length;i++){
+          if(response.results[v].formatted_address.includes(obj[i].ciudad)){
+            obj[i].coincidencia += 1;
+          }
+        }
+      }
+
+      xMax = Math.max(...Array.from(obj, o => o.coincidencia));
+      maxXObject = obj.find(o => o.coincidencia === xMax);
+      
+      if (addressId == 0) {
+        let idCiudad = document.getElementById('address-new[selectcity]');
+
+        if(idCiudad.value != maxXObject.ciudad){
+          idCiudad.value = maxXObject.ciudad;
+          document.getElementById('AddressCityNew').value = maxXObject.ciudad;
+          obtZona(maxXObject.ciudad);
+        }
+
+      }else{
+        let idCiudadEdit = document.getElementById('AddressFirstName1_'+addressId); 
+        if(idCiudadEdit.value != maxXObject.ciudad){
+          idCiudadEdit.value = maxXObject.ciudad;
+          document.getElementById('AddressCity_'+addressId).value = maxXObject.ciudad;
+          cargarIdZona(addressId, false);
+        }
+      }                  
+    })
+    .catch((e) => window.alert("Geocoder failed due to: " + e));     
+    
+    return ciudad
+    
+  }
+  
+  function cambiarCiudadUpdate(addressId){
+	cargarIdZona(addressId, false);
+
+    if (addressId === undefined) addressId = "";
+    let ciudad = document.getElementById('AddressFirstName1_'+addressId).value ;
+    document.getElementById('AddressCity_'+addressId).value = ciudad ; 
+    {{settings.citysConfig}}
+    var cityConfig = citys.find( c => c.city === ciudad );
+      if(cityConfig){
+         
+        var latLng = {lat:parseFloat(cityConfig.latitud),
+                      lng: parseFloat(cityConfig.longitud),
+                      zoom:14}      
+    map.setZoom(coordenadas.zoom);  
+		document.getElementById("AddressCompany_"+addressId).value = latLng.lat +',' + latLng.lng;
+        map.setCenter(latLng);
+        deleteMarkers();
+         let marker = new google.maps.Marker({
+          position: latLng ,
+          map,
+          title : 'Direccion',
+          draggable: true
+         });
+         markers.push(marker);
+         google.maps.event.addListener(marker, 'dragend', function(marker){
+            let latiLong = marker.latLng; 
+			document.getElementById("AddressCompany_"+addressId).value = latiLong.lat() +',' +latiLong.lng() ;     		
+           	obtenerCiudadCoordenadas(latiLong.lat() , latiLong.lng() , addressId )
+         });
+      }
+  }
+  function direccionPorDefecto(addressId){
+    testEdit(addressId);
+	  document.getElementById('address_default_address_'+addressId).checked = true
+  	document.getElementById('submit_'+ addressId).click()
+  }
+  function quitarActiveShowItems(){
+    //document.getElementById('tab-dashboard-link').className ="nav-link";
+    document.getElementById('tab-orders-link').className ="nav-link";
+    document.getElementById('tab-address-link').className ="nav-link";
+    document.getElementById('tab-gif').className ="nav-link";
+    document.getElementById('tab-edit-link').className ="nav-link";
+
+    //document.getElementById('tab-dashboard').className ="tab-pane fade";
+    document.getElementById('tab-orders').className ="tab-pane fade";
+    document.getElementById('tab-address').className ="tab-pane fade";
+    document.getElementById('tab-tarjetas').className ="tab-pane fade";
+    document.getElementById('tab-edit').className ="tab-pane fade";
+
+  }
+  function abrirPanelAddressCheckout(){
+    quitarActiveShowItems();
+
+    const data = localStorage.getItem('insertAddress');
+    if(data == 'true' || data == true){
+      localStorage.setItem('insertAddress', false);
+      let countCarrito = {{cart.item_count}};
+      if(countCarrito > 0){
+        window.location.href = '/checkout/?step=contact_information';
+        //window.location.href = '/checkout/?previous_step=contact_information&step=shipping_method';
+      }
+    }
+    const navLinkActive = 'nav-link active show';
+    const tabPaneActive = 'tab-pane fade active show';
+    const valor = getParameterByName('view');
+    switch (valor) {
+      case 'profile':
+        document.getElementById('tab-edit-link').className = navLinkActive;
+        document.getElementById('tab-edit').className = tabPaneActive;
+        break;
+      case 'orders':
+        document.getElementById('tab-orders-link').className = navLinkActive;
+        document.getElementById('tab-orders').className = tabPaneActive;
+        break;
+      case 'address':
+        document.getElementById('tab-address-link').className = navLinkActive;
+        document.getElementById('tab-address').className = tabPaneActive;
+        break;
+      case 'addressCheckout':
+        document.getElementById('tab-address-link').className = navLinkActive;
+        document.getElementById('tab-address').className = tabPaneActive;
+        
+        document.getElementById('AddressNewForm').className = "form-vertical";
+          setTimeout(function(){
+            initMap();
+            document.getElementById('cargando').innerHTML = '';
+          },4000);
+        break;
+      case 'cards':
+        getTarjetas();
+        document.getElementById('tab-gif').className = navLinkActive;
+        document.getElementById('tab-tarjetas').className = tabPaneActive;
+        break;
+      default:
+        document.getElementById('tab-address-link').className = navLinkActive;
+        document.getElementById('tab-address').className = tabPaneActive;
+        break;
+    }
+    /*
+      
+    */
+    
+  }
+  function mostrarAddress(){
+    document.getElementById('cargando').innerHTML = '';
+    initMap();
+  }
+
+    abrirPanelAddressCheckout();
+</script>
+
+
+
+{% schema %}
+  {
+    "name": "Account page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem",
+        "default": "3rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ]
+  }
+{% endschema %}
+{%-style-%}
+/* Dashboard */
+@media (min-width: 992px) {
+  .dashboard .col-lg-3 {
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+  .dashboard .col-lg-9 {
+    -ms-flex: 0 70%;
+    flex: 0 0 70%;
+    max-width: 70%;
+  }
+}
+.dashboard label {
+  margin-bottom: 0.2rem;
+}
+.dashboard .form-control {
+  margin-bottom: 1.3rem;
+}
+.dashboard .form-control + .form-control {
+  margin-top: 2rem;
+}
+.dashboard .form-control:not(:focus) {
+  background-color: #f9f9f9;
+}
+.dashboard .tab-pane {
+  padding: 0;
+  border: none;
+  line-height: 2.15;
+  padding-bottom: 2rem;
+}
+.dashboard .tab-pane p {
+  margin-bottom: 1rem;
+}
+.dashboard .btn {
+  min-width: 123px;
+}
+.dashboard h3 {
+  font-size: 2rem;
+}
+
+.nav-dashboard {
+  margin-top: -1rem;
+}
+.nav-dashboard .nav-link {
+  overflow: hidden;
+  position: relative;
+  font-weight: 300;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  padding: 1.4rem 0;
+  border-bottom: thin solid #ebebeb;
+}
+.nav-dashboard .nav-link:before {
+  font-family: "molla";
+  content: '\f112';
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: -15px;
+  margin-top: -7.5px;
+  transition: all 0.3s;
+  opacity: 0;
+}
+[dir="rtl"] .nav-dashboard .nav-link:before {
+  content: '\f111';
+  left: auto;
+  right: -15px;
+}
+.nav-dashboard .nav-link:hover, .nav-dashboard .nav-link:focus, .nav-dashboard .nav-link.active {
+  color: var(--primary);
+}
+[dir="ltr"] .nav-dashboard .nav-link.active {
+  padding-left: 2rem;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active {
+  padding-right: 2rem;
+}
+.nav-dashboard .nav-link.active:before {
+  left: 0;
+  opacity: 1;
+}
+[dir="rtl"] .nav-dashboard .nav-link.active:before {
+  left: auto;
+  right: 0;
+}
+.card-dashboard {
+  margin-bottom: 3rem;
+  background-color: #f9f9f9;
+  border: thin solid #ebebeb;
+  border-radius: 30px
+}
+.card-dashboard .card-title {
+  letter-spacing: 0;
+  margin-bottom: 0.5rem;
+}
+.card-dashboard .card-body {
+  padding: 4rem 2.8rem 2rem;
+}
+
+.dashboard .table {
+  margin-bottom: 3rem;
+  line-height: normal;
+}
+.dashboard .table th {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #333;
+}
+.dashboard .table thead th {
+  padding-top: 0.8rem !important;
+}
+.dashboard .table th,
+.dashboard .table thead th,
+.dashboard .table td {
+  border-top: none;
+  border-bottom: thin solid #ebebeb;
+}
+.dashboard .table th,
+.dashboard .table td {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.dashboard .table td {
+  vertical-align: middle;
+}
+.dashboard .table tfoot th, .dashboard .table tfoot td {
+  border-bottom: none;
+  text-align: right;
+}
+[dir="rtl"] .dashboard .table tfoot th, .dashboard .table tfoot td {
+  text-align: left;
+}
+[dir="ltr"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-left: 1rem;
+}
+[dir="rtl"] .dashboard .table .total-col {
+  font-size: 1.4rem;
+  padding-right: 1rem;
+}
+.dashboard .table .product-col {
+  min-width: 280px;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .info-discount {
+  top: 100%;
+  margin-top: 20px;
+  right: 0;
+  width: 250px;
+  padding: 2px 10px;
+  border-radius: 2px;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+  background-color: #d1ecf1;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.dashboard .table .question_mark {
+  cursor: pointer;
+}
+.dashboard .table .question_mark:hover .info-discount {
+  margin-top: 10px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.order-customer-info p {
+  line-height: normal;
+}
+.order-customer-info strong {
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+{%-endstyle-%}

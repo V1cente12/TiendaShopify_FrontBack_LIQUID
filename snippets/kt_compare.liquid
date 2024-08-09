@@ -1,0 +1,19 @@
+{% if settings.use_compare %}
+<div class="modal fade" id="compare-modal" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-xl">
+    <div class="modal-content">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-body">
+        <div class="content-item">
+          <div class="no-compare position-absolute">
+            <div class="row h-100 align-items-center justify-content-center">
+              <div class="col-12">{{'products.compare.no_compare'|t}}</div>
+            </div>
+          </div>
+          <div class="table-responsive loadvariant" data-include id="compare-content" style="min-height: 30rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

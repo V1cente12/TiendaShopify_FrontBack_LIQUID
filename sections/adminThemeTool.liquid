@@ -1,0 +1,523 @@
+<!-- adminThemeTool.liquid -->
+{%- capture icons -%}
+<svg xmlns="http://www.w3.org/2000/svg" width="45" height="40" viewBox="0 0 38 38"> <defs> <linearGradient x1="8.042%" y1="0%" x2="65.682%" y2="23.865%" id="a"> <stop stop-color="#fff" stop-opacity="0" offset="0%"/> <stop stop-color="#fff" stop-opacity=".631" offset="63.146%"/> <stop stop-color="#fff" offset="100%"/> </linearGradient> </defs> <g fill="none" fill-rule="evenodd"> <g transform="translate(1 1)"> <path d="M36 18c0-9.94-8.06-18-18-18" id="Oval-2" stroke="url(#a)" stroke-width="2" transform="rotate(63.9329 18 18)"> <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="0.9s" repeatCount="indefinite"/> </path> <circle fill="#fff" cx="36" cy="18" r="1" transform="rotate(63.9329 18 18)"> <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="0.9s" repeatCount="indefinite"/> </circle> </g> </g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 30.892 30.892" style="enable-background:new 0 0 30.892 30.892;" xml:space="preserve"> <g> <g> <path style="fill:#fff;" d="M29.875,30.892H1.017c-0.483,0-0.875-0.392-0.875-0.874V20.28c0-0.482,0.392-0.875,0.875-0.875 s0.875,0.393,0.875,0.875v8.862H29V20.28c0-0.482,0.392-0.875,0.875-0.875s0.875,0.393,0.875,0.875v9.737 C30.75,30.5,30.358,30.892,29.875,30.892z"/> </g> <g> <g> <path style="fill:#fff;" d="M15.446,23.275c-0.483,0-0.875-0.393-0.875-0.875V0.875C14.571,0.392,14.963,0,15.446,0 c0.482,0,0.875,0.392,0.875,0.875V22.4C16.321,22.883,15.929,23.275,15.446,23.275z"/> </g> <g> <path style="fill:#fff;" d="M15.446,23.635c-0.237,0-0.464-0.097-0.629-0.267L4.055,12.246 c-0.336-0.348-0.326-0.901,0.021-1.237c0.348-0.336,0.9-0.327,1.236,0.021l10.135,10.473L25.58,11.029 c0.336-0.348,0.89-0.356,1.237-0.021c0.347,0.336,0.355,0.89,0.02,1.237L16.075,23.368 C15.909,23.538,15.683,23.635,15.446,23.635z"/> </g> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>
+{%- endcapture -%}
+<div id="modal-container" class="one ktTools">
+  <div class="modal-background">
+    <div class="modal showModal" id="changeDemo_content">
+      <h2 class="modalHead">Customize preset theme
+        <i class="fa fa-gears" aria-hidden="true"></i>
+        <span class="version">
+          <i>Version: 1.0 (08/22/2017)</i>
+        </span>
+      </h2>
+      <div class="container-fluid">
+        <div class="tabs">
+          <div class="tab">
+            <label>Demo versions</label>
+            <div class="content">
+              <div class="imported-base">
+                <div class="updateTools-success updateTools-alert">
+                  <p>
+                    <strong><i class="fa fa-exclamation-circle" aria-hidden="true"></i>Note! </strong>
+                    <span>
+                      Now you can choose any version to apply its settings for your website or leave a default one.<br/>
+                      You are be able to switch to default version settings any time.
+                    </span>
+                  </p>
+                </div>
+                <div class="updateTools-warning updateTools-alert">
+                  <p>
+                    <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Warning </strong>
+                    <span>
+                      It may override all theme settings and reload the editor.<br/>
+                      You should backup your theme settings using Export tab before importing. 
+                    </span>
+                  </p>
+                </div>
+                <div class="updateTools-presets clearfix">
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/03_Home02.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 1</span>
+                          <button class="import-btn loading" data-layout="Home1" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/02_Home01.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 2</span>
+                          <button class="import-btn loading" data-layout="Home2" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/04_Home03.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 3</span>
+                          <button class="import-btn loading" data-layout="Home3" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/05_Home04.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 4</span>
+                          <button class="import-btn loading" data-layout="Home4" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/06_Home05.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 5</span>
+                          <button class="import-btn loading" data-layout="Home5" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/07_Home06.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 6</span>
+                          <button class="import-btn loading" data-layout="Home6" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/08_Home07.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 7</span>
+                          <button class="import-btn loading" data-layout="Home7" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/09_Home08.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 8</span>
+                          <button class="import-btn loading" data-layout="Home8" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/10_Home09.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 9</span>
+                          <button class="import-btn loading" data-layout="Home9" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/11_Home10.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 10</span>
+                          <button class="import-btn loading" data-layout="Home10" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/12_Home11.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 11</span>
+                          <button class="import-btn loading" data-layout="Home11" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/13_Home12.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 12</span>
+                          <button class="import-btn loading" data-layout="Home12" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/14_Home13.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 13</span>
+                          <button class="import-btn loading" data-layout="Home13" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/15_Home14.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 14</span>
+                          <button class="import-btn loading" data-layout="Home14" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/16_Home15.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 15</span>
+                          <button class="import-btn loading" data-layout="Home15" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/17_Home16.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 16</span>
+                          <button class="import-btn loading" data-layout="Home16" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/18_Home17.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 17</span>
+                          <button class="import-btn loading" data-layout="Home17" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/19_Home18.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 18</span>
+                          <button class="import-btn loading" data-layout="Home18" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/20_Home19.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 19</span>
+                          <button class="import-btn loading" data-layout="Home19" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/21_Home20.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 20</span>
+                          <button class="import-btn loading" data-layout="Home20" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/22_Home21.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 21</span>
+                          <button class="import-btn loading" data-layout="Home21" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/23_Home22.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 22</span>
+                          <button class="import-btn loading" data-layout="Home22" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/24_Home23.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 23</span>
+                          <button class="import-btn loading" data-layout="Home23" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/25_Home24.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 24</span>
+                          <button class="import-btn loading" data-layout="Home24" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/26_Home25.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 25</span>
+                          <button class="import-btn loading" data-layout="Home25" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/27_Home26.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 26</span>
+                          <button class="import-btn loading" data-layout="Home26" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/29_Home28.jpg?v=1593403789" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 28</span>
+                          <button class="import-btn loading" data-layout="Home28" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/30_Home29.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 29</span>
+                          <button class="import-btn loading" data-layout="Home29" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/31_Home30.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 30</span>
+                          <button class="import-btn loading" data-layout="Home30" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="updateTools-import">
+                    <div class="page-preview">
+                      <div class="item-import">
+                        <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/32_Home31.jpg?v=1575682108" alt="">
+                        <div class="import-form-fields">
+                          <span>Set up home 31</span>
+                          <button class="import-btn loading" data-layout="Home31" title="Import preset">{{icons}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab tab-2">
+            <label>Import</label>
+            <div class="content">
+              <form action="">
+                <textarea class="tea-form-control " id="tea-import-from-text" rows="10" placeholder="Paste the exported data here..." required></textarea>
+                <button class="btn btn-secondary" id="tea-import-from-btn" type="submit">IMPORT AND SAVE</button>
+              </form>
+            </div>
+          </div>
+          <div class="tab tab-3">
+            <label>Export</label>
+            <div class="content">                
+              <form action="">
+                <textarea id="tea-form-export" class="tea-form-control" rows="10" placeholder="Data current theme" readonly></textarea>
+                <button class="btn btn-secondary" id="tea-copy-from-btn" type="submit">COPY</button>
+                {% comment %}<button class="btn btn-secondary" id="tea-backup-from-btn" type="submit">Backup</button>{% endcomment %}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+	</div>
+	<div class="model-3">
+	  <div class="float-btn-group">
+	    <button class="btn-float btn-triger pink" id="changeDemo">
+	      <i class="icon-bars"></i>
+	    </button>
+	  </div>
+	</div>
+</div>
+<script>
+  $('.ktTools .float-btn-group').toggleClass('open');
+  $('.ktTools .btn-float').addClass('active');
+  $('body').addClass('modal-active');
+  $(document).on('click','.btn-triger', function(){
+    $('.ktTools .float-btn-group').toggleClass('open');
+    $('.ktTools .btn-float').removeClass('active');
+    $('body').removeClass('modal-active');
+  });
+
+  window.teaUpdate = {};
+  window.teaUpdate.settings_data_json_url = '{{ 'settings_preset.json ' | asset_url }}';
+  if (!top.window.jsContentForIndex) {
+    top.window.jsContentForIndex = top.window.Shopify.contentForIndex;
+  }
+
+  $("#tea-form-export").val(JSON.stringify(getCurrentFormSettings()));
+
+  $.get(window.teaUpdate.settings_data_json_url, function(data, status) {
+    /*optional stuff to do after success */
+    if (status == 'success') {
+      $data = data.presets;
+      $('.import-btn.loading').removeClass('loading')
+    }
+  });
+  $(document).on('click', '#tea-import-from-btn', function() {
+    var text = $('#tea-import-from-text').val();
+    try {
+      importData(jsonToMap(JSON.parse(text), false, 'settings'));
+    } catch (e) {
+      // console.log(e);
+      alert("Import Errors");
+    }
+  });
+  $(document).on('click', '.import-btn', function(event) {
+    event.preventDefault();        
+    $(this).addClass('loading');
+
+    var $this = $(this),
+        layout = $this.data('layout');
+    if (typeof($data[layout] != "undefined")) {
+      importData(jsonToMap($data[layout], false, 'settings'));
+      $('.import-btn').removeClass('active');
+      $this.addClass('active');
+    }
+  });
+  $(document).on('click', '#tea-copy-from-btn', function(event) {
+    event.preventDefault();
+    var copyTextarea = $('#tea-form-export');
+    copyTextarea.select();
+    try {
+      var successful = document.execCommand('copy');
+      $(this).text("Copied to clipboard");
+    } catch (err) {
+      $(this).text("ERROR").addClass('error');
+    }
+    setTimeout(function() {
+      $("#tea-copy-from-btn").text("Copy");
+    }, 3000);
+  });
+  function isObject(value) {
+    return value === Object(value)
+  }
+  function isArray(value) {
+    return Array.isArray(value)
+  }
+  function isFile(value) {
+    return value instanceof File
+  }
+  function mapToJson(t, e, n) {
+      var n = n || {};
+      return 1 === t.length ? (e.indexOf("[]") > -1 ? e = [] : e.indexOf('["') > -1 && (e = e.replace('["', "").replace('"]', "").replace(new RegExp('","', "g"), "|").split("|")), n[t[0]] = e, n) : (n[t[0]] = n[t[0]] || {}, n[t[0]] = mapToJson(t.slice(1), e, n[t[0]]), n)
+  }
+
+  function jsonToMap(dataJson, e, namespace) {
+    return e = e || [], Object.keys(dataJson).forEach(function(o) {
+        var i = namespace ? namespace + "[" + o + "]" : o;
+        !isObject(dataJson[o]) || isArray(dataJson[o]) || isFile(dataJson[o]) ? isArray(dataJson[o]) ? dataJson[o].forEach(function(t) {
+            var namespace = i + "[]";
+            isObject(t) && !isFile(t) ? jsonToMap(t, e, namespace) : e.push({
+                name: namespace,
+                value: t
+            })
+        }) : e.push({
+            name: i,
+            value: dataJson[o]
+        }) : jsonToMap(dataJson[o], e, i)
+    }), e
+  }
+  function getCurrentFormSettings() {
+    var data = $(top.document).find(".te-sidebar").serializeArray();
+      data.push({
+          name: "settings[content_for_index]",
+          value: '["' + top.window.jsContentForIndex.join('","') + '"]'
+      });
+      for (var settings = {}, i = 0; i < data.length; i++) {
+          var path = data[i].name.replace("settings", "").split("][").join("|").replace("[", "").replace("]", "").split("|"),
+              value = data[i].value;
+          mapToJson(path, value, settings)
+      }
+    return settings;
+  }
+  function importData(data, configuration) {
+    var params = {
+      method: "PATCH",
+      url: top.Shopify.routes.theme_editor_save(top.THEME_ID).html,
+      data: data
+    };
+    // console.log(data);
+    var config = $.extend({}, params, configuration);
+    // console.log(config);
+    top.Shopify.ajax(config)
+    .done(function(response) {
+      top.window.location.reload();
+    })
+    .fail(function(response) {
+      console.info('fail', response);
+    });
+  }
+</script>

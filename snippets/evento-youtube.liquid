@@ -1,0 +1,94 @@
+<style>
+
+
+.video .youtube {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.youtube {
+    background-color: #000;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    cursor: hand;
+    cursor: pointer;
+}
+
+.video{
+    justify-content: center;
+    padding-bottom: 70px;
+    margin: auto;
+}
+
+.video .embed-responsive {
+    max-width: 1060px;
+    width: 50%;
+    border: 20px solid #2a2a2a;
+    border-radius: 70px;
+    box-shadow: 0 0 10px 1px #131313;
+}
+
+.videoSubTitulo{
+    justify-content: center;
+    padding-bottom: 50px;
+    text-align: center;
+}
+
+.center{
+    text-align: center;
+}
+
+.divVideo{
+    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), 
+            url(https://cdn.shopify.com/s/files/1/0573/4478/6617/files/evento-fondo-video.png?v=1646950268);
+}
+
+.divVideo h1{
+    padding-top: 30px;
+    padding-bottom: 40px;
+    font-size: 40px;
+    color: red;
+}
+
+@media only screen and (min-width: 0px) and (max-width: 390px) {
+    .video .embed-responsive {
+        max-width: 1060px;
+        width: 85%;
+        height: 220px;
+        border: 10px solid #2a2a2a;
+        border-radius: 70px;
+    }
+}
+
+@media only screen and (min-width: 391px) and (max-width: 810px) {
+    .video .embed-responsive {
+        max-width: 1060px;
+        width: 70%;
+        border: 13px solid #2a2a2a;
+        border-radius: 70px;
+    }
+}
+
+
+</style>
+<div class="divVideo">
+    <div>
+        <h1 class="center"> Ultimo Lanzamiento</h1>
+    </div>
+  
+    <div class="video row">
+        <div class="embed-responsive embed-responsive-16by9">
+            <div class="youtube">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/jGhL1v594cU" 
+                    title="YouTube video player" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>

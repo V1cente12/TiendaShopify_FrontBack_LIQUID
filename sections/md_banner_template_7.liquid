@@ -1,0 +1,343 @@
+<!-- md_banner_template_7.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div data-section-id="{{ section.id }}" id="Banner-{{ section.id }}" data-section-type="banner-section" class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+    {%-for block in section.blocks-%}
+    {%-if block.settings.turnoff-%}{%-continue-%}{%-endif-%}
+    {%-case block.type -%}
+    {%-when '1'-%}
+      {%- assign use_css = false -%}
+      <div class="row align-items-center justify-content-center imgs__banner_template31{%unless forloop.first%}{%if section.blocks.size > 1%} mt-2{%endif%}{%endunless%}">
+        <div class="col-12 col-md-6 item__banner item__1">
+          <div class="position-relative">
+            <div class="text-content position-absolute wait-for-css">
+            {%- if block.settings.content_1 != blank -%}
+              <div class="text">{{block.settings.content_1|html}}</div>
+            {%- endif -%}
+            {%- if block.settings.name_btn_1 != blank -%}
+              <a href="{{block.settings.image_link_1|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_1| strip_html}}">{{block.settings.name_btn_1}}</a>
+            {%- endif -%}
+            </div>
+            {%- assign image_item = block.settings.image_1 -%}
+            {%-assign width = image_item.width | default: 700.00 -%}{%-assign height = image_item.height | default: 680.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_1|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_1 %} title="700x680 px"{% endunless %}></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 item__banner item__2 mt-5 mt-lg-0">
+          <div class="text--">            
+            {%- if block.settings.content_2 != blank -%}
+            <div class="text mb-3">{{block.settings.content_2|html}}</div>
+            {%- endif -%}
+            {%- assign image_item = block.settings.image_2 -%}
+            {%-assign width = image_item.width | default: 512.00 -%}{%-assign height = image_item.height | default: 395.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image_2 %} title="512x395 px"{% endunless %}></a>
+          </div>
+          {%- if block.settings.name_btn_2 != blank -%}
+          <div class="d-block text-center mt-2i">
+            <a href="{{block.settings.image_link_2|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn_2| strip_html}}">{{block.settings.name_btn_2}}</a>
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+      <noscript class="banner-css" data-section-type="imgs__banner_template31">
+        {%-capture banner-css-%}
+        {%style%}
+          .imgs__banner_template31 a.img__banner{
+            z-index:0;
+            min-height: 350px;
+          }
+          .imgs__banner_template31 .text-content{
+            z-index:1;
+            left: 14%;
+            top: 13%;
+            right: 14%;
+            bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            flex-flow: column;
+            align-items: flex-start;
+            font-family: var(--f_family_second,var(--f_family));
+          }
+          .imgs__banner_template31 .text-content .text{
+            width: 100%;
+            flex: 1;
+          }
+          .imgs__banner_template31 .text-content .text h3{
+            font-size: 3.2rem;
+            font-weight: 400;
+            letter-spacing: -1.25px;
+          }
+          .imgs__banner_template31 .text-content .text p{
+            margin: 0 0 7px 2px;
+            font-size: 1.6rem;
+          }
+          .imgs__banner_template31 .text-content .text h4{
+            font-size: 3.2rem;
+            font-weight: 400;
+            letter-spacing: 0;
+          }
+          .imgs__banner_template31 .banner-link{
+            line-height:1;
+            padding:.8rem 0;
+            min-width:0;
+            text-transform:uppercase;
+            text-decoration:none!important;
+            white-space:nowrap;
+            margin: auto;
+            font-weight: 500;
+            border-bottom: .2rem solid;
+            letter-spacing: 1.4px;
+          }
+          .imgs__banner_template31 .banner-link:not(:hover){
+            color: var(--text);
+          }
+          .imgs__banner_template31 .item__2 h3{
+            font-size: 3.2rem;
+            font-weight: 400;
+            letter-spacing: -1.25px;
+            font-family: var(--f_family_second,var(--f_family));
+          }
+          @media (min-width: 768px) {
+            .imgs__banner_template31 .text-content{
+              bottom: 5rem;
+            }
+            .imgs__banner_template31 .text-content .text h3{
+              font-size: 5rem;
+            }
+            .imgs__banner_template31 .text-content .text p{
+              font-size: 2rem;
+            }
+            .imgs__banner_template31 .text-content .text h4{
+              font-size: 5rem;
+            }
+            .imgs__banner_template31 .item__2 h3{
+              font-size: 5rem;
+            }
+          }
+          @media (min-width: 1200px) {            
+            .imgs__banner_template31 .item__2>div.text--{
+              margin-left: 130px;
+            }
+          }
+        {%endstyle%}
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+      </noscript>
+    {%-endcase -%}
+    {%-endfor -%}
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Template 7",
+    "class": "md_banner_template_7",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Template 7",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 px"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview demo](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-banner-template.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Banners type 31",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "turnoff",
+            "label": "Turn off block"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title block",
+            "default": "Banner type 31",
+            "info": "Name block (in editor bar)"
+          },
+          {
+            "type": "header",
+            "content": "Banners type 31 settings"
+          },
+          {
+            "type": "header",
+            "content": "Image 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image banner",
+            "info": "Size suggestion: 700 x 680 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_1",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"content_1",
+            "label": "Text content",
+            "default": "<h3>Beauty Kit<\/h3><p>5 Deluxe samples for only<\/p><h4>$12,99<\/h4><p>+ Free Shipping<\/p>"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_1",
+            "label": "Name button",
+            "default":"Shop now"
+          },
+          {
+            "type": "header",
+            "content": "Image 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image banner",
+            "info": "Size suggestion: 512 x 395 px"
+          },
+          {
+            "type": "url",
+            "id": "image_link_2",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"content_2",
+            "label": "Text content",
+            "default": "<h3>For Perfect Face<\/h3>"
+          },
+          {
+            "type":"text",
+            "id":"name_btn_2",
+            "label": "Name button",
+            "default":"Discover Now"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Template 7",
+        "category": "02. Section Banner"
+      }
+    ]
+  }
+{% endschema %}

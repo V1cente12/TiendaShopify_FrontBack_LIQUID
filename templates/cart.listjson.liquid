@@ -1,0 +1,200 @@
+{%- layout none -%}
+{%- if cart.item_count > 0 -%}
+{%- for item in cart.items -%}
+{%- assign gift_item = '' -%}
+{%- if settings.use_gift_wrapping and settings.gift_wrap_product != blank and item.product.handle == settings.gift_wrap_product -%}
+  {%- assign gift_item = 'wrap_item' -%}
+{%- endif -%}
+{%- if item.discounted_price == 0 -%}
+  {%- assign gift_item = 'gift_item' -%}
+{%- endif -%}
+{%- if settings.use_gift_wrapping and settings.gift_wrap_product != blank and gift_item == '' and forloop.first -%}
+<div id="is-a-gift" class="d-none">
+  <input type="hidden" name="updates[{{ all_products[settings.gift_wrap_product].selected_or_first_available_variant.id }}]" value="0" id="gift-wrap_product">
+</div>
+{%- endif -%}
+<li class="item__{{item.id}} item__cart item__{{gift_item|default: 'normal'}} d-flex flex-wrap pb-2 position-relative"{% if gift_item == 'wrap_item' %} id="is-a-gift"{% endif %}>
+  {%- if gift_item == 'wrap_item' -%}
+    <input type="hidden" name="updates[{{ item.id }}]" value="1" id="gift-wrap_product">
+  {%- endif -%}
+  <div class="image__cart col-3">
+    <a href="{{ item.variant.url }}">
+      <img width="{{item.image.width}}" height="{{item.image.height}}" class="img-thumbnail lazyload mll-lz" src="{{ item.image| img_url: '104x120', crop:'center'}}" data-src="{{ item.image| img_url: '104x120', crop:'center'}}" alt="{{ item.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+    </a>
+  </div>
+  <div class="info__cart col-6 p-0">
+    <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+      {%if item.discounted_price == 0 %}<i class="fkt-gift-1 col-auto" style="color: #4CAF50;font-size: 1.6rem;padding-right: .5rem;"></i>{%endif%}
+      <a class="col" href="{{ item.variant.url }}" title="{{ item.product.title | strip_html }}">
+        {%if item.discounted_price == 0 %}{{'cart.gift.label_html'|t }}{%endif%} {{ item.product.title | truncate: 35 }}
+      </a>
+    </h4>
+    {%- unless item.product.has_only_default_variant -%}
+    <div class="variation" title="{{ item.title | escape |strip_html }}">
+      <span>{{item.variant.title}}</span>
+      {%- if settings.edit_it_cart_drawer -%}
+        <a href="javascript:void(0)" class="col-auto p-small product-variable__cart kt__edit-opts fkt-edit" data-view="{{ item.product.url }}" data-vrid="{{item.id}}" data-pid="{{item.product.id}}" data-qty="{{item.quantity}}" data-ogr="{{ item.product.featured_image | img_url: 'master' }}"></a>
+      {%- endif -%}
+    </div>
+    {%- endunless -%}
+    <span class="price">{%-if item.discounted_price -%}{{ item.discounted_price | money }}{%-else-%}{{ item.original_price | money }}{%-endif-%}</span>
+
+    {%if item.unit_price %}
+    {%- capture unit_price_base_unit -%}
+      <span class="base_unit">
+        {%- if item.unit_price_measurement -%}
+          {%- if item.unit_price_measurement.reference_value != 1 -%}
+            {{- item.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ item.unit_price_measurement.reference_unit }}
+        {%- endif -%}
+      </span>
+    {%- endcapture -%}
+    <span class="UnitPrice-{{item.product.id}} text-nowrap">
+      {{item.unit_price_measurement.quantity_value | append: item.unit_price_measurement.quantity_unit}}
+      (<span class="unit_price">{{item.unit_price | money }}</span> / {{unit_price_base_unit}})
+    </span>
+    {%endif%}
+
+    {% comment %}<div>
+    {% if item.line_level_discount_allocations.size > 0 %}
+      {{'cart.summary_box.discount'|t}}:
+      <ul class="list-unstyled">
+      {% for discount_allocation in item.line_level_discount_allocations %}
+        <li>{{ discount_allocation.discount_application.title }}
+        -{{ discount_allocation.amount | money }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+    </div>{% endcomment %}
+  </div>
+  <div class="action__cart col-3">
+    {%-if gift_item == ''-%}
+    <div class="text-center quantity p-0">
+      <div class="control">
+        <a class="btn-number qtyminus quantity-minus" href="#"></a>  
+        <input type="text" data-id="{{ item.variant_id }}" name="updates[{{ item.id }}]" value="{{item.quantity}}" data-min="1" class="input-qty" size="4" pattern="[0-9]*">
+        <a class="btn-number qtyplus quantity-plus" href="#"></a>
+      </div>
+    </div>
+    {%- endif -%}
+    <div class="clearfix text-center">
+      <a class="remove-item remove" href="#" title="{{'cart.general.remove'|t }}">{{'cart.general.remove'|t }}</a>
+    </div>
+  </div>  
+  {%- if gift_item == 'wrap_item' and settings.use_gift_message-%}
+  <div class="form-group mt-1 mb-0 col-12">
+    <textarea name="attributes[gift-note]" class="form-control" id="gift-note" placeholder="{{'cart.gift_wrap.input_placeholder'|t }}" rows="3" style="min-height: auto;">{{cart.attributes.gift-note}}</textarea>
+  </div>
+  {%-endif-%}
+</li>
+{%- endfor -%}
+{%- assign cart_items_ids = cart.items |map:'id' -%}
+
+{%- if settings.cart_upsell_1 != blank or settings.cart_upsell_2 != blank -%}
+<li class="w-100 border-top"></li>
+{%- for i in (1..2) -%}
+  {%- assign cart_upsell_i = 'cart_upsell_' | append: i -%}
+  {%- if settings[cart_upsell_i] == blank -%}{%-continue-%}{%-endif-%}
+
+  {%- assign product = all_products[settings[cart_upsell_i]] -%}   
+  {%- assign item_ids = product.variants |map:'id' -%}
+  {%- assign sum = cart_items_ids.size | plus: item_ids.size -%}
+  {%- assign sum_uniq = cart_items_ids | concat: item_ids | uniq | size -%}
+  {%- if sum != sum_uniq -%}{%-continue-%}{%-endif-%}
+
+  {%- assign compare_at_price = product.compare_at_price -%}
+  {%- assign price = product.price -%}
+  {%- assign price_varies = product.price_varies -%}
+  {%- assign available = product.available-%}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign on_sale = false-%}
+  {%- if compare_at_price > price -%}
+    {%- assign on_sale = true-%}
+  {%- endif-%}
+  {%- assign sold_out = true-%}
+  {%- assign preOrder = false-%}
+  {%- unless available == false-%}
+    {%- assign sold_out = false-%}
+  {%- endunless-%}
+  {%- if product.selected_or_current_variant_variant.inventory_quantity <= 0 and product.selected_or_current_variant_variant.inventory_policy == 'continue' and product.selected_or_current_variant_variant.incoming -%}
+    {%- assign preOrder = true -%}
+  {%- endif -%}
+  {%- if product.title != blank -%}
+  {%- unless product.has_only_default_variant or settings.qs_hide_only_1_opt and product.variants.size == 1 or settings.qs_show_vars_list == false -%}
+    {%- assign show_variant = true -%}
+  {%- endunless -%}
+  {%- endif -%}
+
+  <li class="item__{{current_variant.id}} item__cart item__upsell d-flex flex-wrap pb-2 position-relative">
+    <div class="image__cart col-3">
+      <a href="{{ product.url }}?variant={{current_variant.id}}">
+        <img width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" class="img-thumbnail lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" alt="{{ product.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+      </a>
+    </div>
+    <div class="info__cart col-6 p-0">
+      <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+        <a class="col" href="{{ product.url }}?variant={{current_variant.id}}" title="{{ product.title | escape }}">{{ product.title | truncate: 35 }}</a>
+      </h4>
+      <span class="product-price">
+        <ins class="ProductPrice-{{product.id}}" data-id="{{product.id}}">{{- current_variant.price | money -}}</ins>
+        {%-unless current_variant.compare_at_price <= current_variant.price or current_variant.compare_at_price == null-%}
+        <del class="ComparePrice-{{product.id}}">
+          {{- current_variant.compare_at_price | default: 0 | money -}}
+        </del>
+        {%-endunless-%}
+      </span>
+    </div>
+    <div class="action__cart col-3">
+      <div class="text-center quantity p-0">
+        {%- assign small_text_add = 'products.product.add_small' | t -%}
+        {%- if product.has_only_default_variant -%}
+          {%- render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, label: small_text_add, style_btn: 'btn btn-primary btn-block btn-minwidth-auto text-uppercase btn-cart kt-button' -%}
+        {%- else -%}
+          {%- render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out, label: small_text_add, style_btn: 'btn btn-primary btn-block btn-minwidth-auto text-uppercase kt-button' -%}
+        {%- endif -%}
+      </div>
+    </div>  
+  </li>
+{%- endfor -%}
+{%- endif -%}
+        
+{%- if settings.enable_auto_gift == true and settings.auto_gift_product != blank -%}
+  {%- assign product = all_products[settings.auto_gift_product] -%}  
+  {%- if product.title != blank -%}
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+    {%- unless cart_items_ids contains product.selected_or_first_available_variant.id -%}
+    <li class="item__{{product.selected_or_first_available_variant.id}} item__gift item__upsell d-flex flex-wrap pb-2 position-relative w-100">
+      <div class="image__cart col-3">
+        <a href="#">
+          <img width="{{product.featured_image.width}}" height="{{product.featured_image.height}}" class="img-thumbnail lazyload mll-lz" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ product.featured_image| img_url: '104x120', crop:'center'}}" alt="{{ product.title | escape |strip_html }}" style="padding-bottom:115.384615385%">
+        </a>
+      </div>
+      <div class="info__cart col-6 p-0">
+        <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+          <a class="col" href="#" title="{{ product.title | escape }}">{{ product.title | truncate: 35 }}</a>
+        </h4>
+        <span class="product-price">
+          <ins class="ProductPrice-{{product.id}}" data-id="{{product.id}}">{{- current_variant.price | money -}}</ins>
+        </span>
+      </div>
+      <div class="action__cart col-3"></div>
+    </li>
+    {%- endunless -%}
+  {%- endif -%}
+{%- endif -%}
+{%- endif -%}
+<!-- summary-discounts -->
+{%- if cart.cart_level_discount_applications != blank -%}
+  <th>{{'cart.summary_box.discount'|t}}:</th>
+  <td class="text-nowrap">
+  {%- for discount_application in cart.cart_level_discount_applications -%}
+    <span>-{{ discount_application.total_allocated_amount | money }}</span>
+    <span class="question_mark position-relative"> (?)
+      <div class="info-discount position-absolute text-uppercase">
+        {{ discount_application.title }}
+      </div>
+    </span>
+  {%- endfor -%}
+  </td>
+{%- endif -%}

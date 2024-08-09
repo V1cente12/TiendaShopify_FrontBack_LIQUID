@@ -1,0 +1,61 @@
+{%- liquid
+layout none
+assign url_check = canonical_url | split: 'q=' | last | split: '&' | first
+assign url_variant = url_check | split: '+'
+assign limit_ = url_variant[0] | remove: 'limit_' | plus: 0
+assign limit_per_row = url_variant[1] | remove: 'limitpr_' | plus: 0
+assign grid_ly = url_variant[2] | remove: 'layout_' | replace: '--', ' '
+assign block_id = url_variant[3] | remove: 'block_'
+assign section_id = url_variant[4] | remove: 'section_'
+assign range_row = url_variant[5] | remove: 'rangerow_' | plus: 0
+case limit_per_row
+	when 2
+		assign grid_item_width = ' col-xs-6'
+	when 3
+		assign grid_item_width = ' col-xs-6 col-sm-4'
+	when 4
+		assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-3'
+	when 5
+		assign grid_item_width = ' col-xs-6 col-sm-4 col-lg-2-10'
+	when 6
+		assign grid_item_width = ' col-xs-6 col-sm-4 col-md-2-10 col-xl-2'
+endcase
+
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+{%-paginate collection.products by limit_-%}
+{%-for product in collection.products-%}
+<div class="{%unless limit_per_row != 0%}swiper-slide {%elsif range_row == 0%}mb-3 {%endunless%}grid-item{{grid_item_width}}" style="margin-bottom: {{range_row}}rem">
+  {%- render "product-grid-item", product: product, grid_layout: grid_ly, st_card: st_card -%}
+</div>
+{%-endfor-%}
+{%-endpaginate%}

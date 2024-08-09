@@ -1,0 +1,560 @@
+<!-- md_featured_product.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- assign product = all_products[section.blocks[0].settings.featured_product] -%}
+
+{%- comment -%}
+------- Swatch -----------
+{%- endcomment -%}
+{%- liquid
+  assign pos360 = ''
+  assign optVr1 = ''
+  assign imgsPos = ''
+  assign imgsPos0 = 0
+  assign imgsPos1 = 0
+
+  assign variants = product.variants
+  assign offset = 0
+  for value in product.options_with_values.first.values
+    assign variants_by_option = variants | where: 'option1', value
+    for media in product.media offset: offset
+      if media.preview_image.src == variants_by_option.first.featured_image.src
+        if imgsPos == ''
+          assign imgsPos =  media.position | append: ","| split: ','
+        else
+          assign imgsPos = imgsPos | join: ',' | append: ","  | append: media.position | split: ','
+        endif
+        assign offset = media.position | minus: 1
+        break
+      endif
+    endfor
+  endfor
+
+  assign imgsPosCheckLast = imgsPos
+  for media in product.media
+    if media.alt == 'kt_360'
+      assign pos360 = forloop.index | append: "," | append: product.media.size | split: ','
+    endif
+  endfor
+  if pos360 != ''
+    assign lastPos = "," | append: pos360[0]
+  elsif product.media.size == 1
+    assign lastPos = "," | append: 2
+  else
+    assign lastPos = "," | append: product.media.size
+  endif
+  assign imgsPos = '1' | append: lastPos | split: ','
+  assign imgsPos0 = imgsPos[0] | plus:0
+  assign imgsPos1 = imgsPos[1] | plus:0
+  if imgsPos0 >= imgsPos1
+    assign imgsPos = '1' | append: lastPos | split: ','
+    assign imgsPos0 = imgsPos[0] | plus:0
+    assign imgsPos1 = imgsPos[1] | plus:0
+  endif
+
+  assign imgPos = product.selected_or_first_available_variant.featured_media.position | default: 1
+
+  for imgspr in imgsPos
+    assign idx = forloop.index
+    assign idx_ = forloop.index | minus: 2
+    assign imgsPos0Int = imgspr | plus: 0
+    assign imgsPos1Int = imgsPos[idx] | plus: 0
+    if imgsPos0Int <= imgPos and imgPos < imgsPos1Int or imgsPos0Int > imgPos and imgPos < imgsPos1Int
+      assign imgsPos0 = imgsPos0Int
+      assign imgsPos1 = imgsPos1Int
+      break
+    endif
+    assign imgsPosLast = imgsPos.last | plus:0
+    if imgsPos0Int == imgsPosLast
+      if imgsPosCheckLast contains imgsPos.last
+        assign imgsPos0 = imgsPosLast
+        assign imgsPos1 = imgsPosLast
+      else
+        assign imgsPos0 = imgsPos[idx_] | plus:0
+        assign imgsPos1 = imgsPosLast
+        assign vrimgpos = imgsPos1
+      endif
+    endif
+  endfor
+-%}
+{%- comment -%}
+------- Check one image -----------
+{%- endcomment -%}
+{%- liquid
+  assign checkOneImage = imgsPos0 | plus: 1
+  assign checkOneImage_ = false
+  if product.media.size == 1
+    assign checkOneImage_ = true
+  endif
+
+  assign settings_gallery = false
+  if settings_gallery
+    if checkOneImage == imgsPos1 and checkOneImage != product.media.size
+      assign checkOneImage_ = true
+    endif
+    if checkOneImage > product.media.size
+      assign checkOneImage_ = true
+    endif
+    assign imgsPos1- = imgsPos1 | minus: 1
+    if imgsPos0 == imgsPos1- and checkOneImage != product.media.size
+      assign checkOneImage_ = true
+    endif
+  endif
+-%}
+
+{%- liquid
+  assign compare_at_price = product.compare_at_price
+  assign price = product.price
+  assign price_varies = product.price_varies
+  assign available = product.selected_or_first_available_variant.available
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign on_sale = false
+  if compare_at_price > price and settings.use_sale_label == true
+    unless product.tags contains 'notsale'
+    assign on_sale = true
+    endunless
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true
+  endif
+-%}
+
+<div class="datajs--{{ section.id | default: product.id }}"
+  data-imgUrl="{{'no-image.jpg' | asset_img_url: 'master' | replace: 'no-image.jpg', 'kiti'}}"
+  data-imgspos="{{imgsPos|join:','}}"
+  data-imgspos360=""
+  data-vrimgpos="{% if vrimgpos %}{{vrimgpos}}{% else %}{{imgsPos0}}{% endif %}"
+  data-curpos="[{{imgsPos0}},{{imgsPos1}}]"></div>
+  {%- assign video5_visible = product.media | where: 'media_type', 'video' | first -%}
+  {%- assign external_video_visible = product.media | where: 'media_type', 'external_video' | first -%}
+  {%- assign model_visible = product.media | where: 'media_type', 'model' | first -%}
+<div class="datasettings--{{ section.id | default: product.id }}" data-use-maxheight="false"
+  data-layout-section="featured_product_1"
+  data-width-section="true"
+  data-use-thumb-vertical="false"
+  data-gallery="false"
+  data-swatch-style="{{settings.swatch_style}}"
+  data-wide="false"
+  data-stickyATC="false"
+  data-video5="{%-if video5_visible -%}true{%-else-%}false{%-endif-%}"
+  data-external-video="{%-if external_video_visible -%}true{%-else-%}false{%-endif-%}"
+  data-model="{%-if model_visible -%}true{%-else-%}false{%-endif-%}"></div>
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {% assign block = section.blocks[0] %}
+      {% if section.blocks.size > 0 %} 
+      <div class="row align-items-center">
+        <div class="col-12 col-md-10 offset-md-1 col-lg-6 offset-lg-3 text-center">
+          <div class="section-title w-100">
+            {%- if block.settings.reverse and block.settings.stitle_section != blank -%}
+              <div class="sub-title">{{block.settings.stitle_section}}</div>
+            {%- endif -%}
+            {%- if block.settings.title_section != blank -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+            {%- endif -%}
+            {%- if block.settings.reverse == false and block.settings.stitle_section != blank -%}
+              <div class="sub-title">{{block.settings.stitle_section}}</div>
+            {%- endif -%}
+          </div>
+          {%- if block.settings.content_text != blank -%}
+            <div class="content-text mb-3">{{block.settings.content_text}}</div>
+          {%- endif -%}
+        </div>
+        <div class="col-prd col-12 col-md-10 offset-md-1 col-lg-6 offset-lg-3">
+          <div id="ProductSection-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="product" data-enable-history-state="false" data-enable-ajax-cart="{{settings.ajax_cart}}" data-product-id="{{ product.id }}" data-use-thumb="false" data-use-zoom="false" class="product-page product-inner layout-featured_product_1 pid_{{product.id}}">
+            {%-if product.featured_image-%}
+              <div id="product-photo-slide--{{ section.id }}" class="main-image main-image-wapper" data-vertical="false">
+                <div class="btn-group position-absolute d-flex flex-nowrap" style="z-index: 1">
+                {%- assign model_visible = product.media | where: 'media_type', 'model' | first -%}
+                {%- if model_visible -%}
+                  <button data-toggle="tooltip" title="{{ 'products.product.button_model' | t }}" aria-label="{{ 'products.product.button_model' | t }}" class="view-in-space {{section.id}}__view-in-space" data-shopify-xr data-shopify-model3d-id="{{ model_visible.id }}" data-shopify-title="{{ product.title | escape }}" data-shopify-xr-hidden>
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--full-color icon-3d-badge-full-color" viewBox="0 0 26 26"><path class="icon-3d-badge-full-color-element" d="M19.13 8.28L14 5.32a2 2 0 0 0-2 0l-5.12 3a2 2 0 0 0-1 1.76V16a2 2 0 0 0 1 1.76l5.12 3a2 2 0 0 0 2 0l5.12-3a2 2 0 0 0 1-1.76v-6a2 2 0 0 0-.99-1.72zm-6.4 11.1l-5.12-3a.53.53 0 0 1-.26-.38v-6a.53.53 0 0 1 .27-.46l5.12-3a.53.53 0 0 1 .53 0l5.12 3-4.72 2.68a1.33 1.33 0 0 0-.67 1.2v6a.53.53 0 0 1-.26 0z" opacity=".6" style="isolation:isolate"></path></svg>
+                  </button>
+                {%- endif -%}
+                </div>
+                {%- assign featured_img_src = current_variant.featured_image.src | default: product.featured_image.src -%}
+                {%- assign featured_img_size = featured_img_src.width | append: 'x' -%}
+                {%- assign featured_img_alt = current_variant.featured_image.alt | default: product.featured_image.alt -%}
+                {%- capture data_slick_photo -%}
+                  data-slides-per-view="1" data-space-between="4" data-effect="fade"{%if settings.max_width_photo != 100%} data-breakpoints='{"767": {"slidesPerView": 1, "freeMode": true, "parallax": true}}'{%endif%}
+                {%- endcapture -%}
+                {%- render 'kt_product_media', product: product, section: section, key: 'photo', dataJs: data_slick_photo, imgsPos: imgsPos, imgsPos0: imgsPos0, imgsPos1: imgsPos1 -%}
+              </div>
+            {%- else -%}
+              <div class="main-image main-image-wapper" style="padding: 0;width: 100%;">
+                {{'no-image.jpg' | asset_img_url: 'master' | img_tag}}
+              </div>
+            {%- endif -%}
+
+            <div class="summary entry-summary wait-for-css wait-inline">
+              <div class="content-summary text-center" style="overflow: initial;">
+                <div class="action_when_fullwidth mt-2">
+                  <div class="product-addtocart">
+                    {%- unless product.options.size == 1 and product.variants[0].title == 'Default Title' -%}
+                    {%- capture variantSoldout-%}
+                    {%- for option in product.options_with_values -%}
+                      {%- for value in option.values -%}
+                        {%- if option.selected_value == value -%}{%- assign value_ = value | handleize -%} {{'_'|append: value_}}{%- endif -%}
+                      {%- endfor -%}
+                    {%- endfor -%}
+                    {%- endcapture -%}
+                    {%- endunless -%}
+                    <div id="callBackVariant--{{ section.id }}" class="{{variantSoldout}}">
+                      {%- assign id = 'cart-form--' | append: section.id -%}
+                      {%- assign class = 'cart product-form product-form-' | append: section.id -%}
+                      {%- assign class = class | append: ' d-flex flex-wrap justify-content-center' -%}
+                      {%- form 'product', product, id: id, class: class, novalidate: 'novalidate' -%}
+                        {%-render 'kt_psgl_swatch', product: product, section_id: section.id-%}
+                        {%-render 'kt_psgl_form', product: product, section_id: section.id-%}
+                        <div class="entry-short-description{% unless settings.show_shortdes %} d-none{% endunless %}">
+                          {%- if product.metafields.meta.short_description -%}
+                            {{ product.metafields.meta.short_description | html }}
+                          {%- elsif product.description contains  '[/short description]' -%}
+                            {{ product.description | split: '[/short description]' | first | split: '[short description]'| last | html }}
+                          {%- else -%}
+                            {{ product.description | strip_html | truncatewords: 50 }}
+                          {%- endif -%}
+                        </div>
+
+                        <input type="hidden" data-step="1" name="quantity" data-min="1" value="1" id="qty-{{section.id}}" class="input-qty input-text qty text" size="4" pattern="[0-9]*">
+                        <div class="preOrder preOrder--{{ section.id }} mb-2"{%unless preOrder%} style="display:none"{%endunless%}>
+                          <i class="fkt-exclamation-circle fkt-lg"></i>{{'products.product.pre_order_text'|t}} <span>{{current_variant.next_incoming_date | date: format: 'pre_order_date'}}</span>
+                        </div>
+                        <div class="entry-buttons-button w-100">
+                          <div class="row align-items-center justify-content-center">
+                            <div class="col-auto">
+                              {%- render 'product-single-prices', section: section, current_variant: current_variant -%}
+                            </div>
+                            <div class="col-auto">
+                              {%- if product.metafields.purchase.on_link != blank %}
+                              <a href="{{product.metafields.purchase.on_link | split: "]" | last }}" class="btn {{settings.atc_btn}} {{settings.atc_btn_rounded}}{% if settings.atc_btn_shadow%} btn-shadow{%endif%} single_add_to_cart_button out_site w-100">
+                                <span>{{product.metafields.purchase.on_link | split: "]" | first | remove: "["}}</span>
+                              </a>
+                              {%- else -%}
+                              <button type="submit" name="add" id="AddToCart-{{ section.id }}" {% unless sold_out == false %}disabled="disabled"{% endunless %} class="btn btn-primary btn-round btn-shadow single_add_to_cart_button">
+                                <i class="fkt-cart-plus fkt-lg"></i>
+                                <span id="AddToCartText-{{ section.id }}">{%- if preOrder -%}{{'products.product.pre_order'|t}}{%- elsif sold_out == false -%}{{'products.product.add_to_cart'|t}}{%- else -%}{{'products.product.sold_out'|t}}{%- endif -%}</span>
+                              </button>
+                              {%- endif -%}
+                            </div>
+                          </div>
+                        </div> 
+                      {%- endform -%}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+		</div>
+	</div>
+</div> 
+<noscript class="banner-css" data-section-type="md_featured_product_1">
+  {%style%}
+  .md_featured_product_1 .sub-title{
+    color: #222222;
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: .001rem;
+  }
+  .md_featured_product_1 .title{
+    color: #222222;
+    font-weight:700;
+    font-size:4.5rem;
+    line-height:1;
+    margin-bottom:2.5rem;
+    letter-spacing:-.01em;
+  }
+  .md_featured_product_1 .content-text{
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    letter-spacing: .02rem;
+    color: #999999;
+  }
+  .md_featured_product_1 .product-form__item {
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: initial;
+  }
+  .md_featured_product_1 .product-form__item>label {
+    display: none;
+  }
+  .md_featured_product_1 .fake_select {
+    margin-left: 0;
+    min-width: auto;
+  }
+  .md_featured_product_1 .fake_select.not_select li.color_sw span.option_title {
+    display: none;
+    display: block;
+    font-size: 1.1rem;
+    white-space: normal;
+    line-height: 1.2 !important;
+    color: #999999;
+    margin-top: .5rem;
+  }
+  .md_featured_product_1 .entry-short-description {
+    color: #999999;
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
+  }
+  .md_featured_product_1 .entry-price {
+    margin-bottom: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .md_featured_product_1 .swiper-button-next,
+  .md_featured_product_1 .swiper-button-prev {
+    border-radius: 5rem;
+    width: 4rem;
+    height: 4rem;
+    font-size: 2.4rem;
+    color: #cccccc;
+    border: 1px solid #ebebeb;
+  }
+  @media (min-width: 576px){
+    .md_featured_product_1 .title{
+      font-size:6rem;
+    }
+  }
+  @media (min-width: 768px){    
+    .md_featured_product_1 .swiper-button-next,
+    .md_featured_product_1 .swiper-button-prev {
+      width: 6rem;
+      height: 6rem;
+      font-size: 2.8rem;
+    }
+  }
+  .md_featured_product_1 .swiper-button-next:hover,
+  .md_featured_product_1 .swiper-button-prev:hover {
+    color: #333333;
+    box-shadow: 1px 2px 5px #ddd;
+    border-color: transparent;
+  }
+  .md_featured_product_1 .single_add_to_cart_button {
+    padding: .8rem 4.7rem;
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+  .md_featured_product_1 .single_add_to_cart_button i {
+    font-size: 2.8rem;
+  }
+  .md_featured_product_1 .entry-price ins {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  {%endstyle%}
+</noscript>
+{%- if settings.img_type_prd_single == 'normal' -%}
+<style>.product-page .aspectRatio{padding-bottom: {{1|divided_by: product.featured_image.aspect_ratio | times: 100.00000000}}%;background-color:transparent}</style>
+{%- endif -%}
+<script>var initialSlide = {{ imgPos | minus: imgsPos0 }};</script>
+{%-unless product == empty-%}
+  <script type="application/json" id="ProductJson-{{ section.id }}">
+    {{ product | json }}
+  </script>
+  <script type="application/json" id="ModelJson-{{ section.id }}">
+    {{ product.media | where: 'media_type', 'model' | json }}
+  </script>
+{%-endunless-%}
+{%- endunless-%}
+{% schema %}
+  {
+    "name": "Featured 1",
+    "class": "md_featured_product_1",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Featured 1",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "1",
+        "name": "Product",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "=Title"
+          },
+          {
+            "type": "select",
+            "id": "text_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align text",
+            "default": ""
+          },
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Title"
+          },
+          {
+            "type": "html",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Subtitle"
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "html",
+            "id": "content_text",
+            "label": "Description",
+            "default": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+          },
+          {
+            "type": "header",
+            "content": "Product"
+          },
+          {
+            "type": "product",
+            "id": "featured_product",
+            "label": "Featured product"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured 1",
+        "category": "03. Section products"
+      }
+    ]
+  }
+{% endschema %}

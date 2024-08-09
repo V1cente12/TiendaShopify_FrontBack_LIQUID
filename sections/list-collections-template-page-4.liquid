@@ -1,0 +1,184 @@
+{%-if section.blocks.size != 0-%}
+<!-- list-collections-template-page-4.liquid -->
+{%-if section.settings.title_section != ''-%}
+<div class="heading row no-gutters align-items-center justify-content{%if section.settings.name_link != blank%}-center justify-content-lg-between{%else%}{%if section.settings.title_align == ''%}-start{%else%}-center{%endif%}{%endif%} mb-3">
+  <div class="col-{%if section.settings.name_link != blank%}12 col-lg-auto text-center text-lg-left mb-1 mb-lg-0{%else%}12 {{block.settings.title_align}}{%endif%}">
+    <div class="section-title{%unless section.settings.name_link != blank%} {{section.settings.title_align}}{%endunless%} w-100">
+      {%- if section.settings.reverse -%}
+      <p class="sub-title">{{section.settings.stitle_section}}</p>
+      {%- endif -%}
+      <h3 class="title">{{section.settings.title_section}}</h3>
+      {%- unless section.settings.reverse -%}
+      <p class="sub-title">{{section.settings.stitle_section}}</p>
+      {%- endunless -%}
+    </div>
+  </div>
+  {%- if section.settings.name_link != blank -%}
+  <div class="col-{%if section.settings.name_link != blank%}12 col-lg-auto text-center text-lg-left{%else%}auto{%endif%}">
+    {%- if section.settings.link_to != blank -%}              
+      <a href="{{section.settings.link_to}}" class="title-link {{section.settings.style_link}}" >{{section.settings.name_link}}</a>
+    {%- else -%}
+      <p class="sub-title">{{section.settings.name_link}}</p>
+    {%- endif -%}
+  </div>
+  {%- endif -%}
+</div>
+{%- endif -%}
+<div data-section-id="{{section.id}}" id="Masonry-{{section.id}}" data-section-type="masonry-prds-section">
+  <div class="sub-category-content row mb-7 ly__ms_items">
+    {% for block in section.blocks %}
+      {%- case block.settings.block_width -%}
+      {%- when '2' -%}
+        {%- assign grid_item_width = 'col-12 col-md-4 col-lg-2' -%}
+      {%- when '3' -%}
+        {%- assign grid_item_width = 'col-12 col-md-6 col-lg-3' -%}
+      {% when '4' %}
+        {%- assign grid_item_width = 'col-12 col-md-8 col-lg-4' -%}
+      {% when '6' %}
+        {%- assign grid_item_width = 'col-12 col-md-6' -%}
+      {% endcase %}
+      <div class="ly__ms grid-item {{grid_item_width}}">
+        {%- assign collection = collections[block.settings.collection] -%}
+        {% render 'collection-grid-item', block: block, collection: collection, collection_image_size: collection_image_size%}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Collections list page 4",
+    "settings": [
+      {
+        "type": "select",
+        "id": "sort",
+        "label": "Sort collections by:",
+        "info": "Sorting only applies when 'All' is selected",
+        "default": "alphabetical",
+        "options": [
+          {
+            "value": "products_high",
+            "label": "Product count, high to low"
+          },
+          {
+            "value": "products_low",
+            "label": "Product count, low to high"
+          },
+          {
+            "value": "alphabetical",
+            "label": "Alphabetically, A-Z"
+          },
+          {
+            "value": "alphabetical_reversed",
+            "label": "Alphabetically, Z-A"
+          },
+          {
+            "value": "date",
+            "label": "Date, old to new"
+          },
+          {
+            "value": "date_reversed",
+            "label": "Date, new to old"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type": "html",
+        "id": "title_section",
+        "label": "Title"
+      },
+      {
+        "type": "html",
+        "id": "stitle_section",
+        "label": "Subtitle"
+      },
+      {
+        "type":"checkbox",
+        "id": "reverse",
+        "label": "Reverse title and subtitle?"
+      },
+      {
+        "type": "select",
+        "id": "title_align",
+        "options": [
+          {
+            "value": "",
+            "label": "Auto"
+          },
+          {
+            "value": "text-center",
+            "label": "Center"
+          }
+        ],
+        "label": "Align title",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "link_to",
+        "label": "Link to"
+      },
+      {
+        "type": "text",
+        "id": "name_link",
+        "label": "Name link"
+      },
+      {
+        "type": "radio",
+        "id": "style_link",
+        "label": "Style link",
+        "options": [
+          { "value": "", "label": "Default" },
+          { "value": "link-underline", "label": "Underline" }
+        ],
+        "default": ""
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection"
+          },
+          {
+            "label": "Image banner",
+            "id": "img",
+            "type": "image_picker"
+          },
+          {
+            "type": "select",
+            "id": "block_width",
+            "options": [
+              {
+                "value": "2",
+                "label": "2/12"
+              },
+              {
+                "value": "3",
+                "label": "3/12"
+              },
+              {
+                "value": "4",
+                "label": "4/12"
+              },
+              {
+                "value": "6",
+                "label": "50%"
+              }
+            ],
+            "label": "== Select column width",
+            "default": "6"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

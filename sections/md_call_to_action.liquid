@@ -1,0 +1,1726 @@
+<!-- md_call_to_action.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}{%if section.settings.dark_mode%} dark-mode{%endif%}{%if section.settings.use_round%} round_mode{%endif%}">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'item_title' -%}
+      <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%}">
+        <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12{%endif%}">
+          <div class="section-title {{block.settings.title_align}} w-100">                
+            {%- if block.settings.reverse -%}
+            <p class="sub-title">{{block.settings.stitle_section}}</p>
+            {%- endif -%}
+            <h3 class="title">{{block.settings.title_section}}</h3>
+            {%- unless block.settings.reverse -%}
+            <p class="sub-title">{{block.settings.stitle_section}}</p>
+            {%- endunless -%}
+          </div>
+        </div>
+        {%- if block.settings.name_link != blank -%}
+        <div class="col-auto">
+          {%- if block.settings.link_to != blank -%}              
+            <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+          {%- else -%}
+            <p class="sub-title">{{block.settings.name_link}}</p>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+      {%-case block.type -%}
+      {%-when 'design_1' -%}
+      <div class="cta cta-horizontal cta-horizontal-box design_1" data-type-block="design_1">
+        <div class="row">
+          <div class="col-lg-4 col-xl-3 offset-xl-1">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc">{{block.settings.description|html}}</p>
+          </div>
+          <div class="col-lg-8 col-xl-7 mt-2 mt-lg-0">
+            {%- capture btn_style -%}{{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}{%- endcapture -%}
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: btn_style, text_btn: block.settings.btn_name_cta %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_7' -%}
+      <div class="cta cta-horizontal cta-horizontal-box design_7" data-type-block="design_7">
+        <div class="row">
+          <div class="col-lg-4 col-xl-5">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc">{{block.settings.description|html}}</p>
+          </div>
+          <div class="col-lg-8 col-xl-7">
+            {%- capture btn_style -%}{{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}{%- endcapture -%}
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: btn_style, text_btn: block.settings.btn_name_cta %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_2' -%}
+      <div class="row">
+        <div class="cta design_2 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center" data-type-block="design_2">
+          <div class="cta-heading">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc">{{block.settings.description|html}}</p>
+          </div>
+          {%- capture btn_style -%}{{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}{%- endcapture -%}
+          {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: btn_style, text_btn: block.settings.btn_name_cta %}
+        </div>
+      </div>
+      {%- when 'design_3' -%}
+      <div class="cta cta-horizontal cta-horizontal-box design_3" data-type-block="design_3">
+        <div class="row align-items-center">
+          <div class="col-lg-5">
+            <h3 class="cta-title">{{block.settings.title_cta|html}}</h3>
+            <p class="cta-desc">{{block.settings.description_cta|html}}</p>
+          </div>          
+          <div class="col-lg-7 d-flex justify-content-lg-end">
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: 'btn-primary btn-rounded' %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_5' -%}
+      <div class="cta cta-border design_5"{%if section.settings.image %} style="border: none; background-color: #fff;" {%endif%} data-type-block="design_5">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-11 col-xl-10">
+            <div class="cta-content d-flex flex-wrap justify-content-center">
+              <div class="cta-heading">
+                <h3 class="cta-title text-center text-lg-right">{{block.settings.title_cta|html}}</h3>
+              </div>
+              <div class="cta-text mb-3i mb-lg-0i">
+                <p class="">{{block.settings.description_cta|html}}</p>
+              </div>
+              <a href="{{block.settings.link_cta|default: '#'}}" class="btn btn-primary {{block.settings.style_btn_rounded_1}}">{{block.settings.btn_name_cta}}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_6' -%}
+      <div class="cta" data-type-block="design_6">
+        <div class="row">
+          <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+            <div class="cta-text text-center">
+              <h3 class="cta-title">{{block.settings.title_cta|html}}</h3>
+              <p class="cta-desc">{{block.settings.description_cta|html}}</p>
+              <a href="{{block.settings.link_cta|default: '#'}}" class="btn btn-primary btn-rounded"><span>{{block.settings.btn_name_cta}}</span><i class="fkt-long-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_8' -%}
+      <div class="cta cta-horizontal cta-horizontal-box design_8{%if section.settings.section_padding and section.settings.image%} design_8-1{%endif%}" data-type-block="design_8">
+        <div class="row">
+          <div class="col-12 col-lg-4 offset-lg-1 text-center">
+            <h3 class="cta-title">{{block.settings.title_socials|html}}</h3>
+            <p class="cta-desc mb-2i">{{block.settings.stitle_socials|html}}</p>              
+            <div class="socials_ style-03 social-icons-colored">
+              {%- render "kt_socials" -%}
+            </div>
+          </div>
+          <div class="col-12 col-lg-4 offset-lg-2 text-center mt-2 mt-lg-0">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc mb-2i">{{block.settings.description|html}}</p>
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: 'btn-primary btn-rounded' %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_9' -%}
+      <div class="cta design_9" data-type-block="design_9">
+        {%- if block.settings.image -%}
+        <img class="product_image" src="{{block.settings.image|img_url: 'master'}}" alt="{{block.settings.alt}}">
+        {%- endif -%}
+        <div class="cta-content row justify-content-center align-items-center text-right">
+          <div class="col-12 col-lg-8">
+            <div class="cta-text">
+              <p class="cta-title mb-3i mb-lg-0i">{{block.settings.description_cta|html}}</p>
+            </div>
+          </div>
+          <div class="col-12 col-lg-4 text-right text-lg-center">
+            <a href="{{block.settings.link_cta|default: '#'}}" class="btn btn-primary {{block.settings.style_btn_rounded_1}}">{{block.settings.btn_name_cta}}</a>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_10' -%}
+      <div class="cta design_10" data-type-block="design_10">
+        <div class="cta-content row justify-content-center align-items-center">
+          <div class="col-12 col-md-7">
+            <div class="cta-text mb-2i mb-lg-0i pl-4 pr-4">
+              <p class="cta-title">{{block.settings.title_cta|html}}</p>
+              <i class="cta-desc">{{block.settings.description_cta|html}}</i>
+            </div>
+          </div>
+          <div class="col-12 col-md-5 col-lg-auto offset-lg-1">
+            <div class="pl-4 pr-4">
+              <a href="{{block.settings.link_cta|default: '#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}">{{block.settings.btn_name_cta}}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_11' -%}
+      <div class="cta design_11" data-type-block="design_11">
+        <div class="cta col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center">
+          <div class="cta-heading">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc">{{block.settings.description|html}}</p>
+          </div>
+          {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: block.settings.style_btn %}
+        </div>
+      </div>
+      {%- when 'design_12' -%}
+      <div class="cta design_12" data-type-block="design_12">
+        <div class="row justify-content-center">
+          <div class="col-md-10 col-lg-7">
+            <div class="row no-gutters align-items-center">
+              <div class="col">
+                <h3 class="cta-title">{{block.settings.title|html}}</h3>
+                <p class="cta-desc">{{block.settings.description|html}}</p>
+              </div>
+              <div class="col-12 col-sm-auto mt-1 mt-sm-0">
+                <a href="{{block.settings.link_cta|default: '#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}"><span>{{block.settings.btn_name_cta}}</span><i class="fkt-long-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_13' -%}
+      <div class="cta design_13" data-type-block="design_13">
+        <div class="cta-newsletter text-center">
+          <span class="cta-icon">
+            <i class="fkt-envelope"></i>
+          </span>
+          <h3 class="cta-title">{{block.settings.title|html}}</h3>
+          <p class="cta-desc">{{block.settings.description|html}}</p>          
+          {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: "btn btn-dark" %}
+          <p class="title-desc newsletter-desc">{{block.settings.input_description}}</p>
+        </div>
+      </div>
+      {%- when 'design_14' -%}
+      <div class="col-12 col-xl-8 offset-xl-2 cta design_14" data-type-block="design_14">
+        <div class="row align-items-center">
+          <div class="col-12 col-lg-5 mb-2 mb-lg-0">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc mb-0">{{block.settings.description|html}}</p>
+          </div>
+          <div class="col-12 col-lg-7">
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: "btn-outline-primary" %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_15' -%}
+      <div class="cta design_15" data-type-block="design_15">
+        <div class="cta-newsletter text-center">
+          <span class="cta-icon">
+            <i class="fkt-envelope"></i>
+          </span>
+          <h3 class="cta-title">{{block.settings.title|html}}</h3>
+          <p class="cta-desc">{{block.settings.description|html}}</p>
+          {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: "btn-primary" %}
+          {%- if block.settings.input_description != blank -%}
+          <p class="title-desc newsletter-desc">{{block.settings.input_description}}</p>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- when 'design_16' -%}
+      <div class="cta design_17" data-type-block="design_17">
+        <div class="cta-content d-flex flex-wrap">
+          <div class="cta-heading">
+            <div class="cta-title price">
+              {{block.settings.title_cta|html}}
+            </div>
+          </div>
+          <div class="cta-desc mb-3i mb-lg-0i">
+            <div class="">{{block.settings.description_cta|html}}</div>
+            <a href="{{block.settings.link_cta|default: '#'}}">{{block.settings.btn_name_cta}}</a>
+          </div>
+        </div>
+      </div>
+      {%- when 'design_17' -%}
+      <div class="cta design_18" data-type-block="design_18">
+        <div class="cta-content d-flex flex-wrap justify-content-center">
+          <div class="col-12 col-md-8 col-lg-6 mt-3">
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter w-100', style_btn: " btn-underline btn-underline-dark btn-block btn-minwidth-auto", text_btn: block.settings.btn_name_cta %}
+          </div>
+        </div>
+      </div>
+      {%- when 'design_18' -%}
+      <div class="row">
+        <div class="cta design_19 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 text-center" data-type-block="design_19">
+          <div class="cta-heading">
+            <h3 class="cta-title">{{block.settings.title|html}}</h3>
+            <p class="cta-desc">{{block.settings.description|html}}</p>
+          </div>
+          {%- capture btn_style -%}{{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}{%- endcapture -%}
+          {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: btn_style, text_btn: block.settings.btn_name_cta %}
+        </div>
+      </div>
+      {%- endcase -%}
+    {%- endfor -%}
+    </div>
+  </div>
+</div>
+{%-capture cta-css-%}
+{%-style-%}
+.content_{{section.id}} {
+  --cl_title: {{section.settings.color_title}};
+  --cl_desc: {{section.settings.color_desc}};
+  --cl_placeholder: {{section.settings.color_placeholder}};
+  --cl_text_iput: {{section.settings.color_text_input}};
+  --cl_border_iput: {{section.settings.color_border_input}};
+  --cl_bg_iput: {{section.settings.color_bg_input | default: 'transparent'}};
+}
+  .cta .cta-title,
+  .cta .cta-title h3,
+  .cta .cta-title h4,
+  .cta .cta-icon{
+    color: var(--cl_title);
+  }
+  .cta .cta-desc,
+  .cta .cta-desc h4,
+  .cta .cta-desc h3,
+  .cta .newsletter-desc,
+  .cta .form--success {
+    color: var(--cl_desc);
+  }
+  .cta .input-group input::-webkit-input-placeholder {
+    color: var(--cl_placeholder);
+  }
+  .cta .input-group input::-moz-placeholder {
+    color: var(--cl_placeholder);
+  }
+  .cta .input-group input:-ms-input-placeholder {
+    color: var(--cl_placeholder);
+  }
+  .cta .input-group input:-moz-placeholder {
+    color: var(--cl_placeholder);
+  }
+  .cta .input-group input{
+    color: var(--cl_text_iput);
+    border-color: var(--cl_border_iput) !important;
+    background-color: var(--cl_bg_iput);
+  }
+  {%-endstyle-%}
+{%-endcapture-%}
+{{ cta-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%-endunless-%}
+{%-endif-%}
+{% schema %}
+  {
+    "name": "Call to Action",
+    "class": "md_call_to_action",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Call to Action",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section?",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920x pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type":"checkbox",
+        "id": "use_round",
+        "label": "Use round style?"
+      },
+      {
+        "type": "color",
+        "id": "color_title",
+        "label": "Color title",
+        "default": "#333"
+      },
+      {
+        "type": "color",
+        "id": "color_desc",
+        "label": "Color description",
+        "default": "#ccc"
+      },
+      {
+        "type": "color",
+        "id": "color_text_input",
+        "label": "Color text input",
+        "default": "#999"
+      },
+      {
+        "type": "color",
+        "id": "color_border_input",
+        "label": "Color border input",
+        "default": "#dadada"
+      },
+      {
+        "type": "color",
+        "id": "color_placeholder",
+        "label": "Color placeholder input",
+        "default": "#999"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_input",
+        "label": "Color background input",
+        "default": "#fff"
+      },
+      {
+        "type": "checkbox",
+        "id": "preview",
+        "label": "[* Preview design](//cdn.shopify.com/s/files/1/0264/6972/8316/files/Midas-Cta.jpg)"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item Title section",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "html",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          }
+        ]
+      },
+      {
+        "type": "design_1",
+        "name": "Design 1",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Join Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Lorem ipsum dolor sit amet adipiscing."
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "design_7",
+        "name": "Design 1 + nospace",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Join Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Lorem ipsum dolor sit amet adipiscing."
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Subscribe<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "design_2",
+        "name": "Design 2",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Join Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Lorem ipsum dolor sit amet adipiscing."
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Subscribe<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "design_3",
+        "name": "Design 3",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_cta",
+            "label": "Title",
+            "default": "JOIN OUR NEWSLETTER"
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "Subcribe to get information about products and coupons"
+          }
+        ]
+      },
+      {
+        "type": "design_5",
+        "name": "Design 5",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_cta",
+            "label": "Title",
+            "default": "Vivamus vestibulum <br>ntulla nec ante"
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat."
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Click Here<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "design_6",
+        "name": "Design 6",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_cta",
+            "label": "Title",
+            "default": "Morbi in sem quis dui placerat felis."
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat."
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Click Here"
+          }
+        ]
+      },
+      {
+        "type": "design_8",
+        "name": "Design 8",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Socials settings"
+          },
+          {
+            "type": "html",
+            "id": "title_socials",
+            "label": "Title",
+            "default": "Shop Social"
+          },
+          {
+            "type": "html",
+            "id": "stitle_socials",
+            "label": "Description",
+            "default": "Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. "
+          },
+          {
+            "type": "header",
+            "content": "Newsletter form settings"
+          },
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Get the latest deals"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "and<br> receive <span class=\"highlight\">$20 coupon<\/span> for first shopping"
+          }
+        ]
+      },
+      {
+        "type": "design_9",
+        "name": "Design 9",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Product image",
+            "info": "Size suggestion: 258x167 pixels"
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "Shop Today’s Deals <br><strong>Awesome Made Easy. HERO7 Black</strong>"
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded_1",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Click Here<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "design_10",
+        "name": "Design 10",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_cta",
+            "label": "Title",
+            "default": "New Deals! Start Daily at 12pm e.t."
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "Get <strong>FREE SHIPPING* & 5% rewards</strong> on every order with Midas Theme"
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Click Here<i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "design_11",
+        "name": "Design 11",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Join Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Lorem ipsum dolor sit amet adipiscing."
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-outline-darker",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "design_12",
+        "name": "Design 12",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Join Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Lorem ipsum dolor sit amet adipiscing."
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Click Here"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "design_13",
+        "name": "Design 13",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Subscribe for Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "and receive <span class=\"text-primary\">$20 coupon<\/span> for first shopping"
+          },
+          {
+            "type": "html",
+            "id": "input_description",
+            "label": "Input description",
+            "default": "Your personal details are safe with us."
+          }
+        ]
+      },
+      {
+        "type": "design_14",
+        "name": "Design 14",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Subscribe for Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Subcribe to get information about products and coupons"
+          }
+        ]
+      },
+      {
+        "type": "design_15",
+        "name": "Design 15",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Subscribe for Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Learn about new offers and get more deals by joining our newsletter"
+          }
+        ]
+      },
+      {
+        "type": "design_16",
+        "name": "Design 17",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_cta",
+            "label": "Title",
+            "default": "<h4 class=\"highlight\">from<\/h4><h3>$39<\/h3><sup class=\"highlight\">,99<\/sup><\/div>"
+          },
+          {
+            "type": "html",
+            "id": "description_cta",
+            "label": "Description",
+            "default": "<h4>woodworking tools<\/h4><h3>from top rated brands<\/h3>"
+          },
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Discover now<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      },
+      {
+        "type": "design_17",
+        "name": "Design 18",
+        "settings": [
+          {
+            "type": "url",
+            "id": "link_cta",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "SUBSCRIBE"
+          }
+        ]
+      },
+      {
+        "type": "design_18",
+        "name": "Design 19",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "<span style=\"font-weight: 700\">New Customer Discount<\/span><br><span style=\"font-size: 4.4rem;font-weight: 700\"><span class=\"text-primary\">20% Off<\/span> Your First Order at Molla<\/span>"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "New customers: <strong style=\"color: #222222\">Save 20%<\/strong> when you sign up for exclusive emails, recipes, expert tips &amp; more..."
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-primary",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Primary"
+              },
+              {
+                "value": "btn-secondary",
+                "label": "Secondary"
+              },
+              {
+                "value": "btn-white",
+                "label": "White"
+              },
+              {
+                "value": "btn-white-primary",
+                "label": "White 2"
+              },
+              {
+                "value": "btn-primary-white",
+                "label": "White 3"
+              },
+              {
+                "value": "btn-dark",
+                "label": "Dark"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-lightgray",
+                "label": "Border lightgray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-darker",
+                "label": "Border darker"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          },
+          {
+            "type": "text",
+            "id": "btn_name_cta",
+            "label": "Name button",
+            "default": "Subscribe<i class=\"fkt-long-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Call to Action",
+        "category": "05. Element"
+      }
+    ]
+  }
+{% endschema %}

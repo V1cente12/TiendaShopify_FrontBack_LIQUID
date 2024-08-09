@@ -1,0 +1,269 @@
+<!-- md_list_item_cattegories_3.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-if section.blocks.size != 0-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      <div class="row justify-content-center">
+      {%- case section.blocks.size -%}
+        {%- when 2 -%}
+          {%- assign coll = 'col-lg-6' -%}
+        {%- when 3 -%}
+          {%- assign coll = 'col-lg-4' -%}
+        {%- when 4 -%}
+          {%- assign coll = 'col-lg-3' -%}
+        {%- else -%}
+          {%- assign coll = 'col-lg-4' -%}
+      {%- endcase -%}
+      {%- for block in section.blocks -%}
+        <div class="col-12 col-sm-6 col-md-6 {{coll}} mb-2">
+          <div class="item-- position-relative">
+            {%- assign image_item = block.settings.image -%}
+            {%-assign width = image_item.width | default: 452.00 -%}{%-assign height = image_item.height | default: 300.00 | plus: 0.00-%}
+            <a href="{{block.settings.link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="452x300 px"{% endunless %}></a>
+            <div class="text-content position-absolute wait-for-css">
+              <h3 class="banner-title">{{block.settings.title | html}}</h3>
+              <p class="banner-stitle">{{block.settings.stitle | html}}</p>
+              <a href="{{block.settings.link|default:'#'}}" class="banner-link" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+      </div>
+      {%-capture banner-css-%}
+      <noscript class="banner-css" data-section-type="md_list_item_categories_3">
+        {%style%}
+          .md_list_item_categories_3 a.img__banner{
+            z-index:0;
+            min-height:170px
+          }
+          .md_list_item_categories_3 .text-content{
+            z-index:1;
+            left: 2rem;
+            bottom: 2rem;
+            padding-right:10px;
+            padding-left:10px;
+            font-family: var(--f_family_second,var(--f_family));
+          }
+          .md_list_item_categories_3 .banner-title{
+            margin: 0 0 6px 0;
+            font-size: 4rem;
+            font-weight: 400;
+            line-height: 1em;
+            letter-spacing: -1px;
+          }
+          .md_list_item_categories_3 .banner-stitle{
+            font-size: 1.7rem;
+            letter-spacing: -.17px;
+            line-height: 1.5;
+            color: #999;
+            text-transform: none;
+            margin: 0 0 1.5rem 0;
+          }
+          .md_list_item_categories_3 .banner-link{
+            font-weight: 500;
+            color: var(--text);
+            padding-bottom: 7px;
+            border-bottom: .2rem solid transparent;
+            transition: border-color .3s;
+          }
+          .md_list_item_categories_3 .banner-link:hover{
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+          }
+          @media (min-width: 992px){
+            .md_list_item_categories_3 .text-content{
+              left: 1rem;
+              bottom: -38%;
+            }
+          }
+          @media (min-width: 1200px){
+            .md_list_item_categories_3 .text-content{
+              left: 10%;
+            }
+          }
+          @media (min-width: 1400px){
+            .md_list_item_categories_3 .text-content{
+              left: 22%;
+            }
+          }
+        {%endstyle%}
+      </noscript>
+      {%-endcapture-%}
+      {{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{%-endif-%}
+
+{% schema %}
+  {
+    "name": "List categories 3",
+    "class": "md_list_item_categories_3",
+    "settings": [
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "List categories",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Item category",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Size suggestion: 452 x 300 px"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Face<br>Cosmetics"
+          },
+          {
+            "type": "text",
+            "id": "stitle",
+            "label": "Sub title",
+            "default": "The best products for all skin types"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-arrow-right\"><\/i>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "List categories 3",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          },
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

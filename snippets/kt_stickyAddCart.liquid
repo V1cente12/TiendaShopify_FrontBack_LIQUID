@@ -1,0 +1,369 @@
+{%- liquid
+  capture st_card
+    echo settings.use_new_label
+    echo '|'
+    echo settings.new_day
+    echo '|'
+    echo settings.use_sale_label
+    echo '|'
+    echo settings.product_grid_layout
+    echo '|'
+    echo settings.qs_show_vars_list
+    echo '|'
+    echo settings.use_quickview
+    echo '|'
+    echo settings.use_wishlist
+    echo '|'
+    echo settings.use_compare
+    echo '|'
+    echo settings.use_countdown_grid
+    echo '|'
+    echo settings.countdown_grid_style
+    echo '|'
+    echo settings.use_vendor_grid
+    echo '|'
+    echo settings.use_review_grid
+    echo '|'
+    echo settings.use_add_to_cart_btn
+    echo '|'
+    echo settings.qs_hide_only_1_opt
+  endcapture
+  assign st_card = st_card | split: '|'
+-%}
+
+{%- liquid
+  assign compare_at_price = product.compare_at_price 
+  assign price = product.price 
+  assign price_varies = product.price_varies 
+  assign available = product.available
+  assign current_variant = product.selected_or_first_available_variant
+  if st_card[0] == "true"
+    unless product.tags contains 'notnew'
+      assign on_new = false
+      assign now_date_int = "now" | date: "%j" | plus: 0
+      assign now_year_int = "now" | date: '%Y' | plus: 0
+      assign pub_date_int = product.created_at | date: "%j" | plus: 0
+      assign pub_year_int = product.created_at | date: '%Y' | plus: 0
+      if now_year_int == pub_year_int
+        assign new_day_int = st_card[1] | default: 30 | plus: 0
+        assign check_new = now_date_int | minus: pub_date_int
+        if check_new >= 0 and check_new <= new_day_int
+          assign on_new = true
+        endif
+      else
+        assign new_day_int = st_card[1] | default: 30 | pub_date_int
+        assign check_new = now_date_int | plus: 366
+        if check_new <= new_day_int
+          assign on_new = true
+        endif
+      endif
+    endunless
+  endif
+  assign on_sale = false
+  if compare_at_price > price 
+    assign on_sale = true
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy == 'continue' and product.selected_or_first_available_variant.incoming
+    assign preOrder = true 
+  endif
+  unless grid_layout
+    assign grid_layout = st_card[3]
+  endunless
+  unless masonry
+    assign masonry = false
+    if st_card[7] == 'normal'
+      assign masonry = 'none'
+    endif
+  endunless
+  unless block_id
+    assign block_id = block.id
+  endunless
+  unless section_id
+    assign section_id = 'product-template'
+  endunless
+-%}
+{%-capture component-css-%}
+{%-style-%}
+.kt-stickyAddCart [data-n-opt] {
+  display: block;
+}
+.kt-stickyAddCart .entry-price ins {
+  font-size: 1.6rem;
+}
+.kt-stickyAddCart .entry-price del {
+  font-size: 1.4rem;
+}
+.kt-stickyAddCart:not(.fixed) .position-fixed.bottom {
+  bottom: -100%;
+}
+.kt-stickyAddCart:not(.fixed) .position-fixed.top {
+  top: -100%;
+}
+.kt-stickyAddCart .position-fixed {
+  left: 0%;
+  z-index: 12;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 -5px 1rem rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s cease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+.kt-stickyAddCart .position-fixed.bottom {
+  bottom: 0%;
+}
+.kt-stickyAddCart .position-fixed.top {
+  top: 0%;
+  box-shadow: 0 2px 1rem rgba(0, 0, 0, 0.05);
+}
+.kt-stickyAddCart .img_sticky {
+  width: 85px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+.kt-stickyAddCart .title_sticky > p {
+  font-size: 1.6rem;
+}
+.kt-stickyAddCart form .prd-variants {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: auto;
+  margin-top: 1.5rem;
+}
+.kt-stickyAddCart form .prd-variants > div {
+  padding-right: 10px;
+  padding-left: 10px;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 0.3rem;
+  display: block !important;
+}
+.kt-stickyAddCart form .name_option {
+  margin-bottom: 5px;
+}
+.kt-stickyAddCart form .product-loop-variants.circle._small .swatch,
+.kt-stickyAddCart form .product-loop-variants.square._small .swatch {
+  min-width: 2.6rem;
+  min-height: 2.6rem;
+}
+.kt-stickyAddCart form .product-loop-variants.circle._small .swatch span.swatch-title,
+.kt-stickyAddCart form .product-loop-variants.square._small .swatch span.swatch-title {
+  font-size: 1.2rem;
+}
+.kt-stickyAddCart form .product-loop-variants .variants_list [data-maybe-hide=true]:not(.active) {
+  display: inline-block !important;
+}
+.kt-stickyAddCart form .product-loop-variants .variants_list .more.kt__quick-shop {
+  display: none !important;
+}
+.kt-stickyAddCart .close {
+  display: none;
+}
+.kt-stickyAddCart .toggle {
+  top: 0%;
+  left: 0;
+  right: 0;
+  background-color: transparent !important;
+  color: transparent !important;
+  padding: 1rem;
+  height: 4rem;
+  border: none;
+  font-size: 2.4rem;
+}
+.kt-stickyAddCart .aspectRatio {
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s cease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+[dir="ltr"] .kt-stickyAddCart .quantity .control {
+  margin-right: 2rem;
+}
+[dir="rtl"] .kt-stickyAddCart .quantity .control {
+  margin-left: 2rem;
+}
+.kt-stickyAddCart .quantity .input-qty {
+  border: 1px solid #d7d7d7;
+  padding: 5px 15px 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+@media (min-width: 992px) {
+  .kt-stickyAddCart .quantity .input-qty {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    width: 10rem;
+  }
+}
+.kt-stickyAddCart .add_to_cart_button::before {
+  margin-right: 0.9rem;
+  margin-top: -0.2rem;
+  font-size: 1.8rem;
+}
+@media only screen and (max-width: 767px) {
+  .kt-stickyAddCart .quantity .input-qty {
+    width: 85px;
+  }
+  .kt-stickyAddCart .add_to_cart_button,
+.kt-stickyAddCart button.toggle {
+    width: 100%;
+    height: 100%;
+  }
+  .kt-stickyAddCart .add_to_cart_button:before,
+.kt-stickyAddCart button.toggle:before {
+    margin-right: 0.9rem;
+    font-size: 1.8rem;
+  }
+  .kt-stickyAddCart .hasqty .btns-wrapper {
+    -ms-flex: 0 0 -webkit-calc(100% - 110px);
+    flex: 0 0 -webkit-calc(100% - 110px);
+    max-width: -webkit-calc(100% - 110px);
+  }
+  .kt-stickyAddCart .position-fixed {
+    padding-bottom: 1.5rem;
+  }
+}
+.kt-stickyAddCart .infor {
+  display: none;
+}
+@media (min-width: 768px) {
+  .kt-stickyAddCart .infor {
+    display: block;
+  }
+}
+
+body.show-stickyAddCart .kt-stickyAddCart .position-fixed.bottom .toggle i::before {
+  content: "\f110";
+}
+body.show-stickyAddCart .kt-stickyAddCart .position-fixed.top .toggle i::before {
+  content: "\e801";
+}
+body.show-stickyAddCart .kt-stickyAddCart .toggle {
+  display: none;
+}
+body.show-stickyAddCart .kt-stickyAddCart .close {
+  display: block;
+}
+body.show-stickyAddCart #bg-overlay {
+  position: fixed;
+  z-index: 11;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-animation: opacity1 0.3s forwards;
+  animation: opacity1 0.3s forwards;
+}
+
+.styleDarken .kt-stickyAddCart .position-fixed, .kt-stickyAddCart.darken .position-fixed {
+  background-color: #333;
+  box-shadow: 0 -5px 1rem rgba(255, 255, 255, 0.05);
+}
+.styleDarken .kt-stickyAddCart .position-fixed.top, .kt-stickyAddCart.darken .position-fixed.top {
+  box-shadow: 0 5px 1rem rgba(255, 255, 255, 0.05);
+}
+.styleDarken .kt-stickyAddCart .title_sticky, .kt-stickyAddCart.darken .title_sticky {
+  color: #fff;
+}
+.styleDarken .kt-stickyAddCart .price ins, .kt-stickyAddCart.darken .price ins {
+  color: #eee;
+}
+.styleDarken .kt-stickyAddCart .quantity .input-qty, .kt-stickyAddCart.darken .quantity .input-qty {
+  border-color: rgba(215, 215, 215, 0.5);
+}
+.styleDarken .kt-stickyAddCart form .name_option, .kt-stickyAddCart.darken form .name_option {
+  color: #fff;
+}
+.styleDarken .kt-stickyAddCart .product-loop-variants.circle[data-usecolor=false] li.swatch-on-grid .swatch, .styleDarken .kt-stickyAddCart .product-loop-variants.square[data-usecolor=false] li.swatch-on-grid .swatch, .kt-stickyAddCart.darken .product-loop-variants.circle[data-usecolor=false] li.swatch-on-grid .swatch, .kt-stickyAddCart.darken .product-loop-variants.square[data-usecolor=false] li.swatch-on-grid .swatch {
+  background-color: #424242;
+}
+.styleDarken .kt-stickyAddCart .product-loop-variants.circle[data-usecolor=false] li.swatch-on-grid.active .swatch, .styleDarken .kt-stickyAddCart .product-loop-variants.square[data-usecolor=false] li.swatch-on-grid.active .swatch, .kt-stickyAddCart.darken .product-loop-variants.circle[data-usecolor=false] li.swatch-on-grid.active .swatch, .kt-stickyAddCart.darken .product-loop-variants.square[data-usecolor=false] li.swatch-on-grid.active .swatch {
+  color: #666;
+  background-color: #f7f8fa;
+}
+{%-endstyle-%}
+{%-endcapture-%}
+{{ component-css | strip_newlines | remove: '  ' | remove: '  ' }}
+<div class="kt-stickyAddCart product-inner {{settings.sticky_style}}{%unless settings.show_sticky_add_mobile%} d-none d-md-block{%endunless%}{% unless product.has_only_default_variant %} ktlz{%endunless%}" data-href="{{product.handle}}" data-show-name="true" data-ktlz="onLoad">
+  <form method="post" action="{{routes.cart_add_url}}" id="ProductSection-{{product.id}}-{{section_id}}" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-{{section_id}}" data-options="{{product.options.size}}" data-pr-vrs="">
+    <div class="position-fixed {{settings.sticky_position}}">
+      <button class="close" aria-label="Close" type="button"></button>
+      <div class="container position-relative">
+        {%- unless product.has_only_default_variant -%}
+        <div id="form_variants" class="row align-items-center justify-content-between" style="display: none">
+          {%-if product.has_only_default_variant == false-%}
+            {%-unless settings.qs_hide_only_1_opt and product.variants.size == 1-%}
+            <div class="product-variants-wrapper">
+              <div class="prd-variants">
+                {%- for i in (1..product.options.size) -%}
+                  <div class="prd--option{{i}} animated-background"></div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%-endunless-%}
+          {%-endif-%}
+        </div>
+        {%-endunless-%}
+        <div class="row align-items-center justify-content-between">
+          <div class="col-12 col-md-7 infor">
+            <div class="row align-items-center">
+              {%- if settings.show_sticky_img -%}
+              {%- assign current_img_sticky = product.first_available_variant -%}
+              {%- if current_variant_sticky.featured_image == null -%}
+              {%- assign current_img_sticky = product -%}
+              {%- endif -%}
+              <div class="col-auto">
+                <div class="img_sticky product-thumb">
+                  {%- render 'image-grid-item', product: product, st_card: st_card, masonry: 'false', second_thumb: 'false', as_r: '1/1' -%}
+                </div>
+              </div>
+              {%- endif -%}
+              <div class="col">
+                <div class="title_sticky{% if settings.show_sticky_img %} mt-2 mb-2{%else%} mt-2 mb-2 mt-md-1 mb-md-1{% endif %}">
+                  <p class="m-0">{{product.title}}</p>                  
+                  {%- render 'product-single-prices', section_id: section_id, current_variant: current_variant -%}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-5 text-right btns-group{%if settings.show_sticky_quantiny%}{%unless product.metafields.purchase.on_link != blank %} hasqty{%endunless%}{%endif%} pt-1 pt-sm-0">
+            <div class="row no-gutters justify-content-end">
+              {%- unless product.metafields.purchase.on_link != blank %}
+              <div class="quantity js-product-form__item--quantity{% if preOrder == false and sold_out or settings.show_sticky_quantiny == false %} d-none{% endif %} col-auto">
+                <div class="control">
+                  <a class="btn-number qtyminus quantity-minus" href="#"></a>
+                  <input type="text" data-step="1" name="quantity" data-min="1" value="1" class="input-qty input-text qty text" size="4" pattern="[0-9]*">
+                  <input type="hidden" name="id" value="{{product.selected_or_first_available_variant.id}}">
+                  <a class="btn-number qtyplus quantity-plus" href="#"></a>
+                </div>
+              </div> 
+              {%- endunless -%}
+              <div class="col-auto btns-wrapper position-relative{% unless preOrder == false and sold_out or settings.show_sticky_quantiny == false %} pl-0{% endunless %} pl-md-1">
+                {%- assign btn_style = 'btn btn-primary fkt-cart-plus text-uppercase' -%}
+                {%- if settings.sticky_style == 'darken' -%}
+                {%- assign btn_style = 'btn btn-white fkt-cart-plus text-uppercase' -%}
+                {%- endif -%}
+              {%- if product.metafields.purchase.on_link != blank %}
+                <a href="{{product.metafields.purchase.on_link | split: ']' | last }}" class="{{btn_style}} single_add_to_cart_button out_site">
+                  <span>{{product.metafields.purchase.on_link | split: "]" | first | remove: "["}}</span>
+                </a>
+              {%- elsif product.has_only_default_variant or product.variants.size == 1 -%}
+                {% render 'kt_button_no_variant', preOrder: preOrder, sold_out: sold_out, style_btn: btn_style %}
+              {%- else -%}
+                {% render 'kt_button_has_variant', preOrder: preOrder, sold_out: sold_out, style_btn: btn_style, position_btn: 'sticky_add_cart' %}
+                <button type="button" class="{{btn_style}} position-absolute toggle"></button>
+              {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

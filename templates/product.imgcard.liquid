@@ -1,0 +1,28 @@
+{%-layout none-%}
+{%- liquid
+assign as_r = settings.aspect_ratio | default: settings.aspect_ratio_default
+if product.tags contains 'ar__1-1'
+  assign as_r = '1/1'
+endif
+assign featured_image = product.featured_image
+if settings.use_first_avai_img and product.selected_or_first_available_variant.image
+  assign featured_image = product.selected_or_first_available_variant.image
+endif
+if settings.img_type != 'normal'
+	assign aspect_ratioW = as_r | split: '/' | first | strip | plus: 0.00
+	assign aspect_ratioH = as_r | split: '/' | last | strip | plus: 0.00
+	capture image_fit
+	  render 'kt_image_fit', width: aspect_ratioW, height: aspect_ratioH, image_item: featured_image
+	endcapture
+endif
+-%}
+{%- if featured_image -%}
+<div class="primary-thumb" data-ogr="{{ featured_image | img_url: 'master' }}">
+  {%- assign img_url = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+  <img width="{{featured_image.width}}" height="{{featured_image.height}}" class="lazyload mll-lz {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ img_url }}" data-widths="[240, 360, 540, 720]" data-aspectratio="{{ featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ featured_image.alt | escape }}" style="padding-bottom:{{featured_image.height | times: 1.00 | divided_by: featured_image.width | times: 100.00000000}}%">
+</div>
+{%- else -%}
+<div class="primary-thumb" data-ogr="">
+  <img class="lazyload {{image_fit}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://cdn.shopify.com/s/files/1/1958/5719/files/no-image.webp?v=1534478004" data-aspectratio="1/1" data-sizes="auto" alt="">
+</div>
+{%- endif -%}

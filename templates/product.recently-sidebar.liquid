@@ -1,0 +1,47 @@
+{%layout none%}
+{%- capture canonical_url -%}{% render 'kt_url_full' %}{%- endcapture -%}
+{%- assign arr_canonical_url = canonical_url | split: 'q=' | last | split:'&view=' | first -%}
+{%- if arr_canonical_url contains '+' -%}
+  {%- assign arr_canonical_url = arr_canonical_url | replace: ' +', '+' | replace: '+ ', '+' | split: '+' -%}
+{%- else -%}
+  {%- assign arr_canonical_url = arr_canonical_url | split: ' ' -%}
+{%- endif -%}
+<div class="layered_subtitle_heading">
+	<span class="layered_subtitle">{{'collections.filters.recent_products'|t}}<span></span></span>
+	<span class="ico"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+</div>
+<ul class="kt--filter-gr-i_ul row list-unstyled">
+{%- for handle_product in arr_canonical_url -%}
+  {%- if handle_product != blank -%}
+  {%- assign product_rcv = all_products[handle_product] -%}
+  {%-if product_rcv != blank -%}
+    <li class="grid-item col-12 col-md-4 col-lg-3 mb-2i">
+    	<div class="product-item">
+	      <div class="product-thumb">
+	      	{%-assign width = product_rcv.featured_image.width | plus: 0.00-%}
+	        {%-assign height = product_rcv.featured_image.height | plus: 0.00-%}
+	        {%- assign aspect_ratioW = settings.aspect_ratio | split: '/' | first | strip | plus: 0.00 -%}
+	        {%- assign aspect_ratioH = settings.aspect_ratio | split: '/' | last | strip | plus: 0.00 -%}
+	        {%- assign aspect_cs = aspect_ratioW|divided_by:aspect_ratioH | round: 2 -%}
+			    <a class="aspectRatio is-contain" href="{{product_rcv.url|within: collection.url}}" tabindex="0">
+			      {%- assign img_url = product_rcv.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+					  <div class="primary-thumb">
+		          <img class="w-100" src="{{product_rcv.featured_image.src | product_img_url: '240x'}}" alt="{{ product_rcv.featured_image.alt | escape }}">
+						</div>
+			    </a>
+	      </div>
+	      <div class="product-info">
+	        <h3 class="product-name"><a href="{{product_rcv.url}}">{{product_rcv.title}}</a></h3>
+	        <span class="price">
+	          <ins>{{ product_rcv.price | money }}</ins>
+	          <del {% unless product_rcv.compare_at_price > product_rcv.price %} class="d-none"{%-endunless-%}>
+	            {{ product_rcv.compare_at_price | default: 0 | money }}
+	          </del>
+	        </span>                                 
+	      </div>
+	    </div>
+    </li>
+  {%- endif -%}
+  {%- endif-%}
+{%- endfor -%}
+</ul>

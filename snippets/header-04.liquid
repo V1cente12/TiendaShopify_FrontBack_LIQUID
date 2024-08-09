@@ -1,0 +1,202 @@
+{%- if settings.use_header_mobile_logo_center -%}
+<div class="{{section.settings.width_header}}">
+  <div class="main-header-top kt--drop-w kt--drop-w-d">
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="header-control col-3 col-lg-auto d-xl-none order-first">
+        <div class="control-inner">
+          <div class="mobile-block block-menu-bar">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="header-logo col-6 col-lg-2 col-xl-3 text-center text-lg-left order-1">
+        {%- render 'kt_logo_header' -%}
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 col-lg-6 order-last order-lg-2">
+        <div class="control-inner">
+          <div class="block-search input-cat d-block">
+            {% render 'search-bar', search_style: "input-cat-right" %}
+          </div>
+        </div>
+      </div>
+      {%- elsif settings.use_header_mobile_search_box == false -%}
+      <div class="header-control col-12 col-lg-6 d-none d-lg-block order-last order-lg-2">
+        <div class="control-inner">           
+          <div class="block-search d-block">
+            {% render 'search-bar', search_style: "input-cat-right" %}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="header-control col-3 order-3">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          <div class="block-search d-none d-md-block d-lg-none">
+            {% render 'search-bar', search_style: "icon" %}
+          </div>
+          {%- if shop.customer_accounts_enabled and section.settings.customer_accounts_enabled -%}
+          <div class="block-account">
+            <a href="{%if customer%}{{routes.account_url}}{%else%}{{routes.account_login_url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-user"></use></svg></div><span>{{'customer.account.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare d-none d-lg-block">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div><span>{{'products.compare.mini_title'|t}}</span></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist d-none d-lg-block">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span>{{'products.wishlist.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- unless cart.attributes.theme_mobile == 'true' -%}
+<div class="header-bottom d-none d-lg-block">
+  <div class="{{section.settings.width_header}}">
+    <div class="main-header">
+      <div class="row align-items-center">
+        <div class="header-control col-auto d-lg-none">
+          <div class="control-inner">
+            <div class="mobile-block block-menu-bar">
+              <a href="#" class="menu-bar menu-toggle" aria-label="Menu toggle"><span class="icon"><span></span><span></span><span></span></span></a>
+            </div>
+          </div>
+        </div>
+        {%- if section.settings.list_categories != blank -%}
+        <div class="header-control col-auto">
+          <div class="dropdown category-dropdown{%if section.settings.list_categories_open and template.name == 'index'%} show{%endif%}">
+            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="{%if section.settings.list_categories_open and template.name == 'index'%}true{%else%}false{%endif%}" data-display="static" title="{{section.settings.title_categories}}" aria-label="{{section.settings.title_categories}}">{{section.settings.title_categories}}</a>
+            <div class="dropdown-menu dropdown-menu-right{%if section.settings.list_categories_open and template.name == 'index'%} show{%endif%}">
+              {%- for link in linklists[section.settings.list_categories].links -%}
+              <a class="dropdown-item{%if link.title contains '[special]' %} dropdown-item-lead{%endif%}" href="{{link.url}}" aria-label="{{link.title | remove: '[special]'}}">{{link.title | remove: '[special]'}}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+        {%- endif -%}
+        <div class="header-menu horizon-menu col-12 col-lg{% if section.settings.list_categories == blank %} p-0{%endif%} d-none d-lg-block">
+          <nav class="main-navigation" data-width="992">
+            {%- render 'menu_import' -%}
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+{%- else -%}
+<div class="{{section.settings.width_header}}">
+  <div class="main-header-top kt--drop-w kt--drop-w-d">
+    <div class="row min-height align-items-center justify-content-between">
+      <div class="header-control col-1 col-lg-auto d-none d-md-block d-xl-none order-first">
+        <div class="control-inner">
+          <div class="mobile-block block-menu-bar">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="header-logo col-5 col-lg-2 col-xl-3 order-first">
+        {%- render 'kt_logo_header' -%}
+      </div>
+      {%- if settings.use_header_mobile_search_box and template.name != 'search' -%}
+      <div class="header-control col-12 col-lg-6 order-last order-lg-1">
+        <div class="control-inner">
+          <div class="block-search input-cat d-block">
+            {% render 'search-bar', search_style: "input-cat-right" %}
+          </div>
+        </div>
+      </div>
+      {%- elsif settings.use_header_mobile_search_box == false -%}
+      <div class="header-control col-12 col-lg-6 d-none d-sm-block d-md-none d-lg-block order-lg-1">
+        <div class="control-inner">
+          <div class="block-search input-cat d-block">
+            {% render 'search-bar', search_style: "input-cat-right" %}
+          </div>
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="header-control col-7 col-md-6 col-lg-3 order-2">
+        <div class="control-inner d-flex align-items-center justify-content-end">
+          <div class="mobile-block block-menu-bar d-md-none">
+            <div class="menu-bar menu-toggle"><span class="icon"><span></span><span></span><span></span></span></div>
+          </div>
+          <div class="block-search d-none d-md-block d-lg-none">
+            {% render 'search-bar', search_style: "icon" %}
+          </div>
+          {%- if shop.customer_accounts_enabled and section.settings.customer_accounts_enabled -%}
+          <div class="block-account">
+            <a href="{%if customer%}{{routes.account_url}}{%else%}{{routes.account_login_url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-user"></use></svg></div><span>{{'customer.account.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_compare and settings.use_compare-%}
+          <div class="block-compare d-none d-lg-block">
+            <div class="mini-compare load kt--drop-i">
+              <div class="icon-link kt--drop-title"><div class="icon-count kt-button"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-compare"></use></svg><span class="count compareCount">0</span></div><span>{{'products.compare.mini_title'|t}}</span></div>
+              <div class="mini-compare-content kt--drop-in"><div class="no-compare"><p>{{'products.compare.no_compare'|t}}</p></div><div class="mini-compare-body"></div></div>
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_wishlist and settings.use_wishlist != '' -%}
+          <div class="block-wishlist">
+            {%- assign wishlist_page = pages['wishlist-local'] -%}{%- if settings.use_wishlist == 'nitro' -%}{%- assign wishlist_page = pages['wishlist'] -%}{%- endif -%}
+            <a href="{%if settings.use_wishlist == 'nitro'%}{%if customer%}{{wishlist_page.url}}{%else%}{{routes.account_login_url}}{%endif%}{%else%}{{wishlist_page.url}}{%endif%}" class="icon-link"><div class="icon-count"><svg class="molla-svg-icon" viewBox="0 0 32 32"><use xlink:href="#icon-wishlist"></use></svg><span class="count wishlist-count">0</span></div><span>{{'products.wishlist.mini_title'|t}}</span></a>
+          </div>
+          {%- endif -%}
+          {%- if section.settings.use_cart-%}
+          <div class="block-minicart">
+            {%- render 'kt_mini-cart' -%}
+          </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- unless cart.attributes.theme_mobile == 'true' -%}
+<div class="header-bottom d-none d-lg-block">
+  <div class="{{section.settings.width_header}}">
+    <div class="main-header">
+      <div class="row align-items-center">
+        <div class="header-control col-auto d-lg-none">
+          <div class="control-inner">
+            <div class="mobile-block block-menu-bar">
+              <a href="#" class="menu-bar menu-toggle" aria-label="Menu toggle"><span class="icon"><span></span><span></span><span></span></span></a>
+            </div>
+          </div>
+        </div>
+        {%- if section.settings.list_categories != blank -%}
+        <div class="header-control col-auto">
+          <div class="dropdown category-dropdown{%if section.settings.list_categories_open and template.name == 'index'%} show{%endif%}">
+            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="{%if section.settings.list_categories_open and template.name == 'index'%}true{%else%}false{%endif%}" data-display="static" title="{{section.settings.title_categories}}" aria-label="{{section.settings.title_categories}}">{{section.settings.title_categories}}</a>
+            <div class="dropdown-menu dropdown-menu-right{%if section.settings.list_categories_open and template.name == 'index'%} show{%endif%}">
+              {%- for link in linklists[section.settings.list_categories].links -%}
+              <a class="dropdown-item{%if link.title contains '[special]' %} dropdown-item-lead{%endif%}" href="{{link.url}}" aria-label="{{link.title | remove: '[special]'}}">{{link.title | remove: '[special]'}}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+        {%- endif -%}
+        <div class="header-menu horizon-menu col-12 col-lg{% if section.settings.list_categories == blank %} p-0{%endif%} d-none d-lg-block">
+          <nav class="main-navigation" data-width="992">
+            {%- render 'menu_import' -%}
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+{%- endif -%}

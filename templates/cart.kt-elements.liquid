@@ -1,0 +1,1293 @@
+{%layout none%}
+<style type="text/css">
+  .els * {
+    box-sizing: border-box;
+  }
+  .els img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+  }
+  .els p {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  .els hr {
+    margin-top: 7px;
+    margin-bottom: 7px;
+  }
+  .els.open-popup{
+    display: block;
+  }
+  .els .d-flex{
+    display:-ms-flexbox;
+    display:flex;
+    flex-wrap: wrap;
+  }
+  .els .align-items-center{
+    -ms-flex-align:center;
+    align-items:center
+  }
+  .els .justify-content-center{
+    -ms-flex-pack:center;
+    justify-content:center
+  }
+  .els .justify-content-between{
+    justify-content:space-between;
+    -ms-flex-pack:justify
+  }
+  .els{
+    /* display: none; */
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    font-family: Arial;
+    font-size: 14px;
+    direction: ltr;
+    color: #333;
+    background-color: rgba(0,0,0,.7);
+  }
+  .els-wrapper-popup {
+    background-color: #292929;
+    margin: 2rem;
+    display: flex;
+    display: -ms-flexbox;
+    align-items: center;
+    -ms-flex-align: center;
+    width: calc(100% - 4rem);
+    height: calc(100% - 4rem);
+  }
+  .els-popup{
+    border-radius: 3px;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 10px 5px #616161;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+  .els-head{
+    display: block;
+    padding: 15px 20px;
+    text-align: center;
+    background-color: #141414;
+  }
+  .els-footer{
+    width: 100%;
+    text-align: center;
+    padding-top: 10px;
+  }
+  .els .logo{
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+  }
+  .els-btn-close{
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+    color:#f76b6a;
+  }
+  .els-btn-close:before{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    margin-top: -1px;
+    border-top: 1px solid #777;
+    width: 15px;
+  }
+  .els-head svg{
+    width:60px;
+    height:27px;
+    line-height:1
+  }
+  .els-content {
+    display: flex;
+    display: -ms-flexbox;
+    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    height: 100%;
+  }
+  .els-content .sidebar{
+    flex: 1 1 100%;
+    max-width: 250px;
+    background-color: #fff;
+    height: 100%;
+  }
+  .list-elements {
+    overflow-y: auto;
+    max-height: 100%;
+  }
+  .list-elements p{
+    text-align: center;
+    padding: 0 10px;
+    max-width: 200px;
+    letter-spacing: 0.1;
+    margin: 20px auto;
+  }
+  .list-elements>ul {
+    padding-left: 0;
+    height: calc(100vh - 238px);
+    height: -ms-calc(100vh - 238px);
+    height: -webkit-calc(100vh - 238px);
+  }
+  .list-elements li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  .list-elements ul ul li {
+    padding-left: 0;
+  }
+  .list-elements .filter_i {
+    text-decoration: none;
+    color: #222;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .els-content .content{
+    color: #f1f1f1;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    flex: 1 1 100%;
+    /* max-width: calc(100% - 250px); */
+    max-width: 100%;
+    overflow-y: auto;
+    position: relative;
+    max-height: 100%;
+    padding: 30px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .alerts {
+    margin-bottom: 30px;
+  }
+  .imports {
+    margin-right: -15px;
+    margin-left: -15px;
+    width: 100%;
+  }
+  .import-dm-i {
+    width: 100%;
+    flex: 1 1 33.3333333%;
+    max-width: 33.3333333%;
+    padding: 0 15px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  @media(min-width: 1200px){
+    .import-dm-i {
+      flex: 1 1 25%;
+      max-width: 25%;
+    }
+  }
+  .import-dm-i.--section{    
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .item-import {
+    padding: 10px 10px 20px;
+    background-color: #313131;
+    box-shadow: 0 0 20px transparent;
+    border-radius: 3px;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .item-import:hover {
+    box-shadow: 0 0 20px #1b1b1b;
+    transform: translateY(-10px);
+  }
+  .item-import .--thumb:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.2);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .item-import:hover .--thumb:after {
+    background-color: rgba(0,0,0,0);
+  }
+  /* .page-preview img{
+    opacity: 0.7;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .page-preview:hover img{
+    opacity: 1;
+  } */
+  .import-form-fields {
+    margin-top: 15px;
+    font-weight: 600;
+  }
+  .buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+  }
+  .buttons button{
+    cursor: pointer;
+    padding: 12px 20px;
+    background-color: #a62c2b;
+    color: #fff;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    opacity: 0;
+    transform: translateY(20px);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .item-import:hover .buttons button{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .import.--demo {
+    background-color: #333;
+    border-radius: 50px 0 0 50px;
+  }
+  .import.--section {
+    border-radius: 0 50px 50px 0;
+  }
+  .--thumb {
+    position: relative;
+    overflow: hidden;
+  }
+  .item-import.loading{
+    pointer-events: none;
+  }
+  .item-import.loading .--thumb:before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    right: -20%;
+    bottom: -20%;
+    background-image: linear-gradient(90deg,rgba(255,255,255,0) 20%,rgba(255,255,255,.8) 50%,rgba(255,255,255,0) 80%);
+    animation: placeloading 1s infinite;
+  }
+  @keyframes placeloading{from{transform:skewX(-45deg) translateX(-100%)}to{transform:skewX(-45deg) translateX(100%)}}
+
+
+  .import-dm-i.--section .els-bg_img {
+    background-position-x: center;
+    background-size: cover;
+  }
+
+  .import-dm-i.--01.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/01_homepage_furniture.jpg?v=1605514178');
+  }
+
+  .import-dm-i.--02.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/02_homepage_furniture.jpg?v=1605514178');
+  }
+
+  .import-dm-i.--03.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/04_homepage_electronic.jpg?v=1606141592');
+  }
+
+  .import-dm-i.--04.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/05_homepage_electronic.jpg?v=1606141603');
+  }
+
+  .import-dm-i.--05.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/06_homepage_fashion.jpg?v=1606141603');
+  }
+
+  .import-dm-i.--06.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/07_homepage_fashion.jpg?v=1606141603');
+  }
+
+  .import-dm-i.--07.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/08_homepage_fashion.jpg?v=1606141603');
+  }
+
+  .import-dm-i.--08.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/09_homepage_fashion.jpg?v=1606141603');
+  }
+
+  .import-dm-i.--09.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/10_homepage_fashion.jpg?v=1606141583');
+  }
+
+  .import-dm-i.--10.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/11_homepage_shoes_store.jpg?v=1606141583');
+  }
+
+  .import-dm-i.--11.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/12_homepage_furniture_simple.jpg?v=1606141579');
+  }
+
+  .import-dm-i.--12.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/13_homepage_fashion_simple.jpg?v=1606141596');
+  }
+
+  .import-dm-i.--13.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/14_homepage_market.jpg?v=1606141600');
+  }
+
+  .import-dm-i.--14.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/15_homepage_market_fullwidth.jpg?v=1606141600');
+  }
+
+  .import-dm-i.--15.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/16_homepage_lookbook.jpg?v=1606141531');
+  }
+
+  .import-dm-i.--16.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/03_homepage_lookbook_2.jpg?v=1606141531');
+  }
+
+  .import-dm-i.--17.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/17_homepage_fashion_banners.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--18.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/18_homepage_fashion_sidebar.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--19.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/19_homepage_games.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--20.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/20_homepage_books.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--21.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/21_homepage_sport.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--22.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/22_homepage_tools.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--23.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/23_homepage_fashion.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--24.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/24_homepage_extreme_sport.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--25.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/25_homepage_jewelry.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--26.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/26_homepage_market_7dfec2f1-b4df-4712-a92b-1eaba8d68720.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--27.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/27_homepage_lookbook_3.jpg?v=1606141596');
+  }
+
+  .import-dm-i.--28.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/28_food_market.jpg?v=1606141602');
+  }
+
+  .import-dm-i.--29.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/29_t-shirts_store.jpg?v=1606141584');
+  }
+
+  .import-dm-i.--30.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/30_headphones_oneproduct_store.jpg?v=1606141584');
+  }
+
+  .import-dm-i.--31.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/31_yoga_store.jpg?v=1606141584');
+  }
+
+  .import-dm-i.--32.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/32_sunglasses_store.jpg?v=1612667082');
+  }
+
+  .import-dm-i.--33.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/33_cosmetics_store.jpg?v=1613816142');
+  }
+
+  .import-dm-i.--34.--section .els-bg_img {
+    background-image: url('https://cdn.shopify.com/s/files/1/0264/6972/8316/files/34_car_part.jpg?v=1614221062');
+  }
+</style>
+<div class="els">
+  <div class="els-wrapper-popup">
+    <div class="els-popup">
+      <div class="els-content">
+        <div class="sidebar" style="display: none;">
+          <div class="els-head">
+            <div class="els-logo">
+              <span class="logo">KT Elements</span>
+            </div>
+          </div>
+          <div class="list-elements">
+            <p>Quickly get a project started with any of our examples:</p>
+            <ul>
+              <li>
+                <span class="filter_i" filter=".--demo">Demos</span>
+              </li>
+              <li>
+                <span class="filter_i" filter="">Elements</span>
+                <ul>
+                  <li><span class="filter_i" filter=".--hero-banner">About</span></li>
+                  <li><span class="filter_i" filter=".--hero-banner">Hero banner</span></li>
+                  <li><span class="filter_i" filter=".--banner">Banner</span></li>
+                  <li><span class="filter_i" filter=".--section_ml">Section</span></li>
+                  <li><span class="filter_i" filter=".--products">Products</span></li>
+                  <li><span class="filter_i" filter=".--element">Element</span></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="els-footer">
+            <span class="link-purchase">
+              <span>Elements liblary v1.0.0</span>
+            </span>
+            <span class="els-btn-close">Close</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="alerts">
+            <p>Now you can choose any version to apply its settings for your website or leave a default one. You are be able to switch to default version settings any time.</p>
+            <hr>
+            <p class="mb-0">It may <strong>override</strong> all theme settings and reload the editor.</p>
+          </div>
+          <div class="imports d-flex">
+            <!-- demos -->
+              {%-for i in (1..34)-%}
+              <div class="import-dm-i --demo">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --demo" data-js="assets/Demo_{{ii}}.json">Import</button>
+                      <button class="import --section" data-json="Demo_{{ii}}" data-js="assets/Demo_{{ii}}.json" data-full-url="{{name|asset_url}}">Seclect Section</button>
+                    </div>
+                    <img src="//cdn.shopify.com/s/files/1/0264/6972/8316/files/{{ip}}_Home{{ii}}.jpg?v=1575682110" alt="">
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Import Demo {{ii}}</span>
+                  </div>
+                </div>
+              </div>
+              {%-endfor-%}
+              {%- for i in (1..9) -%}
+              <div class="import-dm-i --01 --section --{%cycle 'hero-banner','section_ml','banner','products','section_ml','products','section_ml','element','element'%}">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_01" data-id="{%cycle '1566371829835','1566375748123','1566403665924','1566437726874','1566535149884','1566535719773','1570076389571','1566404133629','1566442643300'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '26%', '5%', '29%', '29.5%', '29.75%', '47%', '29%', '7%', '13%'%};{{--}}
+                      background-position-y: {%cycle '4.1%', '14.2%', '19%', '31.5%', '45.2%', '63.5%', '80%', '85.7%', '90.8%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --02 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_02" data-id="{%cycle '1566371829835','1566375748123','1566437726874','1566403665924','1570069534594','1570063959499','1566443930152','1566442643300'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '29%', '7%', '32%', '38.5%', '60%', '9.5%', '34%', '7%'%};{{--}}
+                      background-position-y: {%cycle '3.1%', '13.8%', '19%', '35%', '58%', '71%', '85%', '90.7%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..9) -%}
+              <div class="import-dm-i --03 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_03" data-id="{%cycle '1566612744653','1566437726874','1566554827480','1566655647916','1566375748123','1566700483499','1566717434440','1566404133629','1566442643300'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '24%', '35%', '13%', '38.5%', '8%', '28.5%', '28%', '8%', '18%'%};{{--}}
+                      background-position-y: {%cycle '4.5%', '16%', '30%', '41%', '52.7%', '62.5%', '77%', '83.2%', '90.7%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --04 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_04" data-id="{%cycle '1566612744653','1562310633983','1562569085705','1564285191407','1562572009880','1562220204858','1562227619804','1564285424081','1564325655054','1562059653538','1562576431667'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '19.5%', '15%', '11%', '28.5%', '11%', '28.5%', '7%', '8%', '28%', '54%', '6.5%', '11%'%};{{--}}
+                      background-position-y: {%cycle '4%', '12.5%', '18.1%', '24%', '33.5%', '40.5%', '50.3%', '83.2%', '58.2%', '80%', '87.2%', '91.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..10) -%}
+              <div class="import-dm-i --05 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_05" data-id="{%cycle '1566781334514','1562227619804','1562569085705','1562580013929','1562636783430','1562643456157','1562596427369','1562645426958','1562656080266','1562059653538'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '40.7%', '5%', '37.5%', '37.5%', '26%', '38.5%', '69%', '18%', '29%', '6%'%};{{--}}
+                      background-position-y: {%cycle '0%', '12.6%', '15.8%', '27.8%', '40.4%', '51.2%', '72.3%', '81.8%', '91.4%', '93.4%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..9) -%}
+              <div class="import-dm-i --06 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_06" data-id="{%cycle '1566801709137','1562726557942','1562580013929','1573462264239','1562059653538','1566806915378','1562227619804','1562742435625','1562745074407'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '31%', '13%', '36.5%', '36.5%', '10%', '69%', '10%', '37%', '27%', '6%'%};{{--}}
+                      background-position-y: {%cycle '3%', '13.5%', '25.4%', '38.5%', '46.4%', '60.8%', '72%', '81.5%', '90.4%', '93.4%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..7) -%}
+              <div class="import-dm-i --07 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_07" data-id="{%cycle '1562826347275','1562059653538','1562580013929','1562596427369','1562745074407','1563248837632','1562227619804'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '45%', '6.5%', '37%', '63%', '29%', '23%', '5%'%};{{--}}
+                      background-position-y: {%cycle '2.9%', '20.4%', '27.2%', '51.8%', '75.5%', '87%', '91.3%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..9) -%}
+              <div class="import-dm-i --08 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_08" data-id="{%cycle '1566878988429','1563258463318','1562227619804','1573613727360','1562580013929','1573620127840','1562826347275','1573625693037','1562059653538','1563265667015'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '33.8%', '26.4%', '6.5%', '35%', '21%', '18%', '69%', '10.8%', '23%'%};{{--}}
+                      background-position-y: {%cycle '1.8%', '16%', '24.4%', '31%', '44%', '52.2%', '74%', '83.8%', '92.1%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --09 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_09" data-id="{%cycle '1562059653538','1566891404247','1563258463318','1562227619804','1564382878614','1564387810114','1573705673637','1564385624528','1563265667015'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '26%', '27.4%', '6.5%', '38%', '36%', '34%', '12%', '15.8%'%};{{--}}
+                      background-position-y: {%cycle '6%', '19%', '29.4%', '38%', '56.5%', '74.2%', '83%', '90.8%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --10 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_10" data-id="{%cycle '1566963535090','1563431582830','1563432005998','1563432886560','1563437537865','1564035744083','1563442014244','1563444357397','1563500808367'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '26%', '29.4%', '7%', '34%', '17%', '54%', '10%', '15.8%', '11.8%'%};{{--}}
+                      background-position-y: {%cycle '3.1%', '15%', '25.2%', '31.5%', '44.5%', '61.2%', '72.4%', '90.8%', '91.2%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..2) -%}
+              <div class="import-dm-i --11 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_11" data-id="{%cycle '1566114146403','1566966423764'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '29%', '70.4%'%};{{--}}
+                      background-position-y: {%cycle '4.2%', '89%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..5) -%}
+              <div class="import-dm-i --12 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_12" data-id="{%cycle '1566114146403','1566185990067','1566188493847','1566190124614','1566197324941'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '33.3%', '30%', '37.3%', '35%', '6.3%'%};{{--}}
+                      background-position-y: {%cycle '0%', '29%', '59%', '92%', '97%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..12) -%}
+              <div class="import-dm-i --13 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_13" data-id="{%cycle '1566114146403','1567047762962','1567059478587','1567061329688','1567067476252','1567072004402','1567072359720','1567127813293','1567129016636','1567130963434','1567140260212','1566197324941'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '22.6%', '15%', '16%', '29%', '27.3%', '16.3%', '26%', '26.3%', '11%', '6.6%', '25%', '6%'%};{{--}}
+                      background-position-y: {%cycle '4%', '13%', '18.9%', '27.5%', '40%', '49%', '57.5%', '69%', '75.5%', '7.9%', '88%', '92.2%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --14 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_14" data-id="{%cycle '1567526923728','1567654746306','1566375748123','1567650723978','1567657947293','1567669414650','1567667477204','1562059653538','1567753447662'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '28%', '15%', '7%', '30%', '23.3%', '24%', '16%', '24%', '24.3%', '6.6%', '5.8%'%};{{--}}
+                      background-position-y: {%cycle '4.45%', '16.2%', '21.8%', '28.1%', '42.4%', '53.2%', '61.8%', '71.2%', '82.1%', '86.8%', '90.8%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --15 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_15" data-id="{%cycle '1566781334514','1567493918230','1567499740862','1567500267254','1567500446721','1567500933234','1567503204904','1567501287537'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '46.8%', '35%', '35%', '45%', '35%', '35%', '21%', '34%'%};{{--}}
+                      background-position-y: {%cycle '0%', '16%', '30.7%', '45%', '59%', '73.5%', '82.8%', '92.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --16 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_16" data-id="{%cycle '1567526923728','1562059653538','1567561030072','1567564958186','1567565447695','1567483705818','1567482631829','1563265667015'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '37.8%', '10%', '125%', '37%', '30%', '31%', '14%', '16.8%'%};{{--}}
+                      background-position-y: {%cycle '2.5%', '13.6%', '25.5%', '58%', '69%', '79%', '85.5%', '91.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..6) -%}
+              <div class="import-dm-i --17 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_17" data-id="{%cycle '1567479315399','1562059653538','1567481429301','1567482631829','1567483705818','1563265667015'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '31%', '5.8%', '61%', '11%', '30%', '26%'%};{{--}}
+                      background-position-y: {%cycle '6.2%', '22.3%', '37.5%', '63%', '79%', '98%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..6) -%}
+              <div class="import-dm-i --18 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_18" data-id="{%cycle '1566781334514','1567763880438','1567822967343','1562227619804','1567760350866','1567831702289'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '36%', '32.8%', '90%', '10%', '25%', '5%'%};{{--}}
+                      background-position-y: {%cycle '0%', '19.3%', '50.5%', '75%', '86%', '90%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --19 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_19" data-id="{%cycle '1568001981428','1566197324941','1568018252086','1568189225185','1568199219807','1568364860637','1568201433214','1568275789905'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '39%', '6%', '30.8%', '16%', '51%', '6.2%', '25%', '22%'%};{{--}}
+                      background-position-y: {%cycle '4.5%', '20.5%', '26.3%', '40%', '56%', '68.2%', '77.5%', '89%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --20 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_20" data-id="{%cycle '1568458199516','1566197324941','1568201433214','1568540077521','1568601387658','1568602142475','1568275789905','1568364860637'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '24%', '6%', '34%', '28%', '15%', '30.2%', '28%', '16%'%};{{--}}
+                      background-position-y: {%cycle '5.1%', '16%', '22%', '40%', '51.2%', '63.2%', '80%', '90%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..10) -%}
+              <div class="import-dm-i --21 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_21" data-id="{%cycle '1566371829835','1575434115749','1566375748123','1575439912432','1575445734709','1575452826466','1566535719773','1566442643300','1566404133629','1575518545461'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '31.5%', '13%', '7%', '40%', '34%', '13%', '58.2%', '16%', '6%', '39.5%'%};{{--}}
+                      background-position-y: {%cycle '3.2%', '13%', '17.4%', '22.4%', '38%', '48.7%', '65%', '76%', '79.5%', '92.2%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..9) -%}
+              <div class="import-dm-i --22 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_22" data-id="{%cycle '1566371829835','1566375748123','1575614856845','1566442643300','1575781920843','1566404133629','1575687428018','1575687785924','1575691939960'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '26.1%', '9%', '42%', '29%', '16%', '7%', '42.2%', '7%', '24%'%};{{--}}
+                      background-position-y: {%cycle '3.2%', '14.5%', '23%', '36.4%', '49%', '54.7%', '69%', '78%', '88.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --23 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_23" data-id="{%cycle '1566371829835','1566404133629','1578451561609','1578457180665','1578467155086','1578469069366','1578475494987','1578476495141','1578477814808','1578536633107','1578539391585'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '45.6%', '6.3%', '63%', '16%', '61%', '37%', '22.2%', '39%', '20%', '21.6%', '11.3%'%};{{--}}
+                      background-position-y: {%cycle '1.1%', '13.2%', '18%', '32.8%', '43%', '57.7%', '65.9%', '76%', '83.5%', '90.5%', '94.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --24 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_24" data-id="{%cycle '1566371829835','1566375748123','1581476305648','1581480681415','1581559268240','1581586006406','1581562836105','1566442643300','1570076389571','1581566154053','1581565353424'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '48.6%', '10.3%', '32%', '28%', '30%', '71%', '27.2%', '13%', '26%', '17.6%', '6.3%'%};{{--}}
+                      background-position-y: {%cycle '0%', '12%', '16.2%', '26%', '36.6%', '54.5%', '70%', '76%', '83.5%', '90.5%', '93.3%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --25 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_25" data-id="{%cycle '1566801709137','1585291545168','1562580013929','1585302807187','1585552677222','1585559316777','1585551336781','1585540982481'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '34.8%', '50.3%', '42.5%', '42%', '25%', '42%', '25.2%', '11%'%};{{--}}
+                      background-position-y: {%cycle '3.3%', '16%', '34.5%', '50%', '62.6%', '74%', '86%', '90.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..12) -%}
+              <div class="import-dm-i --26 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_26" data-id="{%cycle '1593501530615','1566404133629','1592552083889','1592551122488','1593143507209','1594192395496','1594265322047','1593853075695','1594371306196','1566375748123','1592808951937','1592808951937'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '27.8%', '5.7%', '15.5%', '14%', '34%', '11.4%', '32%', '32%', '13.2%', '29%', '5.8%', '24.5%', '29%'%};{{--}}
+                      background-position-y: {%cycle '3.7%', '12.8%', '15.5%', '20.6%', '27.6%', '38.3%', '46%', '57.8%', '65.3%', '74.5%', '97.5%', '88%', '29%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+              <div class="import-dm-i --27 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_27" data-id="{%cycle '1566801709137','1604980083b9871536','160491250034550fef','16049716514b9b573a','1566375748123','1578476495141','1578539391585','1566404133629'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '49.3%', '49.3%', '47%', '49.3%', '5%', '40.4%', '14%', '6%'%};{{--}}
+                      background-position-y: {%cycle '0%', '20%', '40.5%', '60.5%', '69.2%', '81.3%', '89.5%', '92.2%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --28 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_28" data-id="{%cycle '1566801709137','1592551122488','1566404133629','1592552083889','1593143507209','1566375748123','1591244978544','1591672817907','1592799215754','1592799735924','1592808951937'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '23.8%', '12%', '5%', '15.3%', '32%', '6%', '18%', '13%', '29.8%', '8.3%', '27.8%'%};{{--}}
+                      background-position-y: {%cycle '4%', '14.4%', '19.2%', '23%', '33%', '44.7%', '50.9%', '58.2%', '70%', '76%', '89%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..7) -%}
+              <div class="import-dm-i --29 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_29" data-id="{%cycle '1566801709137','1566404133629','1590573606875','1590984927500','1590985303920','1590993019943','1591006786764'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '29%', '6%', '39%', '14%', '63%', '17%', '25%'%};{{--}}
+                      background-position-y: {%cycle '4.6%', '17.4%', '23.3%', '38.5%', '58.5%', '75.9%', '87.8%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..10) -%}
+              <div class="import-dm-i --30 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_30" data-id="{%cycle '1566371829835','1566404133629','1588300997887','1589439884181','1589536851469','1589879049920','1590136811007','1590142877603','1589882871668','1589883121408'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '40.6%', '5.3%', '31%', '37%', '58%', '58%', '30%', '33%', '24%', '12%'%};{{--}}
+                      background-position-y: {%cycle '1.2%', '12.1%', '15%', '24%', '37.8%', '56.9%', '69.5%', '80.6%', '88%', '92%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..10) -%}
+              <div class="import-dm-i --31 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_31" data-id="{%cycle '1566801709137','1566404133629','1591603614358','1591669857791','1590993019943','1591265992838','1591672817907','1591254762405','1591240667022','1591240667022'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '35.5%', '6%', '40%', '38%', '29%', '31%', '20%', '33%', '21%', '15%'%};{{--}}
+                      background-position-y: {%cycle '3.2%', '14.2%', '17.5%', '31%', '43.8%', '55.9%', '64.5%', '74.6%', '84%', '90%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..10) -%}
+              <div class="import-dm-i --32 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_32" data-id="{%cycle '1610529558279ffc95','1610587586114','1610590433794','1566437726874','1612493432487','1570069534594','1612538514e9717c37','1566443930152','1612489579883','1612489778594'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '33%', '17%', '12%', '42%', '22%', '68%', '32%', '34%', '6%', '6%'%};{{--}}
+                      background-position-y: {%cycle '2.5%', '13.5%', '19.1%', '26%', '38.6%', '56.9%', '74.5%', '87.6%', '91.4%', '93.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --33 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_33" data-id="{%cycle '1566371829835','1610590433794','1613640417cc1644ab','1613656859f5477ed7','16136405361276c2ff','1613719083f72ff839','16137285779e14b302','16137889634f88a50c','1612489579883','1613793184156','1612489778594'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '34%', '11%', '30%', '40%', '41%', '35%', '23%', '27%', '7%', '22%', '6%'%};{{--}}
+                      background-position-y: {%cycle '2.5%', '13.5%', '19.1%', '31.5%', '46%', '60%', '69.5%', '78.9%', '83.3%', '90.4%', '93.4%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+              {%- for i in (1..11) -%}
+              <div class="import-dm-i --34 --section">
+                <div class="item-import loading">
+                  {%- capture ii -%}{%- if forloop.index < 10 -%}0{%- endif -%}{{i}}{%- endcapture -%}
+                  {%- capture ip -%}{%- if forloop.index < 9 -%}0{%- endif -%}{{i | plus: 1}}{%- endcapture -%}
+                  {%- capture name -%}Demo_{%- if forloop.index <= 9 -%}0{%- endif -%}{{i}}.json{%- endcapture -%}
+                  <div class="--thumb" style="position: relative;">
+                    <div class="buttons">
+                      <button class="import --section_i --{{ii}}" data-json="Demo_34" data-id="{%cycle '1614129827045','1612489579883','16141361949660618b','1610590433794','1614150509091','1613640417cc1644ab','16136405361276c2ff','1614151949218','16141553132e102b47','1614133489a5518951','1612489778594'%}">Import section</button>
+                    </div>
+                    <div class="els-bg_img" style="{{--}}
+                      padding-bottom: {%cycle '24%', '6%', '27%', '13%', '16%', '30%', '31%', '30%', '28%', '32%', '6.2%'%};{{--}}
+                      background-position-y: {%cycle '3.7%', '11.75%', '15%', '24%', '30%', '37.5%', '50.5%', '63%', '75%', '88%', '92.5%'%}"></div>
+                  </div>
+                  <div class="import-form-fields">
+                    <span>Section {{forloop.index}}</span>
+                  </div>
+                </div>
+              </div>
+              {%- endfor -%}
+            <!-- section -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  "undefined" == typeof window.T4 && (window.T4 = {});
+  "undefined" == typeof window.theme && (window.theme = {});
+  T4.grid = '';
+  $.getScript( "//cdn.shopify.com/s/files/1/0279/6568/5813/t/2/assets/isotope-plus.pkgd.min.js?v=13908884544623468046" )
+    .done(function( script, textStatus ) {
+      T4.grid = $('.els .imports').isotope({
+          itemSelector: '.els .import-dm-i',
+          filter: '.import-dm-i.--demo',
+          layoutMode: 'packery'
+        });
+    })
+    .fail(function( jqxhr, settings, exception ) {
+  });
+  $('.list-elements .filter_i').on('click', function (event) {
+    event.preventDefault();
+    var filter_ = $(this).attr('filter');
+    T4.grid.isotope({ filter: '.import-dm-i' + filter_ });
+    $('.els .content').animate({scrollTop:0},800);
+  });
+  if (!theme.csrfToken) {
+    $.ajax({
+      type: "GET",
+      url: "/admin/themes/"+Shopify.theme.id,
+      success: function (data){
+        theme.csrfToken = data.split('name="csrf-token"')[1].split(" />")[0].split('"')[1];
+		    $('.item-import').removeClass('loading');
+      }
+    });
+  } else {
+    $('.item-import').removeClass('loading');
+  }
+  $('.import.--demo').on('click', function (event) {
+    event.preventDefault();
+    var $this = $(this);
+    $('.item-import').addClass('loading');
+    $.ajax({
+      url:  '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets.json',
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "x-csrf-token": theme.csrfToken
+      },
+      type: 'PUT',
+      data: {asset:  { 'key': 'config/settings_data.json', 'source_key': $this.attr('data-js')}},
+    })
+    .done(function() {
+	  	$('.item-import').removeClass('loading');
+	    window.top.location.reload();
+    });
+  });
+  $('.import.--section').on('click', function (event) {
+    event.preventDefault();
+    var $this = $(this);
+    var url = $this.attr('data-full-url');
+    var json = $this.attr('data-json');
+    "undefined" == typeof T4.demo && (T4.demo = []);
+    T4.grid.isotope({ filter: '.import-dm-i.--' + json.replace('Demo_','') });
+    $('.els .content').animate({scrollTop:0},800);
+    if (T4.demo[json]) {return}
+    $('.item-import').addClass('loading');
+    $.getJSON( url, function(data) {
+      T4.demo[json] = data;
+    });
+    $.getJSON( '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets?asset[key]=config/settings_data.json', function(data) {
+      T4.demo_crr = JSON.parse(data.asset.value);
+      $('.item-import').removeClass('loading');
+    })
+  });
+  $('.import.--section_i').on('click', function (event) {
+    event.preventDefault();
+    var $this = $(this);
+    $this.addClass('loading');
+    var id = $this.attr('data-id');
+    var json = $this.attr('data-json');
+    var new_st = T4.demo[json].current.sections[id];
+    var block_new_st = {};
+    var block_order_new_st = [];
+    var id_st = Date.now().toString();
+    var idx = 0;
+    $.each(T4.demo[json].current.sections[id].blocks, function(index, val) {
+      block_order_new_st.push(id_st +'-'+ idx);
+      block_new_st[id_st +'-'+ idx] = val;
+      idx++;
+    });
+    new_st.blocks = block_new_st;
+    new_st.block_order = block_order_new_st;
+    T4.demo_crr.current.sections[id_st] = new_st;
+    T4.demo_crr.current.content_for_index.push(id_st);
+    $.ajax({
+      url:  '/admin/api/2021-07/themes/'+Shopify.theme.id+'/assets.json',
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "x-csrf-token": theme.csrfToken
+      },
+      type: 'PUT',
+      data: {asset:  { 'key': 'config/settings_data.json', "value": JSON.stringify(T4.demo_crr)}},
+    })
+    .done(function() {
+      $this.removeClass('loading');
+      window.top.location.reload();
+    });
+  });
+  $(document).on('click', '.els-btn-close', function(event){
+    event.preventDefault();
+    $('.els').removeClass('open-popup');
+  })
+</script>

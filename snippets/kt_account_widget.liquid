@@ -1,0 +1,47 @@
+{%- if layout == 1 -%}
+  <ul class="mb-0 pt-3 list-links list-unstyled">
+    {%- if shop.customer_accounts_enabled -%}
+      {%- if customer -%}
+      <li>
+        <a href="{{routes.account_url}}"><span>{{"layout.customer.account"|t}}</span></a>
+        <span class="perlink"> / </span>
+        <a href="{{routes.account_logout_url}}"><span>{{"layout.customer.log_out"|t}}</span></a>
+      </li>
+      {%- else -%}
+      <li>
+        <a href="{{routes.account_login_url}}{%unless template.directory == 'customers'%}?q={{canonical_url | remove: shop.url | url_encode }}{%endunless%}"><span>{{"layout.customer.log_in"|t}}</span></a>
+        <span class="perlink"> / </span>
+        <a href="{{routes.account_register_url}}"><span>{{"layout.customer.create_account"|t}}</span></a>
+      </li>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if settings.use_wishlist != '' -%}
+      {%- assign wishlist_page = pages['wishlist-local'] -%}
+      {%- if settings.use_wishlist == 'nitro' -%}
+        {%- assign wishlist_page = pages['wishlist'] -%}
+      {%- endif -%}
+      {%- if wishlist_page.title != empty -%}
+      <li><a href="{{wishlist_page.url}}"><span>{{wishlist_page.title}}</span></a></li>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if settings.use_compare -%}
+      <li><a href="#" onclick="KT.showModalCompare()"><span>{{'products.compare.title'|t}}</span></a></li>
+    {%- endif -%}
+  </ul>
+{%- elsif layout == 2 -%}
+
+
+
+ {%- if customer -%}
+      <li style="list-style:none;">
+        <a href="{{routes.account_url}}"><span>Mis Pedidos</span></a>
+        <span class="perlink"> | </span>
+        <a href="{{routes.account_logout_url}}"><span>{{"layout.customer.log_out"|t}}</span></a>
+      </li>
+      {%- else -%}
+      <li style="list-style:none;">
+        <a href="{{routes.account_login_url}}{%unless template.directory == 'customers'%}?q={{canonical_url | remove: shop.url | url_encode }}{%endunless%}"><span>{{"layout.customer.log_in"|t}}</span></a>
+      </li>
+      {%- endif -%}
+	
+{%- endif -%}

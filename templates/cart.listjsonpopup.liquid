@@ -1,0 +1,78 @@
+{%- layout none -%}
+{%- if cart.item_count > 0 -%}
+  {%- for item in cart.items -%}
+  {%- assign gift_item = '' -%}
+  {%- if settings.use_gift_wrapping and settings.gift_wrap_product != blank and item.product.handle == settings.gift_wrap_product -%}
+    {%- assign gift_item = 'wrap_item' -%}
+  {%- endif -%}
+  {%- if item.discounted_price == 0 -%}
+    {%- assign gift_item = 'gift_item' -%}
+  {%- endif -%}
+  <div class="item__{{item.id}} row cart__popup-item item__{{gift_item|default: 'normal'}}">
+    <div class="image__cart col-3 col-md-2">
+      <a href="{{ item.variant.url }}">
+        <img class="img-thumbnail" alt="{{ item.title | escape | strip_html }}" src="{{ item.image | img_url: '104x120', crop:'top' }}">
+      </a>
+    </div>
+    <div class="info__cart col-6 col-md-7 p-0">
+      <h4 class="product-name h6 row no-gutters flex-nowrap align-items-center">
+        {%-if item.discounted_price == 0 -%}<i class="fkt-gift-1 col-auto" style="color: #4CAF50;font-size: 1.6rem;padding-right: .5rem;"></i>{%-endif-%}
+        <a class="col" href="{{ item.variant.url }}" title="{{ item.product.title | strip_html }}">
+          {%-if item.discounted_price == 0 -%}{{'cart.gift.label_html'|t }}{%-endif-%} {{ item.product.title | truncate: 35 }}
+        </a>
+      </h4>
+      {%- unless item.variant.title contains 'Default' -%}
+      <div class="variation" title="{{ item.title | escape |strip_html }}"><span>{{item.variant.title}}</span></div>
+      {%- endunless -%}
+      
+      {% comment %}{% if item.variant.compare_at_price != item.original_price %}
+      <div class="cart-item__original-price"><s>{{ item.variant.compare_at_price | money }}</s></div>
+      {% endif %}{% endcomment %}
+      <span class="price">{%-if item.discounted_price -%}{{ item.discounted_price | money }}{%-else-%}{{ item.original_price | money }}{%-endif-%}</span>
+
+      {%-if item.unit_price -%}
+      {%- capture unit_price_base_unit -%}
+        <span class="base_unit">
+          {%- if item.unit_price_measurement -%}
+            {%- if item.unit_price_measurement.reference_value != 1 -%}
+              {{- item.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+            {{ item.unit_price_measurement.reference_unit }}
+          {%- endif -%}
+        </span>
+      {%- endcapture -%}
+      <span class="UnitPrice-{{item.product.id}} text-nowrap">
+        {{item.unit_price_measurement.quantity_value | append: item.unit_price_measurement.quantity_unit}}
+        (<span class="unit_price">{{item.unit_price | money }}</span> / {{unit_price_base_unit}})
+      </span>
+      {%-endif-%}
+    </div>
+    <div class="action__cart col-3">
+      <div class="d-flex flex-wrap flex-sm-nowrap align-items-center justify-content-center justify-content-sm-between">
+        <div class="text-center quantity">
+          <div class="control">
+            <a class="btn-number qtyminus quantity-minus" href="javascript:void(0)"></a>  
+            <input type="text" data-id="{{ item.variant_id }}" name="quantity" value="{{item.quantity}}" data-min="1" class="input-qty" size="4" pattern="[0-9]*" onchange="Shopify.KT_changeItem('{{ item.variant_id }}',$(this).val());$('#cartModal .ajax__list-cart').addClass('loading')">
+            <a class="btn-number qtyplus quantity-plus" href="javascript:void(0)"></a>
+          </div>
+        </div>
+        <a class="remove-item remove mx-2" href="javascript:void(0)" onclick="Shopify.KT_removeItem('{{ item.variant_id }}');$('#cartModal .ajax__list-cart').addClass('loading')" title="{{'cart.general.remove'|t }}"><i class="fkt-close" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+  {%- endfor -%}
+{%- endif -%}
+<!-- summary-discounts -->
+{%- if cart.cart_level_discount_applications != blank -%}
+  <th>{{'cart.summary_box.discount'|t}}:</th>
+  <td class="text-nowrap">
+  {%- for discount_application in cart.cart_level_discount_applications -%}
+    <span>-{{ discount_application.total_allocated_amount | money }}</span>
+    <span class="question_mark position-relative"> (?)
+      <div class="info-discount position-absolute text-uppercase">
+        {{ discount_application.title }}
+      </div>
+    </span>
+  {%- endfor -%}
+  </td>
+{%- endif -%}

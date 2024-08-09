@@ -1,0 +1,118 @@
+<!-- account-popup.liquid -->
+{%- if template != 'cart.account-modal' -%}
+<div id="accountModal" class="modal fade" aria-hidden="false" role="dialog" tabindex="-1" data-section-id="accountModal" data-section-type="kt-account-modal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="form-box modal-content">
+      <div class="content-item">
+        <button class="close" aria-label="Close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+        <div class="form-tab lazyload" data-include="{{ routes.cart_url }}?view=account-modal" data-checkout-url="{{canonical_url|replace: shop.url, ''}}"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+{%- if template == 'cart.account-modal' -%}
+  <ul class="nav nav-pills nav-fill list-unstyled" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="signin-tab" data-toggle="tab" href="#signin" role="tab" aria-controls="signin" aria-selected="true">{{'customer.login.sign_in'|t}}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">{{'customer.register.submit'|t}}</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="tab-content-5">
+    <div class="tab-pane fade active show" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+      {% form 'customer_login', id: 'CustomerLoginForm' %}
+        {{ form.errors | default_errors }}
+        <input type="hidden" name="checkout_url" value="{{canonical_url|replace: shop.url, ''}}">
+        <div class="form-group">
+          <label for="singin-email">{{ 'customer.login.email' | t }}</label>
+          <input type="email" id="singin-email" class="form-control" name="customer[email]" required="">
+        </div>
+        {%- if form.password_needed -%}
+        <div class="form-group">
+          <label for="singin-password">{{ 'customer.login.password' | t }}</label>
+          <input type="password" id="singin-password" class="form-control" name="customer[password]" required="">
+        </div>
+        {%- endif -%}
+        <div class="form-footer d-flex flex-wrap flex-md-nowrap">
+          <button type="submit" class="btn btn-outline-primary-2">
+            <span>{{ 'customer.login.sign_in' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+          </button>
+          {%- if form.password_needed -%}
+          <a href="#recover" id="RecoverPassword" class="forgot-link mt-1 mb-1">{{ 'customer.login.forgot_password' | t }}</a>
+          {%- endif -%}
+        </div>
+      {% endform %}
+      {% form 'recover_customer_password', id: 'RecoverPasswordForm', class: 'd-none' %}
+        {{ form.errors | default_errors }}
+        {% if form.posted_successfully? %}
+        <span class="hide reset-password-success">{{ success_message | default: 'contact.form.post_success' | t }}</span>
+        {% endif %}
+        <div class="form-group">
+          <label for="RecoverEmail">{{ 'customer.login.email' | t }}</label>
+          <input type="email" id="RecoverEmail" class="form-control" name="email" required="">
+        </div>
+
+        <div class="form-footer d-flex flex-wrap flex-md-nowrap">
+          <button type="submit" class="btn btn-outline-primary-2">
+            <span>{{ 'customer.recover_password.submit' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+          </button>
+          <a href="#recover" id="HideRecoverPasswordLink" class="forgot-link mt-1 mb-1">{{ 'customer.recover_password.cancel' | t }}</a>
+        </div>
+      {% endform %}
+      {% if shop.checkout.guest_login %}
+      {% form 'guest_login' %}
+        <h2 class="h4" style="font-weight: 400;">{{ 'customer.login.guest_title' | t }}</h2>
+        <div class="form-footer">
+          <button type="submit" class="btn btn-outline-primary-2">
+            <span>{{ 'customer.login.guest_continue' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+          </button>
+        </div>
+      {% endform %}
+      {% endif %}
+    </div>
+    <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+      {% form 'create_customer' %}
+        {{ form.errors | default_errors }}
+        <div class="form-group">
+          <label for="register-email">{{ 'customer.register.email' | t }}</label>
+          <input type="email" class="form-control" id="register-email" name="customer[email]" {% if form.email %} value="{{ form.email }}"{% endif %} required="">
+        </div>
+
+        <div class="form-group">
+          <label for="register-password">{{ 'customer.register.password' | t }}</label>
+          <input type="password" class="form-control" id="register-password" name="customer[password]" required="">
+        </div>
+
+        <div class="form-group custom-control custom-checkbox">
+          <input type="hidden" name="customer[accepts_marketing]" value="" />
+          <input class="custom-control-input" id="register-subcrible" type="checkbox" name="customer[accepts_marketing]" checked="checked" />
+          <label class="custom-control-label" for="register-subcrible" style="font-size: 1.3rem;">{{ 'customer.register.subcrible' | t }}</label>
+        </div>
+
+        <div class="form-footer d-flex flex-wrap flex-md-nowrap agree_checkbox" data-layout="account">
+          <button type="submit" class="btn btn-outline-primary-2 text-nowrap kt_agree_swich">
+            <span>{{ 'customer.register.submit' | t }}</span>
+            <i class="fkt-long-arrow-right"></i>
+          </button>
+          {% if settings.terms_conditions_register %}
+          <div class="mt-1 mb-1">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input kt_agree" id="register-policy" required="" data-layout="account">
+              <label class="custom-control-label" for="register-policy" style="font-size: 1.3rem;">
+              {{settings.terms_and_privacy_conditions_register|replace: '<p>','<p class="m-0" style="display: inline">'|html}}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      {% endform %}
+    </div>
+  </div>
+{%- endif -%}
+{%-style-%}
+#accountModal .lazyload[data-include],#accountModal .lazyloading[data-include]{position:relative;min-height:20rem}#accountModal .lazyload[data-include]:after,#accountModal .lazyloading[data-include]:after{content: '';background-image: var(--imglazy);width: 100%;height: 100%;background-size: auto;background-position: center;background-repeat: no-repeat;display: inline-block;position: absolute;transition: all .15s;animation: mll-lz 1.5s infinite;}.form-box{max-width:575px;margin-left:auto;margin-right:auto;background-color:#fff;padding:3.7rem 2rem;box-shadow:0 3px 16px rgba(51,51,51,.1)}@media (min-width:767px){.form-box{padding:3.7rem 6rem 6.4rem}}.form-box .btn{min-width:115px}.form-tab .nav.nav-pills{border-bottom:thin solid #ebebeb}.form-tab .nav.nav-pills .nav-item{margin-bottom:-.1rem}[dir=ltr] .form-tab .nav.nav-pills .nav-item+.nav-item{margin-left:0}[dir=rtl] .form-tab .nav.nav-pills .nav-item+.nav-item{margin-right:0}.form-tab .nav.nav-pills .nav-link{text-transform:capitalize;font-weight:400;font-size:2.4rem;letter-spacing:-.025em;color:inherit;border-bottom-width:.2rem;padding:.9rem 1rem}.form-tab .nav.nav-pills .nav-link.active{color:inherit}.form-tab .nav-fill .nav-item{flex:1 1 0}.form-tab .tab-content .tab-pane{padding:2rem 0 0}.form-tab .form-group{margin-bottom:1.3rem}.form-tab .form-footer{padding-top:.6rem;padding-bottom:3rem;border-bottom:thin solid #ebebeb;margin-bottom:2.3rem}[dir=ltr] .form-tab .form-footer .btn{margin-right:1.6rem}[dir=rtl] .form-tab .form-footer .btn{margin-left:1.6rem}.form-tab .form-footer a{color:inherit}.form-tab .form-footer a:focus,.form-tab .form-footer a:hover{color:var(--primary)}.form-tab .form-footer a:not(.forgot-link){text-decoration:underline}.form-tab .form-footer .custom-control{margin:0}@media (min-width:768px){[dir=ltr] .form-tab .form-footer .forgot-link{margin-left:auto}[dir=rtl] .form-tab .form-footer .forgot-link{margin-right:auto}}.form-choice{font-weight:400;font-size:1.6rem;line-height:1.5;letter-spacing:-.025em}.form-choice p{margin-bottom:2.7rem}.btn.btn-login{font-weight:300;font-size:1.4rem;line-height:1.5;display:flex;display:-ms-flexbox;align-items:center;-ms-flex-align:center;justify-content:center;-ms-flex-pack:center;justify-content:center;padding:.85rem 1rem;border:thin solid #ebebeb;min-width:0}.btn.btn-login i{text-align:initial;display:inline-block;margin-right:0!important;margin-left:0!important;min-width:2rem}.btn.btn-login.btn-g i{color:#c33;min-width:2.6rem}.btn.btn-login.btn-f i{color:#36c}.btn.btn-login:focus,.btn.btn-login:hover{background-color:#f5f6f9}
+{%-endstyle-%}

@@ -1,0 +1,77 @@
+{%- unless style_btn -%}{%-assign style_btn = ''-%}{%- endunless -%}
+{%- unless class_form -%}{%-assign class_form = ''-%}{%- endunless -%}
+{%- unless text_btn -%}{%-assign text_btn = 'general.newsletter_form.submit_html'|t | append: '<i class="fkt-long-arrow-right"></i>' -%}{%- endunless -%}
+{%- if settings.use_omnisend and settings.omnisend_api != "" -%}
+<form id="omnisend-subscribe-form{{section.id|default: 'kiti'}}" class="{{class_form}} omnisend-subscribe-form" action="/subscribe" method="POST">  
+  <div class="input-group">
+    <label class="d-none" for="k_id_email">{{settings.popup_newsletter_title|strip_html}}</label>
+    <input  type="email"class="form-control omnisend-subscribe-input-email" value="{% if customer %}{{ customer.email }}{% endif %}" name="email" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}" required/>
+    <div class="input-group-append"><button class="btn {{style_btn}}" type="submit">{{text_btn}}</button></div>
+  </div>
+</form>
+{%- elsif settings.use_klaviyo and settings.klaviyo_list_id != "" -%}
+<div class="klaviyo_messages">
+  <div class="success_message" style="color: rgb(53, 114, 210);display:none;">
+    {%- assign nll_with_coupon = '<span class="code">' | append: settings.popup_newsletter_coupon_code | append: '</span>' -%}
+    {{'general.newsletter_form.success_mesenger_html'| t | replace: '<span class="code"></span>', nll_with_coupon}}
+  </div>
+  <div class="error_message" style="color: #ff8282;display:none;"></div>
+</div>
+<form id="klaviyo-subscribe-form{{section.id|default: 'kiti'}}" class="{{class_form}} klaviyo-subscribe-form" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" novalidate="novalidate">
+  <input type="hidden" name="g" value="{{settings.klaviyo_list_id}}">
+  <div class="input-group">
+    <input  type="email"class="form-control" value="{% if customer %}{{ customer.email }}{% endif %}" name="email" id="k_id_email" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}" required/>
+    <div class="input-group-append klaviyo_form_actions"><button class="btn {{style_btn}} klaviyo_submit_button" type="submit">{{text_btn}}</button></div>
+  </div>
+</form>
+{%- elsif settings.use_mailchimp and settings.newsletter_mailchimp_url != "" -%}
+<form method="POST" action="{{ settings.newsletter_mailchimp_url | default: '#' }}" id="mc-embedded-subscribe-form-{{section.id|default: 'kiti'}}" class="{{class_form}}" name="mc-embedded-subscribe-form{{section.id|default: 'kiti'}}" data-kt="{{settings.popup_newsletter_coupon_code}}">
+  <div class="input-group">
+    <label class="sr-only" for="mce-EMAIL{{section.id|default: 'kiti'}}">{{ 'general.newsletter_form.email_placeholder' | t }}</label>
+    <input type="email" name="EMAIL" id="mce-EMAIL{{section.id|default: 'kiti'}}" class="form-control" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}" required>
+    <div class="input-group-append">
+      <button class="btn {{style_btn}}" name="subscribe" id="mc-embedded-subscribe-{{section.id|default: 'kiti'}}" type="submit" data-value="{{text_btn|strip_html}}">{{text_btn}}</button>
+    </div>
+  </div>
+</form>
+{%- else -%}
+  {%- capture id_form -%}{{ section.id | default: 'kiti' }}{%- endcapture -%}
+  {%-form 'customer', class: class_form, id: id_form-%}
+  {{ form.errors | default_errors }}
+  {%-if form.posted_successfully?-%}
+  <p class="form--success">{{ 'general.newsletter_form.confirmation' | t }}</p>
+  {%-else-%}
+  {%- if form.errors -%}
+  <ul class="form-message form-message--error">
+    {%- for error in error_order -%}
+      {%- for field in form.errors -%}
+        {%- if error == field -%}
+          <li>
+            {%- capture field_label -%}
+              {%- case field -%}
+                {%- when 'author' -%}
+                  {{ 'contact.form.name' | t }}
+                {%- when 'body' -%}
+                  {{ 'contact.form.message' | t }}
+                {%- else -%}
+                  {{ form.errors.translated_fields[field] }}
+              {%- endcase -%}
+            {%- endcapture -%}
+            {%- comment -%} the href should match the input's id {%- endcomment -%}
+            <a href="#{{ form_id }}-{{ field }}" class="form-message__link">{{ field_label | strip | capitalize }} {{ form.errors.messages[field] }}</a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  </ul>
+  {%- endif -%}
+  <div class="input-group">
+    <input type="hidden" name="contact[tags]" value="newsletter">
+    <input type="email" name="contact[email]" class="form-control" value="{%-if customer-%}{{ customer.email }}{%-endif-%}" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}" required>
+    <div class="input-group-append">
+      <button class="btn {{style_btn}}" name="subscribe" id="subscribe{{section.id|default: 'kiti'}}" type="submit" data-value="{{text_btn|strip_html}}">{{text_btn}}</button>
+    </div>
+  </div>
+  {%-endif-%}
+  {%-endform-%}
+{%- endif -%}

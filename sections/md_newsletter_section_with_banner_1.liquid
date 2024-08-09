@@ -1,0 +1,503 @@
+<!-- md_newsletter_section_with_banner_1.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- if section.blocks.size > 0 -%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+    	<div class="row no-gutters">
+    		{%- for block in section.blocks -%}
+    		{%- if block.type == "item_banner" -%}
+    		<div class="col-12 col-lg-6 item_banner">
+          <div class="position-relative {{block.settings.banner-effect}}">
+            {%- unless block.settings.titlex == blank and block.settings.name_btn == blank -%}  
+            <div class="text-content position-absolute wait-for-css">
+              <h4 class="banner-subtitle">{{block.settings.stitle}}</h4>
+              <h3 class="banner-title">{{block.settings.titlex}}</h3>
+              <a href="{{block.settings.image_link|default:'#'}}" class="btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%}" aria-label="{{block.settings.name_btn| strip_html}}">{{block.settings.name_btn}}</a>
+            </div>
+            {%- assign use_css = true -%}
+            {%- endunless -%}
+            {%- assign image_item = block.settings.image -%}
+            {%-assign width = image_item.width | default: 580.00 -%}{%-assign height = image_item.height | default: 605.00 | plus: 0.00-%}
+            <a href="{{block.settings.image_link|default:'#'}}" class="img__banner lazyload" style="padding-bottom: {{height|divided_by: width | times: 100.00000000}}%;" data-bgset="{%- render 'bgset', image: image_item -%}" data-sizes="auto" aria-label="{{shop.name | escape}}"{% unless block.settings.image %} title="580x605 px"{% endunless %}></a>
+          </div>
+    		</div>
+    		{%- else -%}
+    		<div class="col-12 col-lg-6 mt-2 mt-lg-0">
+    			<div class="cta-content wait-for-css wait-inline">
+            <h3 class="cta-title{%if section.settings.dark_mode%} text-white{%endif%}">{{block.settings.title|html}}</h3>
+            <p class="cta-desc mb-2i{%if section.settings.dark_mode%} text-light{%endif%}">{{block.settings.description|html}}</p>
+            {%- capture bt_style -%}btn {{block.settings.style_btn}} {{block.settings.style_btn_rounded}}{%if block.settings.btn_shadow%} btn-shadow{%endif%} text-uppercase{%- endcapture -%}
+            {%- capture text_btn_ -%}{{block.settings.name_btn}}{%- endcapture -%}
+            {% render 'kt_newsletter_form', section: section, class_form: 'newletter', style_btn: bt_style, text_btn: text_btn_ %}
+    			</div>
+    		</div>
+    		{%- endif -%}
+    		{%- endfor -%}
+    	</div>
+    </div>
+	</div>
+</div>
+{%- if use_css -%}
+{%-capture banner-css-%}
+<noscript class="banner-css" data-section-type="md_newsletter_section_with_banner_1">
+  {%style%}
+    .md_newsletter_section_with_banner_1 a.img__banner {
+      z-index: 0;
+    }
+    .md_newsletter_section_with_banner_1 .banner-subtitle {
+      color: #fff;
+      font-weight: 400;
+      font-size: 1.3rem;
+      letter-spacing: 0;
+      margin-bottom: 1.3rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .md_newsletter_section_with_banner_1 .banner-title {
+      color: #fff;
+      font-weight: 600;
+      font-size: 2.4rem;
+      line-height: 1.13;
+      margin-bottom: 2.6rem;
+      letter-spacing: -.025em;
+      text-transform: uppercase;
+    }
+    .md_newsletter_section_with_banner_1 .text-content {
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      text-align: center;
+      width: 100%;
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+    .md_newsletter_section_with_banner_1 .cta-content{
+      width: 100%;
+	    height: 100%;
+      padding: 6rem 1rem;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    flex-direction: column;
+	    text-align: center;
+	    background-color: #fafafa;
+    }
+    .md_newsletter_section_with_banner_1 .cta-title{
+      font-weight: 600;
+      font-size: 1.5rem;
+      letter-spacing: .05em;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+    .md_newsletter_section_with_banner_1 .cta-desc{
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 300;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      color: #777;
+    }
+    .md_newsletter_section_with_banner_1 .input-group>.form-control{
+	    width: 100%;
+	    text-align: center;
+	    background-color: transparent;
+    }
+    .md_newsletter_section_with_banner_1 .input-group-append{
+    	margin: 2rem auto 0;
+    }
+  {%endstyle%}
+</noscript>
+{%-endcapture-%}
+{{ banner-css | strip_newlines | remove: '  ' | remove: '  ' }}
+{%- endif -%}
+{%-endunless-%}
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Newsletter with banner",
+    "class": "md_newsletter_section_with_banner_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Newsletter with banner",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      }
+    ],
+  	"blocks": [
+      {
+        "type": "item_banner",
+        "name": "Item banner",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "select",
+            "id": "banner-effect",
+            "options": [
+              {
+                "value": "banner-effect1",
+                "label": "Banner Effect 1"
+              },
+              {
+                "value": "banner-effect2",
+                "label": "Banner Effect 2"
+              },
+              {
+                "value": "banner-effect3",
+                "label": "Banner Effect 3"
+              },
+              {
+                "value": "banner-effect4",
+                "label": "Banner Effect 4"
+              },
+              {
+                "value": "banner-effect5",
+                "label": "Banner Effect 5"
+              },
+              {
+                "value": "banner-effect6",
+                "label": "Banner Effect 6"
+              }
+            ],
+            "label": "Banner hover effect",
+            "default": "banner-effect1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image banner",
+            "info": "Size suggestion: 280 x 546 pixels"
+          },
+          {
+            "type": "url",
+            "id": "image_link",
+            "label": "Link to"
+          },
+          {
+            "type":"textarea",
+            "id":"stitle",
+            "label": "Sub title",
+            "default":"Limited time only."
+          },
+          {
+            "type":"textarea",
+            "id":"titlex",
+            "label": "Title",
+            "default":"End of Season<br>Up to 50% off"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"SHOP NOW <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-outline-white",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Default"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      },
+      {
+        "type": "item_newsletter",
+        "name": "Item newsletter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title",
+            "default": "Subscribe To Our Newsletter"
+          },
+          {
+            "type": "html",
+            "id": "description",
+            "label": "Description",
+            "default": "Sign up now for 10% discount on first order.<br>Customise my news:"
+          },
+          {
+            "type":"text",
+            "id":"name_btn",
+            "label": "Name button",
+            "default":"Subscribe <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "select",
+            "id": "style_btn",
+            "label": "Button style",
+            "default": "btn-outline-dark",
+            "options": [
+              {
+                "value": "btn-primary",
+                "label": "Default"
+              },
+              {
+                "value": "btn-outline-primary-2",
+                "label": "Border"
+              },
+              {
+                "value": "btn-outline-gray",
+                "label": "Border gray"
+              },
+              {
+                "value": "btn-outline-dark",
+                "label": "Border dark"
+              },
+              {
+                "value": "btn-outline-white",
+                "label": "Border white"
+              },
+              {
+                "value": "btn-outline-white-2",
+                "label": "Border white 2"
+              },
+              {
+                "value": "btn-outline-white-3",
+                "label": "Border white 3"
+              },
+              {
+                "value": "btn-outline-white-4",
+                "label": "Border white 4"
+              },
+              {
+                "value": "btn-link",
+                "label": "Simple Button"
+              },
+              {
+                "value": "btn-link btn-link-dark",
+                "label": "Simple Button dark"
+              },
+              {
+                "value": "btn-underline",
+                "label": "Underline Button"
+              },
+              {
+                "value": "btn-underline btn-underline-dark",
+                "label": "Underline Button dark"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "style_btn_rounded",
+            "label": "Button style radius",
+            "options": [
+              {
+                "value": "",
+                "label": "Square"
+              },
+              {
+                "value": "btn-rounded",
+                "label": "Rounded Corners"
+              },
+              {
+                "value": "btn-round",
+                "label": "Rounded"
+              }
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Use shadow for button?"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Newsletter with banner",
+        "category": "04. Section",
+        "blocks": [
+          {
+            "type": "item_banner"
+          },
+          {
+            "type": "item_newsletter"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

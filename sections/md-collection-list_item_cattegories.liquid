@@ -1,0 +1,324 @@
+<!-- md-collection-list_item_cattegories.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%-unless section.blocks.size == 0 or section.settings.off_section-%}
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%-assign typeBlocks = section.blocks | map: 'type'-%}
+{%-render 'sc_css'-%}
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}" data-clone-section="md-collection-list_item_cattegories.liquid">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">      
+    <div class="section-width {{width_content_}}">
+      {%- assign blocksSize = section.blocks.size -%}
+      {%- if typeBlocks contains 'item_title' -%}
+        {%- assign blocksSize = blocksSize | minus: 1 -%}
+      {%- endif -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'item_title' -%}
+        <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%} mb-4">
+          <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12{%endif%}">
+            <div class="section-title {{block.settings.title_align}} w-100">                
+              {%- if block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endif -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+              {%- unless block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- if block.settings.name_link != blank -%}
+          <div class="col-auto">
+            {%- if block.settings.link_to != blank -%}              
+              <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+            {%- else -%}
+              <p class="sub-title">{{block.settings.name_link}}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      {%- endfor -%}
+      <div class="d-flex justify-content-center">
+        <div class="overflow-scroll-wrapper w-100">
+          <ul class="box-tabs row flex-sm-row mb-0 list-unstyled">
+            {%- assign itemIdx = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'item' -%}
+              {%- if block.settings.image_1 or block.settings.image_2 -%}
+              <li class="col-6{% if settings.coll_sidebar_layout == '' %}{%if section.settings.width_content == false and section.settings.width_section != 'container'%} col-xs-4{%endif%}{%else%}{%if settings.coll_width_content == false and settings.coll_width_section != 'container'%} col-xs-4{%endif%}{%endif%}">
+                <div class="row align-items-end h-100">
+                  {%- if block.settings.image_1 -%}
+                  <div class="col-12 col-sm-6">
+                    <div class="item-card_list">
+                      <a href="{{block.settings.link_1|default: '#'}}" class="cat-block">
+                        <figure>
+                          <span>
+                            <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image_1|img_url: 'large'}}" alt="{{block.settings.image_1.alt}}">
+                          </span>
+                        </figure>
+                        <h3 class="cat-block-title">{{block.settings.title_1}}</h3>
+                      </a>
+                    </div>
+                  </div>
+                  {%- endif -%}
+                  {%- if block.settings.image_2 -%}
+                  <div class="col-12 col-sm-6">
+                    <div class="item-card_list">
+                      <a href="{{block.settings.link_2|default: '#'}}" class="cat-block">
+                        <figure>
+                          <span>
+                            <img class="lazyload" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{block.settings.image_2|img_url: 'large'}}" alt="{{block.settings.image_2.alt}}">
+                          </span>
+                        </figure>
+                        <h3 class="cat-block-title">{{block.settings.title_2}}</h3>
+                      </a>
+                    </div>
+                  </div>
+                  {%- endif -%}
+                </div>
+              </li>
+              {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless-%}
+{%- endunless-%}
+
+{% schema %}
+  {
+    "name": "List categories",
+    "class": "md_list_item_categories_1",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "List categories",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_section",
+        "label": "Turn off section?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "w-100"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "range",
+        "id": "parallax_speed",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Parallax speed",
+        "default": 0.2
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item title section",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "textarea",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          }
+        ]
+      },
+      {
+        "type": "item",
+        "name": "Item category",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Item 1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image"
+          },
+          {
+            "type": "url",
+            "id": "link_1",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title"
+          },
+          {
+            "type": "header",
+            "content": "Item 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image"
+          },
+          {
+            "type": "url",
+            "id": "link_2",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,147 @@
+{%- liquid
+  if section.settings.header_top_onm
+    assign visible = 'd-none d-md-block'
+  endif
+  if section.settings.header_top_ont
+    assign visible = ' d-md-none d-lg-block'
+  endif
+  assign m_t = section.settings.header_top_margin_top
+  assign m_b = section.settings.header_top_margin_bottom
+  assign p = section.settings.header_top_padding
+  unless section.settings.sticky_header_top
+    assign visible_tophead = 'not-sticky'
+  endunless
+  if template.name == 'product' and settings.show_sticky_add and settings.use_add_to_cart_btn
+    assign visible_tophead = 'not-sticky'
+  endif
+-%}
+<div class="header-top style-{{section.settings.import_header | default: settings.import_header}} {{visible}} {{visible_tophead}}{%if section.settings.header_top_image%} bg-image lazyload{%endif%}"{%if section.settings.header_top_image%} data-bgset="{{section.settings.header_top_image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.header-top','mt':'{{m_t}}','mb':'{{m_b}}','p':'{{p}}'}">
+  <div class="{{section.settings.width_header_top}}">
+    <div class="kt--drop-w kt--drop-w-d">
+      <div class="header-top-wrapper row align-items-center justify-content-between">
+      {%- assign firstTop = '' -%}
+      {%- assign firstTopCount = 0 -%}
+      {%- assign topHeader = section.blocks | where: 'type', 'top_menu' -%}
+      {%- for block in topHeader -%}
+        {%- if block.settings.col != 'auto' -%}
+          {%- assign col_responsive = block.settings.col | split: '|' -%}
+          {% capture col_resp %}col-{{ col_responsive[0] }} col-sm-{{ col_responsive[1] }} col-md-{{ col_responsive[2] }} col-lg-{{ col_responsive[3] }} col-xl-{{ col_responsive[4] }}{% endcapture %}
+        {%- endif -%}
+        <div class="block-info{%if forloop.first%} _first{%elsif forloop.last%} _last{%endif%} {{col_resp|default : 'col-auto'}}">
+          {%- assign drop_mobile_items = 0 -%}
+          {%- capture drop_mobile -%}
+          {%- if block.settings.call_us_show -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-phone">
+            <span class="infor">
+              <a class="fkt-phone-square" href="tel:{{settings.phone_contact|default: shop.address.phone| remove: ' '}}">
+                <span class="label">{{'contact.orther.call_us'|t}}{{settings.phone_contact|default: shop.phone}}</span>
+              </a>
+            </span>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.email_show -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-email">
+            <span class="infor">
+              <a class="fkt-envelope" href="mailto:{{settings.email_contact|default: shop.address.email}}">
+                <span class="label">{{'contact.orther.email'|t}}{{settings.email_contact|default: shop.email}}</span>
+              </a>
+            </span>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.social_contact_show -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-socails">
+            <div class="infor socials_">
+              {%-render "kt_socials"-%}
+            </div>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.wishlist_show and settings.use_wishlist != '' -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          {%- assign wishlist_page = pages['wishlist-local'] -%}
+          {%- if settings.use_wishlist == 'nitro' -%}
+            {%- assign wishlist_page = pages['wishlist'] -%}
+          {%- endif -%}
+          <div class="list-wishlist">
+            <div class="infor"><a class="fkt-heart-o" href="{{wishlist_page.url}}"><span class="label">{{'products.wishlist.title'|t}}</span> (<span class="wishlistCount wishlist-count" style="background-color: transparent;">0</span>)</a></div>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.compare_show and settings.use_compare -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-compare">
+            <div class="infor"><a class="fkt-random" href="javascript:void(0)" onclick="KT.showModalCompare()"><span class="label">{{'products.compare.title'|t}}</span> (<span class="compareCount">0</span>)</a></div>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.link_inline_show and linklists[block.settings.link_inline].links.size > 0 -%}                
+          {%-for link in linklists[block.settings.link_inline].links-%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-link">
+            <a href="{{link.url}}" title="{{link.title}}">{{ link.title }}</a>
+          </div>
+          {%-endfor-%}
+          {%- endif -%}
+          {%- if block.settings.link_dropdown_show and linklists[block.settings.link_dropdown].links.size > 0 -%}                
+          {%-for link in linklists[block.settings.link_dropdown].links-%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-link-drop">
+            <a href="{{link.url}}" title="{{link.title}}">{{ link.title }}</a>
+          </div>
+          {%-endfor-%}
+          {%- endif -%}
+          {%- if block.settings.account_show and shop.customer_accounts_enabled -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-link-account">
+            <span class="infor">
+              {%- if customer -%}
+              <a class="fkt-user" href="{{routes.account_url}}"><span>{{"layout.customer.account"|t}}</span></a>
+              {%- else -%}
+              <a class="fkt-user" href="{{routes.account_register_url}}"><span class="special">Registrarme</span></a>
+              {%- endif -%}
+            </span>
+          </div>
+          {%- endif -%}
+          {%- if block.settings.account_dropdown_show and shop.customer_accounts_enabled -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+ {% comment %}          <div class="list-account">
+            <div class="block-account kt--drop-i">
+              {%- render 'kt_account_widget', layout: 2 -%}
+            </div>
+          </div> {% endcomment %}
+          {%- endif -%}
+          {%- if block.settings.currency_dropdown_show and settings.show_multiple_currencies -%}
+          {%- assign drop_mobile_items = drop_mobile_items | plus: 1 -%}
+          <div class="list-currency">
+            <div class="block-currency kt--drop-i">
+              {%- render 'kt_currency_widget', layout: 2 -%}
+            </div>
+          </div>
+          {%- endif -%}
+          {%- endcapture -%}
+          {%- if drop_mobile_items > 2 -%}
+          <div class="list-link drop-mobile">
+            <span class="label-drop fkt-angle-down_ d-lg-none">Links </span>
+            <div class="list row align-items-center">
+              {{drop_mobile}}
+            </div>
+          </div>
+          {%- else -%}
+            {{drop_mobile}}
+          {%- endif -%}
+          {%- if block.settings.language_app_show -%}
+          <div class="list-language_app">
+            {{block.settings.language_app_html|html}}
+          </div>
+          {%- endif -%}
+          {%- if block.settings.custom_show -%}
+          <div class="list-custom">
+            {{block.settings.custom_html|html}}
+          </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>

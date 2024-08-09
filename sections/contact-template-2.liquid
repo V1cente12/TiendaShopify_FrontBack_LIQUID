@@ -1,0 +1,543 @@
+<!-- contact-template-2.liquid -->
+{{page.content}}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'item_map' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="about-testimonials {{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_map">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        {{block.settings.iframe|html}}            
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_contact_boxs' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_contact_boxs">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="contact-box text-center">
+              {%- if block.settings.title_1 != blank -%}
+              <h3>{{block.settings.title_1}}</h3>
+              <address>{{block.settings.address_1}}</address>
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-box text-center">
+              {%- if block.settings.title_2 != blank -%}
+              <h3>{{block.settings.title_2}}</h3>
+              {%- if block.settings.email_2 != blank -%}
+              <div><a href="mailto:{{block.settings.email_2}}">{{block.settings.email_2}}</a></div>
+              {%- endif -%}
+              <div>
+              {%- if block.settings.phone_2_1 != blank -%}
+                <a href="tel:{{block.settings.phone_2_1}}">{{block.settings.phone_2_1}}</a>
+              {%- endif -%}
+              {%- if block.settings.phone_2_2 != blank -%}
+                , <a href="tel:{{block.settings.phone_2_2}}">{{block.settings.phone_2_2}}</a>
+              {%- endif -%}
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="contact-box text-center">
+              {%- if block.settings.title_3 != blank -%}
+              <h3>{{block.settings.title_3}}</h3>
+              <div class="socials_ style-01 socials_color justify-content-center">
+                {%-render "kt_socials"-%}
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+        <hr class="mt-1 mb-5">
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- elsif block.type == 'item_contact_form' -%}
+  {%-unless block.settings.off_block-%}
+
+  {%- assign width_section = block.settings.width_section -%}
+  {%- assign width_content = block.settings.width_content -%}
+  {%- capture width_section_ -%}{%-if width_section == 'container-fluid wide' and width_content == false -%}w-100{%-else-%}{{width_section}}{%-endif-%}{%- endcapture -%}
+  {%- capture width_content_ -%}{%-if width_content and width_section == 'w-100'-%}container{%-elsif width_section == 'container-fluid wide' and width_content == false -%}container-fluid wide{%-else-%}w-100{%-endif-%}
+  {%- endcapture -%}
+  {%-render 'sc_css', sc: block -%}
+  <div class="{{width_section_}}{%if block.settings.off_mobile%} d-none d-lg-block{%endif%}{%if block.settings.off_desktop%} d-lg-none{%endif%}" data-block="item_contact_form">
+    <div class="content_{{block.id}}" data-respon="{'el':'.content_{{block.id}}','mt':'{{block.settings.section_margin_top}}','mb':'{{block.settings.section_margin_bottom}}','p':'{{block.settings.section_padding}}'}">
+      <div class="section-width {{width_content_}}">
+        <div class="row justify-content-center text-center">
+          <div class="col-md-9 col-lg-7">
+            <h2 class="title mb-1">{{block.settings.title_2}}</h2>
+            <p class="mb-2">{{block.settings.html_desciption_2}}</p>
+              {%- assign formId = 'ContactForm' -%}
+              {%- form 'contact', class: 'contact-form mb-3' -%}
+              {% render 'form-status', form: form, form_id: formId %}
+              <div class="row">
+                <div class="col-6 col-md-4">
+                  <label for="cname" class="sr-only">{{ 'contact.form.name' | t }} </label>
+                  <input type="text" class="form-control" id="cname" name="contact[name]" value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'contact.form.name' | t }} *" required="">
+                </div>
+
+                <div class="col-6 col-md-4">
+                  <label for="cemail" class="sr-only">{{ 'contact.form.email' | t }} </label>
+                  <input type="email" class="form-control" id="cemail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }} *" required="">
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="cphone" class="sr-only">{{ 'contact.form.phone' | t }}</label>
+                  <input type="tel" class="form-control" id="cphone" name="contact[phone]" placeholder="{{ 'contact.form.phone' | t }}">
+                </div>
+              </div>
+              <label for="cmessage" class="sr-only">{{ 'contact.form.message' | t }}</label>
+              <textarea class="form-control" cols="30" rows="4" id="cmessage" name="contact[body]" required="" placeholder="{{ 'contact.form.message' | t }} *"></textarea>
+
+              <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
+                <span>{{ 'contact.form.submit' | t }}</span>
+                <i class="fkt-long-arrow-right"></i>
+              </button>
+            {%- endform -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%-endunless-%}
+  {%- endif -%}
+{%- endfor -%}
+<style>
+  [data-block="item_map"] iframe{
+    display: block;
+    width: 100% !important;
+    height: 280px !important;
+  }
+
+  @media (min-width: 768px) {
+    [data-block="item_map"] iframe{
+      height: 380px !important;
+    }
+  }
+  @media (min-width: 992px) {
+    [data-block="item_map"] iframe{
+      height: 492px !important;
+    }
+  }
+
+  .contact-info h3 {
+    margin-top: 0.5rem;
+    font-weight: 400;
+    font-size: 1.8rem;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-list {
+    max-width: 270px;
+    list-style: none;
+    padding-left: 0;
+  }
+  .contact-list li {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.4rem;
+  }
+  .contact-list a {
+    color: inherit;
+  }
+  .contact-list a:hover,
+  .contact-list a:focus {
+    color: {{settings.color_primary}};
+  }
+  .contact-list i {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    font-size: 2rem;
+    line-height: 1;
+    color: {{settings.color_primary}};
+  }
+
+  .contact-box {
+    margin-bottom: 3rem;
+  }
+  .contact-box h3 {
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.6rem;
+  }
+  .contact-box address,
+  .contact-box div {
+    font-weight: 300;
+    font-style: normal;
+  }
+  .contact-box a {
+    color: inherit;
+  }
+  .contact-box a:hover,
+  .contact-box a:focus {
+    color: {{settings.color_primary}};
+  }
+  .contact-box .social-icons {
+    padding-top: 1.5rem;
+  }
+  .contact-box .social-icon {
+    font-size: 1.3rem;
+  }
+</style>
+{%schema%}
+  {
+    "name": "Contact page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content settings"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_map",
+        "name": "Item Map",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "w-100"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "html",
+            "id": "iframe",
+            "label": "Map iframe",
+            "default": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d24157.401117843983!2d-73.966489!3d40.813132!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x577933f947e52750!2zxJDhuqFpIGjhu41jIENvbHVtYmlh!5e0!3m2!1svi!2sus!4v1565752574420!5m2!1svi!2sus\" width=\"100%\" height=\"450\" frameborder=\"0\" style=\"border:0\" allowfullscreen><\/iframe>"
+          }
+        ]
+      },
+      {
+        "type": "item_contact_boxs",
+        "name": "Item Contact boxs",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 1"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Title",
+            "default": "Office"
+          },
+          {
+            "type": "text",
+            "id": "address_1",
+            "label": "Address",
+            "default": "1 New York Plaza, New York, <br>NY 10004, USA"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 2"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Start a Conversation"
+          },
+          {
+            "type": "text",
+            "id": "email_2",
+            "label": "Email",
+            "default": "info@midas.com"
+          },
+          {
+            "type": "text",
+            "id": "phone_2_1",
+            "label": "Phone 1",
+            "default": "+1 987-876-6543"
+          },
+          {
+            "type": "text",
+            "id": "phone_2_2",
+            "label": "Phone 2",
+            "default": "+1 987-976-1234"
+          },
+          {
+            "type": "paragraph",
+            "content": "==== Box text 3"
+          },
+          {
+            "type": "text",
+            "id": "title_3",
+            "label": "Title",
+            "default": "Social"
+          }
+        ]
+      },
+      {
+        "type": "item_contact_form",
+        "name": "Item Form&Q",
+        "settings": [
+          {
+            "type":"checkbox",
+            "id": "off_block",
+            "label": "Turn off block?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_mobile",
+            "label": "Turn off on mobile?"
+          },
+          {
+            "type":"checkbox",
+            "id": "off_desktop",
+            "label": "Turn off on desktop?"
+          },
+          {
+            "type": "header",
+            "content": "Space settings"
+          },
+          {
+            "type": "radio",
+            "id": "width_section",
+            "label": "Max width section?",
+            "options": [
+              { "value": "container", "label": "1200px" },
+              { "value": "container-fluid wide", "label": "Wide" },
+              { "value": "w-100", "label": "Full width" }
+            ],
+            "default": "container"
+          },
+          {
+            "type":"checkbox",
+            "id": "width_content",
+            "label": "Max width content?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "section_margin_top",
+            "label": "Margin top",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_margin_bottom",
+            "label": "Margin bottom",
+            "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+          },
+          {
+            "type": "text",
+            "id": "section_padding",
+            "label": "Paddings (top right bottom left)",
+            "info": "6rem 6rem 0 6rem"
+          },
+          {
+            "type": "header",
+            "content": "Background settings"
+          },
+          {
+            "type": "color",
+            "id": "section_bg",
+            "label": "Background color"
+          },
+          {
+            "type": "range",
+            "id": "section_bg_op",
+            "min": 0,
+            "max": 1,
+            "step": 0.1,
+            "label": "Opacity background color",
+            "default": 1
+          },
+          {
+            "type": "header",
+            "content": "Content settings"
+          },
+          {
+            "type": "paragraph",
+            "content": "======================== Box Questions"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Title",
+            "default": "Get In Touch"
+          },
+          {
+            "type": "html",
+            "id": "html_desciption_2",
+            "label": "Text desciption",
+            "default": "<p class=\"lead text-primary\">We collaborate with ambitious brands and people; <br>we’d love to build something great together.<\/p><p class=\"mb-3\">Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui, eu pulvinar nunc sapien ornare nisl. Phasellus pede arcu, dapibus eu, fermentum et, dapibus sed, urna.<\/p>"
+          }
+        ]
+      }
+    ]
+  }
+{%endschema%}

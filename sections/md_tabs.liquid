@@ -1,0 +1,347 @@
+<!-- md_tabs.liquid -->
+{%- liquid
+  assign width_section = section.settings.width_section
+  assign width_content = section.settings.width_content
+  capture width_section_
+    if width_section == 'container-fluid wide' and width_content == false
+      echo 'w-100'
+    else
+      echo width_section
+    endif
+  endcapture
+  capture width_content_
+    if width_content and width_section == 'w-100'
+      echo 'container'
+    elsif width_section == 'container-fluid wide' and width_content == false
+      echo 'container-fluid wide'
+    else
+      echo 'w-100'
+    endif
+  endcapture
+  assign dir_body = settings.dir_body
+  assign cssAlign = 'left'
+  assign cssAlign_rev = 'right'
+  if dir_body == 'rtl'
+    assign cssAlign = 'right'
+    assign cssAlign_rev = 'left'
+  endif
+-%}
+
+{%- unless cart.attributes.theme_mobile == 'true' and section.settings.off_mobile or cart.attributes.theme_mobile == 'false' and section.settings.off_desktop -%}
+{%- assign mapType = section.blocks | map: 'type' -%}
+{%-render 'sc_css' -%}
+
+<div class="{{width_section_}}{%if section.settings.off_mobile%} d-none d-lg-block{%endif%}{%if section.settings.off_desktop%} d-lg-none{%endif%}">
+  <div class="content_{{section.id}}{%if section.settings.image%} bg-image lazyload{%endif%}"{%if section.settings.image%} data-bgset="{{section.settings.image | img_url: 'master'}}" data-sizes="auto" data-parent-fit="contain"{%endif%} data-respon="{'el':'.content_{{section.id}}','mt':'{{section.settings.section_margin_top}}','mb':'{{section.settings.section_margin_bottom}}','p':'{{section.settings.section_padding}}'}">
+    <div class="section-width {{width_content_}}">
+      {%- assign block = section.blocks | where: 'type', 'item_title' | first -%}
+      {%- if block -%}
+        <div class="heading row no-gutters align-items-center justify-content{%if block.settings.name_link != blank%}-center justify-content-lg-between{%else%}-center{%endif%}">
+          <div class="col-{%if block.settings.name_link != blank%}auto{%else%}12 {{block.settings.title_align}}{%endif%}">
+            <div class="section-title w-100">                
+              {%- if block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endif -%}
+              <h3 class="title">{{block.settings.title_section}}</h3>
+              {%- unless block.settings.reverse -%}
+              <p class="sub-title">{{block.settings.stitle_section}}</p>
+              {%- endunless -%}
+            </div>
+          </div>
+          {%- if block.settings.name_link != blank -%}
+          <div class="col-auto">
+            {%- if block.settings.link_to != blank -%}              
+              <a href="{{block.settings.link_to}}" class="title-link {{block.settings.style_link}}" >{{block.settings.name_link}}</a>
+            {%- else -%}
+              <p class="sub-title">{{block.settings.name_link}}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      <div class="row justify-content-center">
+        <div class="col-12{%if mapType contains 'item_2'%} col-lg-6{%endif%}">
+          <div class="w-100{%if section.settings.nav_vertical%} tabs-vertical{%endif%}">              
+            <ul class="nav {{section.settings.nav_style}} {{section.settings.nav_align}}{%if section.settings.nav_vertical%}{%unless section.settings.nav_style contains 'nav-tabs'%} nav-tabs{%endunless%} flex-md-column{%endif%} list-unstyled" id="tabs-{{section.id}}-1" role="tablist">
+            {%- assign count_0 = 0 -%}
+            {%- assign count_1 = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'item_1' -%}
+              <li class="nav-item">
+                <a class="nav-link{%if forloop.first or count_0 == 0%} active{%endif%}" id="tab-{{block.id}}-tab" data-toggle="tab" href="#tab-{{block.id}}" role="tab" aria-controls="tab-{{block.id}}"{%if forloop.first%} aria-selected="true"{%endif%}>{{block.settings.title}}</a>
+              </li>
+              {%- assign count_0 = count_0 | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+            </ul>
+            <div class="tab-content{%unless section.settings.nav_style == 'nav-pills'%} tab-content-border{%endunless%}" id="tab-content-{{section.id}}-1">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'item_1' -%}
+              <div class="tab-pane fade{%if forloop.first or count_1 == 0%} active show{%endif%}" id="tab-{{block.id}}" role="tabpanel" aria-labelledby="tab-{{block.id}}-tab">
+                <p>{{block.settings.content}}</p>
+              </div>
+              {%- assign count_1 = count_1 | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+            </div>
+          </div>
+        </div>
+        {%if mapType contains 'item_2'%}
+        <div class="col-12 col-lg-6">
+          <div class="w-100{%if section.settings.nav_vertical%} tabs-vertical{%endif%}">              
+            <ul class="nav {{section.settings.nav_style}} {{section.settings.nav_align}}{%if section.settings.nav_vertical%}{%unless section.settings.nav_style contains 'nav-tabs'%} nav-tabs{%endunless%} flex-md-column{%endif%} list-unstyled" id="tabs-{{section.id}}-2" role="tablist">
+            {%- assign count_2 = 0 -%}
+            {%- assign count_3 = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'item_2' -%}
+              <li class="nav-item">
+                <a class="nav-link{%if forloop.first or count_2 == 0%} active{%endif%}" id="tab-{{block.id}}-tab" data-toggle="tab" href="#tab-{{block.id}}" role="tab" aria-controls="tab-{{block.id}}"{%if forloop.first%} aria-selected="true"{%endif%}>{{block.settings.title}}</a>
+              </li>
+              {%- assign count_2 = count_2 | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+            </ul>
+            <div class="tab-content{%unless section.settings.nav_style == 'nav-pills'%} tab-content-border{%endunless%}" id="tab-content-{{section.id}}-2">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'item_2' -%}
+              <div class="tab-pane fade{%if forloop.first or count_3 == 0%} active show{%endif%}" id="tab-{{block.id}}" role="tabpanel" aria-labelledby="tab-{{block.id}}-tab">
+                <p>{{block.settings.content}}</p>
+              </div>
+              {%- assign count_3 = count_3 | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+            </div>
+          </div>
+        </div>
+        {%endif%}
+      </div>
+    </div>
+  </div>
+</div>
+{%-endunless-%}
+{% schema %}
+  {
+    "name": "Tabs",
+    "class": "md_tabs",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Tabs",
+        "info": "Name section (in editor bar)"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_mobile",
+        "label": "Turn off on mobile?"
+      },
+      {
+        "type":"checkbox",
+        "id": "off_desktop",
+        "label": "Turn off on desktop?"
+      },
+      {
+        "type": "header",
+        "content": "Space settings"
+      },
+      {
+        "type": "select",
+        "id": "width_section",
+        "label": "Max width section",
+        "options": [
+          { "value": "container", "label": "1200px" },
+          { "value": "container-fluid wide", "label": "Wide" },
+          { "value": "w-100", "label": "Full width" }
+        ],
+        "default": "container"
+      },
+      {
+        "type":"checkbox",
+        "id": "width_content",
+        "label": "Max width content?"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_top",
+        "label": "Margin top",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_margin_bottom",
+        "label": "Margin bottom",
+        "info": "2.5rem|3rem|3.5rem|4rem|4.5rem|5rem"
+      },
+      {
+        "type": "text",
+        "id": "section_padding",
+        "label": "Paddings (top right bottom left)",
+        "info": "6rem 6rem 0 6rem"
+      },
+      {
+        "type": "header",
+        "content": "Background settings"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Background color"
+      },
+      {
+        "type": "range",
+        "id": "section_bg_op",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Opacity background color",
+        "default": 1
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background image",
+        "info": "Size suggestion: 1920 x 497 pixels"
+      },
+      {
+        "type": "header",
+        "content": "Content settings"
+      },
+      {
+        "type":"checkbox",
+        "id": "dark_mode",
+        "label": "Dark mode?"
+      },
+      {
+        "type":"checkbox",
+        "id": "nav_vertical",
+        "label": "Nav Vertical?"
+      },
+      {
+        "type": "radio",
+        "id": "nav_style",
+        "label": "Nav style",
+        "options": [
+          {"value": "nav-tabs", "label": "Simple"},
+          {"value": "nav-tabs nav-tabs-bg", "label": "Simple 2"},
+          {"value": "nav-pills", "label": "Pills"}
+        ],
+        "default": "nav-tabs nav-tabs-bg"
+      },
+      {
+        "type": "radio",
+        "id": "nav_align",
+        "label": "Nav align",
+        "options": [
+          {"value": "", "label": "Left"},
+          {"value": "justify-content-center", "label": "Center"}
+        ],
+        "default": ""
+      }
+    ],
+    "blocks": [
+      {
+        "type": "item_title",
+        "name": "Item Title section",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title_section",
+            "label": "Title",
+            "default": "Titles"
+          },
+          {
+            "type": "html",
+            "id": "stitle_section",
+            "label": "Subtitle",
+            "default": "Quisque a lectus."
+          },
+          {
+            "type":"checkbox",
+            "id": "reverse",
+            "label": "Reverse title and subtitle?"
+          },
+          {
+            "type": "select",
+            "id": "title_align",
+            "options": [
+              {
+                "value": "",
+                "label": "Auto"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              }
+            ],
+            "label": "Align title",
+            "default": ""
+          },
+          {
+            "type": "url",
+            "id": "link_to",
+            "label": "Link to"
+          },
+          {
+            "type": "text",
+            "id": "name_link",
+            "label": "Name link",
+            "default": "Click here to view <i class=\"fkt-long-arrow-right\"><\/i>"
+          },
+          {
+            "type": "radio",
+            "id": "style_link",
+            "label": "Style link",
+            "options": [
+              { "value": "", "label": "Default" },
+              { "value": "link-underline", "label": "Underline" }
+            ],
+            "default": ""
+          }
+        ]
+      },
+      {
+        "type": "item_1",
+        "name": "Item 1",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title item",
+            "default": "Tab item"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum."
+          }
+        ]
+      },
+      {
+        "type": "item_2",
+        "name": "Item 2",
+        "settings": [
+          {
+            "type": "html",
+            "id": "title",
+            "label": "Title item",
+            "default": "Tab item"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Tabs",
+        "category": "05. Element"
+      }
+    ]
+  }
+{% endschema %}

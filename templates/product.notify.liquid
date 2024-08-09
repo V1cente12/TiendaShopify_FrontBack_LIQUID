@@ -1,0 +1,24 @@
+{%-layout none-%}
+{%- liquid
+  assign compare_at_price = product.compare_at_price
+  assign price = product.price
+  assign price_varies = product.price_varies
+  assign available = product.selected_or_first_available_variant.available
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign on_sale = false
+  if compare_at_price > price and settings.use_sale_label == true
+    unless product.tags contains 'notsale'
+    assign on_sale = true
+    endunless
+  endif
+  assign sold_out = true
+  assign preOrder = false
+  unless available == false
+    assign sold_out = false
+  endunless
+  if current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue' and current_variant.incoming
+    assign preOrder = true
+  endif
+-%}
+{%- render 'kt_notify-available', sold_out: sold_out -%}

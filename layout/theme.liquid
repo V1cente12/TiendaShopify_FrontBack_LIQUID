@@ -1,0 +1,221 @@
+<!doctype html>
+<script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=YfE9uV"></script>
+{%- assign dir_body = settings.dir_body -%}
+{%- if settings.popup_ageVer and settings.popup_ageVer_coll_list != blank -%}
+  {%- assign coll_list = settings.popup_ageVer_coll_list | split: ', ' -%}
+  {%- if coll_list contains collection.handle -%}
+    {%- assign ageVer = ' ageVerModal"' -%}
+  {%- endif -%}
+{%- elsif settings.popup_ageVer -%}
+  {%- assign ageVer = ' ageVerModal"' -%}
+{%- endif -%}
+<html class="no-js{{ageVer}}" lang="{{shop.locale}}" dir="{{dir_body}}">
+  <head>{% render 'structuredDataV2' %}{% render 'SEO-Master' %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    	<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TQTPXRL');</script>
+<!-- End Google Tag Manager -->
+    
+    <meta name="theme-color" content="{{settings.color_primary}}">
+    {%-render 'meta-tags', dir_body: dir_body-%}
+    {%-if dir_body == 'ltr'-%}
+      {%-assign dir_css = ''-%}
+    {%-else-%}
+      {%-assign dir_css = '-rtl'-%}
+    {%-endif-%}
+    {%- assign map_rtl = 'ar,dv,ha,he,ku,fa,ur,ps,yi' | split: ',' -%}
+    {%- if map_rtl contains shop.locale -%}{%-assign dir_css = '-rtl'-%}{%- endif -%}
+    <link href="{{'style-speed.css' | asset_url}}" rel="stylesheet" type="text/css" media="all">
+    {%- assign style_css = 'style' | append: dir_css | append: '.min.css' -%}
+    {{- style_css | asset_url | stylesheet_tag -}}
+    {%- assign theme_css = 'theme' | append: dir_css | append: '.min.css' -%}
+    {{- theme_css | asset_url | stylesheet_tag -}}
+    {%- if template.name == 'collection' or template.name == 'list-collections' -%}
+      <link href="{{'kt_filters.min.css' | asset_url}}" rel="stylesheet" type="text/css" media="all">
+    {%- endif -%} 
+    {%- if template.name == 'cart' or template.name == 'order' -%}
+      {%- assign cart_css = 'theme.cart' | append: dir_css | append: '.min.css' -%}
+      {{- cart_css | asset_url | stylesheet_tag -}}
+    {%- endif -%}
+    {{- settings.custom_html_head | html -}}
+    {%- assign card_grid_css = 'md_prd_card_grid' | append: dir_css | append: '.min.css' -%}
+    {{- card_grid_css | asset_url | stylesheet_tag -}}
+    <link id="custom-css" href="{{'kiti-var.css' | asset_url}}" rel="stylesheet" type="text/css" media="all">
+    <link href="{{'myStyle.css' | asset_url}}" rel="stylesheet" type="text/css" media="all">
+    {{ content_for_header }}
+    {%-render 'theme_header_js'-%}
+ <!-- Remember to include jQuery :) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+  <!-- Remember to carousel brands :) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1.7.7/glider.min.css"> 	  
+<!-- RYVIU APP :: Settings global -->	
+    <script> var ryviu_global_settings = {{shop.metafields.ryviu.user_settings }};</script>
+<!-- RYVIU APP -->
+     <script src="https://kit.fontawesome.com/7321119022.js" crossorigin="anonymous"></script>
+	 <script src="https://kit.fontawesome.com/c6dd4c1dad.js" crossorigin="anonymous"></script>
+                    {% render 'omg-facebook-chat' %}
+                </head>
+  <body class="template-{{ request.page_type | default: page_title | handle }} {{ page_title | handle }}{%if settings.img_type == 'stretch'%} is-cover{%elsif settings.img_type == 'nonstretch'%} is-contain{%else%} is-default{%endif%}" grid-info="{{settings.pr_grid_talg}}" grid-name-opt="{{settings.qs_use_name_opt}}" grid-ol-first-opt="{{settings.qs_hide_only_1_opt}}" grid-flash="{{settings.label_style}}">
+    
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQTPXRL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    
+    {%- if request.design_mode -%}{%- section 'kt-dear-customers'-%}{%-endif-%}
+    {%- render 'kt_icons_system' -%}
+    <div id="bg-overlay"></div>
+    <div class="content_for_page">
+      {%-render 'header-layout'-%}
+      {%-section 'header-mobile'-%}
+      {%-if template.name != 'cart'-%}
+        {%-case settings.type_ajax_cart-%}
+        {%-when 'drawer'-%}
+          <div class="lazyload lazypreload" data-include="{{routes.cart_url | append: '?view=kt_cart_drawer'}}"></div>
+          {%- if settings.enable_auto_gift == true and settings.auto_gift_product != blank and all_products[settings.auto_gift_product].title != blank -%}
+            <script type="application/json" data-gift-auto-add>
+              {
+                "price_limit": {{ all_products[settings.auto_gift_limit].selected_or_first_available_variant.price | json }},
+                "id": {{ all_products[settings.auto_gift_product].selected_or_first_available_variant.id | json }}
+              }
+            </script>
+          {%- endif -%}
+        {%-when 'popup'-%}
+          <div class="lazyload lazypreload" data-include="{{routes.cart_url | append: '?view=kt_cart_popup'}}"></div>
+        {%-endcase-%}
+      {%-endif-%}
+      <main class="main-content{%if settings.use_wrap_container %} wrap-container{%endif%}{%unless template.name == 'index'%} page-container{%endunless%}" id="PageContainer">
+        {%- liquid
+          unless template contains 'index'
+            section 'kt_banner_all_page'
+
+          endunless
+        -%}
+        {{ content_for_layout }}
+      </main>
+      {%- liquid
+        if settings.use_wrap_container
+          echo '<div class="wrap-container">'
+        endif
+        render 'footer-layout'
+        if settings.use_wrap_container
+          echo '</div>'
+        endif
+        if settings.use_mobile_bottom_bar
+          section 'kt_bottom_bar'
+        endif
+      -%}
+    </div>
+    <div class="content_for_extension">
+      {%- liquid
+        section 'custom_color'
+        if request.design_mode and settings.popup_cookies
+          section 'cookies_popup'
+        endif
+        if ageVer
+          section 'kt_ageVerification'
+        endif
+        if settings.enable_suggest_products
+          render 'kt_suggest'
+        endif
+        if shop.customer_accounts_enabled and settings.modal_login
+          render 'account-popup'
+        endif
+        render 'footer-extension'
+      -%}
+      <div id="toast"></div>
+    </div>
+    <script src="{{ 'lazysizes.min.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'jquery-3.6.0.min.js' | asset_url }}"{% unless request.design_mode %} defer="defer"{%-endunless-%}></script>
+    <script src="{{ 'vendor.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'theme_footer_js.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'myScript.js' | asset_url }}" defer="defer"></script>
+    {%- if settings.show_multiple_currencies -%}
+      {%- case settings.currency_options -%}
+        {%- when 'customize' -%}
+          <script src="//cdn.shopify.com/s/javascripts/currencies.js" defer="defer"></script> 
+          <script src="{{ 'jquery.currencies.js' | asset_url }}" defer="defer"></script>
+        {%- else -%}
+          {%- if settings.use_auto_currencies and cart.currency.iso_code == shop.currency and cart.attributes.cry == null -%}
+            <script src="{{ 'jquery.currencies-sp.min.js' | asset_url }}" defer="defer"></script>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endif -%}
+    {%- if settings.ajax_cart -%}
+      <script src="{{ 'theme.ajax-cart.min.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if settings.shipping_calculator -%}
+      <script src="{{ 'theme.get-shipping.min.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if template.name == 'article' and settings.article_layout == '02' -%}
+      <script src="{{ 'jquery.sticky-kit.min.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    <script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer="defer"></script>
+    {%- if settings.use_flts -%}
+      {%- if template.name == 'collection' or template.name == 'list-collections' or template.suffix contains 'collection' -%}
+        {%- if settings.multi_flts_or -%}
+          <script src="{{ 'jquery-ui.slider.min.js' | asset_url }}" defer="defer"></script>
+          <script src="{{ 'ktjs_multi_filters.js' | asset_url }}" defer="defer"></script>
+        {%- else -%}
+          <script src="{{ 'ktjs_filters.min.js' | asset_url }}" defer="defer"></script>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- if template.name == 'product' -%}
+      <script src="{{ 'ktjs_product_sg.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if template.directory == 'customers' -%}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    <script src="{{ 'theme.min.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'custom.min.js' | asset_url }}" defer="defer"></script>
+    {%- if template.name == 'cart' and settings.ajax_cart_page -%}
+      <script src="{{ 'theme.ajax-cart-page.min.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%-if template.name == 'index' and settings.newsletter_popup -%}
+      {%-case settings.newsletter_layout-%}
+        {%-when '1'-%}
+          {%-section 'newsletter-popup'-%}
+        {%-when '2'-%}
+          {%-section 'newsletter-popup-2'-%}
+      {%-endcase-%}
+      <script src="{{'theme-cp-newletter.min.js' | asset_url}}" defer="defer"></script>
+    {%-endif-%}
+    {%- if request.design_mode -%}
+      {%-render 't4-toolkit'-%}
+      {%- if shop.metafields.t4pcc.molla != 'true' -%}
+        {%- render 't4-pcc', theme: 'molla' -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- render 'googleRich' -%}
+  <!--BeginCFFPersistentCartCart-->
+{% if customer %}
+<script>
+
+    window.cffCustomer = {
+        name: '{{customer.name}}',
+        email: '{{customer.email}}',
+        hasAccount: '{{customer.has_account}}',
+        id: '{{customer.id}}'
+    };
+
+
+</script>
+
+{% endif %}
+<!-- jQuery Modal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/glider-js@1.7.7/glider.min.js"></script>
+<script>
+    window.cffPCLiquidPlaced = true
+</script>
+
+<!--EndCFFPersistentCartCart--></body>
+</html>

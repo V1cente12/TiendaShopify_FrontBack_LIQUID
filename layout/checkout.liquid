@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+  <html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+      <meta name="referrer" content="origin">
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TQTPXRL');</script>
+<!-- End Google Tag Manager -->
+    
+      <title>{{ page_title }}</title>
+      {{ content_for_header }}
+      {{ checkout_stylesheets }}
+      {{-'theme.font.css' | asset_url | stylesheet_tag-}}
+      <style>
+        body {
+            font-family: Poppins;
+        }
+        
+          @media only screen and (max-width: 500px) {
+              #Pgt360-Link {
+                  width: 420px;
+              }
+          }
+  
+          @media only screen and (max-width: 400px) {
+              #Pgt360-Link {
+                  width: 300px;
+              }
+          }
+  
+          @media only screen and (max-width: 600px) {
+              #Pgt360-Link {
+                  width: 500px;
+              }
+          }
+      </style>
+      <style>
+               .content .wrap .main .main__content .step .step__sections .section .section__content .content-box:nth-child(3){
+          border: 0px;
+        }
+        .content .wrap .main .main__content .step .step__sections .section .section__content .content-box:nth-child(3) .content-box__row{    
+          padding:0;
+        }
+        .btn, .sp-modal-toggle {
+            border-radius:30px
+        }
+          .map {
+              height: 100%;
+              width: 100%;
+              border-radius: 30px;
+          }
+  
+          .map_parent {
+              height: 350px;
+              width: 100%;
+              position: relative;
+          }
+  
+          #pin {
+              position: absolute;
+              top: 68px;
+              left: 50%;
+          }
+  
+          .direccion-por-defecto {
+              background: green;
+              border-radius: 10px;
+              text-align: center;
+              color: white;
+          }
+  
+          .contenedor-enlace {
+              display: flex;
+              justify-content: space-around;
+          }
+  
+          .bold {
+              font-weight: bold;
+          }
+  
+          .btn-cambiar-direccion {
+              background: #f7aa06;
+              padding: 10px;
+              border-radius: 4px;
+          }
+  
+          .section--billing-address {
+              display: none !important;
+          }
+  
+          .center {
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 25%;
+          }
+  
+          .address-fields {
+              display: none;
+          }
+          .naranja{
+              width: 40px;
+              margin-top: 5px;
+          }
+          @media only screen and (max-width: 408px) {
+              .select_ {
+                  width: 100%;
+              }
+              .icono_ {
+                  display:none;
+              }
+              .divDireccion{
+                  background: #FAFAFA;
+                  border-radius: 10px;
+                  padding-left: 10px;
+                  padding-top: 10px;
+                  margin-top: 15px;
+                  margin-bottom: 15px;
+                  width: 100%;
+                  border-width: 1px;
+                  border-style: solid;
+                  border-color: #c5c6c7;
+              }
+          }
+          @media only screen and (max-width: 1156px) {
+              .naranja{
+                  width: 40px;
+                  margin-top: -10px;
+              }
+          }
+          @media only screen and (min-width: 409px) and (max-width: 1920px) {
+              .contedor_ {
+                  display: flex;
+                  flex-direction: row;
+                  flex-wrap: wrap;
+              }
+              .select_ {
+                  width: 90%;
+              }
+              .icono_ {
+                  width: 10%;
+                  
+              }
+              .divDireccion{
+                  background: #FAFAFA;
+                  border-radius: 10px;
+                  padding-right: 20px;
+                  padding-left: 20px;
+                  padding-top: 10px;
+                  padding-bottom: 10px;
+                  margin-top: 15px;
+                  margin-bottom: 15px;
+                  width: 50%;
+                  border-width: 1px;
+                  border-style: solid;
+                  border-color: #c5c6c7;
+              }
+          }
+  
+  
+          .section__content{
+              margin-top: -9px;
+          }
+            
+          .radio-wrapper{
+              display: block ;
+          }
+          
+          .mostrarWapper{
+              display: block !important;
+          }
+        [data-step="payment_method"] .step__sections  .section--payment-method .section__content .content-box .radio-wrapper{
+            display:none;
+        }
+          
+      </style>
+  
+  
+  
+      {{ checkout_scripts }}
+      {% if order.cancelled %}
+      <script>
+        <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQTPXRL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  let informacion = document.getElementsByClassName("content-box__row")[2];
+                  informacion.parentElement.remove(informacion);
+              });
+          })(Checkout.$);
+          Shopify.Checkout.OrderStatus.addContentBox(
+              '<h3 style="line-height: 3em">¡Muchas gracias por su compra en El GenioX!</h3><img style="width:50%;" src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/pedido_cancelado_2_genio_1.png?v=1641906033"  class="center">'
+          );
+      </script>
+      {% elsif order.financial_status == 'paid' %}
+      <script>
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  let ab = document.getElementsByClassName("content-box__row text-container")[0];
+                  ab.parentElement.remove(ab);
+              });
+          })(Checkout.$);
+          Shopify.Checkout.OrderStatus.addContentBox(
+              '<h2 >Para iniciar una nueva compra dale click al boton Volver al inicio</h2><img style="width:50%;" src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/PEDIDO_EXITOSO.png?v=1641925743"  class="center">');
+      </script>
+      {% elsif order.financial_status != 'paid' and order.gateway == 'Pago en Línea (Tarjeta Crédito/Débito, QR)' or
+      order.gateway == 'gift_card, Pago en Línea (Tarjeta Crédito/Débito, QR)' %}
+      {% render 'pt-code' %}
+      {% endif %}
+  
+      <script src="https://maps.googleapis.com/maps/api/js?key={{settings.keyGoogleMap}}"></script>
+  </head>
+  
+  <body>
+      {{ skip_to_content_link }}
+  
+      <header class="banner" data-header role="banner">
+          <div class="wrap">
+              {{ content_for_logo }}
+          </div>
+      </header>
+  
+      {{ order_summary_toggle }}
+      <div class="content" data-content>
+          <div class="wrap">
+              <div class="main">
+                  <header class="main__header" role="banner">
+                      {{ content_for_logo }}
+                      {{ breadcrumb }}
+                      {{ alternative_payment_methods }}
+                  </header>
+                  <main class="main__content" role="main">
+  
+                      {{ content_for_layout }}
+                  </main>
+                  <footer class="main__footer" role="contentinfo">
+                      {{ content_for_footer }}
+                  </footer>
+              </div>
+              <aside class="sidebar" role="complementary">
+                  <div class="sidebar__header">
+                      {{ content_for_logo }}
+                  </div>
+                  <div class="sidebar__content">
+                      {{ content_for_order_summary }}
+                  </div>
+              </aside>
+          </div>
+      </div>
+  
+      {{ tracking_code }}
+  
+  
+      <script>
+          const rutaAddresses = '/account/addresses?view=addressCheckout';
+          function setLocalStorage(){
+          }
+          function obtPropiedades(ev, index){
+              const propiedades = ev.options[index].dataset.properties;
+              return JSON.parse(propiedades);
+          }
+          function obtLatitudLongitud(ev, index) {
+              const objPropiedades = obtPropiedades(ev, index);
+              let text = objPropiedades.company;
+              let myArray = text.split(",");
+              marcarPunto(myArray[0], myArray[1]);
+              return objPropiedades;
+          }
+          function actualizarDireccion(value) {
+              if(value!='nuevo'){
+                  document.getElementById("divDireccion").innerHTML = ""
+                  const ev = document.getElementById("checkout_shipping_address_id");
+                  document.getElementById("checkout_shipping_address_id").value = value;
+                  let index = 0;
+                  for (var i = 0; i < ev.length - 1; i++) {
+                      if (ev.options[i].value == value) {
+                          index = i;
+                          break;
+                      }
+                  }
+                  const objPropiedades = obtLatitudLongitud(ev, index);
+                  localStorage.setItem('nombreDireccion', JSON.stringify(objPropiedades));
+                  document.getElementById("divDireccion").innerHTML = `                             
+                      <p><b class="bold">${objPropiedades.city}</b></p>
+                      <p><b class="bold"></b> ${objPropiedades.first_name} ${objPropiedades.last_name}</p>
+                      <p><b class="bold"></b>${objPropiedades.address1}</p>           
+                      <p><b class="bold"></b>${objPropiedades.phone}</p>               
+                  `;
+              }
+              else
+                  window.location.href = rutaAddresses;
+              
+          }
+          function htmlSelectOption() {
+              const ev = document.getElementById("checkout_shipping_address_id");
+              let optionSelect = '';
+  
+              for (var i = 0; i < ev.length - 1; i++) {
+                  const objPropiedades = obtPropiedades(ev, i);
+                  optionSelect += `<option data-properties="${ev.options[i].dataset.properties}" value="${ev.options[i].value}">${objPropiedades.last_name}, ${objPropiedades.address1}</option>`;
+              }
+              localStorage.setItem('nombreDireccion', ev.options[0].dataset.properties);
+              document.getElementById("checkout_shipping_address_id").value = ev.options[0].value;
+              obtLatitudLongitud(ev, 0);
+              optionSelect += `<option value="nuevo">Crea una nueva dirección</option>`;
+              return `
+                <div class="fieldset contedor_">
+                  <div class="field field--required select_">  
+                      <div class="field__input-wrapper field__input-wrapper--select">
+                          <label class="field__label field__label--visible" for="checkout_shipping_address_id">Direcciones guardadas</label>
+                          <select data-address-selector="" onchange="actualizarDireccion(this.value)" data-field-name-format="checkout[shipping_address][%s]" data-backup="contact_stored_addresses" class="field__input field__input--select" aria-required="true" name="checkout[shipping_address][id]" id="checkout_shipping_address_id">
+                            ${optionSelect}
+                          </select>
+                          <div class="field__caret">
+                            <svg class="icon-svg icon-svg--color-adaptive-lighter icon-svg--size-10 field__caret-svg" role="presentation" aria-hidden="true" focusable="false"> <use xlink:href="#caret-down"></use> </svg>
+                          </div>
+                           
+                      </div>
+                     
+                  </div>
+                  <div class="icono_">
+                  &nbsp;&nbsp;&nbsp;<a href="${rutaAddresses}">
+                                      <img src="https://cdn.shopify.com/s/files/1/0588/1380/8845/files/noun-add-location-290995.png?v=1644845234" alt="Imagen no Encontrada" title="Usar una nueva dirección" class="naranja">
+                                    </a>
+                  </div>
+                </div>
+                `;
+          }
+          var map, infoWindow;
+          var longitude, latitude;
+          var geocoder;
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  if (Shopify.Checkout.step === "contact_information") 
+                  {
+                      // Add content
+                      document.querySelector('[data-address-field=first_name]').style.display = "none"
+                      document.querySelector('[data-address-field=last_name]').style.display = "none"
+                      document.querySelector('[data-address-field=address1]').style.display = "none"
+                      document.querySelector('[data-address-field=address2]').style.display = "none"
+                      document.querySelector('[data-address-field=city]').style.display = "none"
+                      document.querySelector('[data-address-field=company]').style.display = "none"
+                      document.querySelector('[data-address-field=phone]').style.display = "none"
+                      document.querySelector('[data-address-field=country]').style.display = "none"
+                      document.getElementsByClassName('field field--required')[0].style.display = "none"
+                      {% if customer.default_address.company %}
+                          document.getElementById('continue_button').style.marginTop = "30px";
+                          let inputPhone = document.querySelector('[data-address-field=phone]');
+                          document.getElementById('checkout_shipping_address_first_name').value = "{{customer.default_address.first_name}}";
+                          document.getElementById('checkout_shipping_address_last_name').value = "{{customer.default_address.last_name}}";
+                          document.getElementById('checkout_shipping_address_address1').value = "{{customer.default_address.address1}}";
+                         document.getElementById('checkout_shipping_address_address2').value = "{{customer.default_address.address2}}";
+                          document.getElementById('checkout_shipping_address_city').value = "{{customer.default_address.city}}";
+                          document.getElementById('checkout_shipping_address_company').value = "{{customer.default_address.company}}";
+                          setTimeout(function () {
+                              document.getElementById('checkout_shipping_address_phone').value = {{ customer.default_address.phone }};
+                          }, 500);
+  
+                          let contenido = document.querySelector('.fieldset')
+                          contenido.insertAdjacentHTML("afterend", `<div class="field map_parent"><div id="map" class="map" ></div></div>`);
+                          contenido.insertAdjacentHTML("afterend", `${htmlSelectOption()}
+                                                      <div class="row"><div id="divDireccion" class="divDireccion">
+                                                          <p><b class="bold">{{ customer.default_address.city}}</b></p>
+                                                          <p><b class="bold"></b> {{ customer.default_address.first_name}} {{ customer.default_address.last_name}}</p>
+                                                          <p><b class="bold"></b>{{ customer.default_address.address1}}</p>
+                                                          <p><b class="bold"></b>{{ customer.default_address.phone}}</p>
+                                                      </div></div>`);
+                          console.log({{ customer.default_address.id }})
+                          console.log({{ customer.default_address.company }})
+                          console.log({{ customer_address.company }})
+                      //initMap()                 
+                      {% else %}
+                          let direccionLabel = document.querySelector('.section.section--shipping-address')
+                          if (direccionLabel) {
+                              direccionLabel.insertAdjacentHTML("afterend", `<p>Para continuar con tu compra necesitas agregar una dirección de envió.</p><br><button class="btn-cambiar-direccion"><a style="color:white" href="${rutaAddresses}">Agregar direccion</a></button>`)
+                              document.getElementById("continue_button").style.display = "none"
+                          }
+                      {% endif %}
+             }
+          });
+      }) (Checkout.$);
+  
+  
+          //Section payment
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  if (Shopify.Checkout.step === "payment_method") {
+                      let direccionFiscal = document.querySelector('.section.section--billing-address')
+                      if(direccionFiscal!=null){
+                      {% for attribute in checkout.attributes %}
+                        direccionFiscal.insertAdjacentHTML('afterend', `<input type=hidden name="checkout[attributes][{{ attribute.first }}]" value="{{ attribute.last  }}">`)
+                      {% endfor %}
+                      direccionFiscal.insertAdjacentHTML('afterend', `<br><div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_reduction_code_mobile">Razon Social</label>
+                      <input placeholder="Razon social" class="field__input" id="razon-social" autocomplete="off" aria-required="true" size="30" type="text" name="checkout[attributes][razon_social]" value=""/></div>`)
+                      direccionFiscal.insertAdjacentHTML('afterend', `<br><h2 class="section--title">Datos para Factura</h2><br><div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_reduction_code_mobile">NIT</label>
+                      <input placeholder="NIT" class="field__input" id="nit" autocomplete="off" aria-required="true" size="30" type="number" min="0" step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="checkout[attributes][nit]" value=""/></div>`)
+                    
+                      direccionFiscal.insertAdjacentHTML('afterend', `<input placeholder="url-mapa" class="field__input" id="urlMapa" autocomplete="off" aria-required="true" size="30" type="hidden" name="checkout[attributes][urlMapa]" value=""/>`)
+                      direccionFiscal.insertAdjacentHTML('afterend', `<input placeholder="url-mapa" class="field__input" id="latMapa" autocomplete="off" aria-required="true" size="30" type="hidden" name="checkout[attributes][latMapa]" value=""/>`)
+                      direccionFiscal.insertAdjacentHTML('afterend', `<input placeholder="url-mapa" class="field__input" id="lonMapa" autocomplete="off" aria-required="true" size="30" type="hidden" name="checkout[attributes][lonMapa]" value=""/>`)
+                     
+                      {% if customer.default_address.company %}
+                          let coordenadas = "{{ customer.default_address.company}}";
+                          let newCoordenadas = coordenadas.split(",")
+                          document.getElementById('urlMapa').value = 'https://maps.google.com/?q=' + newCoordenadas[0] + ',' + newCoordenadas[1];
+                          document.getElementById('latMapa').value = newCoordenadas[0];
+                          document.getElementById('lonMapa').value = newCoordenadas[1];
+                      {% endif %}
+                    } 
+                  }
+              });
+          })(Checkout.$);
+        function mostrarTodosLosTipoRadiosEnvioPago(claseName){
+            const div = document.getElementsByClassName(claseName);
+            for (let i = 0; i < div.length; i++) {
+                div[i].className += " mostrarWapper";
+            }
+        }
+        //Section shipping_method = Envios
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  if (Shopify.Checkout.step === "shipping_method") {
+                      //mostrarTodosLosTipoRadiosEnvioPago('radio-wrapper');
+                 
+                    var dataLocal = JSON.parse(localStorage.getItem("nombreDireccion"));
+                    const data = `${dataLocal.first_name}, ${dataLocal.address1}, ${dataLocal.city}, ${dataLocal.country}`;
+                    document.getElementsByClassName("address--tight")[0].innerText = data;
+                    if(typeof instrucciones === 'undefined' ){
+                    instrucciones = document.getElementsByClassName('section section--shipping-method')[0];
+                    instrucciones.insertAdjacentHTML('afterend', `<br><h4 class="section--title">Instrucciones para la entrega \(opcional\)</h4><br>
+                        <div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_reduction_code_mobile">Instrucciones</label>
+                        <input placeholder="Entregar en portería" class="field__input" id="instrucciones" autocomplete="off" type="text"  step="1" name="checkout[attributes][instrucciones]" value=""/></div>`);
+                  } 
+                }
+              });
+          })(Checkout.$);
+        //Section payment_method = Metodo de pago disponible
+        function ocultarPagoEnEfectivoSiNoEsDiscoteca(){
+            try{
+                const valorMetodo = document.getElementsByClassName('review-block__content')[2].innerText;
+                if(valorMetodo == 'Entregas en Discoteca Tempo · Gratis'){
+                    mostrarTodosLosTipoRadiosEnvioPago('radio-wrapper');
+                }else{
+                    const radios = document.getElementsByName('checkout[payment_gateway]');
+                    let contadorMetodo=-1;
+                    for (let i = 0; i < radios.length; i++) {
+                        let valor = document.getElementsByClassName('radio__label__primary')[i].innerText;
+        
+                        if(valor.trim() != 'Pago en efectivo')
+                        {
+                            contadorMetodo++;
+                            document.getElementsByClassName('radio-wrapper')[contadorMetodo].className += " mostrarWapper";
+                            contadorMetodo++;
+                            document.getElementsByClassName('radio-wrapper')[contadorMetodo].className += " mostrarWapper";
+                            radios[i].checked = true;
+                        }
+                        else
+                            contadorMetodo+=2;          
+                    }
+                }
+            } catch{
+              
+            }
+        }
+        function mostrarTodosLosMetodosDePago(claseName){
+            const div = document.getElementsByClassName(claseName);
+ 
+            for (let i = 0; i < div.length; i++) {
+              div[i].className += " mostrarWapper";
+            }
+        }
+        function ocultarPagoContraEntregaSiLaCiudadEsDistantaAScz(pobj){
+            try{
+                const valorMetodo = document.getElementsByClassName('review-block__content')[2].innerText;
+                
+                if(pobj.city == 'Santa Cruz'){
+                    mostrarTodosLosMetodosDePago('radio-wrapper');
+                }else{
+                    const radios = document.getElementsByName('checkout[payment_gateway]');
+                    let contadorMetodo=-1;
+                    
+                    for (let i = 0; i < radios.length; i++) {
+                        let valor = document.getElementsByClassName('radio__label__primary')[i].innerText;
+                        if(valor.trim() != 'Pago contra entrega')
+                        {
+                            contadorMetodo++;
+                            document.getElementsByClassName('radio-wrapper')[contadorMetodo].className += " mostrarWapper";
+                            contadorMetodo++;
+                            document.getElementsByClassName('radio-wrapper')[contadorMetodo].className += " mostrarWapper";
+                            radios[i].checked = true;
+                        }
+                        else{
+                            contadorMetodo+=2;
+                        }
+                    }
+                }
+                
+            } catch{
+              
+            }
+        }
+          (function ($) {
+              $(document).on("page:load page:change", function () {
+                  if (Shopify.Checkout.step === "payment_method") {
+                 //   ocultarPagoEnEfectivoSiNoEsDiscoteca();
+                    var dataLocal = JSON.parse(localStorage.getItem("nombreDireccion"));
+                    console.log(dataLocal);
+                    ocultarPagoContraEntregaSiLaCiudadEsDistantaAScz(dataLocal);
+                    const data = `${dataLocal.first_name}, ${dataLocal.address1}, ${dataLocal.address2}, ${dataLocal.city}, ${dataLocal.country}`;
+                    document.getElementsByClassName("address--tight")[0].innerText = data;
+                    imagen = document.getElementById('payment-gateway-subfields-70497468621');
+                    /*
+                    imagen.insertAdjacentHTML('afterbegin', `<img alt="Geniox Pagatodo" class="offsite-payment-gateway-logo" style="height: 80px; margin-left: auto;
+                                                            margin-right: auto;
+                                                            margin-top: -2px;
+                                                            margin-bottom: -2px;
+                                                            display: block;" src="//cdn.shopify.com/s/files/1/0588/1380/8845/files/Pay_and_bill2.png?v=1647568088">`)
+                    */
+                    facturacion = document.getElementsByClassName("review-block")[1];
+                    facturacion.style.display = 'none';                    
+                    
+                    $("#continue_button").click(function(){
+                        localStorage.removeItem('nombreDireccion');
+                    });
+                  }
+              });
+          })(Checkout.$);
+          function initMap() {
+              let coordenadas = "{{ customer.default_address.company}}";
+              let newCoordenadas = coordenadas.split(",")
+              map = new google.maps.Map(document.getElementById('map'), {
+                  center: { lat: parseFloat(newCoordenadas[0]), lng: parseFloat(newCoordenadas[1]) },
+                  zoom: parseFloat(14),
+                  disableDefaultUI: true,
+              });
+              longitude = map.getCenter().lng();
+              latitude = map.getCenter().lat();
+              infoWindow = new google.maps.InfoWindow;
+              geocoder = new google.maps.Geocoder;
+              // Marker
+              const myLatLng = { lat: parseFloat(newCoordenadas[0]), lng: parseFloat(newCoordenadas[1]) };
+              new google.maps.Marker({
+                  position: myLatLng,
+                  map,
+                  title: "Mi direccion de envio",
+              });
+  
+          }
+  
+  
+          function marcarPunto(latitud, longitud) {
+              map = new google.maps.Map(document.getElementById('map'), {
+                  center: { lat: parseFloat(latitud), lng: parseFloat(longitud) },
+                  zoom: parseFloat(14),
+                  disableDefaultUI: true,
+              });
+              longitude = map.getCenter().lng();
+              latitude = map.getCenter().lat();
+              infoWindow = new google.maps.InfoWindow;
+              geocoder = new google.maps.Geocoder;
+              // Marker
+              const myLatLng = { lat: parseFloat(latitud), lng: parseFloat(longitud) };
+              new google.maps.Marker({
+                  position: myLatLng,
+                  map,
+                  title: "Mi direccion de envio",
+              });
+  
+          }
+      </script>
+  </body>
+  
+  </html>

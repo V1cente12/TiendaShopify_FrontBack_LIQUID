@@ -1,0 +1,126 @@
+<!-- product-list-item.liquid -->
+{%- liquid
+assign compare_at_price = product.compare_at_price 
+assign price = product.price 
+assign price_varies = product.price_varies 
+assign available = product.available 
+if settings.use_new_label
+  unless product.tags contains 'notnew'
+    assign on_new = false
+    assign now_date_int = "now" | date: "%j" | plus: 0
+    assign now_year_int = "now" | date: '%Y' | plus: 0
+    assign pub_date_int = product.created_at | date: "%j" | plus: 0
+    assign pub_year_int = product.created_at | date: '%Y' | plus: 0
+    if now_year_int == pub_year_int
+      assign new_day_int = settings.new_day | default: 30 | plus: 0
+      assign check_new = now_date_int | minus: pub_date_int
+      if check_new >= 0 and check_new <= new_day_int
+        assign on_new = true
+      endif
+    else
+      assign new_day_int = settings.new_day | default: 30 | pub_date_int
+      assign check_new = now_date_int | plus: 366
+      if check_new <= new_day_int
+        assign on_new = true
+      endif
+    endif
+  endunless
+endif
+assign on_sale = false
+if compare_at_price > price 
+  assign on_sale = true
+endif
+assign sold_out = true
+assign preOrder = false
+assign sold_out_text = 'products.product.sold_out' | t
+unless available == false
+  assign sold_out = false
+endunless
+if product.selected_or_first_available_variant.inventory_quantity <= 0 and product.selected_or_first_available_variant.inventory_policy != 'deny'
+  assign preOrder = true 
+endif
+-%}
+<div class="product-inner{% unless product.has_only_default_variant or settings.qs_hide_only_1_opt and product.variants.size == 1 %} ktlz{%endunless%}" data-href="{{product.handle}}">
+	<form method="post" action="{{ routes.cart_add_url }}" id="ProductSection-{{product.id}}-{{block_id}}" class="form form-ajax-- ktlz-form-pid-{{product.id}}" data-p-id="{{product.id}}" data-section-id="-{{product.id}}-{{block_id}}" data-options="{{product.options.size}}" data-pr-vrs="">
+		<div class="row">
+			<div class="col-6 col-lg-3">
+				<div class="product-thumb images">
+          {%- render 'product-item-flashs', product: product, st_card: st_card, on_new: on_new, on_sale: on_sale, sold_out: sold_out -%}
+		      {%- capture ar_i-%}--ar_i:{{product.featured_image.height | times: 1.00 | divided_by: product.featured_image.width | times: 100.00000000}}%;{%-endcapture-%}
+		      <a class="aspectRatio{%if product.title != blank %} lazyload{%endif%}" data-include="{{product.url|split:'?'|first}}?view=imgscard" href="{{product.url | within: collection}}" title="{{product.title | escape}}" aria-label="{{product.title | escape}}" style="{{ar_i|replace:'--ar_i:NaN%',''}}"></a>
+			  </div>
+			</div>
+			<div class="col-12 col-md-6 order-last order-md-1">
+        <div class="product-body">
+        	{%- if settings.use_vendor_grid -%}
+          <div class="product-vendor">
+          {%- assign map_tags = product.tags|join:',' -%}
+          {%- if map_tags contains 'Vendor ' -%}
+            {%- assign vendor_ = product.vendor | handleize -%}
+            {%- assign url_vendor = collection.url | append: '/vendor-' | append: vendor_ -%}
+            {{ product.vendor | link_to: url_vendor }}
+          {%- else -%}
+            {{ product.vendor | link_to_vendor }}
+          {%- endif -%}
+          </div>
+        	{%- endif -%}
+			    <h2 class="product-name"><a href="{{product.url| within: collection}}" tabindex="0">{{product.title}}</a></h2>
+			    <div class="product-excerpt">
+			    	{%- if product.metafields.meta.short_description -%}
+	          {{ product.metafields.meta.short_description | html }}
+	          {% elsif product.description contains  '[/short description]' %}
+	          {{ product.description | split: '[/short description]' | first | split: '[short description]'| last | strip_html }}
+	          {%-else-%}
+	          {{ product.description | strip_html | truncatewords: 30 }}
+	          {%-endif-%}
+		      </div>
+          {%-if product.has_only_default_variant == false-%}
+            {%-unless settings.qs_hide_only_1_opt and product.variants.size == 1-%}
+            <div class="product-variants-wrapper">
+              <div class="prd-variants">
+                {%- for i in (1..product.options.size) -%}
+                  <div class="prd--option{{i}} animated-background"></div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%-endunless-%}
+          {%-endif-%}
+          {%- if settings.use_wishlist != '' -%}
+            {%- render 'kt-wishlist-product', product: product, style_btn: 'btn-white-primary btn-product-icon btn-expandable kt-button' -%}
+          {%- endif -%}
+			  </div>
+			</div>
+			<div class="col-6 col-lg-3 order-1">
+	      <div class="product-bottom">
+          {%render 'product-item-prices', product: product, on_sale: on_sale, price_varies: price_varies-%}
+          {%-if settings.use_review_grid-%}{%-render 'rating_star', product: product, type: 'collection'-%}{%-endif-%}
+          <div class="entry-buttons">
+            <div class="wishlist_compare_btns">
+	          {%- if settings.use_quickview-%}
+	            <div class="btn quick-view" data-view="{{product.url}}" data-target="#md_qvModal" title="{{'products.quickview.button'|t}}" aria-label="{{'products.quickview.button'|t}}">
+                <i class="fkt-binoculars"></i><span class="text-nowrap text-lowercase d-none d-sm-block">{{'products.quickview.button'|t}}</span>
+              </div>
+	          {%- endif -%}
+            {%- if settings.use_compare-%}
+              <div class="btn compare" data-pid="{{product.handle}}">
+                <i class="fkt-random"></i><span class="text-nowrap text-lowercase d-none d-sm-block">{{'products.compare.button'|t}}</span>
+              </div>
+            {%- endif -%}
+            </div>
+          </div>
+	        <div class="add-to-cart">
+	          <div class="product-cta-wrapper">
+	            {% if settings.use_add_to_cart_btn %}
+	              {%- if product.has_only_default_variant -%}
+	                {% render 'kt_button_no_variant', product: product, preOrder: preOrder, sold_out: sold_out, style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase btn-cart kt-button' %}
+	              {%- else -%}
+	                {% render 'kt_button_has_variant', product: product, preOrder: preOrder, sold_out: sold_out style_btn: 'btn btn-outline-primary-2 w-100 fkt-cart-plus text-uppercase kt-button', position_btn: 'sticky_add_cart' %}
+	              {%- endif -%}
+	            {% endif %}
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+		</div>
+	</form>
+</div>
