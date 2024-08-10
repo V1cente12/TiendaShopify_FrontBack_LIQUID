@@ -375,7 +375,7 @@
     "favicon_xml": "shopify:\/\/shop_images\/mstile-150x150.png",
     "citys": "Santa Cruz,Pando,Cochabamba,Oruro,Potosí,Beni,Tarija,Chuquisaca,La Paz",
     "citysConfig": "var citys = [\n    {\n      \"city\": \"Santa Cruz\",\n\t  \"latitud\": \"-17.783318\",\n\t  \"longitud\": \"-63.182126\",\n\t  \"keyRegion\" : \"001\"\n    },\n\t{\n      \"city\": \"Pando\",\n\t  \"latitud\": \"-11.023339\",\n\t  \"longitud\": \"-68.766269\",\n\t  \"keyRegion\" : \"009\"\n\t},\n    {\n      \"city\": \"Cochabamba\",\n\t  \"latitud\": \"-17.396394\",\n\t  \"longitud\": \"-66.162779\",\n\t  \"keyRegion\" : \"002\"\n    },\n    {\n      \"city\": \"Oruro\",\n\t  \"latitud\": \"-17.969568\",\n\t  \"longitud\": \"-67.114624\",\n\t  \"keyRegion\" : \"005\"\n    },\n    {\n      \"city\": \"Potosí\",\n\t  \"latitud\": \"-19.576795\",\n\t  \"longitud\": \"-65.757412\",\n\t  \"keyRegion\" : \"008\"\n    },\n    {\n      \"city\": \"Beni\",\n\t  \"latitud\": \"-14.835039\",\n\t  \"longitud\": \"-64.904141\",\n\t  \"keyRegion\" : \"007\"\n    },\n    {\n      \"city\": \"Tarija\",\n\t  \"latitud\": \"-21.533895\",\n\t  \"longitud\": \"-64.734285\",\n\t  \"keyRegion\" : \"004\"\n    },\n    {\n      \"city\": \"Chuquisaca\",\n\t  \"latitud\": \"-19.047752\",\n\t  \"longitud\": \"-65.259527\",\n\t  \"keyRegion\" : \"006\"\n    },\n    {\n      \"city\": \"La Paz\",\n\t  \"latitud\": \"-16.498447\",\n\t  \"longitud\": \"-68.126580\",\n\t  \"keyRegion\" : \"003\"\n    }\n  ];",
-    "keyGoogleMap": "AIzaSyDecTdb0bsJJjgk0XVLrEWYLFjWkP1t9yc",
+    "keyGoogleMap": "qwerty",
     "checkout_logo_image": "shopify:\/\/shop_images\/300w-logo-elgeniox.png",
     "checkout_logo_position": "left",
     "checkout_logo_size": "medium",
